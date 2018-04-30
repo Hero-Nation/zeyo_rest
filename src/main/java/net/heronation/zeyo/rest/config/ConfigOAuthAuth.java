@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.authentication.AppTokenEnhancer;
 
 @Slf4j
 @Configuration
@@ -95,7 +96,7 @@ public class ConfigOAuthAuth extends AuthorizationServerConfigurerAdapter {
 
     @Bean
     public TokenEnhancer tokenEnhancer() {
-        return new CustomTokenEnhancer();
+        return new AppTokenEnhancer();
     }
 
 }

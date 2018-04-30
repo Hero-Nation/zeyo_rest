@@ -33,13 +33,29 @@ public class AppUserDetailService implements UserDetailsService {
 		
 		Member user = memberRepo.findByMemberId(username);
 		
+		
 		AppUserDetails userDetail = new AppUserDetails();
 		userDetail.setUsername(username);
 		userDetail.setPassword(user.getPassword());
+		//userDetail.setEmail(user.getEmail());
+		userDetail.setId(user.getId());
+		//userDetail.setManager(user.getManager());
+		//userDetail.setManagerEmail(user.getManagerEmail());
+		//userDetail.setManagerPhone(user.getManagerPhone());
+		userDetail.setName(user.getName());
+		//userDetail.setPhone(user.getPhone());
+		//userDetail.setAdminYn(user.getAdminYn());
+		
+		
+		List<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>();
 		
 		SimpleGrantedAuthority role = new SimpleGrantedAuthority("CLIENT");
-		List<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>();
 		roles.add(role);
+		if(user.getAdminYn() != null & user.getAdminYn().equals("Y")) {
+			role = new SimpleGrantedAuthority("ADMIN");
+			roles.add(role);
+		}
+		 
 		userDetail.setAuthorities(roles);
 		return userDetail; 
 

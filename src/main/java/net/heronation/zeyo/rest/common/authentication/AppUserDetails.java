@@ -2,16 +2,91 @@ package net.heronation.zeyo.rest.common.authentication;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
+import net.heronation.zeyo.rest.repository.member.Member;
 
 public class AppUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	private String username;
-	private String password; // 추가적인 회원정보 항목을 추가한다. email 이나 연락처 등등... 
+	private String password;  
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getManager() {
+		return manager;
+	}
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
+	public String getManagerEmail() {
+		return managerEmail;
+	}
+	public void setManagerEmail(String managerEmail) {
+		this.managerEmail = managerEmail;
+	}
+	public String getManagerPhone() {
+		return managerPhone;
+	}
+	public void setManagerPhone(String managerPhone) {
+		this.managerPhone = managerPhone;
+	}
+	public String getAdminYn() {
+		return adminYn;
+	}
+	public void setAdminYn(String adminYn) {
+		this.adminYn = adminYn;
+	}
+	private Long id; 
+
+	private String name; 
+
+	private String phone;
+
+	private String email;
+
+	private String manager;
+
+	private String managerEmail;
+
+	private String managerPhone; 
+
+	private String adminYn; 
+	
+	
 	private List<SimpleGrantedAuthority> authorities;
-								// 
+						 
 	private boolean accountNonExpired = true; 
 	private boolean accountNonLocked = true; 
 	private boolean credentialsNonExpired = true;
