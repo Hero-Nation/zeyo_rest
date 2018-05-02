@@ -31,6 +31,8 @@ public class ConfigOAuthResource extends ResourceServerConfigurerAdapter {
                 http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authorizeRequests()
+                    
+                    .antMatchers("/**").permitAll()  // 개발용
                     .antMatchers("/api/**").authenticated()
                     .anyRequest().permitAll();
                 
