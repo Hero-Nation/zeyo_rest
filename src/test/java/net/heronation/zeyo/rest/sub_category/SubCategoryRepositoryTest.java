@@ -67,8 +67,8 @@ item.setBleachYn("bleachYn_"+a);
 
 
 
-item.setCreateDt("createDt_"+a);
 
+item.setCreateDt(new Date());
 
 
 

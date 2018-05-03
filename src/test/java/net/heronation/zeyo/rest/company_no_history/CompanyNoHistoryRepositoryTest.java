@@ -42,7 +42,8 @@ item.setBeforeNo("beforeNo_"+a);
 
 
 
-item.setChangeDt("changeDt_"+a);
+
+item.setChangeDt(new Date());
 			repository.save(item);	
 		}
 		 

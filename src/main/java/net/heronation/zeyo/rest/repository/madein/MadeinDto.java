@@ -27,7 +27,8 @@ private String name;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 

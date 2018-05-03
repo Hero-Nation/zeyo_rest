@@ -7,6 +7,7 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource; 
@@ -26,8 +27,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> , QueryDsl
 
  
 	}
-
- 	Member findByName(String name);
  	
- 	Member findByMemberId(String memberId);
+ 	Member findByMemberId(@Param(value = "member_id") String member_id);
+
 }

@@ -35,6 +35,7 @@ private String beforeNo;
 
 
 
-private String changeDt;
+ 
+private Date changeDt;
     
 }

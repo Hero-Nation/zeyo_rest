@@ -81,7 +81,8 @@ private Madein madein;
 
 
 
-private String madeinDate;
+
+private Date madeinDate;
 
 
 
@@ -114,7 +115,8 @@ private String sizeLinkYn;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 

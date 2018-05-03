@@ -67,13 +67,13 @@ item.setManagerPhone("managerPhone_"+a);
 
 
 
-item.setCreateDt("createDt_"+a);
+
+item.setCreateDt(new Date());
 
 
 
 
-item.setDeleteDt("deleteDt_"+a);
-
+item.setDeleteDt(new Date());
 
 
 

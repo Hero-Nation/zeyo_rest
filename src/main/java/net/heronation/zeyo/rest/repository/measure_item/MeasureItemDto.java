@@ -25,7 +25,8 @@ private String metaDesc;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 

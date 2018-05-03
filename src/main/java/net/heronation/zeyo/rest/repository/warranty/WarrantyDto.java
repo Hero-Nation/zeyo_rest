@@ -27,7 +27,8 @@ private String scope;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 

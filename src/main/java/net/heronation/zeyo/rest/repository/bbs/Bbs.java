@@ -55,13 +55,15 @@ private String replyContent;
 
 
 
-private String createDt;
+
+@Temporal(TemporalType.TIMESTAMP)
+private Date   createDt;
 
 
 
 
-private String replyDt;
-
+@Temporal(TemporalType.TIMESTAMP)
+private Date   replyDt;
 
 
 

@@ -38,11 +38,13 @@ private String replyContent;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 
-private String replyDt;
+ 
+private Date replyDt;
 
 
 

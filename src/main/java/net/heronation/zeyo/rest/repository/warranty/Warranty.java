@@ -44,8 +44,9 @@ private String scope;
 
 
 
-private String createDt;
 
+@Temporal(TemporalType.TIMESTAMP)
+private Date   createDt;
 
 
 

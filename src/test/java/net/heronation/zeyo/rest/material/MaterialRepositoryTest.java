@@ -42,8 +42,8 @@ item.setMetaDesc("metaDesc_"+a);
 
 
 
-item.setCreateDt("createDt_"+a);
 
+item.setCreateDt(new Date());
 
 
 

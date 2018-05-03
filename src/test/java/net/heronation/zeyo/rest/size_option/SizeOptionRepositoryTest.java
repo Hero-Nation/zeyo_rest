@@ -32,8 +32,8 @@ public class SizeOptionRepositoryTest{
 
 
 
-item.setCreateDt("createDt_"+a);
 
+item.setCreateDt(new Date());
 
 
 

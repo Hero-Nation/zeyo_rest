@@ -44,8 +44,9 @@ private String metaDesc;
 
 
 
-private String createDt;
 
+@Temporal(TemporalType.TIMESTAMP)
+private Date   createDt;
 
 
 

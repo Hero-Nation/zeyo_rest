@@ -33,7 +33,9 @@ public class ConfigOAuthResource extends ResourceServerConfigurerAdapter {
                     .authorizeRequests()
                     
                     .antMatchers("/**").permitAll()  // 개발용
-                    .antMatchers("/api/**").authenticated()
+                    .antMatchers("/api/members/search/findByMemberId").permitAll()
+                    
+                    //.antMatchers("/api/**").authenticated()
                     .anyRequest().permitAll();
                 
     }

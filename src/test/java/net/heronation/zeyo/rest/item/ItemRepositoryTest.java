@@ -67,8 +67,8 @@ item.setMadeinBuilder("madeinBuilder_"+a);
 
 
 
-item.setMadeinDate("madeinDate_"+a);
 
+item.setMadeinDate(new Date());
 
 
 
@@ -102,8 +102,8 @@ item.setSizeLinkYn("sizeLinkYn_"+a);
 
 
 
-item.setCreateDt("createDt_"+a);
 
+item.setCreateDt(new Date());
 
 
 

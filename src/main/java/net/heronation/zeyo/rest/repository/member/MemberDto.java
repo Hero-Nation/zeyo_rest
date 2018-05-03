@@ -57,11 +57,13 @@ private String managerPhone;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 
-private String deleteDt;
+ 
+private Date deleteDt;
 
 
 

@@ -57,7 +57,8 @@ private String bleachYn;
 
 
 
-private String createDt;
+ 
+private Date createDt;
 
 
 

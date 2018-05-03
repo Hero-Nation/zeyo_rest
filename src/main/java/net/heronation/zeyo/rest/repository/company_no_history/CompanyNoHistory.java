@@ -54,6 +54,8 @@ private String beforeNo;
 
 
 
-private String changeDt;
+
+@Temporal(TemporalType.TIMESTAMP)
+private Date   changeDt;
     
 }

@@ -2,10 +2,10 @@ CREATE TABLE bbs
   ( 
      id                 BIGINT NOT NULL, 
      bbs_content        VARCHAR(255), 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      last_modified_date TINYBLOB, 
      reply_content      VARCHAR(255), 
-     reply_dt           VARCHAR(255), 
+     reply_dt           DATETIME, 
      status             VARCHAR(255), 
      title              VARCHAR(255), 
      use_yn             VARCHAR(255), 
@@ -52,7 +52,7 @@ CREATE TABLE company_no_history
   ( 
      id                 BIGINT NOT NULL, 
      before_no          VARCHAR(255), 
-     change_dt          VARCHAR(255), 
+     change_dt          DATETIME, 
      company_no         VARCHAR(255), 
      last_modified_date TINYBLOB, 
      name               VARCHAR(255), 
@@ -64,7 +64,7 @@ CREATE TABLE company_no_history
 CREATE TABLE fit_info 
   ( 
      id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      last_modified_date TINYBLOB, 
      meta_desc          VARCHAR(255), 
      name               VARCHAR(255), 
@@ -99,7 +99,7 @@ CREATE TABLE item
      id                 BIGINT NOT NULL, 
      bleach_yn          VARCHAR(255), 
      code               VARCHAR(255), 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      drycleaning_yn     VARCHAR(255), 
      drymethod_yn       VARCHAR(255), 
      image              VARCHAR(255), 
@@ -108,7 +108,7 @@ CREATE TABLE item
      last_modified_date TINYBLOB, 
      laundry_yn         VARCHAR(255), 
      madein_builder     VARCHAR(255), 
-     madein_date        VARCHAR(255), 
+     madein_date        DATE, 
      name               VARCHAR(255), 
      price              VARCHAR(255), 
      size_link_yn       VARCHAR(255), 
@@ -262,7 +262,7 @@ CREATE TABLE kindof
 CREATE TABLE madein 
   ( 
      id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      last_modified_date TINYBLOB, 
      name               VARCHAR(255), 
      use_yn             VARCHAR(255), 
@@ -274,7 +274,7 @@ CREATE TABLE madein
 CREATE TABLE material 
   ( 
      id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      image              VARCHAR(255), 
      last_modified_date TINYBLOB, 
      meta_desc          VARCHAR(255), 
@@ -287,7 +287,7 @@ CREATE TABLE material
 CREATE TABLE measure_item 
   ( 
      id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      last_modified_date TINYBLOB, 
      meta_desc          VARCHAR(255), 
      name               VARCHAR(255), 
@@ -300,8 +300,8 @@ CREATE TABLE member
   ( 
      id                    BIGINT NOT NULL, 
      admin_yn              VARCHAR(255), 
-     create_dt             VARCHAR(255), 
-     delete_dt             VARCHAR(255), 
+     create_dt             DATETIME, 
+     delete_dt             DATETIME, 
      email                 VARCHAR(255), 
      last_modified_date    TINYBLOB, 
      manager               VARCHAR(255), 
@@ -331,7 +331,7 @@ CREATE TABLE shopmall
 CREATE TABLE size_option 
   ( 
      id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      last_modified_date TINYBLOB, 
      name               VARCHAR(255), 
      use_yn             VARCHAR(255), 
@@ -347,7 +347,7 @@ CREATE TABLE sub_category
      id                 BIGINT NOT NULL, 
      bleach_yn          VARCHAR(255), 
      cloth_image        VARCHAR(255), 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      drycleaning_yn     VARCHAR(255), 
      drymethod_yn       VARCHAR(255), 
      ironing_yn         VARCHAR(255), 
@@ -386,7 +386,7 @@ CREATE TABLE sub_category_measure_map
 CREATE TABLE warranty 
   ( 
      id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
+     create_dt          DATETIME, 
      last_modified_date TINYBLOB, 
      scope              VARCHAR(255), 
      use_yn             VARCHAR(255), 
@@ -553,4 +553,4 @@ ALTER TABLE sub_category_measure_map
 
 ALTER TABLE warranty 
   ADD CONSTRAINT fk8hfqdbikdbkajxl9vyd3o61fa FOREIGN KEY (kindof_id) REFERENCES 
-  kindof (id);
+  kindof (id); 

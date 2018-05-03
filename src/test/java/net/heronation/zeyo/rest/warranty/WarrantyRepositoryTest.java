@@ -32,8 +32,8 @@ public class WarrantyRepositoryTest{
 
 
 
-item.setCreateDt("createDt_"+a);
 
+item.setCreateDt(new Date());
 
 
 

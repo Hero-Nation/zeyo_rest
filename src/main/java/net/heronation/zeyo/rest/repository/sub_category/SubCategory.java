@@ -81,8 +81,9 @@ private String bleachYn;
 
 
 
-private String createDt;
 
+@Temporal(TemporalType.TIMESTAMP)
+private Date   createDt;
 
 
 

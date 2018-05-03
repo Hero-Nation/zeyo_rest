@@ -52,8 +52,9 @@ private String name;
 
 
 
-private String createDt;
 
+@Temporal(TemporalType.TIMESTAMP)
+private Date   createDt;
 
 
 

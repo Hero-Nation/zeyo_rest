@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -43,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Configuration
 @EnableWebMvc
+@EnableSpringDataWebSupport
 @EnableHypermediaSupport(type= {org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL})
 public class ConfigMVC implements WebMvcConfigurer {
 

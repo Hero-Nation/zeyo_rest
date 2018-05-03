@@ -42,13 +42,13 @@ item.setReplyContent("replyContent_"+a);
 
 
 
-item.setCreateDt("createDt_"+a);
+
+item.setCreateDt(new Date());
 
 
 
 
-item.setReplyDt("replyDt_"+a);
-
+item.setReplyDt(new Date());
 
 
 

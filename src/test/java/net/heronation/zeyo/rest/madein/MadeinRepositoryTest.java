@@ -32,8 +32,8 @@ public class MadeinRepositoryTest{
 
 
 
-item.setCreateDt("createDt_"+a);
 
+item.setCreateDt(new Date());
 
 
 
