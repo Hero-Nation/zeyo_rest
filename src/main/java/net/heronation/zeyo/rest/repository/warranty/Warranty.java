@@ -1,6 +1,6 @@
 package net.heronation.zeyo.rest.repository.warranty;
- 
-import javax.persistence.*; 
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,40 +16,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
- 
-@Entity 
+
+@Entity
 @Data
 @RequiredArgsConstructor
-@Table(name="WARRANTY")
-@TableGenerator(name="WARRANTY_ID_GENERATOR",table="JPA_ID_TABLE",pkColumnValue="WARRANTY_ID",allocationSize=1)
+@Table(name = "WARRANTY")
+@TableGenerator(name = "WARRANTY_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "WARRANTY_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-public class Warranty{
+public class Warranty {
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
- 
-        @OneToMany(mappedBy = "warranty" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Item>  items = new ArrayList<Item>();
- @Id 
-@GeneratedValue(strategy = GenerationType.TABLE,generator="WARRANTY_ID_GENERATOR")
-@Column(name="ID")
-private Long id;
+	@OneToMany(mappedBy = "warranty", fetch = FetchType.LAZY)
+	private List<Item> items = new ArrayList<Item>();
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "WARRANTY_ID_GENERATOR")
+	@Column(name = "ID")
+	private Long id;
 
- 
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
-@JoinColumn(name="KINDOF_ID")
-private Kindof kindof;
-private String scope;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "KINDOF_ID")
+	private Kindof kindof;
+	private String scope;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createDt;
 
+	private String useYn;
 
-
-
-@Temporal(TemporalType.TIMESTAMP)
-private Date   createDt;
-
-
-
-private String useYn;
-    
 }

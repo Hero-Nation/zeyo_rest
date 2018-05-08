@@ -25,10 +25,10 @@ import net.heronation.zeyo.rest.repository.category.Category;import net.heronati
 @EntityListeners(AuditingEntityListener.class)
 public class SizeOption{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "sizeOption" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "sizeOption" ,fetch = FetchType.LAZY)
 private List<ItemSizeOptionMap>  itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="SIZE_OPTION_ID_GENERATOR")
@@ -36,15 +36,15 @@ private List<ItemSizeOptionMap>  itemSizeOptionMaps = new ArrayList<ItemSizeOpti
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="CATEGORY_ID")
 private Category category;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="SUB_CATEGORY_ID")
 private SubCategory subCategory;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="KINDOF_ID")
 private Kindof kindof;
 private String name;

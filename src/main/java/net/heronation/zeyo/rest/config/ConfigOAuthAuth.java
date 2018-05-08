@@ -34,6 +34,10 @@ public class ConfigOAuthAuth extends AuthorizationServerConfigurerAdapter {
     @Autowired
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
+    
+    
+    @Autowired
+    private CustomAccessTokenConverter customAccessTokenConverter;
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
@@ -88,6 +92,7 @@ public class ConfigOAuthAuth extends AuthorizationServerConfigurerAdapter {
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        converter.setAccessTokenConverter(customAccessTokenConverter);
         converter.setSigningKey("123");
 //        final KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("mytest.jks"), "mypass".toCharArray());
 //        converter.setKeyPair(keyStoreKeyFactory.getKeyPair("mytest"));

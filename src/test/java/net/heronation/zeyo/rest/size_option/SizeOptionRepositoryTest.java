@@ -1,7 +1,10 @@
-package net.heronation.zeyo.rest.size_option; 
+package net.heronation.zeyo.rest.size_option;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
+import java.util.Date;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,34 +16,27 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import net.heronation.zeyo.rest.repository.size_option.*;
 
- 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SizeOptionRepositoryTest{
+public class SizeOptionRepositoryTest {
 
-	@Autowired SizeOptionRepository repository;
+	@Autowired
+	SizeOptionRepository repository;
 
- 
 	@Test
 	@Ignore
 	public void initializesRepositoryWithSampleData() {
-		
-		for(int a = 0 ; a < 100;a++) {
-			SizeOption item = new SizeOption(); 
-                         item.setName("name_"+a);
 
+		for (int a = 0; a < 100; a++) {
+			SizeOption item = new SizeOption();
+			item.setName("name_" + a);
 
+			item.setCreateDt(new Date());
 
-
-
-item.setCreateDt(new Date());
-
-
-
-item.setUseYn("useYn_"+a);
-			repository.save(item);	
+			item.setUseYn("useYn_" + a);
+			repository.save(item);
 		}
-		 
+
 	}
-	
+
 }

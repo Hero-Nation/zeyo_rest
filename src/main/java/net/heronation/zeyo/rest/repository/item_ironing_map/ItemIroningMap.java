@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.item.Item;
 @EntityListeners(AuditingEntityListener.class)
 public class ItemIroningMap{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="ITEM_IRONING_MAP_ID_GENERATOR")
@@ -33,7 +33,7 @@ public class ItemIroningMap{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="ITEM_ID")
 private Item item;
 private String ironcan;

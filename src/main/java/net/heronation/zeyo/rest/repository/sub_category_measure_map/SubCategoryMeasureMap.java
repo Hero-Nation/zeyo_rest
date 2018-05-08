@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.sub_category.SubCategory;import net.h
 @EntityListeners(AuditingEntityListener.class)
 public class SubCategoryMeasureMap{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="SUB_CATEGORY_MEASURE_MAP_ID_GENERATOR")
@@ -33,11 +33,11 @@ public class SubCategoryMeasureMap{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="SUB_CATEGORY_ID")
 private SubCategory subCategory;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="MEASURE_ITEM_ID")
 private MeasureItem measureItem;
 private String useYn;

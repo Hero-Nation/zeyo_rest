@@ -1,6 +1,6 @@
 package net.heronation.zeyo.rest.repository.fit_info_option;
- 
-import javax.persistence.*; 
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,40 +14,27 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import net.heronation.zeyo.rest.repository.fit_info.FitInfo;import net.heronation.zeyo.rest.repository.fit_into_choice.FitIntoChoice;
- 
-@Entity 
+import net.heronation.zeyo.rest.repository.fit_info.FitInfo; 
+
+@Entity
 @Data
 @RequiredArgsConstructor
-@Table(name="FIT_INFO_OPTION")
-@TableGenerator(name="FIT_INFO_OPTION_ID_GENERATOR",table="JPA_ID_TABLE",pkColumnValue="FIT_INFO_OPTION_ID",allocationSize=1)
+@Table(name = "FIT_INFO_OPTION")
+@TableGenerator(name = "FIT_INFO_OPTION_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "FIT_INFO_OPTION_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-public class FitInfoOption{
+public class FitInfoOption {
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "FIT_INFO_OPTION_ID_GENERATOR")
+	@Column(name = "ID")
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "FIT_INFO_ID")
+	private FitInfo fitInfo;
+	private String name;
+
+	private String useYn;
  
-        @Id 
-@GeneratedValue(strategy = GenerationType.TABLE,generator="FIT_INFO_OPTION_ID_GENERATOR")
-@Column(name="ID")
-private Long id;
 
- 
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
-@JoinColumn(name="FIT_INFO_ID")
-private FitInfo fitInfo;
-private String name;
-
-
-
-
-private String useYn;
-
-
-
-
-
-@OneToMany(mappedBy = "fitInfoOption" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-private List<FitIntoChoice>  fitIntoChoices = new ArrayList<FitIntoChoice>();
-    
 }

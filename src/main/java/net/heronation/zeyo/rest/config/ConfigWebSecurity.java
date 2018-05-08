@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -60,12 +61,14 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(final HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
+		http
+		
+		.authorizeRequests()
 //				.antMatchers("/login").permitAll()
 //				.antMatchers("/oauth/token/revokeById/**").permitAll()
 //				.antMatchers("/tokens/**").permitAll()
 		
-				.anyRequest().permitAll()
+		.antMatchers("/**").permitAll()
 				.and().csrf().disable();
 
 	}

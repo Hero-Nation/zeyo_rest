@@ -25,10 +25,10 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @EntityListeners(AuditingEntityListener.class)
 public class Madein{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "madein" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "madein" ,fetch = FetchType.LAZY)
 private List<Item>  items = new ArrayList<Item>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="MADEIN_ID_GENERATOR")
@@ -36,7 +36,7 @@ private List<Item>  items = new ArrayList<Item>();
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="KINDOF_ID")
 private Kindof kindof;
 private String name;

@@ -25,10 +25,10 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @EntityListeners(AuditingEntityListener.class)
 public class ClothColor{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "clothColor" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "clothColor" ,fetch = FetchType.LAZY)
 private List<ItemClothColorMap>  itemClothColorMaps = new ArrayList<ItemClothColorMap>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="CLOTH_COLOR_ID_GENERATOR")
@@ -36,7 +36,7 @@ private List<ItemClothColorMap>  itemClothColorMaps = new ArrayList<ItemClothCol
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="KINDOF_ID")
 private Kindof kindof;
 private String name;

@@ -26,10 +26,10 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 @EntityListeners(AuditingEntityListener.class)
 public class Category{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "category" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "category" ,fetch = FetchType.LAZY)
 private List<Item>  items = new ArrayList<Item>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="CATEGORY_ID_GENERATOR")
@@ -52,10 +52,10 @@ private String useYn;
 
 
 
-@OneToMany(mappedBy = "category" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+@OneToMany(mappedBy = "category" ,fetch = FetchType.LAZY)
 private List<SubCategory>  subCategorys = new ArrayList<SubCategory>();
  
-@OneToMany(mappedBy = "category" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+@OneToMany(mappedBy = "category" ,fetch = FetchType.LAZY)
 private List<SizeOption>  sizeOptions = new ArrayList<SizeOption>();
     
 }

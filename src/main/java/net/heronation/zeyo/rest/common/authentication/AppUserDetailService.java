@@ -49,10 +49,10 @@ public class AppUserDetailService implements UserDetailsService {
 		
 		List<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>();
 		
-		SimpleGrantedAuthority role = new SimpleGrantedAuthority("CLIENT");
+		SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_CLIENT");
 		roles.add(role);
 		if(user.getAdminYn() != null & user.getAdminYn().equals("Y")) {
-			role = new SimpleGrantedAuthority("ADMIN");
+			role = new SimpleGrantedAuthority("ROLE_ADMIN");
 			roles.add(role);
 		}
 		 

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -38,29 +40,27 @@ import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 @EntityListeners(AuditingEntityListener.class)
 public class Item {
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BRAND_ID")
 	private Brand brand;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
+
 	private String imageMode;
 
 	private String image;
@@ -77,16 +77,18 @@ public class Item {
 
 	private String madeinBuilder;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
 
+	@DateTimeFormat(iso = ISO.DATE)
 	@Temporal(TemporalType.DATE)
 	private Date madeinDate;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "WARRANTY_ID")
 	private Warranty warranty;
+
 	private String laundryYn;
 
 	private String drycleaningYn;
@@ -98,37 +100,54 @@ public class Item {
 	private String bleachYn;
 
 	private String sizeLinkYn;
+	
+	private String sizeTableYn;
+	
+	/**
+	 * 
+	 * DATE
+		The most common ISO Date Format yyyy-MM-dd, e.g.
+		DATE_TIME
+		The most common ISO DateTime Format yyyy-MM-dd'T'HH:mm:ss.SSSZ, e.g.
+		NONE
+		Indicates that no ISO-based format pattern should be applied.
+		TIME
+		The most common ISO Time Format HH:mm:ss.SSSZ, e.g.
+	 * 
+	 * 
+	 */
 
+	@DateTimeFormat(iso = ISO.DATE_TIME)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDt;
 
 	private String useYn;
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemLaundryMap> itemLaundryMaps = new ArrayList<ItemLaundryMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemDrycleaningMap> itemDrycleaningMaps = new ArrayList<ItemDrycleaningMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemIroningMap> itemIroningMaps = new ArrayList<ItemIroningMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemDrymethodMap> itemDrymethodMaps = new ArrayList<ItemDrymethodMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemBleachMap> itemBleachMaps = new ArrayList<ItemBleachMap>();
 
 }

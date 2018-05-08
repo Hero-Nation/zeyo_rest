@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.item.Item;import net.heronation.zeyo.
 @EntityListeners(AuditingEntityListener.class)
 public class ItemMaterialMap{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="ITEM_MATERIAL_MAP_ID_GENERATOR")
@@ -33,15 +33,15 @@ public class ItemMaterialMap{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="ITEM_ID")
 private Item item;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="KINDOF_ID")
 private Kindof kindof;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="MATERIAL_ID")
 private Material material;
 private String contain;

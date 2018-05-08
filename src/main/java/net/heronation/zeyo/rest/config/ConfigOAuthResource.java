@@ -33,7 +33,7 @@ public class ConfigOAuthResource extends ResourceServerConfigurerAdapter {
                     .authorizeRequests()
                     
                     .antMatchers("/**").permitAll()  // 개발용
-                    .antMatchers("/api/members/search/findByMemberId").permitAll()
+                    //.antMatchers("/api/members/search/findByMemberId").permitAll()
                     
                     //.antMatchers("/api/**").authenticated()
                     .anyRequest().permitAll();
@@ -53,7 +53,7 @@ public class ConfigOAuthResource extends ResourceServerConfigurerAdapter {
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        //converter.setAccessTokenConverter(customAccessTokenConverter);
+        converter.setAccessTokenConverter(customAccessTokenConverter);
 
         converter.setSigningKey("123");
 //        final Resource resource = new ClassPathResource("public.txt");

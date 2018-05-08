@@ -24,10 +24,10 @@ import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryM
 @EntityListeners(AuditingEntityListener.class)
 public class MeasureItem{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "measureItem" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "measureItem" ,fetch = FetchType.LAZY)
 private List<SubCategoryMeasureMap>  subCategoryMeasureMaps = new ArrayList<SubCategoryMeasureMap>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="MEASURE_ITEM_ID_GENERATOR")

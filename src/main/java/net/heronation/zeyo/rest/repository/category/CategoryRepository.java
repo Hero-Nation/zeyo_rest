@@ -9,11 +9,17 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.data.rest.core.annotation.RestResource; 
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.querydsl.core.types.dsl.StringPath;
+
+import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "categorys", path = "categorys")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
+
 public interface CategoryRepository extends JpaRepository<Category, Long> , QueryDslPredicateExecutor<Category>{
     /****
 
@@ -27,4 +33,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
  
 	}
 
+ 	
+	@Override
+	@RestResource(path = "", rel = "",exported = true)
+	Page<Category> findAll(Pageable arg0);
+
+ 	
 }

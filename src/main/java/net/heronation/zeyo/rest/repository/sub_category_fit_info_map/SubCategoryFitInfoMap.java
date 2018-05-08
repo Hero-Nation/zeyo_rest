@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.sub_category.SubCategory;import net.h
 @EntityListeners(AuditingEntityListener.class)
 public class SubCategoryFitInfoMap{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="SUB_CATEGORY_FIT_INFO_MAP_ID_GENERATOR")
@@ -33,11 +33,11 @@ public class SubCategoryFitInfoMap{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="SUB_CATEGORY_ID")
 private SubCategory subCategory;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="FIT_INFO_ID")
 private FitInfo fitInfo;
 private String useYn;

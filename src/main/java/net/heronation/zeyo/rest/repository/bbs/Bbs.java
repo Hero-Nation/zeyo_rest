@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;import net.heronation.z
 @EntityListeners(AuditingEntityListener.class)
 public class Bbs{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="BBS_ID_GENERATOR")
@@ -33,11 +33,11 @@ public class Bbs{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="KINDOF_ID")
 private Kindof kindof;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="MEMBER_ID")
 private Member member;
 private String title;

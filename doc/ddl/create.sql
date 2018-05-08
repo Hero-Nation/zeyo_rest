@@ -1,96 +1,72 @@
 CREATE TABLE bbs 
   ( 
-     id                 BIGINT NOT NULL, 
-     bbs_content        VARCHAR(255), 
-     create_dt          DATETIME, 
-     last_modified_date TINYBLOB, 
-     reply_content      VARCHAR(255), 
-     reply_dt           DATETIME, 
-     status             VARCHAR(255), 
-     title              VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     kindof_id          BIGINT, 
-     member_id          BIGINT, 
+     id            BIGINT NOT NULL, 
+     bbs_content   VARCHAR(255), 
+     create_dt     DATETIME, 
+     reply_content VARCHAR(255), 
+     reply_dt      DATETIME, 
+     status        VARCHAR(255), 
+     title         VARCHAR(255), 
+     use_yn        VARCHAR(255), 
+     kindof_id     BIGINT, 
+     member_id     BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE brand 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     member_id          BIGINT, 
+     id        BIGINT NOT NULL, 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
+     member_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE category 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
+     id        BIGINT NOT NULL, 
+     create_dt VARCHAR(255), 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE cloth_color 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     kindof_id          BIGINT, 
+     id        BIGINT NOT NULL, 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
+     kindof_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE company_no_history 
   ( 
-     id                 BIGINT NOT NULL, 
-     before_no          VARCHAR(255), 
-     change_dt          DATETIME, 
-     company_no         VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     version            BIGINT, 
-     member_id          BIGINT, 
+     id         BIGINT NOT NULL, 
+     before_no  VARCHAR(255), 
+     change_dt  DATETIME, 
+     company_no VARCHAR(255), 
+     name       VARCHAR(255), 
+     member_id  BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE fit_info 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          DATETIME, 
-     last_modified_date TINYBLOB, 
-     meta_desc          VARCHAR(255), 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
+     id        BIGINT NOT NULL, 
+     create_dt DATETIME, 
+     meta_desc VARCHAR(255), 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE fit_info_option 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     fit_info_id        BIGINT, 
-     PRIMARY KEY (id) 
-  ); 
-
-CREATE TABLE fit_into_choice 
-  ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     version            BIGINT, 
-     fit_info_id        BIGINT, 
-     fit_info_option_id BIGINT, 
+     id          BIGINT NOT NULL, 
+     name        VARCHAR(255), 
+     use_yn      VARCHAR(255), 
+     fit_info_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
@@ -105,17 +81,16 @@ CREATE TABLE item
      image              VARCHAR(255), 
      image_mode         VARCHAR(255), 
      ironing_yn         VARCHAR(255), 
-     last_modified_date TINYBLOB, 
      laundry_yn         VARCHAR(255), 
      madein_builder     VARCHAR(255), 
      madein_date        DATE, 
      name               VARCHAR(255), 
      price              VARCHAR(255), 
-     size_link_yn       VARCHAR(255), 
+     size_link_yn       VARCHAR(255),
+     size_table_yn       VARCHAR(255), 
      size_measure_image VARCHAR(255), 
      size_measure_mode  VARCHAR(255), 
      use_yn             VARCHAR(255), 
-     version            BIGINT, 
      brand_id           BIGINT, 
      category_id        BIGINT, 
      madein_id          BIGINT, 
@@ -127,117 +102,110 @@ CREATE TABLE item
 
 CREATE TABLE item_bleach_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     chlorine           VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     oxygen             VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     item_id            BIGINT, 
+     id       BIGINT NOT NULL, 
+     chlorine VARCHAR(255), 
+     oxygen   VARCHAR(255), 
+     use_yn   VARCHAR(255), 
+     item_id  BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_cloth_color_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     cloth_color_id     BIGINT, 
-     item_id            BIGINT, 
+     id             BIGINT NOT NULL, 
+     use_yn         VARCHAR(255), 
+     cloth_color_id BIGINT, 
+     item_id        BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_drycleaning_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     detergent          VARCHAR(255), 
-     drycan             VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     storecan           VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     item_id            BIGINT, 
+     id        BIGINT NOT NULL, 
+     detergent VARCHAR(255), 
+     drycan    VARCHAR(255), 
+     storecan  VARCHAR(255), 
+     use_yn    VARCHAR(255), 
+     item_id   BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_drymethod_map 
   ( 
+     id          BIGINT NOT NULL, 
+     dry_mode    VARCHAR(255), 
+     hand_dry    VARCHAR(255), 
+     machine_dry VARCHAR(255), 
+     nature_dry  VARCHAR(255), 
+     use_yn      VARCHAR(255), 
+     item_id     BIGINT, 
+     PRIMARY KEY (id) 
+  ); 
+
+CREATE TABLE item_fit_info_option_map 
+  ( 
      id                 BIGINT NOT NULL, 
-     dry_mode           VARCHAR(255), 
-     hand_dry           VARCHAR(255), 
      last_modified_date TINYBLOB, 
-     machine_dry        VARCHAR(255), 
-     nature_dry         VARCHAR(255), 
      use_yn             VARCHAR(255), 
      version            BIGINT, 
+     fit_info_option_id BIGINT, 
      item_id            BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_ironing_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     addprotection      VARCHAR(255), 
-     end_temp           VARCHAR(255), 
-     ironcan            VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     start_temp         VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     item_id            BIGINT, 
+     id            BIGINT NOT NULL, 
+     addprotection VARCHAR(255), 
+     end_temp      VARCHAR(255), 
+     ironcan       VARCHAR(255), 
+     start_temp    VARCHAR(255), 
+     use_yn        VARCHAR(255), 
+     item_id       BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_laundry_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     detergent          VARCHAR(255), 
-     hand               VARCHAR(255), 
-     intensity          VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     machine            VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     water              VARCHAR(255), 
-     water_temp         VARCHAR(255), 
-     item_id            BIGINT, 
+     id         BIGINT NOT NULL, 
+     detergent  VARCHAR(255), 
+     hand       VARCHAR(255), 
+     intensity  VARCHAR(255), 
+     machine    VARCHAR(255), 
+     use_yn     VARCHAR(255), 
+     water      VARCHAR(255), 
+     water_temp VARCHAR(255), 
+     item_id    BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_material_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     contain            VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     item_id            BIGINT, 
-     kindof_id          BIGINT, 
-     material_id        BIGINT, 
+     id          BIGINT NOT NULL, 
+     contain     VARCHAR(255), 
+     use_yn      VARCHAR(255), 
+     item_id     BIGINT, 
+     kindof_id   BIGINT, 
+     material_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_shopmall_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     item_id            BIGINT, 
-     shopmall_id        BIGINT, 
+     id          BIGINT NOT NULL, 
+     use_yn      VARCHAR(255), 
+     item_id     BIGINT, 
+     shopmall_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE item_size_option_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     option_value       VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     item_id            BIGINT, 
-     size_option_id     BIGINT, 
+     id             BIGINT NOT NULL, 
+     option_value   VARCHAR(255), 
+     use_yn         VARCHAR(255), 
+     item_id        BIGINT, 
+     size_option_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
@@ -250,49 +218,41 @@ CREATE TABLE jpa_id_table
 
 CREATE TABLE kindof 
   ( 
-     id                 BIGINT NOT NULL, 
-     ktype              VARCHAR(255), 
-     kvalue             VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
+     id     BIGINT NOT NULL, 
+     ktype  VARCHAR(255), 
+     kvalue VARCHAR(255), 
+     use_yn VARCHAR(255), 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE madein 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          DATETIME, 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     kindof_id          BIGINT, 
+     id        BIGINT NOT NULL, 
+     create_dt DATETIME, 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
+     kindof_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE material 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          DATETIME, 
-     image              VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     meta_desc          VARCHAR(255), 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
+     id        BIGINT NOT NULL, 
+     create_dt DATETIME, 
+     image     VARCHAR(255), 
+     meta_desc VARCHAR(255), 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE measure_item 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          DATETIME, 
-     last_modified_date TINYBLOB, 
-     meta_desc          VARCHAR(255), 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
+     id        BIGINT NOT NULL, 
+     create_dt DATETIME, 
+     meta_desc VARCHAR(255), 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
      PRIMARY KEY (id) 
   ); 
 
@@ -303,7 +263,6 @@ CREATE TABLE member
      create_dt             DATETIME, 
      delete_dt             DATETIME, 
      email                 VARCHAR(255), 
-     last_modified_date    TINYBLOB, 
      manager               VARCHAR(255), 
      manager_email         VARCHAR(255), 
      manager_phone         VARCHAR(255), 
@@ -312,86 +271,94 @@ CREATE TABLE member
      password              VARCHAR(255), 
      phone                 VARCHAR(255), 
      use_yn                VARCHAR(255), 
-     version               BIGINT, 
      company_no_history_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE shopmall 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     member_id          BIGINT, 
+     id        BIGINT NOT NULL, 
+     name      VARCHAR(255), 
+     use_yn    VARCHAR(255), 
+     member_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE size_option 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          DATETIME, 
-     last_modified_date TINYBLOB, 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     category_id        BIGINT, 
-     kindof_id          BIGINT, 
-     sub_category_id    BIGINT, 
+     id              BIGINT NOT NULL, 
+     create_dt       DATETIME, 
+     name            VARCHAR(255), 
+     use_yn          VARCHAR(255), 
+     category_id     BIGINT, 
+     kindof_id       BIGINT, 
+     sub_category_id BIGINT, 
+     PRIMARY KEY (id) 
+  ); 
+
+CREATE TABLE size_table 
+  ( 
+     id                       BIGINT NOT NULL, 
+     create_dt                DATETIME, 
+     last_modified_date       TINYBLOB, 
+     use_yn                   VARCHAR(255), 
+     version                  BIGINT, 
+     visible_basic_yn         VARCHAR(255), 
+     visible_code_yn          VARCHAR(255), 
+     visible_color_yn         VARCHAR(255), 
+     visible_fit_info_yn      VARCHAR(255), 
+     visible_item_image_yn    VARCHAR(255), 
+     visible_laundry_info_yn  VARCHAR(255), 
+     visible_measure_howayn   VARCHAR(255), 
+     visible_measure_howbyn   VARCHAR(255), 
+     visible_measure_table_yn VARCHAR(255), 
+     visible_name_yn          VARCHAR(255), 
+     item_id                  BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE sub_category 
   ( 
-     id                 BIGINT NOT NULL, 
-     bleach_yn          VARCHAR(255), 
-     cloth_image        VARCHAR(255), 
-     create_dt          DATETIME, 
-     drycleaning_yn     VARCHAR(255), 
-     drymethod_yn       VARCHAR(255), 
-     ironing_yn         VARCHAR(255), 
-     item_image         VARCHAR(255), 
-     last_modified_date TINYBLOB, 
-     laundry_yn         VARCHAR(255), 
-     name               VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     category_id        BIGINT, 
+     id             BIGINT NOT NULL, 
+     bleach_yn      VARCHAR(255), 
+     cloth_image    VARCHAR(255), 
+     create_dt      DATETIME, 
+     drycleaning_yn VARCHAR(255), 
+     drymethod_yn   VARCHAR(255), 
+     ironing_yn     VARCHAR(255), 
+     item_image     VARCHAR(255), 
+     laundry_yn     VARCHAR(255), 
+     name           VARCHAR(255), 
+     use_yn         VARCHAR(255), 
+     category_id    BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE sub_category_fit_info_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     fit_info_id        BIGINT, 
-     sub_category_id    BIGINT, 
+     id              BIGINT NOT NULL, 
+     use_yn          VARCHAR(255), 
+     fit_info_id     BIGINT, 
+     sub_category_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE sub_category_measure_map 
   ( 
-     id                 BIGINT NOT NULL, 
-     last_modified_date TINYBLOB, 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     measure_item_id    BIGINT, 
-     sub_category_id    BIGINT, 
+     id              BIGINT NOT NULL, 
+     use_yn          VARCHAR(255), 
+     measure_item_id BIGINT, 
+     sub_category_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
 CREATE TABLE warranty 
   ( 
-     id                 BIGINT NOT NULL, 
-     create_dt          DATETIME, 
-     last_modified_date TINYBLOB, 
-     scope              VARCHAR(255), 
-     use_yn             VARCHAR(255), 
-     version            BIGINT, 
-     kindof_id          BIGINT, 
+     id        BIGINT NOT NULL, 
+     create_dt DATETIME, 
+     scope     VARCHAR(255), 
+     use_yn    VARCHAR(255), 
+     kindof_id BIGINT, 
      PRIMARY KEY (id) 
   ); 
 
@@ -418,14 +385,6 @@ ALTER TABLE company_no_history
 ALTER TABLE fit_info_option 
   ADD CONSTRAINT fkcl17pn9grtkgnbxf3ooxc006b FOREIGN KEY (fit_info_id) 
   REFERENCES fit_info (id); 
-
-ALTER TABLE fit_into_choice 
-  ADD CONSTRAINT fksl0yj5q6ps9v6blss8aateoqq FOREIGN KEY (fit_info_id) 
-  REFERENCES fit_info (id); 
-
-ALTER TABLE fit_into_choice 
-  ADD CONSTRAINT fkp91whe2lbpia2vhok24h7hh0v FOREIGN KEY (fit_info_option_id) 
-  REFERENCES fit_info_option (id); 
 
 ALTER TABLE item 
   ADD CONSTRAINT fkhie4w6g67io9k67mf87clka9l FOREIGN KEY (brand_id) REFERENCES 
@@ -469,6 +428,14 @@ ALTER TABLE item_drycleaning_map
 
 ALTER TABLE item_drymethod_map 
   ADD CONSTRAINT fkg3ja160lkq3sv5m31l9ymb8uo FOREIGN KEY (item_id) REFERENCES 
+  item (id); 
+
+ALTER TABLE item_fit_info_option_map 
+  ADD CONSTRAINT fke8x7oa0ixltx9yxs8fo90sdh2 FOREIGN KEY (fit_info_option_id) 
+  REFERENCES fit_info_option (id); 
+
+ALTER TABLE item_fit_info_option_map 
+  ADD CONSTRAINT fkrlpiqvb05hvc708knmmxyw0w4 FOREIGN KEY (item_id) REFERENCES 
   item (id); 
 
 ALTER TABLE item_ironing_map 
@@ -530,6 +497,10 @@ ALTER TABLE size_option
 ALTER TABLE size_option 
   ADD CONSTRAINT fkk7k3fvg25k3lfv9y076ulrs2w FOREIGN KEY (sub_category_id) 
   REFERENCES sub_category (id); 
+
+ALTER TABLE size_table 
+  ADD CONSTRAINT fk9947teyv7wkgf2mvg256qkamy FOREIGN KEY (item_id) REFERENCES 
+  item (id); 
 
 ALTER TABLE sub_category 
   ADD CONSTRAINT fkl65dyy5me2ypoyj8ou1hnt64e FOREIGN KEY (category_id) 

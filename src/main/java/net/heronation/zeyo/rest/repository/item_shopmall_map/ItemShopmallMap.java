@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.item.Item;import net.heronation.zeyo.
 @EntityListeners(AuditingEntityListener.class)
 public class ItemShopmallMap{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="ITEM_SHOPMALL_MAP_ID_GENERATOR")
@@ -33,11 +33,11 @@ public class ItemShopmallMap{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="ITEM_ID")
 private Item item;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="SHOPMALL_ID")
 private Shopmall shopmall;
 private String useYn;

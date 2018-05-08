@@ -25,10 +25,10 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @EntityListeners(AuditingEntityListener.class)
 public class Shopmall{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "shopmall" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "shopmall" ,fetch = FetchType.LAZY)
 private List<ItemShopmallMap>  itemShopmallMaps = new ArrayList<ItemShopmallMap>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="SHOPMALL_ID_GENERATOR")
@@ -36,7 +36,7 @@ private List<ItemShopmallMap>  itemShopmallMaps = new ArrayList<ItemShopmallMap>
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="MEMBER_ID")
 private Member member;
 private String name;

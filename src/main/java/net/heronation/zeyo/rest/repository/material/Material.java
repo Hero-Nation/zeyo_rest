@@ -24,10 +24,10 @@ import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 @EntityListeners(AuditingEntityListener.class)
 public class Material{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
-        @OneToMany(mappedBy = "material" ,fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(mappedBy = "material" ,fetch = FetchType.LAZY)
 private List<ItemMaterialMap>  itemMaterialMaps = new ArrayList<ItemMaterialMap>();
  @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="MATERIAL_ID_GENERATOR")

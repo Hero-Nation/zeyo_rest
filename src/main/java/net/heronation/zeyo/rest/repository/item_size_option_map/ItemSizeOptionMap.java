@@ -24,8 +24,8 @@ import net.heronation.zeyo.rest.repository.item.Item;import net.heronation.zeyo.
 @EntityListeners(AuditingEntityListener.class)
 public class ItemSizeOptionMap{
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+	
+	
  
         @Id 
 @GeneratedValue(strategy = GenerationType.TABLE,generator="ITEM_SIZE_OPTION_MAP_ID_GENERATOR")
@@ -33,11 +33,11 @@ public class ItemSizeOptionMap{
 private Long id;
 
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="ITEM_ID")
 private Item item;
  
-@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL) 
+@ManyToOne(fetch=FetchType.EAGER ) 
 @JoinColumn(name="SIZE_OPTION_ID")
 private SizeOption sizeOption;
 private String optionValue;
