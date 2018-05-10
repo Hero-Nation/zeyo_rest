@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +23,7 @@ import net.heronation.zeyo.rest.repository.item.Item;
 @Table(name = "SIZE_TABLE")
 @TableGenerator(name = "SIZE_TABLE_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "SIZE_TABLE_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = {"option"})
 public class SizeTable {
 
 	private @Version Long version;

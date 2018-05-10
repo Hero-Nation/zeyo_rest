@@ -41,7 +41,7 @@ public class ItemRepositoryTest {
 
 			item.setCode("code_" + a);
 
-			item.setPrice("price_" + a);
+			//item.setPrice("price_" + a);
 
 			item.setMadeinBuilder("madeinBuilder_" + a);
 

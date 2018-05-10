@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,6 +39,7 @@ import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 @Table(name = "ITEM")
 @TableGenerator(name = "ITEM_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = {"option"})
 public class Item {
 
 	@Id
@@ -73,7 +75,7 @@ public class Item {
 
 	private String code;
 
-	private String price;
+	private int price;
 
 	private String madeinBuilder;
 

@@ -117,7 +117,15 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.0.9.Final</version>
 		</dependency>
- 
+
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate5</artifactId>
+			<version>2.9.5</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
@@ -162,19 +170,8 @@
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>com.querydsl</groupId>
-						<artifactId>querydsl-apt</artifactId>
-						<version>4.1.4</version>
-					</dependency>
-					<dependency>
-						<groupId>com.querydsl</groupId>
-						<artifactId>querydsl-jpa</artifactId>
-						<version>4.1.4</version>
-					</dependency>
-				</dependencies>
 			</plugin>
+		 
 		</plugins>
 	</build>
 

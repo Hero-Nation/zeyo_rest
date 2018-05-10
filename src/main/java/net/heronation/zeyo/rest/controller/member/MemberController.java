@@ -2,11 +2,14 @@ package net.heronation.zeyo.rest.controller.member;
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.repository.bbs.QBbs;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.member.MemberResourceAssembler;
+import net.heronation.zeyo.rest.repository.member.QMember;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -27,6 +30,9 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+
+import com.querydsl.core.BooleanBuilder;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -171,6 +177,69 @@ public class MemberController extends BaseController {
 		Map<String,Object> user =  (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
  
 		return return_success(user);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> list(
+			@RequestParam(value = "identity", required = false) String identity,
+			
+			@RequestParam(value = "phone1", required = false) String phone1,
+			@RequestParam(value = "phone2", required = false) String phone2,
+			@RequestParam(value = "phone3", required = false) String phone3,
+			
+			@RequestParam(value = "email1", required = false) String email1,
+			@RequestParam(value = "email2", required = false) String email2,
+			
+			@RequestParam(value = "cn1", required = false) String cn1,
+			@RequestParam(value = "cn2", required = false) String cn2,
+			@RequestParam(value = "cn3", required = false) String cn3,
+			
+			Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QMember target = QMember.member;
+
+		if (identity != null) {
+			builder.and(target.name.containsIgnoreCase(identity).or(target.memberId.containsIgnoreCase(identity)));
+		}
+
+		if (phone1 != null) {
+			builder.and(target.phone.startsWith(phone1));
+		}
+		
+		if (phone2 != null) {
+			builder.and(target.phone.containsIgnoreCase(","+phone2+","));
+		}
+
+		if (phone3 != null) {
+			builder.and(target.phone.endsWith(phone3));
+		}
+		
+		if (email1 != null) {
+			builder.and(target.email.startsWith(email1));
+		}
+		
+		if (email2 != null) {
+			builder.and(target.email.endsWith(email2));
+		}
+		
+		if (cn1 != null) {
+			builder.and(target.companyNoHistory.companyNo.startsWith(cn1));
+		}
+		
+		if (cn2 != null) {
+			builder.and(target.companyNoHistory.companyNo.containsIgnoreCase(","+cn2+",")); 
+		}
+		
+		if (cn3 != null) {
+			builder.and(target.companyNoHistory.companyNo.endsWith(cn3));
+		}
+		 
+		builder.and(target.useYn.eq("Y"));
+
+		return return_success((Object) memberService.search(builder.getValue(), pageable));
 	}
 	
 }

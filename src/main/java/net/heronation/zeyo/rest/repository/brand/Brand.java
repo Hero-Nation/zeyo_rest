@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,10 +24,12 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @Table(name = "BRAND")
 @TableGenerator(name = "BRAND_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "BRAND_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+
 public class Brand {
 
 	@OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BRAND_ID_GENERATOR")
 	@Column(name = "ID")
@@ -36,6 +39,10 @@ public class Brand {
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 	private String name;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createDt;
+
 
 	private String useYn;
 

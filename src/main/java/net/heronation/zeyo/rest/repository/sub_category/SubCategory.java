@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,6 +27,7 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 @Table(name = "SUB_CATEGORY")
 @TableGenerator(name = "SUB_CATEGORY_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "SUB_CATEGORY_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+
 public class SubCategory {
 
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)

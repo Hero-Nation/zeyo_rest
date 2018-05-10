@@ -11,6 +11,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+
 import net.heronation.zeyo.rest.common.authentication.AppTokenEnhancer;
 
 @Configuration
@@ -21,6 +23,5 @@ public class ConfigBean {
 		return new BCryptPasswordEncoder();
 	}
 
- 
-
+  
 }

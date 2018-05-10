@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,6 +24,7 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 @Table(name = "FIT_INFO")
 @TableGenerator(name = "FIT_INFO_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "FIT_INFO_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = {"option"})
 public class FitInfo {
 
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)

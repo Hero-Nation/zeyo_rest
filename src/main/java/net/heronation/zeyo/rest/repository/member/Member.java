@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,6 +28,7 @@ import net.heronation.zeyo.rest.repository.bbs.Bbs;
 @Table(name = "MEMBER")
 @TableGenerator(name = "MEMBER_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MEMBER_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = {"option"})
 public class Member {
 
 	@Id

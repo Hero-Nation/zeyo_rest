@@ -11,7 +11,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
-import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
 import net.heronation.zeyo.rest.repository.brand.Brand;
@@ -74,6 +75,7 @@ public class ConfigSpringDataRest extends RepositoryRestConfigurerAdapter {
 	public void configureJacksonObjectMapper(ObjectMapper objectMapper) {
 		// TODO Auto-generated method stub
 		super.configureJacksonObjectMapper(objectMapper);
+		objectMapper.registerModule((new Hibernate5Module()));
 	}
 
 	@Override

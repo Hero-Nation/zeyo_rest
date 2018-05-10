@@ -8,6 +8,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,6 +24,7 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @Table(name = "WARRANTY")
 @TableGenerator(name = "WARRANTY_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "WARRANTY_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
+
 public class Warranty {
 
 	@OneToMany(mappedBy = "warranty", fetch = FetchType.LAZY)
