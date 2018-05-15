@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
@@ -53,5 +54,22 @@ public class ShopmallServiceImpl implements ShopmallService{
  
 		return new PageImpl<Shopmall>(R.getResults(), page, R.getTotal());
 
+	}
+
+	@Override
+	public Page<Shopmall> client_search(Predicate where, Pageable page) {
+		JPAQuery<Shopmall> query = new JPAQuery<Shopmall>(entityManager);
+
+		QShopmall target = QShopmall.shopmall;
+
+		QueryResults<Shopmall> R = query.from(target)
+				 
+				.where(where)
+				.orderBy(target.id.desc())
+				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
+				.limit(page.getPageSize())
+				.fetchResults();
+ 
+		return new PageImpl<Shopmall>(R.getResults(), page, R.getTotal());
 	}
 }

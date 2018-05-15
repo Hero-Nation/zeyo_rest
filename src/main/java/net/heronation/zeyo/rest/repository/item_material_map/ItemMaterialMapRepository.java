@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "item_material_maps", path = "item_material_maps")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemMaterialMapRepository extends JpaRepository<ItemMaterialMap, Long> , QueryDslPredicateExecutor<ItemMaterialMap>{
     /****

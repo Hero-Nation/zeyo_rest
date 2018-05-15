@@ -15,5 +15,7 @@ public interface MadeinService {
  
 	Page<Madein> search(Predicate where,Pageable page); 
  
- 
+	Page<Madein> use_list(Predicate where,Pageable page); 
+	 
+	
 }

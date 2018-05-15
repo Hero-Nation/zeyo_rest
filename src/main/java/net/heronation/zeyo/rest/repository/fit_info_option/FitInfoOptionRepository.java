@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "fit_info_options", path = "fit_info_options")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface FitInfoOptionRepository extends JpaRepository<FitInfoOption, Long> , QueryDslPredicateExecutor<FitInfoOption>{
     /****
@@ -34,7 +34,7 @@ public interface FitInfoOptionRepository extends JpaRepository<FitInfoOption, Lo
 	}
  	
 	@Override
-	@RestResource(path = "", rel = "",exported = false)
+	@RestResource(path = "", rel = "",exported = true)
 	Page<FitInfoOption> findAll(Pageable arg0);
 
 

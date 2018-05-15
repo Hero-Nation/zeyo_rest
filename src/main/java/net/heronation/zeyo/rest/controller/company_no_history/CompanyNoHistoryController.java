@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,8 +60,8 @@ public class CompanyNoHistoryController extends BaseController {
 			@RequestParam(value = "cn1", required = false) String cn1,
 			@RequestParam(value = "cn2", required = false) String cn2,
 			@RequestParam(value = "cn3", required = false) String cn3,
-			@RequestParam(value = "start",required=false) Date start,
-			@RequestParam(value = "end",required=false) Date end,
+			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
+			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();

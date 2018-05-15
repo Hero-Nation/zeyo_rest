@@ -20,7 +20,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "measure_items", path = "measure_items")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface MeasureItemRepository extends JpaRepository<MeasureItem, Long> , QueryDslPredicateExecutor<MeasureItem>{
     /****

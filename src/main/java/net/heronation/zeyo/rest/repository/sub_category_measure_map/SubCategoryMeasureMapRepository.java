@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "sub_category_measure_maps", path = "sub_category_measure_maps")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface SubCategoryMeasureMapRepository extends JpaRepository<SubCategoryMeasureMap, Long> , QueryDslPredicateExecutor<SubCategoryMeasureMap>{
     /****

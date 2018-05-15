@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,8 +50,8 @@ public class ShopmallController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "start", required = false) Date start,
-			@RequestParam(value = "end", required = false) Date end, Pageable pageable) {
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -73,4 +74,37 @@ public class ShopmallController extends BaseController {
 		return return_success((Object) shopmallService.search(builder.getValue(), pageable));
 	}
 
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> client_list(
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "sizeCp", required = false) String sizeCp,
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
+			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end, Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QShopmall target = QShopmall.shopmall;
+
+		if (name != null) {
+			builder.and(target.name.containsIgnoreCase(name));
+		}
+		
+		if (sizeCp != null) {
+ 			builder.and(target.sizeCpYn.eq(sizeCp));
+		}
+
+		if (start != null) {
+			builder.and(target.createDt.after(start));
+		}
+
+		if (end != null) {
+			builder.and(target.createDt.before(end));
+		}
+
+		builder.and(target.useYn.eq("Y"));
+
+		return return_success((Object) shopmallService.search(builder.getValue(), pageable));
+	}	
 }

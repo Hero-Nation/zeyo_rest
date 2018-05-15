@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "item_size_option_maps", path = "item_size_option_maps")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemSizeOptionMapRepository extends JpaRepository<ItemSizeOptionMap, Long> , QueryDslPredicateExecutor<ItemSizeOptionMap>{
     /****

@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
- 
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -28,21 +28,19 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @Table(name = "MADEIN")
 @TableGenerator(name = "MADEIN_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MADEIN_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+@ToString(exclude = { "option" })
 public class Madein {
 
 	@OneToMany(mappedBy = "madein", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "MADEIN_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
 
-	
-	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "KINDOF_ID") 
+	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
 	private String name;
 

@@ -1,7 +1,10 @@
 package net.heronation.zeyo.rest.config;
 
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
@@ -45,52 +49,65 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @Configuration
 @EnableWebMvc
 @EnableSpringDataWebSupport
-@EnableHypermediaSupport(type= {org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL})
+@EnableHypermediaSupport(type = { org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL })
 public class ConfigMVC implements WebMvcConfigurer {
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
-
+		 
+	//	registry.addConverter(getStringToDateConverter());
 	}
 
- 
+//	public Converter<String, Date> getStringToDateConverter() {
+//		return new Converter<String, Date>() {
+//
+//			@Override
+//			public Date convert(String source) {
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//				try {
+//					return sdf.parse(source);
+//				} catch (ParseException e) {
+//					return null;
+//				}
+//			}
+//		};
+//	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
- 
-	}
-	
-    @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        //configurer.mediaType("json", MediaType.APPLICATION_JSON);
-    }
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-    	
-//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-//                .indentOutput(true)
-//                .dateFormat(new SimpleDateFormat("yyyy-MM-dd"))
-//                .modulesToInstall(new ParameterNamesModule());
-        converters.add(new MappingJackson2HttpMessageConverter()); 
-    }
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("/");
-    }
-    
-    
+	}
+
+	@Override
+	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+		// configurer.mediaType("json", MediaType.APPLICATION_JSON);
+	}
+
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+		// Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+		// .indentOutput(true)
+		// .dateFormat(new SimpleDateFormat("yyyy-MM-dd"))
+		// .modulesToInstall(new ParameterNamesModule());
+		converters.add(new MappingJackson2HttpMessageConverter());
+	}
+
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/").setViewName("/");
+	}
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
- 
+
 	}
 
- 
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
- 
-    }
-	
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+
+	}
+
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
@@ -112,6 +129,8 @@ public class ConfigMVC implements WebMvcConfigurer {
 		config.addAllowedMethod("POST");
 		config.addAllowedMethod("PUT");
 		config.addAllowedMethod("DELETE");
+		config.addAllowedMethod("PATCH");
+
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
 	}
@@ -156,43 +175,43 @@ public class ConfigMVC implements WebMvcConfigurer {
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureAsyncSupport(AsyncSupportConfigurer arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configurePathMatch(PathMatchConfigurer arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void extendMessageConverters(List<HttpMessageConverter<?>> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -201,12 +220,10 @@ public class ConfigMVC implements WebMvcConfigurer {
 		return null;
 	}
 
-
-
 	@Override
 	public Validator getValidator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
- 
+
 }

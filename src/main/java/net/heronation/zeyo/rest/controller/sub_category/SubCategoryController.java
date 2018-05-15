@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,8 +60,8 @@ public class SubCategoryController extends BaseController {
 			@RequestParam(value = "cate",required=false) Category cate,
 			@RequestParam(value = "subcate",required=false) SubCategory subcate,
 			@RequestParam(value = "measure",required=false) MeasureItem measure, 
-			@RequestParam(value = "start",required=false) Date start,
-			@RequestParam(value = "end",required=false) Date end,
+			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
+			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -100,8 +101,8 @@ public class SubCategoryController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> sublist(
 			@RequestParam(value = "name",required=false) String name, 
-			@RequestParam(value = "start",required=false) Date start,
-			@RequestParam(value = "end",required=false) Date end,
+			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
+			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();

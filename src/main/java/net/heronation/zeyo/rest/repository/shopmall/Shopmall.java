@@ -44,5 +44,7 @@ public class Shopmall {
 	private Date createDt;
 
 	private String useYn;
+	
+	private String sizeCpYn;
 
 }

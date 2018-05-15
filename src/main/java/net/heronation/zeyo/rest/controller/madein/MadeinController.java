@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -55,8 +56,8 @@ public class MadeinController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
 			@RequestParam(value = "name",required=false) String name,
-			@RequestParam(value = "start",required=false) Date start,
-			@RequestParam(value = "end",required=false) Date end,
+			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
+			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -70,12 +71,25 @@ public class MadeinController extends BaseController {
 		}
 
 		if (end != null) {
-			builder.and(QMadein.madein.createDt.before(end));
+			builder.and(QMadein.madein.createDt.before(end)); 
 		}
 
 		builder.and(QMadein.madein.useYn.eq("Y"));
 		
 		return return_success((Object) madeinService.search(builder.getValue(), pageable));
 	}
+
+	
+//	@RequestMapping(method = RequestMethod.GET, value = "/use_list")
+//	@ResponseBody
+//	public ResponseEntity<ResultVO> list(
+//			@RequestParam(value = "useYn",required=false) String useYn ,
+//			Pageable pageable) {
+//
+//		BooleanBuilder builder = new BooleanBuilder(); 
+//		builder.and(QMadein.madein.useYn.eq(useYn));
+//		
+//		return return_success((Object) madeinService.use_list(builder.getValue(), pageable));
+//	}
 
 }

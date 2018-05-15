@@ -7,6 +7,7 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -18,7 +19,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "fit_infos", path = "fit_infos")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryDslPredicateExecutor<FitInfo>{
     /****
@@ -34,8 +35,16 @@ public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryD
 	}
 
  	
-	@Override
-	@RestResource(path = "", rel = "",exported = false)
-	Page<FitInfo> findAll(Pageable arg0);
+//	@Override
+//	@RestResource(path = "", rel = "",exported = true)
+//	Page<FitInfo> findAll(Pageable arg0);
+	
+	
+
+	@RestResource(path = "use_list", rel = "use_list", exported = true)
+	Page<FitInfo> findByUseYn(@Param("useYn")  String useYn , Pageable arg0);
+	
+	
+
 
 }

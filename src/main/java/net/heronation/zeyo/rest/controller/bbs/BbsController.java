@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,8 +53,8 @@ public class BbsController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "title", required = false) String title,
-			@RequestParam(value = "start", required = false) Date start,
-			@RequestParam(value = "end", required = false) Date end, Pageable pageable) {
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 

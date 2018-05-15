@@ -101,7 +101,7 @@ public class Item {
 
 	private String bleachYn;
 
-	private String sizeLinkYn;
+	private String linkYn;
 	
 	private String sizeTableYn;
 	

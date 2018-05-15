@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "item_bleach_maps", path = "item_bleach_maps")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemBleachMapRepository extends JpaRepository<ItemBleachMap, Long> , QueryDslPredicateExecutor<ItemBleachMap>{
     /****

@@ -54,4 +54,21 @@ public class MadeinServiceImpl implements MadeinService {
 
 	}
 
+	@Override
+	public Page<Madein> use_list(Predicate where, Pageable page) {
+		JPAQuery<Madein> query = new JPAQuery<Madein>(entityManager);
+
+		QMadein mi = QMadein.madein;
+
+		QueryResults<Madein> R = query.from(mi)
+				.leftJoin(mi.kindof)
+				.where(where)
+				.orderBy(QMadein.madein.id.desc())
+				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
+				.limit(page.getPageSize())
+				.fetchResults();
+ 
+		return new PageImpl<Madein>(R.getResults(), page, R.getTotal());
+	}
+
 }

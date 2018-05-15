@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "bbss", path = "bbss")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface BbsRepository extends JpaRepository<Bbs, Long> , QueryDslPredicateExecutor<Bbs>{
     /****

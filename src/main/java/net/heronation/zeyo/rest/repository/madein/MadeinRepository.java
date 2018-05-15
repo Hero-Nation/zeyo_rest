@@ -21,11 +21,12 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.kindof.QKindof;
 import net.heronation.zeyo.rest.repository.member.Member;
 
 @RepositoryRestResource(collectionResourceRel = "madeins", path = "madeins")
-// @PreAuthorize("hasRole('ROLE_CLIENT')")
+// //@PreAuthorize("hasRole('ROLE_CLIENT')")
 public interface MadeinRepository extends JpaRepository<Madein, Long>, QueryDslPredicateExecutor<Madein> {
 	/****
 	 * 
@@ -39,11 +40,10 @@ public interface MadeinRepository extends JpaRepository<Madein, Long>, QueryDslP
 	}
 
 	@Override
-	@RestResource(path = "", rel = "", exported = true)
+	@RestResource(path = "", rel = "", exported = false)
 	Page<Madein> findAll(Pageable arg0);
 
 	@RestResource(rel = "findByName", path = "findByName")
 	Madein findByName(@Param("name") String name);
-  
-
+    
 }

@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
@@ -42,13 +44,12 @@ public class ItemServiceImpl implements ItemService {
 
 		QueryResults<Item> R = query.from(target)
 
-				.where(where).orderBy(target.id.desc())
-				.offset((page.getPageNumber() - 1) * page.getPageSize())
-				.limit(page.getPageSize())
-				.fetchResults();
+				.where(where).orderBy(target.id.desc()).offset((page.getPageNumber() - 1) * page.getPageSize())
+				.limit(page.getPageSize()).fetchResults();
 
 		return new PageImpl<Item>(R.getResults(), page, R.getTotal());
 
 	}
+
 
 }

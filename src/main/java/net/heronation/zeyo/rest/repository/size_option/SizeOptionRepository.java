@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "size_options", path = "size_options")
-@PreAuthorize("hasRole('ROLE_CLIENT')")
+//@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface SizeOptionRepository extends JpaRepository<SizeOption, Long> , QueryDslPredicateExecutor<SizeOption>{
     /****

@@ -4,6 +4,7 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoResourceAssembler;
+import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,21 +50,14 @@ public class FitInfoController extends BaseController {
 		this.entityLinks = entityLinks;
 	} 
 
-	@RequestMapping(path = "/test")
-	public ResponseEntity<String> test() {
-		log.debug("/test");
-		return new ResponseEntity<>("test", HttpStatus.OK);
-	}
-
-
-   
+ 
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
 			@RequestParam(value = "name",required=false) String name,
-			@RequestParam(value = "start",required=false) Date start,
-			@RequestParam(value = "end",required=false) Date end,
+			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
+			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -82,6 +77,21 @@ public class FitInfoController extends BaseController {
 		builder.and(QMeasureItem.measureItem.useYn.eq("Y"));
 		
 		return return_success((Object) fit_infoService.search(builder.getValue(), pageable));
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/fitInfoOptions")
+	@ResponseBody
+	public ResponseEntity<ResultVO> list(
+			@RequestParam(value = "fitInfoId",required=false) Long fitInfoId,
+			Pageable pageable) {
+		
+		QFitInfoOption target = QFitInfoOption.fitInfoOption;
+
+		BooleanBuilder builder = new BooleanBuilder();
+		builder.and(target.fitInfo.id.eq(fitInfoId));
+		builder.and(target.useYn.eq("Y"));
+		return return_success((Object) fit_infoService.fitInfoOptions_search(builder.getValue(), pageable));
 	}
  
 }

@@ -41,7 +41,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> , QueryDsl
  	Member findByMemberId(@Param(value = "member_id") String member_id);
  
 	@Override
-	@RestResource(path = "", rel = "",exported = true)
+	@RestResource(path = "", rel = "",exported = false)
 	Page<Member> findAll(Pageable arg0);
 
 	 

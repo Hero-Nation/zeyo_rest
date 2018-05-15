@@ -16,6 +16,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
+import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 
@@ -49,6 +51,22 @@ public class FitInfoServiceImpl implements FitInfoService{
  
 		return new PageImpl<FitInfo>(R.getResults(), page, R.getTotal());
 
+	}
+
+	@Override
+	public Page<FitInfoOption> fitInfoOptions_search(Predicate where, Pageable page) {
+		
+		JPAQuery<FitInfoOption> query = new JPAQuery<FitInfoOption>(entityManager);
+		 
+		QFitInfoOption target = QFitInfoOption.fitInfoOption;
+
+		QueryResults<FitInfoOption> R = query.from(target).where(where)
+				.orderBy(target.id.desc())
+				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
+				.limit(page.getPageSize()).fetchResults();
+				
+ 
+		return new PageImpl<FitInfoOption>(R.getResults(), page, R.getTotal());
 	}
 
 }

@@ -57,7 +57,6 @@ public class ItemRepositoryTest {
 
 			item.setBleachYn("bleachYn_" + a);
 
-			item.setSizeLinkYn("sizeLinkYn_" + a);
 
 			item.setCreateDt(new Date());
 
