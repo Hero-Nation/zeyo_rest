@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.brand;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.BrandResourceAssembler;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
@@ -82,6 +83,35 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
 	public ResponseEntity<ResultVO> insert(@RequestParam(value = "name", required = true) String name,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = (Long) user.get("member_seq");
+
+		return return_success((Object) brandService.insert(name, seq));
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/update_name")
+	@ResponseBody
+	public ResponseEntity<ResultVO> update_name(  
+			@RequestParam(value="id" ,required=false) Long id,
+			@RequestParam(value="name",required=false) String name,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
+		
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+		
+		return return_success((Object) brandService.update(id, seq, name)); 
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/delete")
+	@ResponseBody
+	public ResponseEntity<ResultVO> delete(@RequestParam(value = "id", required = true) String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())

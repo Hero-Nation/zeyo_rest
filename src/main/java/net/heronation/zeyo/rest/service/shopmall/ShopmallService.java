@@ -13,4 +13,5 @@ public interface ShopmallService {
 	Page<Shopmall> search(Predicate where,Pageable page); 
 	Page<Shopmall> client_search(Predicate where,Pageable page); 
 	
+	Shopmall insert(String name,Long member_seq); 
 }

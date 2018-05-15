@@ -8,6 +8,7 @@ import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallResourceAssembler;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,6 +77,19 @@ public class ShopmallController extends BaseController {
 		builder.and(target.useYn.eq("Y"));
 
 		return return_success((Object) shopmallService.search(builder.getValue(), pageable));
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	@ResponseBody
+	public ResponseEntity<ResultVO> insert(@RequestParam(value = "name", required = true) String name,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = (Long) user.get("member_seq");
+
+		return return_success((Object) shopmallService.insert(name, seq));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")

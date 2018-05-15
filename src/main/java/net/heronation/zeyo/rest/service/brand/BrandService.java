@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.service.brand;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,11 @@ public interface BrandService {
 	Page<Brand> search(Predicate where,Pageable page);
 
  	Brand insert(String name,Long member_seq); 
+ 	Map<String,Object> update(Long brand_id,Long member_seq,String name); 
+ 	Brand delete(String name,Long member_seq); 
+ 	
+ 	
+ 	
 	Page<Tuple> client_search(Predicate where, Pageable page);
 
 }

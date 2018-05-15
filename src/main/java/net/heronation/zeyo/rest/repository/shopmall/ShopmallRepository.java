@@ -46,4 +46,8 @@ public interface ShopmallRepository extends JpaRepository<Shopmall, Long> , Quer
 	@Query("select distinct m from Shopmall m where m.useYn = 'Y'")
 	List<Shopmall> distinct_name();
 	
+	
+	@Override
+	@RestResource(path = "", rel = "",exported = false)
+	<S extends Shopmall> S save(S arg0);
 }
