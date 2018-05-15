@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 @Entity
 @Data
@@ -39,7 +41,7 @@ public class Warranty {
 	private Kindof kindof;
 	private String scope;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;

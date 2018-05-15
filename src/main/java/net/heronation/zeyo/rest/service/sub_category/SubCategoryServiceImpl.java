@@ -52,7 +52,7 @@ public class SubCategoryServiceImpl implements SubCategoryService{
 				.leftJoin(target.subCategoryMeasureMaps)
 				.leftJoin(target.subCategoryFitInfoMaps)
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize()).fetchResults();
 				
@@ -73,7 +73,7 @@ public class SubCategoryServiceImpl implements SubCategoryService{
 				.leftJoin(target.subCategoryMeasureMaps)
 				.leftJoin(target.subCategoryFitInfoMaps)
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize()).fetchResults();
 				

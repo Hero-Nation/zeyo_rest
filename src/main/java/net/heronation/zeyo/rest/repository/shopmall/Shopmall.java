@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.member.Member;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 @Entity
 @Data
@@ -40,7 +42,7 @@ public class Shopmall {
 	private Member member;
 	private String name;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;

@@ -16,6 +16,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 @Entity
 @Data
@@ -37,7 +39,7 @@ public class MeasureItem {
 
 	private String metaDesc;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;

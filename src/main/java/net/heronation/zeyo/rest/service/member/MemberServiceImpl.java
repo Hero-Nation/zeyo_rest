@@ -102,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
 		QueryResults<Member> R = query.from(target)
 		 
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();
@@ -123,7 +123,7 @@ public class MemberServiceImpl implements MemberService {
 
 		return query.from(target)
 		.where(where)
-		.orderBy(target.id.desc())
+		//.orderBy(target.id.desc())
 		.fetchOne();
 
 		 

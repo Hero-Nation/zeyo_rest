@@ -45,7 +45,7 @@ public class MadeinServiceImpl implements MadeinService {
 		QueryResults<Madein> R = query.from(mi)
 				.leftJoin(mi.kindof)
 				.where(where)
-				.orderBy(QMadein.madein.id.desc())
+				//.orderBy(QMadein.madein.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();
@@ -63,7 +63,7 @@ public class MadeinServiceImpl implements MadeinService {
 		QueryResults<Madein> R = query.from(mi)
 				.leftJoin(mi.kindof)
 				.where(where)
-				.orderBy(QMadein.madein.id.desc())
+				//.orderBy(QMadein.madein.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();

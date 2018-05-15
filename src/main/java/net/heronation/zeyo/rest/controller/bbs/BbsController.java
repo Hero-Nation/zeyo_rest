@@ -54,8 +54,8 @@ public class BbsController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "title", required = false) String title,
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime end, Pageable pageable) {
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 

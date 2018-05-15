@@ -47,7 +47,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPr
 	@Query("select distinct(m.name) from Brand m where m.useYn = 'Y'")
 	List<Brand> distinct_name();
  	
-	@RestResource(path = "unique", rel = "unique",exported = true)
+	@RestResource(path = "findByName", rel = "findByName",exported = true)
 	@Query("select m.name from Brand m where m.name = ?1 and  m.useYn = 'Y'")
 	List<Brand> unique(@Param("name") String ktype);
 	 

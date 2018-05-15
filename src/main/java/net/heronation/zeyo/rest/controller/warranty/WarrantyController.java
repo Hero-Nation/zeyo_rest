@@ -55,8 +55,8 @@ public class WarrantyController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
 			@RequestParam(value = "scope",required=false) String scope,
-			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
-			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime end,
+			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();

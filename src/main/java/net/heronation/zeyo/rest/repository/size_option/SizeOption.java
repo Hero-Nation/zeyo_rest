@@ -19,6 +19,8 @@ import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMa
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 @Entity
 @Data
@@ -49,7 +51,7 @@ public class SizeOption {
 	private Kindof kindof;
 	private String name;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;

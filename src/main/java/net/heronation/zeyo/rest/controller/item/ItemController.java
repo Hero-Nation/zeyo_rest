@@ -83,8 +83,8 @@ public class ItemController extends BaseController {
 			@RequestParam(value = "sub_cate", required = false) SubCategory sub_category,
 			@RequestParam(value = "start_price",defaultValue="0", required = false) int start_price,
 			@RequestParam(value = "end_price",defaultValue="0", required = false) int end_price,
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime end, Pageable pageable) {
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 

@@ -55,8 +55,8 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
-			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime end, Pageable pageable) {
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -81,7 +81,7 @@ public class BrandController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
-	public ResponseEntity<ResultVO> unique(@RequestParam(value = "name", required = true) String name,
+	public ResponseEntity<ResultVO> insert(@RequestParam(value = "name", required = true) String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
@@ -97,8 +97,8 @@ public class BrandController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> brand_list( 
 			@RequestParam(value = "name", required = false) String name, 
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime end, Pageable pageable) {
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 

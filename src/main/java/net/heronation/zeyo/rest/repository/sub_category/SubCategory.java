@@ -20,6 +20,8 @@ import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 @Entity
 @Data
@@ -56,7 +58,7 @@ public class SubCategory {
 
 	private String bleachYn;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;

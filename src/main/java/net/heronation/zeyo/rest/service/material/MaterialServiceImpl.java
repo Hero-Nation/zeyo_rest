@@ -47,7 +47,7 @@ public class MaterialServiceImpl implements MaterialService{
 		QueryResults<Material> R = query.from(target)
 				//.leftJoin(wt.kindof)
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();

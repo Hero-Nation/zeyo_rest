@@ -21,14 +21,17 @@ import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
+
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
 @Entity
 @Data
 @RequiredArgsConstructor
 @Table(name = "MEMBER")
 @TableGenerator(name = "MEMBER_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MEMBER_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+@ToString(exclude = { "option" })
 public class Member {
 
 	@Id
@@ -55,10 +58,10 @@ public class Member {
 
 	private String managerPhone;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime deleteDt;
 
 	private String adminYn;

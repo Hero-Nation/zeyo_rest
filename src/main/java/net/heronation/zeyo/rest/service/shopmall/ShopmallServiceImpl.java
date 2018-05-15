@@ -47,7 +47,7 @@ public class ShopmallServiceImpl implements ShopmallService{
 		QueryResults<Shopmall> R = query.from(target)
 				.leftJoin(target.itemShopmallMaps)
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();
@@ -65,7 +65,7 @@ public class ShopmallServiceImpl implements ShopmallService{
 		QueryResults<Shopmall> R = query.from(target)
 				 
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();

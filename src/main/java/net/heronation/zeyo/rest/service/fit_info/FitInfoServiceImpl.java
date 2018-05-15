@@ -44,7 +44,7 @@ public class FitInfoServiceImpl implements FitInfoService{
 		QMeasureItem target = QMeasureItem.measureItem;
 
 		QueryResults<FitInfo> R = query.from(target).where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize()).fetchResults();
 				
@@ -61,7 +61,7 @@ public class FitInfoServiceImpl implements FitInfoService{
 		QFitInfoOption target = QFitInfoOption.fitInfoOption;
 
 		QueryResults<FitInfoOption> R = query.from(target).where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize()).fetchResults();
 				

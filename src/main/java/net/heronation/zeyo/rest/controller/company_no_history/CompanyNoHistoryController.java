@@ -61,8 +61,8 @@ public class CompanyNoHistoryController extends BaseController {
 			@RequestParam(value = "cn1", required = false) String cn1,
 			@RequestParam(value = "cn2", required = false) String cn2,
 			@RequestParam(value = "cn3", required = false) String cn3,
-			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
-			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime end,
+			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();

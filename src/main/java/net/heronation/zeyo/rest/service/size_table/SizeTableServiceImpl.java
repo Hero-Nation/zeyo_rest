@@ -41,7 +41,8 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 		QueryResults<SizeTable> R = query.from(target)
 
-				.where(where).orderBy(target.id.desc())
+				.where(where)
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1) * page.getPageSize())
 				.limit(page.getPageSize())
 				.fetchResults();

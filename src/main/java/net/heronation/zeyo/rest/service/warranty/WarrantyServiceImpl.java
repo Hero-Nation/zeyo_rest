@@ -47,7 +47,7 @@ public class WarrantyServiceImpl implements WarrantyService{
 		QueryResults<Warranty> R = query.from(target)
 				.leftJoin(target.kindof)
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();

@@ -61,7 +61,7 @@ public class BrandServiceImpl implements BrandService{
 		QueryResults<Brand> R = query.from(target)
 				.leftJoin(target.items)
 				.where(where)
-				.orderBy(target.id.desc())
+				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize())
 				.fetchResults();
@@ -100,7 +100,7 @@ public class BrandServiceImpl implements BrandService{
 				.innerJoin(i.member)
 				.where(where)
 				.groupBy(i.member)
-				.orderBy(i.id.desc())
+				//.orderBy(i.id.desc())
 				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
 
 		return new PageImpl<Tuple>(R.getResults(), page, R.getTotal());

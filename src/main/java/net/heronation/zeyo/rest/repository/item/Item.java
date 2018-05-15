@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -83,7 +84,7 @@ public class Item {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
- 
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime madeinDate;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -103,22 +104,8 @@ public class Item {
 	private String linkYn;
 	
 	private String sizeTableYn;
-	
-	/**
-	 * 
-	 * DATE
-		The most common ISO Date Format yyyy-MM-dd, e.g.
-		DATE_TIME
-		The most common ISO DateTime Format yyyy-MM-dd'T'HH:mm:ss.SSSZ, e.g.
-		NONE
-		Indicates that no ISO-based format pattern should be applied.
-		TIME
-		The most common ISO Time Format HH:mm:ss.SSSZ, e.g.
-	 * 
-	 * 
-	 */
  
-	
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;

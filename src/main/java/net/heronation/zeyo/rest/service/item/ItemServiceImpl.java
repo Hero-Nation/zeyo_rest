@@ -44,7 +44,9 @@ public class ItemServiceImpl implements ItemService {
 
 		QueryResults<Item> R = query.from(target)
 
-				.where(where).orderBy(target.id.desc()).offset((page.getPageNumber() - 1) * page.getPageSize())
+				.where(where)
+				//.orderBy(target.id.desc())
+				.offset((page.getPageNumber() - 1) * page.getPageSize())
 				.limit(page.getPageSize()).fetchResults();
 
 		return new PageImpl<Item>(R.getResults(), page, R.getTotal());

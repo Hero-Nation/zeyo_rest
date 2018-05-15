@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import lombok.Value;
@@ -54,7 +55,7 @@ public class ItemDto {
 	private String madeinBuilder;
 
 	private Madein madein;
-
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime madeinDate;
 
 	private Warranty warranty;
@@ -70,7 +71,7 @@ public class ItemDto {
 	private String bleachYn;
 
 	private String sizeLinkYn;
-
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;
