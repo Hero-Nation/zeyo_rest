@@ -17,6 +17,7 @@ import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import java.util.Date;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -82,8 +83,8 @@ public class ItemController extends BaseController {
 			@RequestParam(value = "sub_cate", required = false) SubCategory sub_category,
 			@RequestParam(value = "start_price",defaultValue="0", required = false) int start_price,
 			@RequestParam(value = "end_price",defaultValue="0", required = false) int end_price,
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end, Pageable pageable) {
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 

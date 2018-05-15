@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager; 
+import javax.persistence.EntityManager;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -64,7 +66,7 @@ public class MemberServiceImpl implements MemberService {
 		newCompanyNo.setCompanyNo(param.getCompany_no());
 		newCompanyNo.setMember(newUser);
 		newCompanyNo.setName(param.getCompany_name());
-		newCompanyNo.setChangeDt(new Date());
+		newCompanyNo.setChangeDt(new DateTime());
 
 		companyNoHistoryRepository.saveAndFlush(newCompanyNo);
 

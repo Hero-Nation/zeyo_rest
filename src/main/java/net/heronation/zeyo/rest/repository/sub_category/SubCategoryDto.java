@@ -10,7 +10,7 @@ import net.heronation.zeyo.rest.repository.category.Category;import net.heronati
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
-
+import org.joda.time.DateTime;
 @Value
 public class SubCategoryDto{
  
@@ -58,7 +58,7 @@ private String bleachYn;
 
 
  
-private Date createDt;
+private DateTime createDt;
 
 
 

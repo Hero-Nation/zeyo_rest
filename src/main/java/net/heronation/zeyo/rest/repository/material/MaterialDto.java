@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
-
+import org.joda.time.DateTime;
 
 @Value
 public class MaterialDto{
@@ -30,7 +30,7 @@ private String metaDesc;
 
 
  
-private Date createDt;
+private DateTime createDt;
 
 
 

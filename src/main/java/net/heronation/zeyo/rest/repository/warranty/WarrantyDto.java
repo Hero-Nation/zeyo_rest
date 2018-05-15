@@ -7,7 +7,7 @@ import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
-
+import org.joda.time.DateTime;
 
 @Value
 public class WarrantyDto{
@@ -28,7 +28,7 @@ private String scope;
 
 
  
-private Date createDt;
+private DateTime createDt;
 
 
 

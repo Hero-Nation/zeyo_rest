@@ -9,6 +9,7 @@ import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -59,8 +60,8 @@ public class CategoryController extends BaseController {
 			@RequestParam(value = "cate",required=false) Long cate,
 			@RequestParam(value = "subcate",required=false) Long subcate,
 			@RequestParam(value = "measure",required=false) String measure, 
-			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
-			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
+			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
+			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();

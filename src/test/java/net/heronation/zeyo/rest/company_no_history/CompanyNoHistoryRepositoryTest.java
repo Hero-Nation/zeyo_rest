@@ -35,7 +35,7 @@ public class CompanyNoHistoryRepositoryTest {
 
 			item.setBeforeNo("beforeNo_" + a);
 
-			item.setChangeDt(new Date());
+			//item.setChangeDt(new Date());
 			repository.save(item);
 		}
 

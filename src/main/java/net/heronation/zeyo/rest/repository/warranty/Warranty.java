@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
-
+import org.joda.time.DateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -39,8 +39,8 @@ public class Warranty {
 	private Kindof kindof;
 	private String scope;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+	
+	private DateTime createDt;
 
 	private String useYn;
 

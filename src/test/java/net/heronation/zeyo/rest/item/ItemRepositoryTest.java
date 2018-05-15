@@ -45,7 +45,7 @@ public class ItemRepositoryTest {
 
 			item.setMadeinBuilder("madeinBuilder_" + a);
 
-			item.setMadeinDate(new Date());
+			//item.setMadeinDate(new Date());
 
 			item.setLaundryYn("laundryYn_" + a);
 
@@ -58,7 +58,7 @@ public class ItemRepositoryTest {
 			item.setBleachYn("bleachYn_" + a);
 
 
-			item.setCreateDt(new Date());
+			//item.setCreateDt(new Date());
 
 			item.setUseYn("useYn_" + a);
 			repository.save(item);

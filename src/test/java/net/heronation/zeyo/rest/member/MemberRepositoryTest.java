@@ -45,9 +45,9 @@ public class MemberRepositoryTest {
 
 			item.setManagerPhone("managerPhone_" + a);
 
-			item.setCreateDt(new Date());
+			//item.setCreateDt(new Date());
 
-			item.setDeleteDt(new Date());
+//			item.setDeleteDt(new Date());
 
 			item.setAdminYn("adminYn_" + a);
 

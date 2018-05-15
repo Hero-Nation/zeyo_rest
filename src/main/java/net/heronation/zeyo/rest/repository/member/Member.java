@@ -21,7 +21,7 @@ import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
-
+import org.joda.time.DateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -55,11 +55,11 @@ public class Member {
 
 	private String managerPhone;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+	
+	private DateTime createDt;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date deleteDt;
+	
+	private DateTime deleteDt;
 
 	private String adminYn;
 

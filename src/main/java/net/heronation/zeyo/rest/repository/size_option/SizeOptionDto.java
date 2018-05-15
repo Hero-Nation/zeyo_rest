@@ -7,7 +7,7 @@ import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.category.Category;import net.heronation.zeyo.rest.repository.sub_category.SubCategory;import net.heronation.zeyo.rest.repository.kindof.Kindof;
-
+import org.joda.time.DateTime;
 
 @Value
 public class SizeOptionDto{
@@ -38,7 +38,7 @@ private String name;
 
 
  
-private Date createDt;
+private DateTime createDt;
 
 
 

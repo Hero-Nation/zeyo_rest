@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -45,11 +47,11 @@ public class Bbs {
 
 	private String replyContent;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+	
+	private DateTime createDt;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date replyDt;
+	
+	private DateTime replyDt;
 
 	private String status;
 

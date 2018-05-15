@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -82,10 +83,8 @@ public class Item {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
-
-	@DateTimeFormat(iso = ISO.DATE)
-	@Temporal(TemporalType.DATE)
-	private Date madeinDate;
+ 
+	private DateTime madeinDate;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "WARRANTY_ID")
@@ -118,10 +117,9 @@ public class Item {
 	 * 
 	 * 
 	 */
-
-	@DateTimeFormat(iso = ISO.DATE_TIME)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+ 
+	
+	private DateTime createDt;
 
 	private String useYn;
 

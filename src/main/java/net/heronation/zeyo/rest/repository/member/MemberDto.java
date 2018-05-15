@@ -11,7 +11,7 @@ import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
-
+import org.joda.time.DateTime;
 @Value
 public class MemberDto {
 
@@ -35,9 +35,9 @@ public class MemberDto {
 
 	private String managerPhone;
 
-	private Date createDt;
+	private DateTime createDt;
 
-	private Date deleteDt;
+	private DateTime deleteDt;
 
 	private String adminYn;
 

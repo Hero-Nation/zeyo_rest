@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -43,7 +44,7 @@ public class CompanyNoHistory {
 
 	private String beforeNo;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date changeDt;
+	
+	private DateTime changeDt;
 
 }

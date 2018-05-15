@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.repository.madein;
 
 import javax.persistence.*;
+import org.joda.time.DateTime;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,7 @@ import lombok.ToString;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -44,8 +46,8 @@ public class Madein {
 	private Kindof kindof;
 	private String name;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime createDt;
 
 	private String useYn;
 

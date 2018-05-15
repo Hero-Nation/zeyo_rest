@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.member.Member;
-
+import org.joda.time.DateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -40,8 +40,8 @@ public class Shopmall {
 	private Member member;
 	private String name;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+	
+	private DateTime createDt;
 
 	private String useYn;
 	

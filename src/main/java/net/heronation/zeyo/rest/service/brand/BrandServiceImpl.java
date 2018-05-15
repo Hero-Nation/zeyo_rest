@@ -3,7 +3,9 @@ package net.heronation.zeyo.rest.service.brand;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager; 
+import javax.persistence.EntityManager;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -79,7 +81,7 @@ public class BrandServiceImpl implements BrandService{
 		o.setMember(m);
 		o.setName(name);
 		o.setUseYn("Y");
-		o.setCreateDt(new Date());
+		o.setCreateDt(new DateTime());
 		return brandRepository.save(o);
 	}
  

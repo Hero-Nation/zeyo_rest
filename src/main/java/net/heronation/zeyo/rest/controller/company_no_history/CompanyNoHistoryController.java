@@ -10,6 +10,7 @@ import net.heronation.zeyo.rest.repository.member.QMember;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -60,8 +61,8 @@ public class CompanyNoHistoryController extends BaseController {
 			@RequestParam(value = "cn1", required = false) String cn1,
 			@RequestParam(value = "cn2", required = false) String cn2,
 			@RequestParam(value = "cn3", required = false) String cn3,
-			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date start,
-			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end,
+			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
+			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime end,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();

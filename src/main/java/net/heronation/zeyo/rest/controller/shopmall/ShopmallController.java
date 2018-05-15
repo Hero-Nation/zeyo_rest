@@ -9,6 +9,7 @@ import net.heronation.zeyo.rest.repository.shopmall.ShopmallResourceAssembler;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -50,8 +51,8 @@ public class ShopmallController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  Date end, Pageable pageable) {
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -80,8 +81,8 @@ public class ShopmallController extends BaseController {
 	public ResponseEntity<ResultVO> client_list(
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "sizeCp", required = false) String sizeCp,
-			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date start,
-			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date end, Pageable pageable) {
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime start,
+			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) DateTime end, Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 

@@ -7,7 +7,7 @@ import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
 
-
+import org.joda.time.DateTime;
 @Value
 public class MeasureItemDto{
  
@@ -26,7 +26,7 @@ private String metaDesc;
 
 
  
-private Date createDt;
+private DateTime createDt;
 
 
 

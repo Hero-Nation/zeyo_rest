@@ -3,10 +3,13 @@ package net.heronation.zeyo.rest.repository.fit_info;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
+
 import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
-import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption; 
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 
 @Value
 public class FitInfoDto {
@@ -18,7 +21,7 @@ public class FitInfoDto {
 
 	private String metaDesc;
 
-	private Date createDt;
+	private DateTime createDt;
 
 	private String useYn;
 

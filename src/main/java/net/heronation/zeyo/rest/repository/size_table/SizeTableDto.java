@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.item.Item;
-
+import org.joda.time.DateTime;
 
 @Value
 public class SizeTableDto{
@@ -62,7 +62,7 @@ private String visibleFitInfoYn;
 
 
  
-private Date createDt;
+private DateTime createDt;
 
 
 

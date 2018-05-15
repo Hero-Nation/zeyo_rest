@@ -20,7 +20,7 @@ import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
-
+import org.joda.time.DateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -56,8 +56,8 @@ public class SubCategory {
 
 	private String bleachYn;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createDt;
+	
+	private DateTime createDt;
 
 	private String useYn;
 
