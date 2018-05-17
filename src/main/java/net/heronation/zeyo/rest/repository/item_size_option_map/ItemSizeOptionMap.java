@@ -24,7 +24,7 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 @Table(name = "ITEM_SIZE_OPTION_MAP")
 @TableGenerator(name = "ITEM_SIZE_OPTION_MAP_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_SIZE_OPTION_MAP_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class ItemSizeOptionMap {
 
 	@Id

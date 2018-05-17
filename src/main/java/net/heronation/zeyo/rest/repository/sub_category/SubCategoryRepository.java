@@ -18,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
@@ -46,9 +48,10 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 	@RestResource(path = "", rel = "",exported = true)
 	Page<SubCategory> findAll(Pageable arg0);
 	
+ 
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
-	@Query("select distinct m from SubCategory m where m.useYn = 'Y'")
-	List<Shopmall> distinct_name();
+	@Query("select distinct m  from SubCategory m where  m.category = ?1 and m.useYn = 'Y'")
+	List<SubCategory> distinct_name(@Param(value = "category") Category category);
 
 }

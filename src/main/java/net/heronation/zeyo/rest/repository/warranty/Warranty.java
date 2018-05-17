@@ -36,7 +36,7 @@ public class Warranty {
 	@Column(name = "ID")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER )
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
 	private String scope;

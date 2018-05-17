@@ -24,7 +24,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 @Table(name = "ITEM_SHOPMALL_MAP")
 @TableGenerator(name = "ITEM_SHOPMALL_MAP_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_SHOPMALL_MAP_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class ItemShopmallMap {
 
 	@Id

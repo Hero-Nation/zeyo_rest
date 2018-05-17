@@ -43,12 +43,14 @@ public class Member {
 
 	private String name;
 
+	@JsonIgnore
 	private String password;
 
 	private String phone;
 
 	private String email;
 	
+	@JsonIgnore
 	private String confirm_no;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -60,28 +62,37 @@ public class Member {
 
 	private String managerPhone;
 
+	@JsonIgnore
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
+	@JsonIgnore
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime deleteDt;
 
+	@JsonIgnore
 	private String adminYn;
 
+	@JsonIgnore
 	private String useYn;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Brand> brands = new ArrayList<Brand>();
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<CompanyNoHistory> companyNoHistorys = new ArrayList<CompanyNoHistory>();
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();
 

@@ -25,7 +25,7 @@ import net.heronation.zeyo.rest.repository.material.Material;
 @Table(name = "ITEM_MATERIAL_MAP")
 @TableGenerator(name = "ITEM_MATERIAL_MAP_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_MATERIAL_MAP_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class ItemMaterialMap {
 
 	@Id

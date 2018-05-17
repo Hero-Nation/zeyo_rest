@@ -3,6 +3,11 @@ package net.heronation.zeyo.rest.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.ConversionServiceFactoryBean;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.ConverterRegistry;
+import org.springframework.core.convert.support.GenericConversionService;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
@@ -14,6 +19,9 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
 import net.heronation.zeyo.rest.common.authentication.AppTokenEnhancer;
+import net.heronation.zeyo.rest.controller.company_no_history.CompanyNoHistoryDistinctNameConverter;
+import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
+import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryDistinctNameDto;
 
 @Configuration
 public class ConfigBean {

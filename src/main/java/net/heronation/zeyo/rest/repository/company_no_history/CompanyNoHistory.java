@@ -26,7 +26,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @Table(name = "COMPANY_NO_HISTORY")
 @TableGenerator(name = "COMPANY_NO_HISTORY_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "COMPANY_NO_HISTORY_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class CompanyNoHistory {
 
 	@OneToMany(mappedBy = "companyNoHistory", fetch = FetchType.LAZY)
@@ -36,7 +36,7 @@ public class CompanyNoHistory {
 	@Column(name = "ID")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER )
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 	private String name;

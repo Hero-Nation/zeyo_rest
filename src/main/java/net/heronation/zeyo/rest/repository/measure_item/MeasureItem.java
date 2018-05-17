@@ -25,7 +25,7 @@ import org.joda.time.DateTime;
 @Table(name = "MEASURE_ITEM")
 @TableGenerator(name = "MEASURE_ITEM_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MEASURE_ITEM_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class MeasureItem {
 
 	@OneToMany(mappedBy = "measureItem", fetch = FetchType.LAZY)

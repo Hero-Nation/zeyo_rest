@@ -40,11 +40,11 @@ public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPr
 	}
 
 	@Override
-	@RestResource(path = "", rel = "",exported = true)
+	@RestResource(path = "", rel = "",exported = false)
 	Page<Brand> findAll(Pageable arg0);
 
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
-	@Query("select distinct(m.name) from Brand m where m.useYn = 'Y'")
+	@Query("select distinct m from Brand m where m.useYn = 'Y'")
 	List<Brand> distinct_name();
  	
 	@RestResource(path = "findByName", rel = "findByName",exported = true)

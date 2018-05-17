@@ -24,7 +24,7 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 @Table(name = "ITEM_FIT_INFO_OPTION_MAP")
 @TableGenerator(name = "ITEM_FIT_INFO_OPTION_MAP_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_FIT_INFO_OPTION_MAP_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class ItemFitInfoOptionMap {
 
 	private @Version Long version;

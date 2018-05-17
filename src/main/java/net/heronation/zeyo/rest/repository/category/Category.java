@@ -32,6 +32,7 @@ public class Category {
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "CATEGORY_ID_GENERATOR")
 	@Column(name = "ID")

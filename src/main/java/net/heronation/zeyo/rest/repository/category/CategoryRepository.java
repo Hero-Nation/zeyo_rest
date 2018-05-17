@@ -13,10 +13,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.data.rest.core.config.Projection;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
@@ -42,7 +44,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
 	@RestResource(path = "", rel = "",exported = true)
 	Page<Category> findAll(Pageable arg0);
 
+ 
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
+ 
 	@Query("select distinct m from Category m where m.useYn = 'Y'")
-	List<Shopmall> distinct_name();
+	List<Category> distinct_name();
+	
+	
+	
 }

@@ -24,7 +24,7 @@ import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 @Table(name = "ITEM_CLOTH_COLOR_MAP")
 @TableGenerator(name = "ITEM_CLOTH_COLOR_MAP_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_CLOTH_COLOR_MAP_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class ItemClothColorMap {
 
 	@Id

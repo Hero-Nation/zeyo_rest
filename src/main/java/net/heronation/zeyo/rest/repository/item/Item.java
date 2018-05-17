@@ -41,7 +41,7 @@ import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 @Table(name = "ITEM")
 @TableGenerator(name = "ITEM_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class Item {
 
 	@Id

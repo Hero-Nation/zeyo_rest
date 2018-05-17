@@ -25,7 +25,7 @@ import org.joda.time.DateTime;
 @Table(name = "SIZE_TABLE")
 @TableGenerator(name = "SIZE_TABLE_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "SIZE_TABLE_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class SizeTable {
 
 	private @Version Long version;

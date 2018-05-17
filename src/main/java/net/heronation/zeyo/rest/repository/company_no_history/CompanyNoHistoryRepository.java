@@ -37,6 +37,8 @@ public interface CompanyNoHistoryRepository
 
 	}
 
+	
+	
 	@Override
 	@RestResource(path = "", rel = "", exported = true)
 	Page<CompanyNoHistory> findAll(Pageable arg0);
@@ -46,7 +48,7 @@ public interface CompanyNoHistoryRepository
 	List<CompanyNoHistory> findByMemberId(@Param("memberId") long memberId);
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
-	@Query("select distinct m  from CompanyNoHistory m  ")
+	@Query("select distinct m  from CompanyNoHistory m   ")
 	List<CompanyNoHistory> distinct_name();
 
 }

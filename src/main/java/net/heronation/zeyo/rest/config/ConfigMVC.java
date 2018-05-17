@@ -1,23 +1,19 @@
 package net.heronation.zeyo.rest.config;
 
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.Filter;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -41,11 +37,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.heronation.zeyo.rest.controller.company_no_history.CompanyNoHistoryDistinctNameConverter;
 
 @Configuration
 @EnableWebMvc
@@ -56,24 +52,13 @@ public class ConfigMVC implements WebMvcConfigurer {
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		 
-	//	registry.addConverter(getStringToDateConverter());
+ 
 	}
+ 
 
-//	public Converter<String, Date> getStringToDateConverter() {
-//		return new Converter<String, Date>() {
-//
-//			@Override
-//			public Date convert(String source) {
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//				try {
-//					return sdf.parse(source);
-//				} catch (ParseException e) {
-//					return null;
-//				}
-//			}
-//		};
-//	}
 
+  
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 

@@ -23,7 +23,7 @@ import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 @Table(name = "FIT_INFO_OPTION")
 @TableGenerator(name = "FIT_INFO_OPTION_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "FIT_INFO_OPTION_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class FitInfoOption {
 
 	@Id

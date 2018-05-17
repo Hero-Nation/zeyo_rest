@@ -27,7 +27,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @Table(name = "BBS")
 @TableGenerator(name = "BBS_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "BBS_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"option"})
+
 public class Bbs {
 
 	@Id
