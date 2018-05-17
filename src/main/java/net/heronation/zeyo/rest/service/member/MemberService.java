@@ -31,4 +31,17 @@ public interface MemberService {
     
     Map<String,Long> getUserBizInfo(Predicate where);
     
+    Member update_phone(String phone,Long member_seq );
+    Member update_email(String email,String confirm_no,Long member_seq );
+    Member send_confirm_email(String email, Long member_seq );
+    
+    
+    Member update_password(String password,Long member_seq );
+    
+    
+    CompanyNoHistory update_cp_no(String cp_no,Long member_seq );
+    Member update_mng_name(String mng_name,Long member_seq );
+    Member update_mng_phone(String mng_phone,Long member_seq );
+    
+    
 }

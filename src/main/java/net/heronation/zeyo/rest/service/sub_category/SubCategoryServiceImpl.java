@@ -1,5 +1,10 @@
 package net.heronation.zeyo.rest.service.sub_category;
  
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
@@ -41,44 +47,61 @@ public class SubCategoryServiceImpl implements SubCategoryService{
 	@Autowired
 	EntityManager entityManager;
 	
+//	@Override
+//	public Page<SubCategory> search(Predicate where, Pageable page) {
+// 
+//		JPAQuery<SubCategory> query = new JPAQuery<SubCategory>(entityManager);
+//		 
+//		QSubCategory target = QSubCategory.subCategory;  
+//		
+//		QueryResults<SubCategory> R = query.from(target) 
+//				.leftJoin(target.subCategoryMeasureMaps)
+//				.leftJoin(target.subCategoryFitInfoMaps)
+//				.where(where)
+//				//.orderBy(target.id.desc())
+//				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
+//				.limit(page.getPageSize()).fetchResults();
+//				
+// 
+//		return new PageImpl<SubCategory>(R.getResults(), page, R.getTotal());
+//		
+//	}
+
+
 	@Override
-	public Page<SubCategory> search(Predicate where, Pageable page) {
+	public Page<Map<String,Object>> subsearch(Predicate where, Pageable page) {
  
-		JPAQuery<SubCategory> query = new JPAQuery<SubCategory>(entityManager);
-		 
-		QSubCategory target = QSubCategory.subCategory;  
-		
-		QueryResults<SubCategory> R = query.from(target) 
-				.leftJoin(target.subCategoryMeasureMaps)
-				.leftJoin(target.subCategoryFitInfoMaps)
+		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
+		  
+		QSubCategory subc = QSubCategory.subCategory; 
+
+		QueryResults<Tuple> R = query.select( subc.id,subc.name,subc.itemImage,subc.clothImage,subc.subCategoryFitInfoMaps.size(),subc.subCategoryMeasureMaps.size(),subc.createDt)
+				.from(subc)
+				.innerJoin(subc.subCategoryFitInfoMaps)
+				.innerJoin(subc.subCategoryMeasureMaps)
 				.where(where)
-				//.orderBy(target.id.desc())
 				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
 				.limit(page.getPageSize()).fetchResults();
 				
  
-		return new PageImpl<SubCategory>(R.getResults(), page, R.getTotal());
+		List<Tuple> search_list = R.getResults();
+		List<Map<String,Object>> return_list = new ArrayList<Map<String,Object>>(); 
 		
-	}
-
-
-	@Override
-	public Page<SubCategory> subsearch(Predicate where, Pageable page) {
- 
-		JPAQuery<SubCategory> query = new JPAQuery<SubCategory>(entityManager);
-		 
-		QSubCategory target = QSubCategory.subCategory;  
+		for(Tuple row : search_list) {
+			Map<String,Object> search_R = new HashMap<String,Object>();
+			 
+			search_R.put("subcate_name", row.get(subc.name));
+			search_R.put("subcate_id", row.get(subc.id));
+			search_R.put("itemImage", row.get(subc.itemImage));
+			search_R.put("clothImage", row.get(subc.clothImage));
+			search_R.put("subCategoryFitInfoMaps_count", row.get(subc.subCategoryFitInfoMaps.size()));
+			search_R.put("subCategoryMeasureMaps_count", row.get(subc.subCategoryMeasureMaps.size()));
+			search_R.put("createDt", row.get(subc.createDt)); 
+			
+			return_list.add(search_R);
+		}
 		
-		QueryResults<SubCategory> R = query.from(target) 
-				.leftJoin(target.subCategoryMeasureMaps)
-				.leftJoin(target.subCategoryFitInfoMaps)
-				.where(where)
-				//.orderBy(target.id.desc())
-				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
-				.limit(page.getPageSize()).fetchResults();
-				
- 
-		return new PageImpl<SubCategory>(R.getResults(), page, R.getTotal());
+		return new PageImpl<Map<String,Object>>(return_list, page, R.getTotal());
 		
 	}
 

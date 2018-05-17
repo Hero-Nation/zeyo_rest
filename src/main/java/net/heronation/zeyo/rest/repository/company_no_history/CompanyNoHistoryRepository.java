@@ -43,7 +43,7 @@ public interface CompanyNoHistoryRepository
 	
 	
 	@RestResource( rel = "findByMemberId", path = "findByMemberId")
-	CompanyNoHistory findByMemberId(@Param("memberId") long memberId);
+	List<CompanyNoHistory> findByMemberId(@Param("memberId") long memberId);
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
 	@Query("select distinct m  from CompanyNoHistory m  ")

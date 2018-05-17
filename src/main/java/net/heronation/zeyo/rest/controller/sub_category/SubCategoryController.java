@@ -54,53 +54,54 @@ public class SubCategoryController extends BaseController {
 		this.entityLinks = entityLinks;
 	} 
  
-	@RequestMapping(method = RequestMethod.GET, value = "/list")
-	@ResponseBody
-	public ResponseEntity<ResultVO> list(
-			@RequestParam(value = "name",required=false) String name,
-			@RequestParam(value = "cate",required=false) Category cate,
-			@RequestParam(value = "subcate",required=false) SubCategory subcate,
-			@RequestParam(value = "measure",required=false) MeasureItem measure, 
-			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
-			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable) {
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		if (name != null) {
-			builder.and(QSubCategory.subCategory.category.name.containsIgnoreCase(name));
-		}
-		
-		if (cate != null) {
-			builder.and(QSubCategory.subCategory.category.eq(cate));
-		}
-		
-		if (subcate != null) {
-			builder.and(QSubCategory.subCategory.eq(subcate));
-		}
-		
-//		if (measure != null) {
-//			builder.and(QSubCategory.subCategory.subCategoryMeasureMaps..eq(measure));
+//	@RequestMapping(method = RequestMethod.GET, value = "/list")
+//	@ResponseBody
+//	public ResponseEntity<ResultVO> list(
+//			@RequestParam(value = "name",required=false) String name,
+//			@RequestParam(value = "cate",required=false) Category cate,
+//			@RequestParam(value = "subcate",required=false) SubCategory subcate,
+//			@RequestParam(value = "measure",required=false) MeasureItem measure, 
+//			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+//			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
+//			Pageable pageable) {
+//
+//		BooleanBuilder builder = new BooleanBuilder();
+//
+//		if (name != null) {
+//			builder.and(QSubCategory.subCategory.category.name.containsIgnoreCase(name));
 //		}
-		
-		if (start != null) {
-			builder.and(QSubCategory.subCategory.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(QSubCategory.subCategory.createDt.before(end));
-		}
-
-		builder.and(QSubCategory.subCategory.useYn.eq("Y"));
-		
-		return return_success((Object) sub_categoryService.search(builder.getValue(), pageable));
-	}
+//		
+//		if (cate != null) {
+//			builder.and(QSubCategory.subCategory.category.eq(cate));
+//		}
+//		
+//		if (subcate != null) {
+//			builder.and(QSubCategory.subCategory.eq(subcate));
+//		}
+//		
+////		if (measure != null) {
+////			builder.and(QSubCategory.subCategory.subCategoryMeasureMaps..eq(measure));
+////		}
+//		
+//		if (start != null) {
+//			builder.and(QSubCategory.subCategory.createDt.after(start));
+//		}
+//
+//		if (end != null) {
+//			builder.and(QSubCategory.subCategory.createDt.before(end));
+//		}
+//
+//		builder.and(QSubCategory.subCategory.useYn.eq("Y"));
+//		
+//		return return_success((Object) sub_categoryService.search(builder.getValue(), pageable));
+//	}
 
  
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/sublist")
 	@ResponseBody
 	public ResponseEntity<ResultVO> sublist(
+			@RequestParam(value = "cate",required=false) Long cate,
 			@RequestParam(value = "name",required=false) String name, 
 			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime start,
 			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end,
@@ -108,21 +109,27 @@ public class SubCategoryController extends BaseController {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
+		QSubCategory target = QSubCategory.subCategory;
+		
+		if (cate != null) {
+			builder.and(target.category.id.eq(cate));
+		}
+		
 		if (name != null) {
-			builder.and(QSubCategory.subCategory.name.containsIgnoreCase(name));
+			builder.and(target.name.containsIgnoreCase(name));
 		}
  
 		if (start != null) {
-			builder.and(QSubCategory.subCategory.createDt.after(start));
+			builder.and(target.createDt.after(start));
 		}
 
 		if (end != null) {
-			builder.and(QSubCategory.subCategory.createDt.before(end));
+			builder.and(target.createDt.before(end));
 		}
 
-		builder.and(QSubCategory.subCategory.useYn.eq("Y"));
+		builder.and(target.useYn.eq("Y"));
 		
-		return return_success((Object) sub_categoryService.search(builder.getValue(), pageable));
+		return return_success((Object) sub_categoryService.subsearch(builder.getValue(), pageable));
 	}
  
  

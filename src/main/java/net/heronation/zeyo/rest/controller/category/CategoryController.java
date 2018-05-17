@@ -6,6 +6,7 @@ import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.repository.category.QCategory;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
+import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 
 import java.util.Date;
 
@@ -65,22 +66,33 @@ public class CategoryController extends BaseController {
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
-
+		QSubCategory target = QSubCategory.subCategory; 
+		
+		
 		if (name != null) {
-			builder.and(QCategory.category.name.containsIgnoreCase(name));
+			builder.and(target.category.name.containsIgnoreCase(name));
 		}
 
+		if (cate != null) {
+			builder.and(target.category.id.eq(cate));
+		}
+
+		if (subcate != null) {
+			builder.and(target.id.eq(subcate));
+		}
+
+		
 		if (start != null) {
-			builder.and(QCategory.category.createDt.after(start));
+			builder.and(target.category.createDt.after(start));
 		}
 
 		if (end != null) {
-			builder.and(QCategory.category.createDt.before(end));
+			builder.and(target.category.createDt.before(end));
 		}
 
-		builder.and(QCategory.category.useYn.eq("Y"));
+		builder.and(target.category.useYn.eq("Y"));
 		
-		return return_success((Object) categoryService.search(builder.getValue(), pageable));
+		return return_success(categoryService.search(builder.getValue(), pageable));
 	}
 
  

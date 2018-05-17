@@ -93,7 +93,7 @@ public class MemberController extends BaseController {
 
 	}
 
-	@RequestMapping(path = "/find_id_by_email", method = RequestMethod.POST)
+	@RequestMapping(path = "/find_id_by_email", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> find_id_by_email(@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "email", defaultValue = "") String email) {
 		log.debug("/api/members/find_id_by_email");
@@ -110,7 +110,7 @@ public class MemberController extends BaseController {
 
 	}
 
-	@RequestMapping(path = "/find_id_by_phone", method = RequestMethod.POST)
+	@RequestMapping(path = "/find_id_by_phone", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> find_id_by_phone(@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "phone", defaultValue = "") String phone) {
 		log.debug("/api/members/find_id_by_phone");
@@ -125,13 +125,13 @@ public class MemberController extends BaseController {
 
 	}
 
-	@RequestMapping(path = "/confirm_num", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> confirm_num(
-			@RequestParam(name = "confirm_num", defaultValue = "") String confirm_num) {
-		log.debug("/api/members/confirm_num");
+	@RequestMapping(path = "/confirm_no", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> confirm_no(
+			@RequestParam(name = "confirm_no", defaultValue = "") String confirm_no) {
+		log.debug("/api/members/confirm_no");
 
-		if (confirm_num.equals("")) {
-			return return_fail("confirm_num.empty");
+		if (confirm_no.equals("")) {
+			return return_fail("confirm_no.empty");
 		} else {
 			return return_success();
 		}
@@ -163,49 +163,19 @@ public class MemberController extends BaseController {
 		log.debug("/api/members/my_info");
 
 		// 유저 정보 가지고 오기
+
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
 		BooleanBuilder builder = new BooleanBuilder();
 
 		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
 
-		builder.and(target.member.id.eq(Long.valueOf((Integer) user.get("member_seq"))));
+		builder.and(target.member.id.eq(seq));
 
-		return return_success((Object) memberService.getCompanyInfo(builder.getValue()));
-	}
-
-	@RequestMapping(path = "user_info", method = RequestMethod.GET)
-	// @PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<ResultVO> user_info(@AuthenticationPrincipal OAuth2Authentication auth,
-			@RequestParam(value = "member_seq", required = true) Long member_seq) {
-		log.debug("/api/members/user_info");
- 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QMember target = QMember.member;
-
-		builder.and(target.member.id.eq(member_seq));
-		builder.and(target.member.useYn.eq("N"));
-
-		return return_success((Object) memberService.getUserInfo(builder.getValue()));
-	}
-	
-	
-	@RequestMapping(path = "user_biz_info", method = RequestMethod.GET)
-	// @PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<ResultVO> user_biz_info(@AuthenticationPrincipal OAuth2Authentication auth,
-			@RequestParam(value = "member_seq", required = true) Long member_seq) {
-		log.debug("/api/members/user_biz_info");
- 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QMember target = QMember.member;
-
-		builder.and(target.member.id.eq(member_seq));
-		builder.and(target.member.useYn.eq("N"));
-
-		return return_success(  memberService.getUserBizInfo(builder.getValue()));
+		return return_success(memberService.getCompanyInfo(builder.getValue()));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
@@ -267,7 +237,154 @@ public class MemberController extends BaseController {
 
 		builder.and(target.useYn.eq("Y"));
 
-		return return_success((Object) memberService.search(builder.getValue(), pageable));
+		return return_success(memberService.search(builder.getValue(), pageable));
+	}
+
+	@RequestMapping(path = "/update_phone", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> update_phone(@RequestParam(name = "phone", defaultValue = "") String phone,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/update_phone");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (phone.equals("")) {
+			return return_fail("phone.empty");
+		} else {
+			memberService.update_phone(phone, seq);
+			return return_success();
+		}
+
+	}
+
+	@RequestMapping(path = "/update_email", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> update_email(@RequestParam(name = "email", defaultValue = "") String phone,
+			@RequestParam(name = "confirm_no", defaultValue = "") String confirm_no,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/update_email");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (phone.equals("")) {
+			return return_fail("email.empty");
+		} else if (confirm_no.equals("")) {
+			return return_fail("confirm_no.empty");
+		} else {
+			
+			Member R = memberService.update_email(phone, confirm_no, seq);
+			
+			if(R == null) {
+				return return_fail("confirm_no.wrong");
+			}else {
+				return return_success();	
+			}
+					
+			
+		}
+
+	}
+	
+	
+	@RequestMapping(path = "/send_confirm_email", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> send_confirm_email(@RequestParam(name = "email", defaultValue = "") String phone, 
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/send_confirm_email");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (phone.equals("")) {
+			return return_fail("email.empty");
+		}  else {
+			
+			Member R = memberService.send_confirm_email(phone,  seq);
+			
+			return return_success( );	
+					
+			
+		}
+
+	}
+	
+	
+	
+
+	@RequestMapping(path = "/update_password", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> update_password(@RequestParam(name = "password", defaultValue = "") String password,
+
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/update_password");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (password.equals("")) {
+			return return_fail("password.empty");
+		} else {
+			memberService.update_password(password, seq);
+			return return_success();
+		}
+
+	}
+
+	@RequestMapping(path = "/update_cp_no", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> update_cp_no(@RequestParam(name = "cp_no", defaultValue = "") String cp_no,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/update_cp_no");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (cp_no.equals("")) {
+			return return_fail("cp_no.empty");
+		} else {
+			memberService.update_cp_no(cp_no, seq);
+			return return_success();
+		}
+
+	}
+
+	@RequestMapping(path = "/update_mng_name", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> update_mng_name(@RequestParam(name = "mng_name", defaultValue = "") String mng_name,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/update_mng_name");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (mng_name.equals("")) {
+			return return_fail("mng_name.empty");
+		} else {
+			memberService.update_mng_name(mng_name, seq);
+			return return_success();
+		}
+
+	}
+
+	@RequestMapping(path = "/update_mng_phone", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> update_mng_phone(
+			@RequestParam(name = "mng_phone", defaultValue = "") String mng_phone,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/update_mng_phone");
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		if (mng_phone.equals("")) {
+			return return_fail("mng_phone.empty");
+		} else {
+			memberService.update_mng_phone(mng_phone, seq);
+			return return_success();
+		}
+
 	}
 
 }

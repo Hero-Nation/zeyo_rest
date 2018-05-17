@@ -17,9 +17,9 @@ public interface BrandService {
 
  	Brand insert(String name,Long member_seq); 
  	Map<String,Object> update(Long brand_id,Long member_seq,String name); 
- 	Brand delete(String name,Long member_seq); 
- 	
- 	
+ 	Map<String,Object> delete(Long brand_id,Long member_seq); 
+ 	Map<String,Object> toggle_link(Long brand_id,Long member_seq);
+ 	Page<Map<String, Object>> detail(Long brand_id,Long member_seq, Pageable page);
  	
 	Page<Tuple> client_search(Predicate where, Pageable page);
 

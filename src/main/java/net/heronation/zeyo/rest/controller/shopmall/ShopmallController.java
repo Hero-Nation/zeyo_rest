@@ -91,7 +91,48 @@ public class ShopmallController extends BaseController {
 
 		return return_success((Object) shopmallService.insert(name, seq));
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/delete")
+	@ResponseBody
+	public ResponseEntity<ResultVO> delete(@RequestParam(value="id" ,required=false) Long id,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
 
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = (Long) user.get("member_seq");
+
+		return return_success((Object) shopmallService.delete(id, seq));
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/update_name")
+	@ResponseBody
+	public ResponseEntity<ResultVO> update_name(  
+			@RequestParam(value="id" ,required=false) Long id,
+			@RequestParam(value="name",required=false) String name,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
+		
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+		
+		return return_success((Object) shopmallService.update(id, seq, name)); 
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/toggle_link")
+	@ResponseBody
+	public ResponseEntity<ResultVO> toggle_link(@RequestParam(value="id" ,required=false) Long id,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = (Long) user.get("member_seq");
+
+		return return_success((Object) shopmallService.toggle_link(id, seq));
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> client_list(@RequestParam(value = "name", required = false) String name,
@@ -123,5 +164,18 @@ public class ShopmallController extends BaseController {
 		builder.and(target.useYn.eq("Y"));
 
 		return return_success((Object) shopmallService.search(builder.getValue(), pageable));
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/detail")
+	@ResponseBody
+	public ResponseEntity<ResultVO> detail(	@RequestParam(value="id" ,required=false) Long id, @AuthenticationPrincipal OAuth2Authentication auth,Pageable pageable) {
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+		
+		return return_success( shopmallService.detail(id,seq,pageable));
 	}
 }

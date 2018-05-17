@@ -46,7 +46,6 @@ public class Shopmall {
 	private DateTime createDt;
 
 	private String useYn;
-	
-	private String sizeCpYn;
+	 
 
 }

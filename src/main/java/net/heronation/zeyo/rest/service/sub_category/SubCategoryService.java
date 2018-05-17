@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.service.sub_category;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,7 +11,7 @@ import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
 public interface SubCategoryService {
-	Page<SubCategory> search(Predicate where, Pageable page);
-	Page<SubCategory> subsearch(Predicate where, Pageable page);
+//	Page<SubCategory> search(Predicate where, Pageable page);
+	Page<Map<String,Object>> subsearch(Predicate where, Pageable page);
 
 }

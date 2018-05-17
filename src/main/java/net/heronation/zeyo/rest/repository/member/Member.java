@@ -48,6 +48,8 @@ public class Member {
 	private String phone;
 
 	private String email;
+	
+	private String confirm_no;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMPANY_NO_HISTORY_ID")

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -130,6 +131,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Member getUserInfo(Predicate where) {
 		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
 
@@ -141,6 +143,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String,Long> getUserBizInfo(Predicate where) {
 		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
 
@@ -177,6 +180,98 @@ public class MemberServiceImpl implements MemberService {
 		
 		return returnValue;
 				
+	}
+
+	@Override
+	@Transactional
+	public Member update_phone(String phone, Long member_seq) {
+		// TODO Auto-generated method stub
+		
+		Member user = memberRepository.findOne(member_seq);
+		user.setPhone(phone);
+		
+		return user;
+	}
+
+	@Override
+	@Transactional
+	public Member update_email(String email,String confirm_no, Long member_seq) {
+		Member user = memberRepository.findOne(member_seq);
+		
+		if(confirm_no.equals(user.getConfirm_no())){
+			return null;
+		}else {
+			user.setEmail(email);
+			return user;
+		}
+		 
+	}
+
+	@Override
+	@Transactional
+	public Member update_password(String password, Long member_seq) {
+		Member user = memberRepository.findOne(member_seq);
+		user.setPassword(password);
+		// 인코딩 필요
+		
+		return user;
+	}
+
+	@Override
+	@Transactional
+	public CompanyNoHistory update_cp_no(String cp_no, Long member_seq) {
+		
+		List<CompanyNoHistory> list =companyNoHistoryRepository.findByMemberId(member_seq);
+		Member user = memberRepository.findOne(member_seq);
+		
+		CompanyNoHistory  last = list.get(list.size()-1);
+		last.setCompanyNo(cp_no);
+		
+		CompanyNoHistory new_record = new CompanyNoHistory();
+		new_record.setBeforeNo(cp_no);
+		new_record.setChangeDt(new DateTime());
+		new_record.setMember(user);
+		new_record.setName(last.getName());
+		companyNoHistoryRepository.save(new_record);
+		
+		return new_record;
+	}
+
+	@Override
+	@Transactional
+	public Member update_mng_name(String mng_name, Long member_seq) {
+		Member user = memberRepository.findOne(member_seq);
+		user.setManager(mng_name);
+		
+		return user;
+	}
+
+	@Override
+	@Transactional
+	public Member update_mng_phone(String mng_phone, Long member_seq) {
+		Member user = memberRepository.findOne(member_seq);
+		user.setManagerPhone(mng_phone);
+		
+		return user;
+	}
+
+	@Override
+	public Member send_confirm_email(String email, Long member_seq) {
+		
+		
+		
+		Member user = memberRepository.findOne(member_seq);
+		user.setConfirm_no("1111");
+		
+		// 랜덤 문자열 생성 6자리
+		
+		// 이메일을 보낸다.
+		
+		// 문자열 저장
+		
+		// 인코딩 필요
+		
+		return user;
 	}
  
 
