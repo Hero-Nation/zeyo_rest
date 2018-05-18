@@ -27,9 +27,6 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 
 public class ItemFitInfoOptionMap {
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_FIT_INFO_OPTION_MAP_ID_GENERATOR")
 	@Column(name = "ID")

@@ -27,7 +27,7 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 @Table(name = "CATEGORY")
 @TableGenerator(name = "CATEGORY_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "CATEGORY_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-
+@ToString(exclude="subCategorys,sizeOptions") 
 public class Category {
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
@@ -50,5 +50,12 @@ public class Category {
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
+
+	@Override
+	public String toString() {
+		return "Category ]";
+	}
+	
+	
 
 }

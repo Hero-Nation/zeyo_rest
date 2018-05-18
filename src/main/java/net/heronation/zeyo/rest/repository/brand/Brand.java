@@ -26,7 +26,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @Table(name = "BRAND")
 @TableGenerator(name = "BRAND_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "BRAND_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-
+@ToString(exclude="member")
 public class Brand {
 
 	@OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
@@ -47,5 +47,11 @@ public class Brand {
 
 
 	private String useYn;
+	
+	
+	@Override
+	public String toString() {
+		return "Brand ]";
+	}
 
 }

@@ -38,5 +38,9 @@ public class FitInfoOption {
 
 	private String useYn;
  
+	@Override
+	public String toString() {
+		return "FitInfoOption ]";
+	}
 
 }

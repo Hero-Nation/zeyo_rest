@@ -40,5 +40,6 @@ public class ItemClothColorMap {
 	@JoinColumn(name = "CLOTH_COLOR_ID")
 	private ClothColor clothColor;
 	private String useYn;
+	private String optionValue;
 
 }

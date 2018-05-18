@@ -46,6 +46,7 @@ public class ItemMaterialMap {
 	private Material material;
 	private String contain;
 
+	private String useLocatoin;
 	private String useYn;
 
 }

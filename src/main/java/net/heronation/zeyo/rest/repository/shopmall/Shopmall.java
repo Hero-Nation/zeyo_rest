@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 @Table(name = "SHOPMALL")
 @TableGenerator(name = "SHOPMALL_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "SHOPMALL_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-
+@ToString(exclude="member")
 public class Shopmall {
 
 	@OneToMany(mappedBy = "shopmall", fetch = FetchType.LAZY)
@@ -47,5 +47,8 @@ public class Shopmall {
 
 	private String useYn;
 	 
-
+	@Override
+	public String toString() {
+		return "Shopmall ]";
+	}
 }

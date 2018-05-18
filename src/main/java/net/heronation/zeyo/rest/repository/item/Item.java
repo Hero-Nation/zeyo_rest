@@ -20,6 +20,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
@@ -33,6 +34,7 @@ import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_drycleaning_map.ItemDrycleaningMap;
 import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMap;
+import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoOptionMap;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 
 @Entity
@@ -122,19 +124,24 @@ public class Item {
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemLaundryMap> itemLaundryMaps = new ArrayList<ItemLaundryMap>();
+	@OneToOne(mappedBy = "item")
+	private ItemLaundryMap itemLaundryMap;
+	@OneToOne(mappedBy = "item")
+	private ItemDrycleaningMap itemDrycleaningMap;
+	@OneToOne(mappedBy = "item")
+	private ItemIroningMap itemIroningMap;
+	@OneToOne(mappedBy = "item")
+	private ItemDrymethodMap itemDrymethodMap;
+	@OneToOne(mappedBy = "item")
+	private ItemBleachMap itemBleachMap;
+	
+	@OneToMany(mappedBy = "item")
+	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemDrycleaningMap> itemDrycleaningMaps = new ArrayList<ItemDrycleaningMap>();
-
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemIroningMap> itemIroningMaps = new ArrayList<ItemIroningMap>();
-
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemDrymethodMap> itemDrymethodMaps = new ArrayList<ItemDrymethodMap>();
-
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemBleachMap> itemBleachMaps = new ArrayList<ItemBleachMap>();
+	@OneToMany(mappedBy = "item")
+	private List<SizeTable> sizeTables = new ArrayList<SizeTable>();
+	
+	
+	
 
 }

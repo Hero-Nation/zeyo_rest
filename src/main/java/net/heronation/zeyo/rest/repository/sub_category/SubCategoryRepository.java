@@ -39,10 +39,7 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 
  
 	}
- 	
- 	
- 	SubCategory findByCategoryId(@Param(value = "category_id") Long category_id);
-
+ 	 
 
 	@Override
 	@RestResource(path = "", rel = "",exported = true)

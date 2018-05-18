@@ -1,20 +1,19 @@
 package net.heronation.zeyo.rest.repository.warranty;
   
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.Point;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.data.rest.core.annotation.RestResource; 
-import com.querydsl.core.types.dsl.StringPath;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "warrantys", path = "warrantys")
@@ -39,5 +38,10 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> , Quer
  	
 	@RestResource( rel = "findByScope", path = "findByScope")
 	Madein findByScope(@Param("scope") String scope);
+	
+	
+	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
+	@Query("select distinct m from Warranty m where m.useYn = 'Y'")
+	List<Warranty> distinct_name();
  	
 }

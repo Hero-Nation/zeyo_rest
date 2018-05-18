@@ -40,7 +40,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPr
 	}
 
 	@Override
-	@RestResource(path = "", rel = "",exported = false)
+	@RestResource(path = "", rel = "",exported = true)
 	Page<Brand> findAll(Pageable arg0);
 
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)

@@ -67,5 +67,11 @@ public class Kindof {
 	private String kvalue;
 	@JsonIgnore
 	private String useYn;
+	
+	
+	@Override
+	public String toString() {
+		return "Kindof ]";
+	}
 
 }

@@ -78,7 +78,7 @@ public class MadeinController extends BaseController {
 
 		builder.and(QMadein.madein.useYn.eq("Y"));
 
-		return return_success((Object) madeinService.search(builder.getValue(), pageable));
+		return return_success((Object) madeinService.use_list(builder.getValue(), pageable));
 	}
 
 	// @RequestMapping(method = RequestMethod.GET, value = "/use_list")

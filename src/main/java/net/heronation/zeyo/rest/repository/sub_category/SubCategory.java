@@ -29,7 +29,7 @@ import org.joda.time.DateTime;
 @Table(name = "SUB_CATEGORY")
 @TableGenerator(name = "SUB_CATEGORY_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "SUB_CATEGORY_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-
+@ToString(exclude="items,category,subCategoryMeasureMaps,subCategoryFitInfoMaps") 
 public class SubCategory {
 
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
@@ -72,4 +72,10 @@ public class SubCategory {
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
 
+	
+	@Override
+	public String toString() {
+		return "SubCategory ]";
+	}
+	
 }

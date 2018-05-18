@@ -48,6 +48,6 @@ public interface ShopmallRepository extends JpaRepository<Shopmall, Long> , Quer
 	
 	
 	@Override
-	@RestResource(path = "", rel = "",exported = false)
+	@RestResource(path = "", rel = "",exported = true)
 	<S extends Shopmall> S save(S arg0);
 }

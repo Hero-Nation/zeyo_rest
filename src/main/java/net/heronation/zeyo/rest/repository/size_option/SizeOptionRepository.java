@@ -19,6 +19,7 @@ import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 @RepositoryRestResource(collectionResourceRel = "size_options", path = "size_options")
 // @PreAuthorize("hasRole('ROLE_CLIENT')")
@@ -38,4 +39,7 @@ public interface SizeOptionRepository extends JpaRepository<SizeOption, Long>, Q
 	List<Brand> findByName(@Param("name") String name);
 	
 
+	@RestResource(path = "select_options", rel = "select_options",exported = true)
+	@Query("select m from SizeOption m where (m.kindof = 6 or m.kindof = 7 or m.kindof = 8) and  m.useYn = 'Y'")
+	List<SizeOption> select_options();
 }

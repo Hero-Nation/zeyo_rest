@@ -19,6 +19,7 @@ import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
 @RepositoryRestResource(collectionResourceRel = "cloth_colors", path = "cloth_colors")
 // @PreAuthorize("hasRole('ROLE_CLIENT')")
@@ -35,5 +36,11 @@ public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, Q
 
 	@RestResource(path = "findByName", rel = "findByName", exported = true)
 	@Query("select m.name from ClothColor m where m.name = ?1 and  m.useYn = 'Y'")
-	List<Brand> findByName(@Param("name") String name);
+	List<ClothColor> findByName(@Param("name") String name);
+	
+	
+	@RestResource(path = "select_options", rel = "select_options",exported = true)
+	@Query("select m from ClothColor m where (m.kindof = 1 or m.kindof = 2  ) and  m.useYn = 'Y'")
+	List<ClothColor> select_options();
+	
 }
