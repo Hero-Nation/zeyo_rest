@@ -32,10 +32,7 @@ import net.heronation.zeyo.rest.repository.bbs.Bbs;
 
 public class Kindof {
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
-	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
-
+ 
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Madein> madeins = new ArrayList<Madein>();

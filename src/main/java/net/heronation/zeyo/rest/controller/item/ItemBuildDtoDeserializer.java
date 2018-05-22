@@ -121,21 +121,21 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 //		Kindof kindof_size_option_char = kindofRepository.findOne(6L);
 //		Kindof kindof_size_option_num = kindofRepository.findOne(7L);
-//		Kindof kindof_size_option_direct = kindofRepository.findOne(8L);
+		Kindof kindof_size_option_direct = kindofRepository.findOne(8L);
 //		Kindof kindof_size_option_num_bottom = kindofRepository.findOne(9L);
 		
 		
 		
 		JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-		
+		log.debug("ItemBuildDtoDeserializer : BRAND");
 		/// BRAND
 		Long brand_id = Long.valueOf(node.get("brand").textValue());
 
 		Brand brand = brandRepository.findOne(brand_id);
 
 		/// SHOPMALL
-
+		log.debug("ItemBuildDtoDeserializer : SHOPMALL");
 		List<Shopmall> shopmalls = new ArrayList<Shopmall>();
 
 		Iterator<JsonNode> shopmalls_iterator = node.get("shopmalls").elements();
@@ -147,11 +147,13 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		}
 
 		// category
+		log.debug("ItemBuildDtoDeserializer : Category");
 		Long category_id = Long.valueOf(node.get("category").textValue());
 
 		Category category = categoryRepository.findOne(category_id);
 
 		// subCategory
+		log.debug("ItemBuildDtoDeserializer : SubCategory");
 		Long subCategory_id = Long.valueOf(node.get("subCategory").textValue());
 
 		SubCategory subCategory = subCategoryRepository.findOne(subCategory_id);
@@ -172,6 +174,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 
 		String madeinBuilder = node.get("madeinBuilder").textValue();
 
+		log.debug("ItemBuildDtoDeserializer : Madein");
 		JsonNode madein_node = node.get("madein");
 		Madein madein = null;
 		
@@ -197,14 +200,14 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				}
 						
 
-		
+			
 		String madeinDate_str = node.get("madeinDate").textValue();
 
 		DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 		DateTime madeinDate = dtf.parseDateTime(madeinDate_str);
 		
-		
+		log.debug("ItemBuildDtoDeserializer : Warranty");
 		JsonNode warranty_node = node.get("warranty");
 		Warranty warranty = null;
 		
@@ -233,7 +236,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		 
 
 		
-		
+		log.debug("ItemBuildDtoDeserializer : ItemMaterialMap");
 		List<ItemMaterialMap> materialsmaps = new ArrayList<ItemMaterialMap>();
 		
 		Iterator<JsonNode> materials_iterator = node.get("materials").elements();
@@ -252,7 +255,6 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			new_material_mapp.setMaterial(db_material);
 			new_material_mapp.setUseLocatoin(useLocation);
 			new_material_mapp.setUseYn("Y");
-			//new_material_mapp.setKindof(kindof);
 			materialsmaps.add(new_material_mapp);
 		}
 		
@@ -265,29 +267,37 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //		'7', 'size_option', '숫자', 'Y'
 //		'8', 'size_option', '직접입력', 'Y'
 //		'9', 'size_option', '숫자 - 하위', 'Y'
-		
+		log.debug("ItemBuildDtoDeserializer : ItemSizeOptionMap");
 	    List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 		
 	    Iterator<JsonNode> sizeOptions_iterator = node.get("sizeOptions").elements();
 		
+	 
 	    
 		while (sizeOptions_iterator.hasNext()) {
 			JsonNode sizeOptions_node = sizeOptions_iterator.next();
 			
-			String kindof = sizeOptions_node.get("kindof").textValue();
+			Long direct_id = Long.valueOf(sizeOptions_node.get("direct_id").asText());
 			Long sizeOptions_id =Long.valueOf(sizeOptions_node.get("id").asText());
 			String inputValue =sizeOptions_node.get("inputValue").asText();
 			
 			
 			ItemSizeOptionMap new_sizeoptoins_mapp = new ItemSizeOptionMap();
 			new_sizeoptoins_mapp.setUseYn("Y");
-			SizeOption db_sizeoption = sizeOptionRepository.findOne(sizeOptions_id); 
-			new_sizeoptoins_mapp.setSizeOption(db_sizeoption);
+			
 			
 			// 직접입력일경우
-			if(kindof.equals("8")) { 
+			if(direct_id == sizeOptions_id) {  
+				
+				//size_option 테이블에서 이미 존재하는 옵션의 id를 가지고 와서 한다.
+				
+				SizeOption db_direct_optoin = sizeOptionRepository.findOne(direct_id); 
+				new_sizeoptoins_mapp.setSizeOption(db_direct_optoin);
 				new_sizeoptoins_mapp.setOptionValue(inputValue); 
 			}else {
+				
+				SizeOption db_sizeoption = sizeOptionRepository.findOne(sizeOptions_id); 
+				new_sizeoptoins_mapp.setSizeOption(db_sizeoption);
 				new_sizeoptoins_mapp.setOptionValue(""); 
 			}
 			
@@ -295,6 +305,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		}
 	    
 	    // 색상 입력 
+		log.debug("ItemBuildDtoDeserializer : ItemClothColorMap");
 		 List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>(); 
 		 
 		 Iterator<JsonNode> clothColor_iterator = node.get("clothColor").elements();
@@ -302,23 +313,33 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			while (clothColor_iterator.hasNext()) {
 				JsonNode clothColor_node = clothColor_iterator.next();
 				
-				String kindof = clothColor_node.get("kindof").textValue();
-				Long clothColor_id =Long.valueOf(clothColor_node.get("id").asText());
+				
+				
+				Long direct_id = Long.valueOf(clothColor_node.get("direct_id").asText());
+				Long sizeOptions_id =Long.valueOf(clothColor_node.get("id").asText());
 				String inputValue =clothColor_node.get("inputValue").asText();
 				
 				
 				ItemClothColorMap new_clothColor_mapp = new ItemClothColorMap();
 				new_clothColor_mapp.setUseYn("Y");
-				ClothColor db_clothColor = clothColorRepository.findOne(clothColor_id); 
-				new_clothColor_mapp.setClothColor(db_clothColor);
+				
 				
 				// 직접입력일경우
-				if(kindof.equals("2")) { 
+				if(direct_id == sizeOptions_id) {  
+					
+					//size_option 테이블에서 이미 존재하는 옵션의 id를 가지고 와서 한다.
+					
+					ClothColor db_direct_optoin = clothColorRepository.findOne(direct_id); 
+					new_clothColor_mapp.setClothColor(db_direct_optoin);
 					new_clothColor_mapp.setOptionValue(inputValue); 
 				}else {
+					
+					ClothColor db_sizeoption = clothColorRepository.findOne(sizeOptions_id); 
+					new_clothColor_mapp.setClothColor(db_sizeoption);
 					new_clothColor_mapp.setOptionValue(""); 
 				}
 				
+		 
 				itemClothColorMaps.add(new_clothColor_mapp);
 			}
 			
@@ -330,7 +351,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //			B : 중성세제
 //			C : 알카리성세제
 //			D: 산성세제"
-			
+			log.debug("ItemBuildDtoDeserializer : ItemLaundryMap");
 			ItemLaundryMap itemLaundryMap = new ItemLaundryMap();
 			
 			JsonNode laundry_node = node.get("laundry");
@@ -357,7 +378,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //			"A : 제한없음
 //			B : 석유계
 //			C : 클로로에틸렌"
-			
+			log.debug("ItemBuildDtoDeserializer : ItemDrycleaningMap");
 			ItemDrycleaningMap itemDrycleaningMap = new ItemDrycleaningMap();
 			
 			JsonNode drycleaning_node = node.get("drycleaning");
@@ -375,7 +396,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					itemDrycleaningMap.setUseYn("Y");
 			
 			// 다림질
-					
+			log.debug("ItemBuildDtoDeserializer : ItemIroningMap");		
 			ItemIroningMap itemIroningMap = new ItemIroningMap();
 			
 			JsonNode itemIroning_node = node.get("ironing"); 
@@ -399,7 +420,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //					 "natureDry":"N", 
 //					 "dryMode":"B", 
 //					 "handDry":"C"
-			
+					log.debug("ItemBuildDtoDeserializer : ItemDrymethodMap");
 					ItemDrymethodMap itemDrymethodMap = new ItemDrymethodMap();
 					
 					JsonNode itemDrymethod_node = node.get("drymethod"); 
@@ -422,6 +443,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 						
 //							private String chlorine
 //							private String oxygen;
+					log.debug("ItemBuildDtoDeserializer : ItemBleachMap");
 					ItemBleachMap itemBleachMap = new ItemBleachMap();
 					
 					JsonNode itemBleach_node = node.get("bleach"); 
@@ -436,6 +458,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 						itemBleachMap.setOxygen(itemBleach_oxygen);
 						itemBleachMap.setUseYn("Y");
 		
+						log.debug("ItemBuildDtoDeserializer : ItemFitInfoOptionMap");
 		// fit 정보 관리 				
 		List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 						

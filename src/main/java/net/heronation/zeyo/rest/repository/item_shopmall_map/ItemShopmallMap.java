@@ -40,5 +40,9 @@ public class ItemShopmallMap {
 	@JoinColumn(name = "SHOPMALL_ID")
 	private Shopmall shopmall;
 	private String useYn;
-
+	@Override
+	public String toString() {
+		return "ItemShopmallMap ]";
+	}
+	
 }

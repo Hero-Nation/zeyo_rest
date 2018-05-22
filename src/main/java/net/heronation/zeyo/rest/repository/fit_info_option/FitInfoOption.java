@@ -42,5 +42,8 @@ public class FitInfoOption {
 	public String toString() {
 		return "FitInfoOption ]";
 	}
+	
+ 
+
 
 }

@@ -56,4 +56,10 @@ public class SizeOption {
 
 	private String useYn;
 
+	
+	@Override
+	public String toString() {
+		return "SizeOption ]";
+	}
+
 }

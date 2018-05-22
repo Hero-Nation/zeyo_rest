@@ -43,5 +43,10 @@ public class MeasureItem {
 	private DateTime createDt;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "MeasureItem ]";
+	}
 
 }

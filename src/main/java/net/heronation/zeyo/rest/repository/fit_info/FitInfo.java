@@ -47,5 +47,10 @@ public class FitInfo {
 
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<FitInfoOption> fitInfoOptions = new ArrayList<FitInfoOption>();
+	
+	@Override
+	public String toString() {
+		return "FitInfo ]";
+	}
 
 }

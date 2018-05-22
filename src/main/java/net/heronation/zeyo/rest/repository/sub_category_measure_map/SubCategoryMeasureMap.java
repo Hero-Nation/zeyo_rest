@@ -40,5 +40,11 @@ public class SubCategoryMeasureMap {
 	@JoinColumn(name = "MEASURE_ITEM_ID")
 	private MeasureItem measureItem;
 	private String useYn;
+	
+	
+	@Override
+	public String toString() {
+		return "SubCategoryMeasureMap ]";
+	}
 
 }

@@ -15,8 +15,7 @@ import net.heronation.zeyo.rest.repository.bbs.Bbs;
 
 @Value
 public class KindofDto{
- 
-        private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
+
  private List<Madein> madeins = new ArrayList<Madein>();
  private List<Warranty> warrantys = new ArrayList<Warranty>();
  private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();

@@ -45,5 +45,10 @@ public class Material {
 	private DateTime createDt;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "Material ]";
+	}
 
 }

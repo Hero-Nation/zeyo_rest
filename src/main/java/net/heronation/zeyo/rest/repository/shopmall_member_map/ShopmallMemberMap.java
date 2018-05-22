@@ -44,5 +44,10 @@ public class ShopmallMemberMap {
 	private String linkYn;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ShopmallMemberMap ]";
+	}
 
 }

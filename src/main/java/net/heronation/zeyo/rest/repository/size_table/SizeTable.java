@@ -63,5 +63,11 @@ public class SizeTable {
 	private DateTime createDt;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "SizeTable ]";
+	}
+
 
 }

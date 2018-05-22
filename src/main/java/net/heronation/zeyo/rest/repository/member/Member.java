@@ -31,7 +31,7 @@ import org.joda.time.DateTime;
 @Table(name = "MEMBER")
 @TableGenerator(name = "MEMBER_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MEMBER_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = { "option" })
+
 public class Member {
 
 	@Id
@@ -95,5 +95,11 @@ public class Member {
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();
+	
+	
+	@Override
+	public String toString() {
+		return "Member ]";
+	}
 
 }

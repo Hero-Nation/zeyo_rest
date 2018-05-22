@@ -287,6 +287,7 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	@Transactional
 	public Item build(ItemBuildDto ibd,Long member_id) {
+		log.debug("build");
 		
 		Item new_item = new Item();
 		Member user = memberRepository.findOne(member_id);

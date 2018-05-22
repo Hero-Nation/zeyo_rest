@@ -26,7 +26,7 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @Table(name = "CLOTH_COLOR")
 @TableGenerator(name = "CLOTH_COLOR_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "CLOTH_COLOR_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = { "option" })
+
 public class ClothColor {
 
 	@OneToMany(mappedBy = "clothColor", fetch = FetchType.LAZY)
@@ -45,5 +45,10 @@ public class ClothColor {
 	private DateTime createDt;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ClothColor ]";
+	}
 
 }

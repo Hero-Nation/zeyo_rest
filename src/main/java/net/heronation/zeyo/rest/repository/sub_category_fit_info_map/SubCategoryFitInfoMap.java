@@ -40,5 +40,10 @@ public class SubCategoryFitInfoMap {
 	@JoinColumn(name = "FIT_INFO_ID")
 	private FitInfo fitInfo;
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "SubCategoryFitInfoMap ]";
+	}
 
 }

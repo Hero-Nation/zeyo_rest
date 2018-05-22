@@ -45,4 +45,9 @@ public class BrandMemberMap {
 
 	private String useYn;
 
+	@Override
+	public String toString() {
+		return "BrandMemberMap ]";
+	}
+
 }

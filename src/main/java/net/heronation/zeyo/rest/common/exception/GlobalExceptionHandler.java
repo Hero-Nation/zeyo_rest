@@ -25,13 +25,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //    }
     
     @ExceptionHandler({ Exception.class })
-    public ResponseEntity<ResultVO> handleNullPointerException(Exception ex, WebRequest request) {
-        
+    public ResponseEntity<ResultVO>   handleNormalException(Exception ex, WebRequest request) {
+        ex.printStackTrace();
     	ResultVO R = new ResultVO();
 		R.setMsg(CommonConstants.FAIL);
 		R.setR(ex.toString());
 		return new ResponseEntity<ResultVO>(R, HttpStatus.INTERNAL_SERVER_ERROR);
         
     }
+	
+	@Override
+	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
+			HttpStatus status, WebRequest request) {
+		ex.printStackTrace();
+		ResultVO R = new ResultVO();
+		R.setMsg(CommonConstants.FAIL);
+		R.setR(ex.toString());
+		
+		return new ResponseEntity<Object>(R, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
     
 }

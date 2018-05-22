@@ -22,7 +22,6 @@ alter table item_fit_info_option_map drop foreign key FKrlpiqvb05hvc708knmmxyw0w
 alter table item_ironing_map drop foreign key FKpwtd1s97vwgubuji09oxddv98
 alter table item_laundry_map drop foreign key FKg4wmy9noxkxyyncw2i37flisr
 alter table item_material_map drop foreign key FKqn2dhw7g6upbdgpo7d1apewfr
-alter table item_material_map drop foreign key FKj731wxhseviv40ect7ir6jg17
 alter table item_material_map drop foreign key FKkahmyyniph988jgmbgru7luiv
 alter table item_shopmall_map drop foreign key FKbrwddijlb6k9ijq3dbxmtkvek
 alter table item_shopmall_map drop foreign key FKp96tmk8n6j24kaf110uv6qhf9

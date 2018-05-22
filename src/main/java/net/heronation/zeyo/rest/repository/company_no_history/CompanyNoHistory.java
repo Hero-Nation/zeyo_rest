@@ -47,5 +47,10 @@ public class CompanyNoHistory {
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime changeDt;
+	
+	@Override
+	public String toString() {
+		return "CompanyNoHistory ]";
+	}
 
 }

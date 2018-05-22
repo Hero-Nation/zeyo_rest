@@ -36,10 +36,7 @@ public class ItemMaterialMap {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "KINDOF_ID")
-	private Kindof kindof;
+ 
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MATERIAL_ID")
@@ -49,4 +46,9 @@ public class ItemMaterialMap {
 	private String useLocatoin;
 	private String useYn;
 
+	@Override
+	public String toString() {
+		return "ItemMaterialMap ]";
+	}
+	
 }

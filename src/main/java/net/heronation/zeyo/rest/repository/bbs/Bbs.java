@@ -57,5 +57,11 @@ public class Bbs {
 	private String status;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "Bbs ]";
+	}
+
 
 }

@@ -29,8 +29,7 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @RequiredArgsConstructor
 @Table(name = "MADEIN")
 @TableGenerator(name = "MADEIN_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MADEIN_ID", allocationSize = 1)
-@EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = { "option" })
+@EntityListeners(AuditingEntityListener.class) 
 public class Madein {
 
 	@OneToMany(mappedBy = "madein", fetch = FetchType.LAZY)
@@ -50,5 +49,10 @@ public class Madein {
 	private DateTime createDt;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "Madein ]";
+	}
 
 }
