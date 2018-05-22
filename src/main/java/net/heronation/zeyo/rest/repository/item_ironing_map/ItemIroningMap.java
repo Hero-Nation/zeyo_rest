@@ -43,5 +43,10 @@ public class ItemIroningMap {
 	private String endTemp;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ItemIroningMap ]";
+	}
 
 }

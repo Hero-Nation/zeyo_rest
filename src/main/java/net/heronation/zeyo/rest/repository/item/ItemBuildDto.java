@@ -63,11 +63,12 @@ public class ItemBuildDto {
 
 	private String code;
 
-	private int price;
+	private int price; 
 	
 	private String madeinBuilder;
 	
 	private Madein madein;
+	
 	
 	private DateTime madeinDate;
  
@@ -77,38 +78,18 @@ public class ItemBuildDto {
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
     private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
     
-     
+    private String laundryYn; 
 	private ItemLaundryMap itemLaundryMap; 
+	private String drycleaningYn;
  	private ItemDrycleaningMap itemDrycleaningMap; 
+ 	private String ironingYn;
 	private ItemIroningMap itemIroningMap; 
+	private String drymethodYn;
 	private ItemDrymethodMap itemDrymethodMap; 
- 	private ItemBleachMap itemBleachMap;
-//	
-// 
+	private String bleachYn;
+ 	private ItemBleachMap itemBleachMap; 
+ 	
     private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
-// 
-//	private SizeTable sizeTable;
-//    
  
-//
-//	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-//
-//
-//
-//
-//	private String laundryYn;
-//
-//	private String drycleaningYn;
-//
-//	private String ironingYn;
-//
-//	private String drymethodYn;
-//
-//	private String bleachYn;
-//
-//	private String sizeLinkYn;
-//	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-//	private DateTime createDt;
-//
-//	private String useYn;
+    private String sizeTableYn;
 }

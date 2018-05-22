@@ -20,17 +20,8 @@ public class ItemBuildValidator implements Validator {
 		log.debug(obj.toString());
 		
 		
-//		ValidationUtils.rejectIfEmpty(e, "member_id", "member_id.empty");
-//		ValidationUtils.rejectIfEmpty(e, "name", "name.empty");
-//		ValidationUtils.rejectIfEmpty(e, "email", "email.empty");
-//		ValidationUtils.rejectIfEmpty(e, "phone", "phone.empty");
-//		ValidationUtils.rejectIfEmpty(e, "password", "password.empty");
-//		ValidationUtils.rejectIfEmpty(e, "manager", "manager.empty");
-//		ValidationUtils.rejectIfEmpty(e, "manager_email", "manager_email.empty");
-//		ValidationUtils.rejectIfEmpty(e, "manager_phone", "manager_phone.empty");
-//		ValidationUtils.rejectIfEmpty(e, "company_name", "company_name.empty");
-//		ValidationUtils.rejectIfEmpty(e, "company_no", "company_no.empty");
-// 
+//		ValidationUtils.rejectIfEmpty(e, "member_id", "member_id.empty"); 
+ 
 		
 		ItemBuildDto p = (ItemBuildDto) obj;
  

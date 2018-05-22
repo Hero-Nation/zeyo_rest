@@ -40,5 +40,11 @@ public class ItemFitInfoOptionMap {
 	@JoinColumn(name = "FIT_INFO_OPTION_ID")
 	private FitInfoOption fitInfoOption;
 	private String useYn;
+	
+	
+	@Override
+	public String toString() {
+		return "ItemFitInfoOptionMap ]";
+	}
 
 }

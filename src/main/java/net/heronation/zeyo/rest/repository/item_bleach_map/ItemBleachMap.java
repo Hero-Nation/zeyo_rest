@@ -39,5 +39,10 @@ public class ItemBleachMap {
 	private String oxygen;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ItemBleachMap ]";
+	}
 
 }

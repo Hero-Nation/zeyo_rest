@@ -41,5 +41,8 @@ public class ItemDrycleaningMap {
 	private String detergent;
 
 	private String useYn;
-
+	@Override
+	public String toString() {
+		return "ItemDrycleaningMap ]";
+	}
 }

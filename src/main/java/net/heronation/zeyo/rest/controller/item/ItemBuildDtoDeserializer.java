@@ -26,6 +26,7 @@ import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
+import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
@@ -115,13 +116,13 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 
 		// 공통
-		Kindof kindof_admin_input = kindofRepository.findOne(1L);
+//		Kindof kindof_admin_input = kindofRepository.findOne(1L);
 		Kindof kindof_direct_input = kindofRepository.findOne(2L);
 		
-		Kindof kindof_size_option_char = kindofRepository.findOne(6L);
-		Kindof kindof_size_option_num = kindofRepository.findOne(7L);
-		Kindof kindof_size_option_direct = kindofRepository.findOne(8L);
-		Kindof kindof_size_option_num_bottom = kindofRepository.findOne(9L);
+//		Kindof kindof_size_option_char = kindofRepository.findOne(6L);
+//		Kindof kindof_size_option_num = kindofRepository.findOne(7L);
+//		Kindof kindof_size_option_direct = kindofRepository.findOne(8L);
+//		Kindof kindof_size_option_num_bottom = kindofRepository.findOne(9L);
 		
 		
 		
@@ -250,8 +251,8 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			new_material_mapp.setContain(contain);
 			new_material_mapp.setMaterial(db_material);
 			new_material_mapp.setUseLocatoin(useLocation);
-			
-			
+			new_material_mapp.setUseYn("Y");
+			//new_material_mapp.setKindof(kindof);
 			materialsmaps.add(new_material_mapp);
 		}
 		
@@ -334,6 +335,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			
 			JsonNode laundry_node = node.get("laundry");
 			 
+					String laundryYn =  laundry_node.get("useYn").textValue();
 			
 					String laundry_detergent = laundry_node.get("detergent").textValue();
 					String laundry_hand = laundry_node.get("hand").textValue();
@@ -359,7 +361,9 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			ItemDrycleaningMap itemDrycleaningMap = new ItemDrycleaningMap();
 			
 			JsonNode drycleaning_node = node.get("drycleaning");
-			  
+			
+					String drycleaningYn =  drycleaning_node.get("useYn").textValue();
+			
 			
 					String drycleaning_drycan = drycleaning_node.get("drycan").textValue();
 					String drycleaning_storecan = drycleaning_node.get("storecan").textValue();
@@ -375,6 +379,8 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			ItemIroningMap itemIroningMap = new ItemIroningMap();
 			
 			JsonNode itemIroning_node = node.get("ironing"); 
+			
+					String ironingYn =  itemIroning_node.get("useYn").textValue();
 			
 					String itemIroning_ironcan = itemIroning_node.get("ironcan").textValue();
 					String itemIroning_addprotection = itemIroning_node.get("addprotection").textValue();
@@ -398,6 +404,9 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					
 					JsonNode itemDrymethod_node = node.get("drymethod"); 
 					
+							String drymethodYn =  itemDrymethod_node.get("useYn").textValue();
+					
+					
 							String itemDrymethod_machineDry = itemDrymethod_node.get("machineDry").textValue();
 							String itemDrymethod_natureDry = itemDrymethod_node.get("natureDry").textValue();
 							String itemDrymethod_dryMode = itemDrymethod_node.get("dryMode").textValue();
@@ -417,6 +426,9 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					
 					JsonNode itemBleach_node = node.get("bleach"); 
 							
+						String bleachYn =  itemBleach_node.get("useYn").textValue();
+					
+					
 						String itemBleach_chlorine = itemBleach_node.get("chlorine").textValue();
 						String itemBleach_oxygen = itemBleach_node.get("oxygen").textValue();
 						
@@ -448,9 +460,12 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		}
 		
 		
+		String sizeTableYn = node.get("sizeTableYn").textValue();
+		
 		return new ItemBuildDto(brand, shopmalls, category, subCategory, imageMode, image, sizeMeasureMode,
-				sizeMeasureImage, name, code, price, madeinBuilder, madein, madeinDate,warranty,materialsmaps,itemSizeOptionMaps,itemClothColorMaps,itemLaundryMap,itemDrycleaningMap,itemIroningMap,itemDrymethodMap,itemBleachMap,itemFitInfoOptionMaps);
+				sizeMeasureImage, name, code, price, madeinBuilder, madein, madeinDate,warranty,materialsmaps,itemSizeOptionMaps,itemClothColorMaps,laundryYn,itemLaundryMap,drycleaningYn,itemDrycleaningMap,ironingYn,itemIroningMap,drymethodYn,itemDrymethodMap,bleachYn,itemBleachMap,itemFitInfoOptionMaps,sizeTableYn);
 
 	}
-
+	
+ 
 }

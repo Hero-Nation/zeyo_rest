@@ -41,5 +41,12 @@ public class ItemClothColorMap {
 	private ClothColor clothColor;
 	private String useYn;
 	private String optionValue;
+	
+	
+	@Override
+	public String toString() {
+		return "ItemClothColorMap ]";
+	}
+
 
 }

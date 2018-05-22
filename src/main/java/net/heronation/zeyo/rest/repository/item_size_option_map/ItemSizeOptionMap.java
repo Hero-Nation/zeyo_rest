@@ -42,5 +42,10 @@ public class ItemSizeOptionMap {
 	private String optionValue;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ItemSizeOptionMap ]";
+	}
 
 }

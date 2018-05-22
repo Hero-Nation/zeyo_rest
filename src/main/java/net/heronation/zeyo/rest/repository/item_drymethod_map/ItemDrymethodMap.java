@@ -43,5 +43,10 @@ public class ItemDrymethodMap {
 	private String handDry;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ItemDrymethodMap ]";
+	}
 
 }

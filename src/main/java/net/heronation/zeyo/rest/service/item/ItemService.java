@@ -22,6 +22,6 @@ public interface ItemService {
 	String toggle_size_table(Long item_id);
 	
 	
-	Item build(ItemBuildDto itemBuildDto);
+	Item build(ItemBuildDto itemBuildDto,Long member_id);
 	
 }

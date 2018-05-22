@@ -296,11 +296,14 @@ public class ItemController extends BaseController {
 			
 			log.debug(itemBuildDto.toString());
 
-//			Item new_item = itemService.build(itemBuildDto);
-//
-//			return return_success(new_item);
+			Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+					.getDecodedDetails();
+
+			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 			
-			return return_success("a");
+			Item new_item = itemService.build(itemBuildDto,seq);
+
+			return return_success(new_item); 
 		}
 
 	}

@@ -47,5 +47,11 @@ public class ItemLaundryMap {
 	private String detergent;
 
 	private String useYn;
+	
+	@Override
+	public String toString() {
+		return "ItemLaundryMap ]";
+	}
+
 
 }

@@ -142,6 +142,9 @@ public class Item {
 	private List<SizeTable> sizeTables = new ArrayList<SizeTable>();
 	
 	
-	
+	@Override
+	public String toString() {
+		return "Item ]";
+	}
 
 }
