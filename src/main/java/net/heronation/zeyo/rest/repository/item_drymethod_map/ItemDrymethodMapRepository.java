@@ -21,13 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemDrymethodMapRepository extends JpaRepository<ItemDrymethodMap, Long> , QueryDslPredicateExecutor<ItemDrymethodMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QItemDrymethodMap item_drymethod_map) {
 
  

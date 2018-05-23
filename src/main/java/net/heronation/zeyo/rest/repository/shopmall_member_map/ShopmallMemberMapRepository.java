@@ -15,12 +15,7 @@ import com.querydsl.core.types.dsl.StringPath;
  
 @RepositoryRestResource(collectionResourceRel = "shopmall_member_maps", path = "shopmall_member_maps")
 public interface ShopmallMemberMapRepository extends JpaRepository<ShopmallMemberMap, Long> , QueryDslPredicateExecutor<ShopmallMemberMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QShopmallMemberMap shopmall_member_map) {
 

@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.service.cloth_color;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,5 +11,5 @@ import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
 public interface ClothColorService {
-	Page<ClothColor> search(Predicate where,Pageable page); 
+	Page<Map<String,Object>>  search(Predicate where,Pageable page); 
 }

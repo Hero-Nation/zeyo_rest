@@ -10,5 +10,6 @@ import net.heronation.zeyo.rest.repository.madein.Madein;
 
 public interface CompanyNoHistoryService {
 	Page<CompanyNoHistory> search(Predicate where, Pageable page);
+	Page<CompanyNoHistory> mylist(Predicate where, Pageable page);
 
 }

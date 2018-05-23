@@ -22,14 +22,24 @@ public interface MemberService {
     
     String find_id_by_phone();
     
-    Page<Member> search(Predicate where,Pageable page);
+    Page<Map<String,Object>>  search(Predicate where,Pageable page);
      
     
     CompanyNoHistory getCompanyInfo(Predicate where);
+     
     
-    Member getUserInfo(Predicate where);
+    Map<String, Object> getUserInfo(Predicate where);
     
     Map<String,Long> getUserBizInfo(Predicate where);
+    
+    Page<Map<String,Object>>  my_brand(Predicate where,Pageable page);
+    
+    Page<Map<String,Object>>  my_shopmall(Predicate where,Pageable page);
+    
+    Page<Map<String,Object>>  my_item(Predicate where,Pageable page);
+   
+    Page<Map<String,Object>>  cn_history(Predicate where,Pageable page);
+    
     
     Member update_phone(String phone,Long member_seq );
     Member update_email(String email,String confirm_no,Long member_seq );

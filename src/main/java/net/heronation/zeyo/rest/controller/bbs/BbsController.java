@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ import net.heronation.zeyo.rest.service.bbs.BbsService;
 @RequestMapping("/bbss")
 public class BbsController extends BaseController {
 
+	
 	@Autowired
 	private BbsService bbsService;
 
@@ -59,11 +61,17 @@ public class BbsController extends BaseController {
 	public BbsController(RepositoryEntityLinks entityLinks) {
 		this.entityLinks = entityLinks;
 	}
+
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
 		binder.addValidators(new BbsClientValidator());
 	}
-	
+
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ResponseEntity<ResultVO> handleResourceNotFoundException() {
+		 return return_fail();
+	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
@@ -112,8 +120,8 @@ public class BbsController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/query")
 	@ResponseBody
-	public ResponseEntity<ResultVO> query( 
-			@RequestBody @Valid BbsClientInsertDto new_post,BindingResult result, @AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultVO> query(@RequestBody @Valid BbsClientInsertDto new_post, BindingResult result,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		if (result.hasErrors()) {
 			return return_fail(result.getFieldError());
@@ -122,9 +130,8 @@ public class BbsController extends BaseController {
 					.getDecodedDetails();
 			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-			return return_success((Object) bbsService.client_insert(new_post, seq));			
+			return return_success((Object) bbsService.client_insert(new_post, seq));
 		}
-		
 
 	}
 }

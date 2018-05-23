@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import net.heronation.zeyo.rest.repository.company_no_history.*;
+import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.member.MemberRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,19 +26,22 @@ public class CompanyNoHistoryRepositoryTest {
 	@Autowired
 	CompanyNoHistoryRepository repository;
 
-	@Test
-	@Ignore
+	@Autowired
+	MemberRepository memberRepository;
+
+	
+	@Test 
 	public void initializesRepositoryWithSampleData() {
+		
+		Member user = memberRepository.getOne(1L);
 
-		for (int a = 0; a < 100; a++) {
+		for (int a = 0; a < 10; a++) {
 			CompanyNoHistory item = new CompanyNoHistory();
-			item.setName("name_" + a);
-
-			item.setCompanyNo("companyNo_" + a);
-
+			item.setName("name_" + a); 
+			item.setCompanyNo("companyNo_" + a); 
 			item.setBeforeNo("beforeNo_" + a);
-
-			//item.setChangeDt(new Date());
+			item.setMember(user);
+			item.setChangeDt(new DateTime());
 			repository.save(item);
 		}
 

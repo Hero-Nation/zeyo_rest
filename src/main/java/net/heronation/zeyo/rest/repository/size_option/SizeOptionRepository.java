@@ -35,8 +35,8 @@ public interface SizeOptionRepository extends JpaRepository<SizeOption, Long>, Q
 	Page<SizeOption> findAll(Pageable arg0);
 
 	@RestResource(path = "findByName", rel = "findByName", exported = true)
-	@Query("select m.name from SizeOption m where m.name = ?1 and  m.useYn = 'Y'")
-	List<Brand> findByName(@Param("name") String name);
+	@Query("select m from SizeOption m where m.name = ?1 and  m.useYn = 'Y'")
+	List<SizeOption> findByName(@Param("name") String name);
 	
 
 	@RestResource(path = "select_options", rel = "select_options",exported = true)

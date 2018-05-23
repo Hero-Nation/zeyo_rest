@@ -21,12 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemClothColorMapRepository extends JpaRepository<ItemClothColorMap, Long> , QueryDslPredicateExecutor<ItemClothColorMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QItemClothColorMap item_cloth_color_map) {
 

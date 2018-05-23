@@ -54,5 +54,22 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService{
 
 	}
 
+	@Override
+	public Page<CompanyNoHistory> mylist(Predicate where, Pageable page) {
+		JPAQuery<CompanyNoHistory> query = new JPAQuery<CompanyNoHistory>(entityManager);
+
+		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
+
+		QueryResults<CompanyNoHistory> R = query.from(target)
+			 
+				.where(where)
+				//.orderBy(target.id.desc())
+				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
+				.limit(page.getPageSize())
+				.fetchResults();
+ 
+		return new PageImpl<CompanyNoHistory>(R.getResults(), page, R.getTotal());
+	}
+
 
 }

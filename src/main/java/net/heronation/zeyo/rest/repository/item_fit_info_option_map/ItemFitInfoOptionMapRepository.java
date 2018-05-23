@@ -15,13 +15,7 @@ import com.querydsl.core.types.dsl.StringPath;
  
 @RepositoryRestResource(collectionResourceRel = "item_fit_info_option_maps", path = "item_fit_info_option_maps")
 public interface ItemFitInfoOptionMapRepository extends JpaRepository<ItemFitInfoOptionMap, Long> , QueryDslPredicateExecutor<ItemFitInfoOptionMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QItemFitInfoOptionMap item_fit_info_option_map) {
 
  

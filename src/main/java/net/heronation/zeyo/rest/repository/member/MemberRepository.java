@@ -25,12 +25,7 @@ import com.querydsl.core.types.dsl.StringPath;
 @RepositoryRestResource(collectionResourceRel = "members", path = "members") 
 
 public interface MemberRepository extends JpaRepository<Member, Long> , QueryDslPredicateExecutor<Member>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QMember member) {
 

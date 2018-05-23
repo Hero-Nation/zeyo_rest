@@ -15,12 +15,7 @@ import com.querydsl.core.types.dsl.StringPath;
  
 @RepositoryRestResource(collectionResourceRel = "brand_member_maps", path = "brand_member_maps")
 public interface BrandMemberMapRepository extends JpaRepository<BrandMemberMap, Long> , QueryDslPredicateExecutor<BrandMemberMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QBrandMemberMap brand_member_map) {
 

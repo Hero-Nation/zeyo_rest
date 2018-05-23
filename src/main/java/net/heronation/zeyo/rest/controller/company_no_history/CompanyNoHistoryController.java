@@ -108,5 +108,21 @@ public class CompanyNoHistoryController extends BaseController {
 
 		return return_success((Object) company_no_historyService.search(builder.getValue(), pageable));
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/my_list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> my_list(@RequestParam(value = "member_id", required = false) String member_id,
+			Pageable pageable) {
+		
+		Long member = Long.valueOf(String.valueOf(member_id));
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
+ 
+		builder.and(target.member.id.eq(member));
+	  
+		return return_success((Object) company_no_historyService.mylist(builder.getValue(), pageable));
+	}
 
 }

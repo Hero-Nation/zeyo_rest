@@ -2,8 +2,6 @@ package net.heronation.zeyo.rest.config;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
@@ -22,7 +20,6 @@ import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryDistinctNameDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.item.Item;
@@ -46,23 +43,18 @@ import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
-import org.springframework.data.rest.core.mapping.RepositoryDetectionStrategy;
 
 @Slf4j
-@Component
+@Component 
 public class ConfigSpringDataRest extends RepositoryRestConfigurerAdapter {
 
- 
-		
-	
 	@Override
 	public void configureConversionService(ConfigurableConversionService conversionService) {
 		log.debug("configureConversionService");
-		conversionService.addConverter( new CompanyNoHistoryDistinctNameConverter());
+		conversionService.addConverter(new CompanyNoHistoryDistinctNameConverter());
 		super.configureConversionService(conversionService);
 	}
 
- 
 	@Override
 	public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {
 		log.debug("configureValidatingRepositoryEventListener");
@@ -74,7 +66,9 @@ public class ConfigSpringDataRest extends RepositoryRestConfigurerAdapter {
 	public void configureExceptionHandlerExceptionResolver(ExceptionHandlerExceptionResolver exceptionResolver) {
 		log.debug("configureExceptionHandlerExceptionResolver");
 		// TODO Auto-generated method stub
-		super.configureExceptionHandlerExceptionResolver(exceptionResolver);
+		//super.configureExceptionHandlerExceptionResolver(exceptionResolver);
+		
+		
 	}
 
 	@Override

@@ -26,13 +26,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface FitInfoOptionRepository extends JpaRepository<FitInfoOption, Long> , QueryDslPredicateExecutor<FitInfoOption>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QFitInfoOption fit_info_option) {
 
  

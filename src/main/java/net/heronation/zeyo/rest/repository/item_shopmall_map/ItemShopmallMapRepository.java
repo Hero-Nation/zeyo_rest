@@ -21,12 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemShopmallMapRepository extends JpaRepository<ItemShopmallMap, Long> , QueryDslPredicateExecutor<ItemShopmallMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QItemShopmallMap item_shopmall_map) {
 

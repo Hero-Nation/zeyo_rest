@@ -35,8 +35,10 @@ public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, Q
 	Page<ClothColor> findAll(Pageable arg0);
 
 	@RestResource(path = "findByName", rel = "findByName", exported = true)
-	@Query("select m.name from ClothColor m where m.name = ?1 and  m.useYn = 'Y'")
+	@Query("select m from ClothColor m where m.name = ?1 and  m.useYn = 'Y'")
 	List<ClothColor> findByName(@Param("name") String name);
+	
+	
 	
 	
 	@RestResource(path = "select_options", rel = "select_options",exported = true)

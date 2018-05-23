@@ -27,12 +27,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 ////@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPredicateExecutor<Brand>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QBrand brand) {
 
@@ -48,8 +43,8 @@ public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPr
 	List<Brand> distinct_name();
  	
 	@RestResource(path = "findByName", rel = "findByName",exported = true)
-	@Query("select m.name from Brand m where m.name = ?1 and  m.useYn = 'Y'")
-	List<Brand> unique(@Param("name") String ktype);
+	@Query("select m from Brand m where m.name = ?1 and  m.useYn = 'Y'")
+	List<Brand> findByName(@Param("name") String ktype);
 	 
  	 
 	@Override

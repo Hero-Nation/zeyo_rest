@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.Filter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -41,9 +44,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.controller.company_no_history.CompanyNoHistoryDistinctNameConverter;
 
 @Configuration
+@Slf4j
 @EnableWebMvc
 @EnableSpringDataWebSupport
 @EnableHypermediaSupport(type = { org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL })
@@ -195,6 +200,17 @@ public class ConfigMVC implements WebMvcConfigurer {
 	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> arg0) {
 		// TODO Auto-generated method stub
 
+		arg0.add(new HandlerExceptionResolver() {
+
+			@Override
+			public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
+					Object handler, Exception ex) {
+				log.debug("HandlerExceptionResolver resolveException");
+			 
+				return null;
+			}
+			
+		});
 	}
 
 	@Override

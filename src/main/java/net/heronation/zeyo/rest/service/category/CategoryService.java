@@ -13,5 +13,7 @@ import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 
 public interface CategoryService {
 	Page<Map<String,Object>> search(Predicate where, Pageable page);
+	
+	Page<Map<String,Object>> pure_search(Predicate where, Pageable page);
 
 }

@@ -21,12 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface SubCategoryFitInfoMapRepository extends JpaRepository<SubCategoryFitInfoMap, Long> , QueryDslPredicateExecutor<SubCategoryFitInfoMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QSubCategoryFitInfoMap sub_category_fit_info_map) {
 

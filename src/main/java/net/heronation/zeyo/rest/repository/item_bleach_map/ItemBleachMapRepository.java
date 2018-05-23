@@ -21,13 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemBleachMapRepository extends JpaRepository<ItemBleachMap, Long> , QueryDslPredicateExecutor<ItemBleachMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QItemBleachMap item_bleach_map) {
 
  

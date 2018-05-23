@@ -49,10 +49,14 @@ public class SizeOptionController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultVO> list(
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "cate", required = false) String category,
+			@RequestParam(value = "sub_cate", required = false) String sub_category,
+			
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			@RequestParam(value = "kindof", required = false) Kindof kindof,
+			@RequestParam(value = "kindof", required = false) String kindof,
 			
 			Pageable pageable) {
 
@@ -64,6 +68,16 @@ public class SizeOptionController extends BaseController {
 			builder.and(target.name.containsIgnoreCase(name));
 		}
 
+		if (category != null) {
+			Long category_id = Long.valueOf(String.valueOf(category));
+			builder.and(target.category.id.eq(category_id));
+		}
+		
+		if (sub_category != null) {
+			Long sub_category_id = Long.valueOf(String.valueOf(sub_category));
+			builder.and(target.subCategory.id.eq(sub_category_id));
+		}
+		
 		if (start != null) {
 			builder.and(target.createDt.after(start));
 		}
@@ -73,12 +87,27 @@ public class SizeOptionController extends BaseController {
 		}
 		
 		if (kindof != null) {
-			builder.and(target.kindof.eq(kindof));
+			Long kindof_id = Long.valueOf(String.valueOf(kindof));
+			builder.and(target.kindof.id.eq(kindof_id));
 		}
 
 		builder.and(target.useYn.eq("Y"));
 
 		return return_success((Object) size_optionService.search(builder.getValue(), pageable));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/category_count")
+	@ResponseBody
+	public ResponseEntity<ResultVO> category_count() {
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QSizeOption target = QSizeOption.sizeOption;
+
+ 
+		builder.and(target.useYn.eq("Y"));
+
+		return return_success((Object) size_optionService.category_count(builder.getValue()));
 	}
 
 }

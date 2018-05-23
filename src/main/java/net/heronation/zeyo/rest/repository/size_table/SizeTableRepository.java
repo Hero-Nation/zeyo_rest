@@ -13,12 +13,7 @@ import com.querydsl.core.types.dsl.StringPath;
 
 @RepositoryRestResource(collectionResourceRel = "size_tables", path = "size_tables")
 public interface SizeTableRepository extends JpaRepository<SizeTable, Long>, QueryDslPredicateExecutor<SizeTable> {
-	/****
-	 * 
-	 * @RestResource(path = "names", rel = "names",exported = false) List<Person>
-	 *                    findByName(String name);
-	 * 
-	 ***/
+ 
 
 	default void customize(QuerydslBindings bindings, QSizeTable size_table) {
 

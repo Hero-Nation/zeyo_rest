@@ -26,20 +26,15 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @RepositoryRestResource(collectionResourceRel = "items", path = "items")
 
 public interface ItemRepository extends JpaRepository<Item, Long>, QueryDslPredicateExecutor<Item> {
-	/****
-	 * 
-	 * @RestResource(path = "names", rel = "names",exported = false) List<Person>
-	 *                    findByName(String name);
-	 * 
-	 ***/
+ 
 
 	default void customize(QuerydslBindings bindings, QItem item) {
 
 	}
 
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or @AppSecurityEL.isMyItem(authentication,#item_id)")
-	Item findOne(@Param("item_id") Long item_id);
+//	@Override
+//	@PreAuthorize("hasRole('ROLE_ADMIN') or @AppSecurityEL.isMyItem(authentication,#item_id)")
+//	Item findOne(@Param("item_id") Long item_id);
 
 	// @Override
 	// @RestResource(path = "", rel = "",exported = false)

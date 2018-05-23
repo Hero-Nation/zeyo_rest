@@ -4,6 +4,7 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoResourceAssembler;
+import net.heronation.zeyo.rest.repository.fit_info.QFitInfo;
 import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 
@@ -61,21 +62,23 @@ public class FitInfoController extends BaseController {
 			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end,
 			Pageable pageable) {
 
+		QFitInfo target = QFitInfo.fitInfo;
+		
 		BooleanBuilder builder = new BooleanBuilder();
 
 		if (name != null) {
-			builder.and(QMeasureItem.measureItem.name.containsIgnoreCase(name));
+			builder.and(target.name.containsIgnoreCase(name));
 		}
 
 		if (start != null) {
-			builder.and(QMeasureItem.measureItem.createDt.after(start));
+			builder.and(target.createDt.after(start));
 		}
 
 		if (end != null) {
-			builder.and(QMeasureItem.measureItem.createDt.before(end));
+			builder.and(target.createDt.before(end));
 		}
 
-		builder.and(QMeasureItem.measureItem.useYn.eq("Y"));
+		builder.and(target.useYn.eq("Y"));
 		
 		return return_success((Object) fit_infoService.search(builder.getValue(), pageable));
 	}

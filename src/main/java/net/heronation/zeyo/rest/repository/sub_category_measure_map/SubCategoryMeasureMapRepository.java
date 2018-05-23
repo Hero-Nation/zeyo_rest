@@ -21,13 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface SubCategoryMeasureMapRepository extends JpaRepository<SubCategoryMeasureMap, Long> , QueryDslPredicateExecutor<SubCategoryMeasureMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QSubCategoryMeasureMap sub_category_measure_map) {
 
  

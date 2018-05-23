@@ -66,9 +66,9 @@ public class CategoryController extends BaseController {
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
+		//QCategory target = QCategory.category; 
+		
 		QSubCategory target = QSubCategory.subCategory; 
-		
-		
 		if (name != null) {
 			builder.and(target.category.name.containsIgnoreCase(name));
 		}
@@ -78,7 +78,7 @@ public class CategoryController extends BaseController {
 		}
 
 		if (subcate != null) {
-			builder.and(target.id.eq(subcate));
+			builder.and(target.category.id.eq(subcate));
 		}
 
 		
@@ -96,4 +96,17 @@ public class CategoryController extends BaseController {
 	}
 
  
+	@RequestMapping(method = RequestMethod.GET, value = "/pure_list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> pure_list(
+			 Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+		QCategory target = QCategory.category; 
+		 
+ 
+		builder.and(target.useYn.eq("Y"));
+		
+		return return_success(categoryService.pure_search(builder.getValue(), pageable));
+	}
 }

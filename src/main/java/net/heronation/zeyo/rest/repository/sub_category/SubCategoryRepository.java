@@ -28,13 +28,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 ////@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> , QueryDslPredicateExecutor<SubCategory>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QSubCategory sub_category) {
 
  
@@ -50,5 +44,10 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
 	@Query("select distinct m  from SubCategory m where  m.category = ?1 and m.useYn = 'Y'")
 	List<SubCategory> distinct_name(@Param(value = "category") Category category);
+	
+	
+	@RestResource(path = "findByName", rel = "findByName",exported = true)
+	@Query("select m from SubCategory m where m.name = ?1 and  m.useYn = 'Y'")
+	List<SubCategory> findByName(@Param("name") String ktype);
 
 }

@@ -61,9 +61,9 @@ public class SizeTableController extends BaseController {
 	public ResponseEntity<ResultVO> list(
 			
 			@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "company", required = false) CompanyNoHistory company,
-			@RequestParam(value = "brand", required = false) Brand brand,
-			@RequestParam(value = "shopmall", required = false) Shopmall shopmall,
+			@RequestParam(value = "company", required = false) String company,
+			@RequestParam(value = "brand", required = false) String brand,
+			@RequestParam(value = "shopmall", required = false) String shopmall,
 		 
 			@RequestParam(value = "start_price",defaultValue="0", required = false) int start_price,
 			@RequestParam(value = "end_price",defaultValue="0", required = false) int end_price,
@@ -78,15 +78,20 @@ public class SizeTableController extends BaseController {
 			builder.and(target.name.containsIgnoreCase(name));
 		}
 
-		if (company != null) {
-			builder.and(target.member.companyNoHistory.eq(company));
-		}
+//		if (company != null) {
+//		Long company_id = Long.valueOf(String.valueOf(company));
+//		builder.and(cnh.id.eq(company_id));
+//	}
 
 		if (brand != null) {
-			builder.and(target.brand.eq(brand));
+			Long brand_id = Long.valueOf(String.valueOf(brand));
+			builder.and(target.brand.id.eq(brand_id));
 		}
 
-		// shopmall skip
+//		if (shopmall != null) {
+//		Long shopmall_id = Long.valueOf(String.valueOf(shopmall));
+//		builder.and(sm.id.eq(shopmall_id));
+//	}
 		
  
 

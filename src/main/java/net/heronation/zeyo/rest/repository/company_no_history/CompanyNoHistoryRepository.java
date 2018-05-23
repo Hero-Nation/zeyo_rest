@@ -26,13 +26,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface CompanyNoHistoryRepository
 		extends JpaRepository<CompanyNoHistory, Long>, QueryDslPredicateExecutor<CompanyNoHistory> {
-	/****
-	 * 
-	 * @RestResource(path = "names", rel = "names",exported = false) List<Person>
-	 *                    findByName(String name);
-	 * 
-	 ***/
-
+ 
 	default void customize(QuerydslBindings bindings, QCompanyNoHistory company_no_history) {
 
 	}

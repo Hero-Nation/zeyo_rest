@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
@@ -31,5 +32,10 @@ public class ConfigBean {
 		return new BCryptPasswordEncoder();
 	}
 
-  
+	@Bean // Magic entry
+	public DispatcherServlet dispatcherServlet() {
+		DispatcherServlet ds = new DispatcherServlet();
+		ds.setThrowExceptionIfNoHandlerFound(true);
+		return ds;
+	}
 }

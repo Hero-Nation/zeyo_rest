@@ -12,15 +12,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import net.heronation.zeyo.rest.repository.brand.Brand;
+
 @RepositoryRestResource(collectionResourceRel = "madeins", path = "madeins")
 // //@PreAuthorize("hasRole('ROLE_CLIENT')")
 public interface MadeinRepository extends JpaRepository<Madein, Long>, QueryDslPredicateExecutor<Madein> {
-	/****
-	 * 
-	 * @RestResource(path = "names", rel = "names",exported = false) List<Person>
-	 *                    findByName(String name);
-	 * 
-	 ***/
+ 
 
 	default void customize(QuerydslBindings bindings, QMadein madein) {
 		//bindings.bind(String.class).first((StringPath path, String value) -> path.containsIgnoreCase(value));
@@ -28,11 +25,12 @@ public interface MadeinRepository extends JpaRepository<Madein, Long>, QueryDslP
 
 	@Override
 	@RestResource(path = "", rel = "", exported = false)
-	Page<Madein> findAll(Pageable arg0);
-
-	@RestResource(rel = "findByName", path = "findByName")
-	Madein findByName(@Param("name") String name);
+	Page<Madein> findAll(Pageable arg0); 
 	
+	@RestResource(path = "findByName", rel = "findByName",exported = true)
+	@Query("select m  from Madein m where m.name = ?1 and  m.useYn = 'Y'")
+	List<Madein> findByName(@Param("name") String ktype);
+ 
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
 	@Query("select distinct m from Madein m where m.useYn = 'Y'")

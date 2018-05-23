@@ -18,13 +18,7 @@ import net.heronation.zeyo.rest.repository.madein.Madein;
  
 @RepositoryRestResource(collectionResourceRel = "warrantys", path = "warrantys")
 public interface WarrantyRepository extends JpaRepository<Warranty, Long> , QueryDslPredicateExecutor<Warranty>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
-
+ 
  	default void customize(QuerydslBindings bindings, QWarranty warranty) {
 
  
@@ -35,9 +29,12 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> , Quer
 	@RestResource(path = "", rel = "",exported = true)
 	Page<Warranty> findAll(Pageable arg0);
 
- 	
-	@RestResource( rel = "findByScope", path = "findByScope")
-	Madein findByScope(@Param("scope") String scope);
+ 	 
+	
+	@RestResource(path = "findByScope", rel = "findByScope",exported = true)
+	@Query("select m  from Warranty m where m.scope = ?1 and  m.useYn = 'Y'")
+	List<Warranty> findByName(@Param("scope") String ktype);
+	
 	
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)

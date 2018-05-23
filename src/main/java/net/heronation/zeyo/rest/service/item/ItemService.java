@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.service.item;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +15,7 @@ import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface ItemService {
-	Page<Item> search(Predicate where, Pageable page);
+	Page<Map<String, Object>> search(Predicate where, Pageable page);
 	String change_connect(String target);
 	String delete(String target);
 	

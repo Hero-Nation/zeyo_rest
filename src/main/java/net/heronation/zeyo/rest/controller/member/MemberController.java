@@ -3,7 +3,9 @@ package net.heronation.zeyo.rest.controller.member;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.repository.bbs.QBbs;
+import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
+import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
@@ -16,11 +18,13 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -171,12 +175,91 @@ public class MemberController extends BaseController {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
+		QMember target = QMember.member;
+
+		builder.and(target.id.eq(seq));
+
+		return return_success(memberService.getUserInfo(builder.getValue()));
+	}
+	
+	@RequestMapping(path = "user_info", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> user_info(@RequestParam(value = "member_id", required = false) String member_id) {
+		log.debug("/api/members/user_info");
+ 
+		Long id = Long.valueOf(String.valueOf(member_id));
+		
+		BooleanBuilder builder = new BooleanBuilder();
+
 		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
 
-		builder.and(target.member.id.eq(seq));
+		builder.and(target.member.id.eq(id));
 
-		return return_success(memberService.getCompanyInfo(builder.getValue()));
+		return return_success(memberService.getUserInfo(builder.getValue()));
 	}
+
+	
+	@RequestMapping(path = "user_biz_info", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> user_biz_info(@RequestParam(value = "member_id", required = false) String member_id) {
+		log.debug("/api/members/user_biz_info");
+ 
+		Long id = Long.valueOf(String.valueOf(member_id));
+		
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QMember target = QMember.member;
+
+		builder.and(target.id.eq(id));
+
+		return return_success(memberService.getUserBizInfo(builder.getValue()));
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/my_brand")
+	@ResponseBody
+	public ResponseEntity<ResultVO> my_brand(@RequestParam(value = "member_id", required = false) String member_id, Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+		Long id = Long.valueOf(String.valueOf(member_id));
+		QBrand target = QBrand.brand;
+ 
+		builder.and(target.member.id.eq(id));
+
+		builder.and(target.member.useYn.eq("Y"));
+
+		return return_success(memberService.my_brand(builder.getValue(), pageable));
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/my_shopmall")
+	@ResponseBody
+	public ResponseEntity<ResultVO> my_shopmall(@RequestParam(value = "member_id", required = false) String member_id, Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+		Long id = Long.valueOf(String.valueOf(member_id));
+		QBrand target = QBrand.brand;
+ 
+		builder.and(target.member.id.eq(id));
+
+		builder.and(target.useYn.eq("Y"));
+
+		return return_success(memberService.my_shopmall(builder.getValue(), pageable));
+	}
+	
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/my_item")
+	@ResponseBody
+	public ResponseEntity<ResultVO> my_item(@RequestParam(value = "member_id", required = false) String member_id, Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+		Long id = Long.valueOf(String.valueOf(member_id)); 
+		QItem target = QItem.item;
+		builder.and(target.member.id.eq(id));
+		builder.and(target.useYn.eq("Y"));
+
+		return return_success(memberService.my_item(builder.getValue(), pageable));
+	}
+	
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
@@ -239,6 +322,46 @@ public class MemberController extends BaseController {
 
 		return return_success(memberService.search(builder.getValue(), pageable));
 	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/search_company_history")
+	@ResponseBody
+	public ResponseEntity<ResultVO> search_company_history(
+			
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "cn1", required = false) String cn1,
+			@RequestParam(value = "cn2", required = false) String cn2,
+			@RequestParam(value = "cn3", required = false) String cn3,
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
+
+			Pageable pageable) {
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
+
+		if (name != null) {
+			builder.and(target.name.containsIgnoreCase(name));
+		}
+
+ 
+		if (cn1 != null) {
+			builder.and(target.companyNo.startsWith(cn1));
+		}
+
+		if (cn2 != null) {
+			builder.and(target.companyNo.containsIgnoreCase("," + cn2 + ","));
+		}
+
+		if (cn3 != null) {
+			builder.and(target.companyNo.endsWith(cn3));
+		}
+
+
+		return return_success(memberService.cn_history(builder.getValue(), pageable));
+	}
+
 
 	@RequestMapping(path = "/update_phone", method = RequestMethod.PATCH)
 	public ResponseEntity<ResultVO> update_phone(@RequestParam(name = "phone", defaultValue = "") String phone,

@@ -9,6 +9,7 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -27,12 +28,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 ////@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface CategoryRepository extends JpaRepository<Category, Long> , QueryDslPredicateExecutor<Category>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QCategory category) {
 
@@ -45,11 +41,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
 	Page<Category> findAll(Pageable arg0);
 
  
-	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
- 
+	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true) 
 	@Query("select distinct m from Category m where m.useYn = 'Y'")
 	List<Category> distinct_name();
 	
-	
-	
+	@RestResource(path = "findByName", rel = "findByName",exported = true)
+	@Query("select m from Category m where m.name = ?1 and  m.useYn = 'Y'")
+	List<Category> findByName(@Param("name") String name);
+	 
+ 
+	 
 }

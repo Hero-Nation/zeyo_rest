@@ -5,6 +5,7 @@ import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorResourceAssembler;
 import net.heronation.zeyo.rest.repository.cloth_color.QClothColor;
+import net.heronation.zeyo.rest.repository.item_cloth_color_map.QItemClothColorMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
 
@@ -57,21 +58,22 @@ public class ClothColorController extends BaseController {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
-		QClothColor target = QClothColor.clothColor;
+		QItemClothColorMap target = QItemClothColorMap.itemClothColorMap;
+		//QClothColor target = QClothColor.clothColor;
 
 		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+			builder.and(target.clothColor.name.containsIgnoreCase(name));
 		}
 
 		if (start != null) {
-			builder.and(target.createDt.after(start));
+			builder.and(target.clothColor.createDt.after(start));
 		}
 
 		if (end != null) {
-			builder.and(target.createDt.before(end));
+			builder.and(target.clothColor.createDt.before(end));
 		}
 
-		builder.and(target.useYn.eq("Y"));
+		builder.and(target.clothColor.useYn.eq("Y"));
 
 		return return_success((Object) cloth_colorService.search(builder.getValue(), pageable));
 	}

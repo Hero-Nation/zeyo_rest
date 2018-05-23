@@ -19,19 +19,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
+import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
  
 @RepositoryRestResource(collectionResourceRel = "fit_infos", path = "fit_infos")
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryDslPredicateExecutor<FitInfo>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QFitInfo fit_info) {
 
@@ -53,4 +50,14 @@ public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryD
 	@Query("select m from FitInfo m where   m.useYn = 'Y'")
 	List<FitInfo> select_options();
 
+	
+	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true) 
+	@Query("select distinct m from FitInfo m where m.useYn = 'Y'")
+	List<FitInfo> distinct_name();
+	
+	
+	@RestResource(path = "findByName", rel = "findByName", exported = true)
+	@Query("select m from FitInfo m where m.name = ?1 and  m.useYn = 'Y'")
+	List<FitInfo> findByName(@Param("name") String name);
+	
 }

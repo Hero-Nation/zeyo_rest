@@ -287,13 +287,24 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			
 			
 			// 직접입력일경우
-			if(direct_id == sizeOptions_id) {  
+			if(direct_id == 0) {  
 				
 				//size_option 테이블에서 이미 존재하는 옵션의 id를 가지고 와서 한다.
 				
-				SizeOption db_direct_optoin = sizeOptionRepository.findOne(direct_id); 
-				new_sizeoptoins_mapp.setSizeOption(db_direct_optoin);
-				new_sizeoptoins_mapp.setOptionValue(inputValue); 
+				//SizeOption db_direct_optoin = sizeOptionRepository.findOne(direct_id);
+				
+				
+				
+				SizeOption direct_input_size_option = new SizeOption();
+				direct_input_size_option.setName(inputValue);
+				direct_input_size_option.setCreateDt(new DateTime());
+				direct_input_size_option.setKindof(kindof_size_option_direct);
+				direct_input_size_option.setUseYn("Y"); 
+				direct_input_size_option.setCategory(category);
+				direct_input_size_option.setSubCategory(subCategory);
+				
+				new_sizeoptoins_mapp.setSizeOption(direct_input_size_option);
+				new_sizeoptoins_mapp.setOptionValue("DIRECT"); 
 			}else {
 				
 				SizeOption db_sizeoption = sizeOptionRepository.findOne(sizeOptions_id); 
@@ -325,13 +336,17 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				
 				
 				// 직접입력일경우
-				if(direct_id == sizeOptions_id) {  
+				if(direct_id == 0) {  
 					
 					//size_option 테이블에서 이미 존재하는 옵션의 id를 가지고 와서 한다.
 					
-					ClothColor db_direct_optoin = clothColorRepository.findOne(direct_id); 
-					new_clothColor_mapp.setClothColor(db_direct_optoin);
-					new_clothColor_mapp.setOptionValue(inputValue); 
+					ClothColor direct_input_color = new ClothColor();
+					direct_input_color.setName(inputValue);
+					direct_input_color.setCreateDt(new DateTime());
+					direct_input_color.setKindof(kindof_direct_input);
+					direct_input_color.setUseYn("Y");
+					new_clothColor_mapp.setClothColor(direct_input_color);
+					new_clothColor_mapp.setOptionValue("DIRECT"); 
 				}else {
 					
 					ClothColor db_sizeoption = clothColorRepository.findOne(sizeOptions_id); 

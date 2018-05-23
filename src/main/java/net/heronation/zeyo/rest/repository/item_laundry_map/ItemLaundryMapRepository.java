@@ -21,12 +21,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 //@PreAuthorize("hasRole('ROLE_CLIENT')")
 
 public interface ItemLaundryMapRepository extends JpaRepository<ItemLaundryMap, Long> , QueryDslPredicateExecutor<ItemLaundryMap>{
-    /****
-
-  @RestResource(path = "names", rel = "names",exported = false)
-  List<Person> findByName(String name);
-
-***/
+ 
 
  	default void customize(QuerydslBindings bindings, QItemLaundryMap item_laundry_map) {
 
