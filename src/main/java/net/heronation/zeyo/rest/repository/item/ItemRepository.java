@@ -24,6 +24,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import net.heronation.zeyo.rest.repository.member.Member;
 
 @RepositoryRestResource(collectionResourceRel = "items", path = "items")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface ItemRepository extends JpaRepository<Item, Long>, QueryDslPredicateExecutor<Item> {
  

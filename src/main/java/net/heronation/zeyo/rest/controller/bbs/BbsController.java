@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.bbs;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.member.MemberRegisterValidator;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;
@@ -27,6 +28,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
@@ -75,6 +77,7 @@ public class BbsController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "title", required = false) String title,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
@@ -101,10 +104,15 @@ public class BbsController extends BaseController {
 		return return_success((Object) bbsService.search(builder.getValue(), pageable));
 	}
 
+	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
 
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
@@ -117,12 +125,40 @@ public class BbsController extends BaseController {
 
 		return return_success((Object) bbsService.search(builder.getValue(), pageable));
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/get_stats")
+	@ResponseBody
+	public ResponseEntity<ResultVO> get_stats(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
 
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		QBbs target = QBbs.bbs;
+
+		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
+
+		return return_success((Object) bbsService.search(builder.getValue(), pageable));
+	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/query")
 	@ResponseBody
 	public ResponseEntity<ResultVO> query(@RequestBody @Valid BbsClientInsertDto new_post, BindingResult result,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		
 		if (result.hasErrors()) {
 			return return_fail(result.getFieldError());
 		} else {

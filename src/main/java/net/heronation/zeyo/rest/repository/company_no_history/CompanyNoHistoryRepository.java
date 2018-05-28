@@ -22,7 +22,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 @RepositoryRestResource(collectionResourceRel = "company_no_historys", path = "company_no_historys")
-////@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface CompanyNoHistoryRepository
 		extends JpaRepository<CompanyNoHistory, Long>, QueryDslPredicateExecutor<CompanyNoHistory> {

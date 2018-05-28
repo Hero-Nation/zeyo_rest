@@ -19,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +57,7 @@ public class CategoryController extends BaseController {
    
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<ResultVO> list(
 			@RequestParam(value = "name",required=false) String name,
 			@RequestParam(value = "cate",required=false) Long cate,
@@ -98,6 +100,7 @@ public class CategoryController extends BaseController {
  
 	@RequestMapping(method = RequestMethod.GET, value = "/pure_list")
 	@ResponseBody
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<ResultVO> pure_list(
 			 Pageable pageable) {
 

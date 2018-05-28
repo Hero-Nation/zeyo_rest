@@ -9,11 +9,14 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.data.rest.core.annotation.RestResource; 
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.querydsl.core.types.dsl.StringPath;
 
  
 @RepositoryRestResource(collectionResourceRel = "item_fit_info_option_maps", path = "item_fit_info_option_maps")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface ItemFitInfoOptionMapRepository extends JpaRepository<ItemFitInfoOptionMap, Long> , QueryDslPredicateExecutor<ItemFitInfoOptionMap>{
  
  	default void customize(QuerydslBindings bindings, QItemFitInfoOptionMap item_fit_info_option_map) {

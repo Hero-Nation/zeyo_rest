@@ -4,6 +4,7 @@ create table brand_member_map (id bigint not null, last_modified_date tinyblob, 
 create table category (id bigint not null, create_dt datetime, name varchar(255), use_yn varchar(255), primary key (id))
 create table cloth_color (id bigint not null, create_dt datetime, name varchar(255), use_yn varchar(255), kindof_id bigint, primary key (id))
 create table company_no_history (id bigint not null, before_no varchar(255), change_dt datetime, company_no varchar(255), name varchar(255), member_id bigint, primary key (id))
+create table email_validation (email varchar(255) not null, create_dt datetime, otp varchar(255), primary key (email))
 create table fit_info (id bigint not null, create_dt datetime, meta_desc varchar(255), name varchar(255), use_yn varchar(255), primary key (id))
 create table fit_info_option (id bigint not null, name varchar(255), use_yn varchar(255), fit_info_id bigint, primary key (id))
 create table item (id bigint not null, bleach_yn varchar(255), code varchar(255), create_dt datetime, drycleaning_yn varchar(255), drymethod_yn varchar(255), image varchar(255), image_mode varchar(255), ironing_yn varchar(255), laundry_yn varchar(255), link_yn varchar(255), madein_builder varchar(255), madein_date datetime, name varchar(255), price integer not null, size_measure_image varchar(255), size_measure_mode varchar(255), size_table_yn varchar(255), use_yn varchar(255), brand_id bigint, category_id bigint, madein_id bigint, member_id bigint, sub_category_id bigint, warranty_id bigint, primary key (id))

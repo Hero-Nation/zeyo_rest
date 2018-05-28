@@ -25,6 +25,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.WebDataBinder;
@@ -56,17 +57,14 @@ public class CompanyNoHistoryController extends BaseController {
 		this.entityLinks = entityLinks;
 	}
 
-//	@InitBinder
-//	protected void initBinder(WebDataBinder binder) {
-//
-//
-//	}
+ 
 
 	@Bean
 	public CompanyNoHistoryDistinctNameConverter getCompanyNoHistoryDistinctNameConverter() {
 		return new CompanyNoHistoryDistinctNameConverter();
 	}
-
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
@@ -109,6 +107,7 @@ public class CompanyNoHistoryController extends BaseController {
 		return return_success((Object) company_no_historyService.search(builder.getValue(), pageable));
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/my_list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> my_list(@RequestParam(value = "member_id", required = false) String member_id,

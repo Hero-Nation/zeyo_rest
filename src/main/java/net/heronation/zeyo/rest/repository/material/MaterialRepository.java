@@ -21,7 +21,7 @@ import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.member.Member;
 
 @RepositoryRestResource(collectionResourceRel = "materials", path = "materials")
-////@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface MaterialRepository extends JpaRepository<Material, Long>, QueryDslPredicateExecutor<Material> {
  

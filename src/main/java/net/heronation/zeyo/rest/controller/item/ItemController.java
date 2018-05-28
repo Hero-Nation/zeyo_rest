@@ -3,6 +3,8 @@ package net.heronation.zeyo.rest.controller.item;
 import net.heronation.zeyo.rest.common.authentication.AppUserDetails;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.controller.member.MemberRegisterValidator;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
@@ -22,6 +24,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -78,14 +81,17 @@ public class ItemController extends BaseController {
 		binder.addValidators(new ItemBuildValidator());
 	}
 
-	@PreAuthorize("@AppSecurityEL.hasScope('bar') and  hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "download_excel")
 	public ResponseEntity<ResultVO> download_excel(@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/items/download_excel");
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		} 
 		return return_success();
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
@@ -162,72 +168,57 @@ public class ItemController extends BaseController {
 		return return_success((Object) itemService.search(builder.getValue(), pageable));
 	}
 
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> clinet_list(
 
-			@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "company", required = false) CompanyNoHistory company,
-			@RequestParam(value = "brand", required = false) Brand brand,
-			@RequestParam(value = "shopmall", required = false) Shopmall shopmall,
+			@RequestParam(value = "name", required = false) String name,  
 			@RequestParam(value = "size_link", required = false) String size_link,
-			@RequestParam(value = "cate", required = false) Category category,
-			@RequestParam(value = "sub_cate", required = false) SubCategory sub_category,
-			@RequestParam(value = "start_price", defaultValue = "0", required = false) int start_price,
-			@RequestParam(value = "end_price", defaultValue = "0", required = false) int end_price,
+			@RequestParam(value = "cate", required = false) String category,
+			@RequestParam(value = "sub_cate", required = false) String sub_category,
+			@RequestParam(value = "start_price",  required = false) String start_price,
+			@RequestParam(value = "end_price",  required = false) String end_price,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
+			@AuthenticationPrincipal OAuth2Authentication auth,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QItem target = QItem.item;
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		} 
+		
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name);  
+		param.put("size_link", size_link);
+		param.put("category", category);
+		param.put("sub_category", sub_category);
+		param.put("start_price", start_price);
+		param.put("end_price", end_price);
+		
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
+		}  
+		
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
 
-		if (company != null) {
-			builder.and(target.member.companyNoHistory.eq(company));
-		}
-
-		if (brand != null) {
-			builder.and(target.brand.eq(brand));
-		}
-
-		// shopmall skip
-
-		// if (size_link != null) {
-		// builder.and(target.sizeLinkYn.eq(size_link));
-		// }
-
-		if (category != null) {
-			builder.and(target.category.eq(category));
-		}
-
-		// if (sub_category != null) {
-		// builder.and(target.category.subCategorys.eq(sub_category));
-		// }
-
-		if (start_price != 0) {
-			builder.and(target.price.gt(start_price).or(target.price.eq(start_price)));
-		}
-
-		if (end_price != 0) {
-			builder.and(target.price.lt(end_price).or(target.price.eq(end_price)));
-		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start).or(target.createDt.eq(start)));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end).or(target.createDt.eq(end)));
-		}
-
-		return return_success((Object) itemService.search(builder.getValue(), pageable));
+		String seq = String.valueOf(user.get("member_seq"));
+		
+		param.put("member_id", seq);
+		
+		return return_success((Object) itemService.client_search(param, pageable));
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/change_connect")
 	@ResponseBody
 	public ResponseEntity<ResultVO> change_connect(
@@ -242,6 +233,7 @@ public class ItemController extends BaseController {
 
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/delete")
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(
@@ -256,6 +248,7 @@ public class ItemController extends BaseController {
 
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/shopmall_list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> shopmall_list(
@@ -269,6 +262,7 @@ public class ItemController extends BaseController {
 
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/toggle_size_table")
 	@ResponseBody
 	public ResponseEntity<ResultVO> toggle_size_table(
@@ -290,12 +284,15 @@ public class ItemController extends BaseController {
 
 	}
 
+	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/build")
 	@ResponseBody
 	public ResponseEntity<ResultVO> build(@RequestBody @Valid ItemBuildDto itemBuildDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/items/build");
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		if (bindingResult.hasErrors()) {
 			return return_fail(bindingResult.getFieldError());
 		} else {

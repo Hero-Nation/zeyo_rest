@@ -2,12 +2,15 @@ package net.heronation.zeyo.rest.controller.shopmall;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallResourceAssembler;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -53,37 +56,44 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable) {
+	public ResponseEntity<ResultVO> list(
+			@RequestParam(value = "name", required = false) String name,
+			
+			@RequestParam(value = "company", required = false) String company,
+			@RequestParam(value = "brand", required = false) String brand,
+			@RequestParam(value = "shopmall", required = false) String shopmall,
+			@RequestParam(value = "link", required = false) String link,
+			
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QShopmall target = QShopmall.shopmall;
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name);
+		param.put("company", company);
+		param.put("brand", brand);
+		param.put("shopmall", shopmall);
+		param.put("link", link);
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success((Object) shopmallService.search(builder.getValue(), pageable));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
+		} 
+		return return_success((Object) shopmallService.search(param, pageable));
 	}
+
 
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
 	public ResponseEntity<ResultVO> insert(@RequestParam(value = "name", required = true) String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
@@ -96,7 +106,9 @@ public class ShopmallController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(@RequestParam(value="id" ,required=false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
@@ -111,7 +123,9 @@ public class ShopmallController extends BaseController {
 			@RequestParam(value="id" ,required=false) Long id,
 			@RequestParam(value="name",required=false) String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-		
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
 		
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
@@ -123,7 +137,9 @@ public class ShopmallController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> toggle_link(@RequestParam(value="id" ,required=false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
@@ -135,42 +151,47 @@ public class ShopmallController extends BaseController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> client_list(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "sizeCp", required = false) String sizeCp,
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable) {
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QShopmall target = QShopmall.shopmall;
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+	public ResponseEntity<ResultVO> client_list(
+			@RequestParam(value = "name", required = false) String name, 
+			@RequestParam(value = "link", required = false) String link, 
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, Pageable pageable,
+			 @AuthenticationPrincipal OAuth2Authentication auth) {
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
 		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
 
-		if (sizeCp != null) {
-			builder.and(target.sizeCpYn.eq(sizeCp));
+		String seq = String.valueOf(user.get("member_seq"));
+		
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		param.put("link", link);
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success((Object) shopmallService.search(builder.getValue(), pageable));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
+		} 
+		
+		param.put("member_id", seq);
+		
+		
+		return return_success((Object) shopmallService.client_search(param, pageable)); 
 	}
-	
+//	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
 	@ResponseBody
 	public ResponseEntity<ResultVO> detail(	@RequestParam(value="id" ,required=false) Long id, @AuthenticationPrincipal OAuth2Authentication auth,Pageable pageable) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 

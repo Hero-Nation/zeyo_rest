@@ -56,14 +56,9 @@ public class ConfigMVC implements WebMvcConfigurer {
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
-		 
- 
+
 	}
- 
 
-
-  
-	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 
@@ -107,26 +102,6 @@ public class ConfigMVC implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**");
-	}
-
-	@Bean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true); // you USUALLY want this
-		config.addAllowedOrigin("*");
-		config.addAllowedHeader("*");
-		config.addAllowedMethod(HttpMethod.DELETE);
-		config.addAllowedMethod(HttpMethod.GET);
-		config.addAllowedMethod(HttpMethod.HEAD);
-		config.addAllowedMethod(HttpMethod.OPTIONS);
-		config.addAllowedMethod(HttpMethod.PATCH);
-		config.addAllowedMethod(HttpMethod.POST);
-		config.addAllowedMethod(HttpMethod.PUT);
-		config.addAllowedMethod(HttpMethod.TRACE);
-
-		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
 	}
 
 	@Bean
@@ -206,10 +181,10 @@ public class ConfigMVC implements WebMvcConfigurer {
 			public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
 					Object handler, Exception ex) {
 				log.debug("HandlerExceptionResolver resolveException");
-			 
+
 				return null;
 			}
-			
+
 		});
 	}
 

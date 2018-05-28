@@ -33,10 +33,15 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.sql.JPASQLQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
+import net.heronation.zeyo.rest.repository.email_validation.EmailValidation;
+import net.heronation.zeyo.rest.repository.email_validation.EmailValidationRepository;
+import net.heronation.zeyo.rest.repository.email_validation.QEmailValidation;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -59,6 +64,10 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private EmailValidationRepository emailValidationRepository;
+
+	
 	@Autowired
 	EntityManager entityManager;
 
@@ -300,22 +309,70 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member send_confirm_email(String email, Long member_seq) {
+	@Transactional
+	public String send_confirm_email(String email) throws CommonException{
 
-		Member user = memberRepository.findOne(member_seq);
-		user.setConfirm_no("1111");
-
+		// 이미 이메일이 존재하는지 여부 ..>>> 여러번 보낼수 있다고 가정
+ 
 		// 랜덤 문자열 생성 6자리
-
-		// 이메일을 보낸다.
-
-		// 문자열 저장
-
-		// 인코딩 필요
-
-		return user;
+		
+		EmailValidation a=  new EmailValidation();
+		a.setEmail(email);
+		a.setCreateDt(new DateTime());
+		a.setOtp("1111");
+		
+		
+		QEmailValidation target = QEmailValidation.emailValidation;
+		
+		EmailValidation db_v = emailValidationRepository.findOne(target.email.eq(email));
+		
+		if(db_v == null) {
+			// 새로운 번호로 입력한다. 
+			db_v.setOtp("111");
+			//db_v.set
+		}else {
+			emailValidationRepository.save(a);	
+		}
+ 
+		
+		// 이메일 보낸다.
+		boolean email_send_event = false;
+		if(email_send_event) {
+			CommonException exp = new CommonException("SENDING EMAIL ERROR");
+		
+			throw exp;
+		}
+		
+		return CommonConstants.COMPLETE;
 	}
 
+	
+
+	@Override
+	public String confirm_email(String email,String otp) throws CommonException { 
+		
+		QEmailValidation target = QEmailValidation.emailValidation;
+		
+		EmailValidation db_v = emailValidationRepository.findOne(target.email.eq(email));
+		
+		if(db_v == null) {
+			CommonException exp = new CommonException("EMAIL.NOT.EXIST");
+			
+			throw exp;
+		}else { 
+			
+			if(db_v.getOtp().equals(otp)) {
+				return CommonConstants.EQUAL;		
+			}else {
+				return CommonConstants.NOT_EQUAL;	
+			}
+		}
+		
+		
+		
+	}
+	
+	
 	@Override
 	public Page<Map<String, Object>> my_brand(Predicate where, Pageable page) {
 		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
@@ -330,9 +387,7 @@ public class MemberServiceImpl implements MemberService {
 
 				b.name, ism.shopmall.name, i.id.countDistinct()
 
-		).from(i)
-				.leftJoin(i.brand, b).on(b.useYn.eq("Y"))
-				.leftJoin(i.itemShopmallMaps, ism).on(ism.useYn.eq("Y"))
+		).from(i).leftJoin(i.brand, b).on(b.useYn.eq("Y")).leftJoin(i.itemShopmallMaps, ism).on(ism.useYn.eq("Y"))
 				.where(where).groupBy(ism.shopmall.id).fetchResults();
 
 		List<Tuple> search_list = R.getResults();
@@ -363,14 +418,11 @@ public class MemberServiceImpl implements MemberService {
 
 		QueryResults<Tuple> R = query.select(
 
-				s.name ,b.name,i.id.countDistinct()
+				s.name, b.name, i.id.countDistinct()
 
-		).from(ism)
-				.innerJoin(ism.shopmall,s)
-				.innerJoin(ism.item,i)
-				.innerJoin(ism.item.brand,b)
-				.where(s.useYn.eq("Y").and(i.useYn.eq("Y")).and(b.useYn.eq("Y")).and(where))
-				.groupBy(b.id ) .fetchResults();
+		).from(ism).innerJoin(ism.shopmall, s).innerJoin(ism.item, i).innerJoin(ism.item.brand, b)
+				.where(s.useYn.eq("Y").and(i.useYn.eq("Y")).and(b.useYn.eq("Y")).and(where)).groupBy(b.id)
+				.fetchResults();
 
 		List<Tuple> search_list = R.getResults();
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
@@ -381,7 +433,7 @@ public class MemberServiceImpl implements MemberService {
 			search_R.put("shopmall_name", row.get(s.name));
 			search_R.put("brand_name", row.get(b.name));
 			search_R.put("item_count", row.get(i.id.countDistinct()));
- 
+
 			return_list.add(search_R);
 		}
 		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
@@ -390,38 +442,30 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Page<Map<String, Object>> my_item(Predicate where, Pageable page) {
 		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
- 
-		
+
 		QMember m = QMember.member;
 		QItem i = QItem.item;
 		QBrand b = QBrand.brand;
 		QShopmall s = QShopmall.shopmall;
 		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
-		
 
 		QueryResults<Tuple> R = query.select(
 
-				i.name,s.name ,b.name
+				i.name, s.name, b.name
 
-		).from(ism)
-				.innerJoin(ism.shopmall,s)
-				.innerJoin(ism.item,i)
-				.innerJoin(ism.item.brand,b)
-				.where(s.useYn.eq("Y").and(i.useYn.eq("Y")).and(b.useYn.eq("Y")).and(where))
-				.fetchResults();
+		).from(ism).innerJoin(ism.shopmall, s).innerJoin(ism.item, i).innerJoin(ism.item.brand, b)
+				.where(s.useYn.eq("Y").and(i.useYn.eq("Y")).and(b.useYn.eq("Y")).and(where)).fetchResults();
 
 		List<Tuple> search_list = R.getResults();
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
 		for (Tuple row : search_list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
- 
-			
-			search_R.put("item_name", row.get(i.name)); 
+
+			search_R.put("item_name", row.get(i.name));
 			search_R.put("shopmall_name", row.get(s.name));
 			search_R.put("brand_name", row.get(b.name));
-			
- 
+
 			return_list.add(search_R);
 		}
 		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
@@ -430,17 +474,15 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Page<Map<String, Object>> cn_history(Predicate where, Pageable page) {
 		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
- 
-		 
+
 		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
-		
 
 		QueryResults<Tuple> R = query.select(
 
-				cnh.name,cnh.beforeNo,cnh.companyNo,cnh.changeDt
+				cnh.name, cnh.beforeNo, cnh.companyNo, cnh.changeDt
 
 		).from(cnh)
-				 
+
 				.where(cnh.id.in(JPAExpressions.select(cnh.id.max()).from(cnh).groupBy(cnh.member.id)).and(where))
 				.fetchResults();
 
@@ -449,17 +491,24 @@ public class MemberServiceImpl implements MemberService {
 
 		for (Tuple row : search_list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
- 
-			
-			search_R.put("company_name", row.get(cnh.name)); 
+
+			search_R.put("company_name", row.get(cnh.name));
 			search_R.put("before_num", row.get(cnh.beforeNo));
 			search_R.put("current_name", row.get(cnh.companyNo));
 			search_R.put("change_dt", row.get(cnh.changeDt));
-			
- 
+
 			return_list.add(search_R);
 		}
 		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Member findByMemberId(String member_id) {
+		Member user = memberRepository.findByMemberId(member_id);
+
+		return user;
+	}
+
 
 }

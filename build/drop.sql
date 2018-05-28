@@ -48,6 +48,7 @@ drop table if exists brand_member_map
 drop table if exists category
 drop table if exists cloth_color
 drop table if exists company_no_history
+drop table if exists email_validation
 drop table if exists fit_info
 drop table if exists fit_info_option
 drop table if exists item

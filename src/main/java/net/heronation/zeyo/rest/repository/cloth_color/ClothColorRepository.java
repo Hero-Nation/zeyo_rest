@@ -22,7 +22,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
 @RepositoryRestResource(collectionResourceRel = "cloth_colors", path = "cloth_colors")
-// @PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, QueryDslPredicateExecutor<ClothColor> {
 

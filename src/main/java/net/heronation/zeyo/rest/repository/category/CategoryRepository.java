@@ -25,7 +25,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
  
 @RepositoryRestResource(collectionResourceRel = "categorys", path = "categorys")
-////@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface CategoryRepository extends JpaRepository<Category, Long> , QueryDslPredicateExecutor<Category>{
  

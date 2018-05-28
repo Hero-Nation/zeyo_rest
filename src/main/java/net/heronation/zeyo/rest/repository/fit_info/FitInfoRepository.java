@@ -25,7 +25,7 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
  
 @RepositoryRestResource(collectionResourceRel = "fit_infos", path = "fit_infos")
-//@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryDslPredicateExecutor<FitInfo>{
  

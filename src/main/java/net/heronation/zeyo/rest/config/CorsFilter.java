@@ -22,9 +22,10 @@ public class CorsFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
+		
 		final HttpServletResponse response = (HttpServletResponse) res;
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET,PATCH, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Allow-Methods", "OPTIONS,POST, PUT, GET,PATCH , DELETE");
 		response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		
@@ -43,3 +44,4 @@ public class CorsFilter implements Filter {
 	public void init(FilterConfig config) throws ServletException {
 	}
 }
+

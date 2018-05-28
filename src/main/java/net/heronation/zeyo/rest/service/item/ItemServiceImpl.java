@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -172,12 +174,7 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public Page<Map<String, Object>> search(Predicate where, Pageable page) {
- 
-
-//		QItem target = QItem.item;
-//		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
-//		QShopmall sm = QShopmall.shopmall;
-		
+  
 		QItem i = QItem.item;
 		QBrand b = QBrand.brand;
 		QShopmall s = QShopmall.shopmall;
@@ -272,29 +269,80 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public Page<ItemShopmallMap> shopmall_list(Long item_id,Pageable pageable) {
+	public Page<Map<String,Object>> shopmall_list(Long item_id,Pageable page) {
 		 
-//		PathBuilder<Madein> madeinPath = new PathBuilder<Madein>(Madein.class, "madein");
-//		
-//		for (Order order : page.getSort()) {
-//		    PathBuilder<Object> path = madeinPath.get(order.getProperty());
-//		    query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()), path));
-//		}
+		StringBuffer  count_query = new StringBuffer();
+		count_query.append("SELECT "); 
+		count_query.append("    count(*) "); 
+		
+		
+		StringBuffer  select_query = new StringBuffer(); 
+		select_query.append("SELECT ");
+		select_query.append("    i.name as item_name ");
+		select_query.append("   ,s.name as shopmall_name ");
+		select_query.append("   ,b.name as brand_name  ");
 
 		
-		QItemShopmallMap target = QItemShopmallMap.itemShopmallMap;
-		QItem qi = QItem.item;
-		QShopmall qs = QShopmall.shopmall;
 		
-		JPAQuery<ItemShopmallMap> query = new JPAQuery<ItemShopmallMap>(entityManager);
+		
+		StringBuffer  where_query = new StringBuffer(); 
+		where_query.append("FROM ");
+		where_query.append("    item_shopmall_map ism ");
+		where_query.append("        INNER JOIN ");
+		where_query.append("    shopmall s ON ism.shopmall_id = s.id ");
+		where_query.append("        INNER JOIN ");
+		where_query.append("    item i ON ism.item_id = i.id ");
+		where_query.append("        INNER JOIN ");
+		where_query.append("    brand b ON i.brand_id = b.id ");
+		where_query.append("WHERE ");
+		where_query.append("    ism.use_yn = 'Y' ");
+		where_query.append("        AND s.use_yn = 'Y' ");
+		where_query.append("        AND b.use_yn = 'Y' ");
+		where_query.append("        AND i.use_yn = 'Y' ");
+		where_query.append("        AND i.id = 5");
  
-		QueryResults<ItemShopmallMap> R = query.from(target)
-				.where(target.item.id.eq(item_id).and(target.useYn.eq("Y")))
-				.innerJoin(target.item).on(target.item.useYn.eq("Y"))
-				.innerJoin(target.shopmall).on(target.shopmall.useYn.eq("Y"))
-				.offset((pageable.getPageNumber() - 1) * pageable.getPageSize()).limit(pageable.getPageSize()).fetchResults();
+		
+		StringBuffer  sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY i.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for(Sort.Order order   : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			 sep = ", ";
+		}
+		
+		StringBuffer page_query  = new StringBuffer(); 
+		page_query.append("  limit "); 
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize()); 
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+		 
+		Query count_q =   entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String,Object>> count_list = count_q.getResultList();
+		
+		Query q =   entityManager.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
 
-		return new PageImpl<ItemShopmallMap>(R.getResults(), pageable, R.getTotal()); 
+		List<Map<String,Object>> return_list = new ArrayList<Map<String,Object>>();
+		
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>();
+  
+//			select_query.append("    i.name as item_name ");
+//			select_query.append("   ,s.name as shopmall_name ");
+//			select_query.append("   ,b.name as brand_name  ");
+			
+			search_R.put("item_name", row[0]);
+			search_R.put("shopmall_name", row[1]);
+			search_R.put("brand_name", row[2]);  
+			
+			return_list.add(search_R);
+		}
+		
+		return new PageImpl<Map<String,Object>>(return_list, page, count_list.size());
 	}
 
 	@Override
@@ -500,6 +548,164 @@ public class ItemServiceImpl implements ItemService {
 		
 		
 		return new_item;
+	}
+
+	@Override
+	public Page<Map<String, Object>> client_search(Map<String, Object> param, Pageable page) {
+		
+		StringBuffer  count_query = new StringBuffer();
+		count_query.append("SELECT "); 
+		count_query.append("    count(*) "); 
+		
+ 
+		
+		
+		StringBuffer  select_query = new StringBuffer();  
+		select_query.append("SELECT ");
+		select_query.append("    i.id					as item_id, ");
+		select_query.append("    i.name					as item_name, ");
+		select_query.append("    i.code					as item_code, ");
+		select_query.append("    c.name					as category_name, ");
+		select_query.append("    sc.name				as sub_category_name, ");
+		select_query.append("    i.price				as item_price, ");
+		select_query.append("    i.create_dt			as item_create_dt, ");
+		select_query.append("    i.link_yn				as item_link_yn, ");
+		select_query.append("    i.size_table_yn		as item_size_table_yn, ");
+		select_query.append("    st.id					as size_table_id ");
+
+
+		
+		StringBuffer  where_query = new StringBuffer(); 
+		
+		where_query.append("FROM ");
+		where_query.append("    item i ");
+		where_query.append("        INNER JOIN ");
+		where_query.append("    category c ON i.category_id = c.id ");
+		where_query.append("        INNER JOIN ");
+		where_query.append("    sub_category sc ON i.sub_category_id = sc.id ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    size_table st ON i.id = st.item_id ");
+		where_query.append("WHERE ");
+		where_query.append("    i.use_yn = 'Y' ");
+		where_query.append("    AND c.use_yn = 'Y' ");
+		where_query.append("	AND sc.use_yn = 'Y'");
+		
+		
+		String member_id = (String)param.get("member_id");
+		
+		where_query.append("        AND i.member_id = "+member_id+" ");	
+		
+		
+//		param.put("name", name);  
+//		param.put("size_link", size_link);
+//		param.put("category", category);
+//		param.put("sub_category", sub_category);
+//		param.put("start_price", start_price);
+//		param.put("end_price", end_price);
+		
+		
+		String name = (String)param.get("name");
+		if(name != null) {
+			where_query.append("        AND i.name like '%"+name+"%' ");	
+		}
+	
+		String size_link = (String)param.get("size_link");
+		if(size_link != null && size_link.equals("Y")) {
+			where_query.append("        AND i.link_yn = 'Y' ");	
+		}
+		
+		String category = (String)param.get("category");
+		if(category != null) {
+			where_query.append("        AND i.category_id = "+category+" ");	
+		}
+		
+		String sub_category = (String)param.get("sub_category");
+		if(sub_category != null) {
+			where_query.append("        AND i.sub_category_id = "+sub_category+" ");	
+		}
+		
+ 
+		
+		String start_price = (String)param.get("start_price");
+		if(start_price != null) {
+			where_query.append("        AND i.price >= "+start_price+" ");	
+		}
+		
+		String end_price = (String)param.get("end_price");
+		if(end_price != null) {
+			where_query.append("        AND i.price <= "+end_price+" ");	
+		}
+		
+		String start = (String)param.get("start");
+		if(start != null  ) {
+			where_query.append("        AND b.create_dt >= STR_TO_DATE('"+start+"', '%Y-%m-%d %H:%i:%s')");	
+		}
+		
+		
+		String end = (String)param.get("end");
+		if(end != null  ) {
+			where_query.append("        AND b.create_dt <= STR_TO_DATE('"+end+"', '%Y-%m-%d %H:%i:%s')");	
+		}
+		
+		 
+
+		
+		StringBuffer sort_query  = new StringBuffer(); 
+		sort_query.append("  ORDER BY i.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for(Sort.Order order   : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			 sep = ", ";
+		}
+		
+		StringBuffer page_query  = new StringBuffer(); 
+		page_query.append("  limit "); 
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize()); 
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+		 
+		Query count_q =   entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String,Object>> count_list = count_q.getResultList();
+		
+		Query q =   entityManager.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
+		List<Map<String,Object>> return_list = new ArrayList<Map<String,Object>>();
+		
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>(); 
+			
+			
+//			select_query.append("    i.id					as item_id, ");
+//			select_query.append("    i.name					as item_name, ");
+//			select_query.append("    i.code					as item_code, ");
+//			select_query.append("    c.name					as category_name, ");
+//			select_query.append("    sc.name				as sub_category_name, ");
+//			select_query.append("    i.price				as item_price, ");
+//			select_query.append("    i.create_dt			as item_create_dt, ");
+//			select_query.append("    i.link_yn				as item_link_yn, ");
+//			select_query.append("    i.size_table_yn		as item_size_table_yn, ");
+//			select_query.append("    st.id					as size_table_id ");
+			
+			search_R.put("item_id", row[0]);
+			search_R.put("item_name", row[1]);
+			search_R.put("item_code", row[2]);  
+			search_R.put("category_name", row[3]);  
+			search_R.put("sub_category_name", row[4]);  
+			search_R.put("item_price", row[5]);  
+			search_R.put("item_create_dt", row[6]);  
+			search_R.put("item_link_yn", row[7]);  
+			search_R.put("item_size_table_yn", row[8]);  
+			search_R.put("size_table_id", row[9]);  
+			
+			return_list.add(search_R);
+		}
+		
+		return new PageImpl<Map<String,Object>>(return_list, page, count_list.size());
 	}
 
 }

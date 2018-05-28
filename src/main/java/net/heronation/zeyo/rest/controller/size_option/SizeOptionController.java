@@ -17,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ import net.heronation.zeyo.rest.service.size_option.SizeOptionService;
 @Slf4j
 @RepositoryRestController
 @RequestMapping("/size_options")
+
 public class SizeOptionController extends BaseController {
 
 	@Autowired
@@ -47,6 +49,7 @@ public class SizeOptionController extends BaseController {
 		this.entityLinks = entityLinks;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
@@ -96,6 +99,31 @@ public class SizeOptionController extends BaseController {
 		return return_success((Object) size_optionService.search(builder.getValue(), pageable));
 	}
 	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/single")
+	@ResponseBody
+	public ResponseEntity<ResultVO> single(
+			@RequestParam(value = "id", required = false) String id ) {
+ 
+		BooleanBuilder builder = new BooleanBuilder();
+
+		if(id ==  null) {
+			return return_fail("id.empty");
+		}else {
+			QSizeOption target = QSizeOption.sizeOption;
+			Long size_option_id = Long.valueOf(id);
+			builder.and(target.id.eq(size_option_id));
+			builder.and(target.useYn.eq("Y"));
+			
+			return return_success((Object) size_optionService.single(builder.getValue()));
+		}
+			
+		
+
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/category_count")
 	@ResponseBody
 	public ResponseEntity<ResultVO> category_count() {

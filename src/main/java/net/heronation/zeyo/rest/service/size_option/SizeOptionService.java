@@ -15,4 +15,6 @@ public interface SizeOptionService {
 	
 	Map<String, Object> category_count(Predicate where); 
 	
+	Map<String, Object> single(Predicate where); 
+	
 }

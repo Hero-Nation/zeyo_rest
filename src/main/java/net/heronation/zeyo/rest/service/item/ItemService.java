@@ -16,10 +16,13 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface ItemService {
 	Page<Map<String, Object>> search(Predicate where, Pageable page);
+	Page<Map<String, Object>> client_search(Map<String, Object> param, Pageable page);
+	
+	
 	String change_connect(String target);
 	String delete(String target);
 	
-	Page<ItemShopmallMap> shopmall_list(Long item_id,Pageable pageable);
+	Page<Map<String,Object>> shopmall_list(Long item_id,Pageable pageable);
 	
 	String toggle_size_table(Long item_id);
 	

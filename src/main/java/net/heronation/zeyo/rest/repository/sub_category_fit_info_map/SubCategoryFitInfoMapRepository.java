@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "sub_category_fit_info_maps", path = "sub_category_fit_info_maps")
-//@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface SubCategoryFitInfoMapRepository extends JpaRepository<SubCategoryFitInfoMap, Long> , QueryDslPredicateExecutor<SubCategoryFitInfoMap>{
  

@@ -25,8 +25,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "measure_items", path = "measure_items")
-//@PreAuthorize("hasRole('ROLE_CLIENT')")
-
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface MeasureItemRepository extends JpaRepository<MeasureItem, Long> , QueryDslPredicateExecutor<MeasureItem>{
  
  	default void customize(QuerydslBindings bindings, QMeasureItem measure_item) {

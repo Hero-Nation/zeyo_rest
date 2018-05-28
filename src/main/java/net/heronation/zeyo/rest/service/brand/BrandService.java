@@ -13,14 +13,14 @@ import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 
 public interface BrandService {
-	Page<Brand> search(Predicate where,Pageable page);
+	Page<Map<String,Object>> search(Map<String,Object> where,Pageable page);
+	Page<Map<String,Object>> client_search(Map<String,Object> where,Pageable page);
 
  	Brand insert(String name,Long member_seq); 
  	Map<String,Object> update(Long brand_id,Long member_seq,String name); 
  	Map<String,Object> delete(Long brand_id,Long member_seq); 
  	Map<String,Object> toggle_link(Long brand_id,Long member_seq);
  	Page<Map<String, Object>> detail(Long brand_id,Long member_seq, Pageable page);
- 	
-	Page<Tuple> client_search(Predicate where, Pageable page);
+ 	 
 
 }

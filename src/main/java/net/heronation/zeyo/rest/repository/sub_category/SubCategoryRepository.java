@@ -25,7 +25,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
  
 @RepositoryRestResource(collectionResourceRel = "sub_categorys", path = "sub_categorys")
-////@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> , QueryDslPredicateExecutor<SubCategory>{
  

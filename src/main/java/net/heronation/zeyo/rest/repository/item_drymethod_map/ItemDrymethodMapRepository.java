@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
  
 @RepositoryRestResource(collectionResourceRel = "item_drymethod_maps", path = "item_drymethod_maps")
-//@PreAuthorize("hasRole('ROLE_CLIENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 
 public interface ItemDrymethodMapRepository extends JpaRepository<ItemDrymethodMap, Long> , QueryDslPredicateExecutor<ItemDrymethodMap>{
  

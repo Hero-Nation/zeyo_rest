@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.config;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -64,13 +66,14 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 		http
 		
 		.authorizeRequests()
-//				.antMatchers("/login").permitAll()
-//				.antMatchers("/oauth/token/revokeById/**").permitAll()
-//				.antMatchers("/tokens/**").permitAll()
+				.antMatchers("/login").permitAll()
+				.antMatchers("/oauth/token/**").permitAll()
+				.antMatchers("/tokens/**").permitAll()
 		
-		.antMatchers("/**").permitAll()
+		.antMatchers("/api/*").authenticated()
 				.and().csrf().disable();
 
+ 
 	}
 
 }

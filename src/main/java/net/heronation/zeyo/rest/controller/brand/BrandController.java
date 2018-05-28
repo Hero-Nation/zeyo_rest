@@ -2,6 +2,8 @@ package net.heronation.zeyo.rest.controller.brand;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.BrandResourceAssembler;
@@ -10,6 +12,7 @@ import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.madein.QMadein;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -21,6 +24,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
@@ -53,38 +57,47 @@ public class BrandController extends BaseController {
 		this.entityLinks = entityLinks;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultVO> list(
+			@RequestParam(value = "name", required = false) String name,
+			
+			@RequestParam(value = "company", required = false) String company,
+			@RequestParam(value = "brand", required = false) String brand,
+			@RequestParam(value = "shopmall", required = false) String shopmall,
+			@RequestParam(value = "link", required = false) String link,
+			
 			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QBrand target = QBrand.brand;
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name);
+		param.put("company", company);
+		param.put("brand", brand);
+		param.put("shopmall", shopmall);
+		param.put("link", link);
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success((Object) brandService.search(builder.getValue(), pageable));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
+		} 
+		return return_success((Object) brandService.search(param, pageable));
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
 	public ResponseEntity<ResultVO> insert(@RequestParam(value = "name", required = true) String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
@@ -93,14 +106,16 @@ public class BrandController extends BaseController {
 		return return_success((Object) brandService.insert(name, seq));
 	}
 	
-	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/update_name")
 	@ResponseBody
 	public ResponseEntity<ResultVO> update_name(  
 			@RequestParam(value="id" ,required=false) Long id,
 			@RequestParam(value="name",required=false) String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-		
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
 		
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
@@ -108,12 +123,14 @@ public class BrandController extends BaseController {
 		return return_success((Object) brandService.update(id, seq, name)); 
 	}
 	
-	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/delete")
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(@RequestParam(value="id" ,required=false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
@@ -122,11 +139,14 @@ public class BrandController extends BaseController {
 		return return_success((Object) brandService.delete(id, seq));
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/toggle_link")
 	@ResponseBody
 	public ResponseEntity<ResultVO> toggle_link(@RequestParam(value="id" ,required=false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
@@ -136,41 +156,54 @@ public class BrandController extends BaseController {
 	}
 	
 	
+ 
+	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> brand_list( 
+	public ResponseEntity<ResultVO> brand_list(
 			@RequestParam(value = "name", required = false) String name, 
-			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime start,
-			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end, Pageable pageable) {
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QItem target = QItem.item;
-
-		if (name != null) {
-			builder.and(target.brand.name.containsIgnoreCase(name));
+			@RequestParam(value = "link", required = false) String link, 
+			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, Pageable pageable,
+			 @AuthenticationPrincipal OAuth2Authentication auth) {
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
 		} 
 		
-		if(start != null) {
-			builder.and(target.brand.createDt.after(start).or(target.brand.createDt.eq(start)));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		param.put("link", link);
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
+		} 
 		
-		if(end != null) {
-			builder.and(target.brand.createDt.before(end).or(target.brand.createDt.eq(end)));
-		}
+
 		
-		builder.and(target.useYn.eq("N"));
-		builder.and(target.brand.useYn.eq("N"));
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		String seq = String.valueOf(user.get("member_seq"));
 		
-		return return_success((Object) brandService.client_search(builder.getValue(), pageable));
+		param.put("member_id", seq);
+		
+		return return_success((Object) brandService.client_search(param, pageable));
 	}
 
 	
-	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
 	@ResponseBody
 	public ResponseEntity<ResultVO> detail(	@RequestParam(value="id" ,required=false) Long id, @AuthenticationPrincipal OAuth2Authentication auth,Pageable pageable) {
-
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 

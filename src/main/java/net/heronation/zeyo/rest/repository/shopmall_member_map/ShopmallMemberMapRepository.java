@@ -9,11 +9,14 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.data.rest.core.annotation.RestResource; 
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.querydsl.core.types.dsl.StringPath;
 
  
 @RepositoryRestResource(collectionResourceRel = "shopmall_member_maps", path = "shopmall_member_maps")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface ShopmallMemberMapRepository extends JpaRepository<ShopmallMemberMap, Long> , QueryDslPredicateExecutor<ShopmallMemberMap>{
  
 
