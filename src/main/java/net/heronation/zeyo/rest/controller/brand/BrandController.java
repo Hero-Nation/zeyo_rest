@@ -86,7 +86,8 @@ public class BrandController extends BaseController {
 			param.put("end", end);	
 		}else {
 			param.put("end", end.toString(Format.ISO_DATETIME));
-		} 
+		}
+		 
 		return return_success((Object) brandService.search(param, pageable));
 	}
 
@@ -105,6 +106,34 @@ public class BrandController extends BaseController {
 
 		return return_success((Object) brandService.insert(name, seq));
 	}
+	
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/distinct_with_member_id")
+	@ResponseBody
+	public ResponseEntity<ResultVO> distinct_with_member_id(
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+
+		return return_success((Object) brandService.distinct_with_member_id());
+	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/use_count")
+	@ResponseBody
+	public ResponseEntity<ResultVO> use_count(
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+
+		return return_success((Object) brandService.use_count());
+	}
+	
+	
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/update_name")

@@ -48,7 +48,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPr
 	 
  	 
 	@Override
-	@RestResource(path = "", rel = "",exported = false)
+	@RestResource(path = "", rel = "",exported = true)
 	<S extends Brand> S save(S arg0);
 	
 	

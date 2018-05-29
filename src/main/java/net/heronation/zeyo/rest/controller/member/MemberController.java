@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.controller.member;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.bbs.QBbs;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
@@ -14,6 +15,7 @@ import net.heronation.zeyo.rest.repository.member.MemberResourceAssembler;
 import net.heronation.zeyo.rest.repository.member.QMember;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -96,7 +98,7 @@ public class MemberController extends BaseController {
 			return return_fail("email.form.wrong");
 		} else {
 			try {
-				return return_success(memberService.send_confirm_email(email));
+				return return_success(memberService.send_register_mail(email));
 			} catch (Exception e) {
 				return  return_fail("email.send.exception");
 			}
@@ -105,9 +107,9 @@ public class MemberController extends BaseController {
 
 	}
 	
-	@RequestMapping(path = "/send_confirm_email", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> send_confirm_email(@RequestParam(name = "email", defaultValue = "") String email,@RequestParam(name = "otp", defaultValue = "") String otp) {
-		log.debug("/api/members/send_confirm_email");
+	@RequestMapping(path = "/confirm_otp", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> confirm_otp(@RequestParam(name = "email", defaultValue = "") String email,@RequestParam(name = "otp", defaultValue = "") String otp) {
+		log.debug("/api/members/confirm_otp");
 
 		if (email == null && email.equals("")) {
 			return return_fail("email.empty");
@@ -118,7 +120,7 @@ public class MemberController extends BaseController {
 		} else {
 			try {
 				
-				return return_success(memberService.confirm_email(email,otp));
+				return return_success(memberService.confirm_otp(email,otp));
 				
 			} catch (Exception e) {
 				
@@ -187,19 +189,7 @@ public class MemberController extends BaseController {
 		}
 
 	}
-
-	@RequestMapping(path = "/confirm_no", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> confirm_no(
-			@RequestParam(name = "confirm_no", defaultValue = "") String confirm_no) {
-		log.debug("/api/members/confirm_no");
-
-		if (confirm_no.equals("")) {
-			return return_fail("confirm_no.empty");
-		} else {
-			return return_success();
-		}
-
-	}
+ 
 
 	@RequestMapping(path = "/find_password", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> find_password(@RequestParam(name = "member_id", defaultValue = "") String member_id,
@@ -344,49 +334,21 @@ public class MemberController extends BaseController {
 
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QMember target = QMember.member;
-
-		if (identity != null) {
-			builder.and(target.name.containsIgnoreCase(identity).or(target.memberId.containsIgnoreCase(identity)));
-		}
-
-		if (phone1 != null) {
-			builder.and(target.phone.startsWith(phone1));
-		}
-
-		if (phone2 != null) {
-			builder.and(target.phone.containsIgnoreCase("," + phone2 + ","));
-		}
-
-		if (phone3 != null) {
-			builder.and(target.phone.endsWith(phone3));
-		}
-
-		if (email1 != null) {
-			builder.and(target.email.startsWith(email1));
-		}
-
-		if (email2 != null) {
-			builder.and(target.email.endsWith(email2));
-		}
-
-		if (cn1 != null) {
-			builder.and(target.companyNoHistory.companyNo.startsWith(cn1));
-		}
-
-		if (cn2 != null) {
-			builder.and(target.companyNoHistory.companyNo.containsIgnoreCase("," + cn2 + ","));
-		}
-
-		if (cn3 != null) {
-			builder.and(target.companyNoHistory.companyNo.endsWith(cn3));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success(memberService.search(builder.getValue(), pageable));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("identity", identity);
+		param.put("phone1", phone1);
+		param.put("phone2", phone2);
+		param.put("phone3", phone3);
+		
+		param.put("email1", email1);
+		param.put("email2", email2);
+		
+		param.put("cn1", cn1);
+		param.put("cn2", cn2);
+		param.put("cn3", cn3);
+		
+ 
+		return return_success(memberService.search(param, pageable));
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/search_company_history")

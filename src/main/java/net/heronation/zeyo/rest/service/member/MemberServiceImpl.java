@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.hibernate.loader.custom.sql.SQLCustomQuery;
 import org.joda.time.DateTime;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,52 +112,218 @@ public class MemberServiceImpl implements MemberService {
 		return null;
 	}
 
+//	@Override
+//	@Transactional(readOnly = true)
+//	public Page<Map<String, Object>> search(Predicate where, Pageable page) {
+//
+//		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
+//
+//		QMember m = QMember.member;
+//		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
+//
+//		// PathBuilder<Member> queryPath = new PathBuilder<Member>(Member.class,
+//		// "member");
+//		//
+//		// for (Order order : page.getSort()) {
+//		// PathBuilder<Object> path = queryPath.get(order.getProperty());
+//		// query.orderBy(new
+//		// OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()),
+//		// path));
+//		// }
+//
+//		QueryResults<Tuple> R = query
+//				.select(m.id, m.name, m.phone, m.email, m.manager, m.managerPhone, cnh.id, cnh.name, cnh.companyNo)
+//				.from(cnh).innerJoin(cnh.member, m)
+//				.where(cnh.id.in(JPAExpressions.select(cnh.id.max()).from(cnh).groupBy(cnh.member.id)).and(where))
+//				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
+//
+//		List<Tuple> search_list = R.getResults();
+//		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+//
+//		for (Tuple row : search_list) {
+//			Map<String, Object> search_R = new HashMap<String, Object>();
+//
+//			search_R.put("member_id", row.get(m.id));
+//			search_R.put("member_name", row.get(m.name));
+//			search_R.put("member_phone", row.get(m.phone));
+//			search_R.put("member_email", row.get(m.email));
+//			search_R.put("member_manager", row.get(m.manager));
+//			search_R.put("member_managerPhone", row.get(m.managerPhone));
+//
+//			search_R.put("company_id", row.get(cnh.id));
+//			search_R.put("company_name", row.get(cnh.name));
+//			search_R.put("company_companyNo", row.get(cnh.companyNo));
+//
+//			return_list.add(search_R);
+//		}
+//
+//		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
+//
+//	}
+	
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Map<String, Object>> search(Predicate where, Pageable page) {
+	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
-		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
+		
+		
+		StringBuffer  count_query = new StringBuffer();
+		count_query.append("SELECT "); 
+		count_query.append("    count(*) "); 
+		
+		         
+		
+		
+		StringBuffer  select_query = new StringBuffer(); 
+		select_query.append("SELECT ");
+		select_query.append("    m.id				as member_id, ");
+		select_query.append("    m.name				as member_name, ");
+		select_query.append("    m.phone			as member_phone, ");
+		select_query.append("    m.email			as member_email, ");
+		select_query.append("    bt.name			as company_name, ");
+		select_query.append("    bt.id				as company_id, ");
+		select_query.append("    bt.company_no		as company_companyNo, ");
+		select_query.append("    m.manager			as member_manager, ");
+		select_query.append("    m.manager_phone	as member_managerPhone   ");
 
-		QMember m = QMember.member;
-		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
+		
+		StringBuffer  where_query = new StringBuffer();
+		where_query.append("FROM ");
+		where_query.append("    (SELECT ");
+		where_query.append("        cnh.* ");
+		where_query.append("    FROM ");
+		where_query.append("        company_no_history cnh ");
+		where_query.append("    INNER JOIN (SELECT ");
+		where_query.append("        MAX(id) AS id ");
+		where_query.append("    FROM ");
+		where_query.append("        company_no_history ");
+		where_query.append("    GROUP BY member_id) pcnh ON cnh.id = pcnh.id) bt ");
+		where_query.append("        LEFT OUTER JOIN ");
+		where_query.append("    member m ON bt.member_id = m.id ");
+		where_query.append("WHERE ");
+		where_query.append("    m.use_yn = 'Y'");
+ 
+ 
+		String identity = (String) param.get("identity");
+		if (identity != null) {
+			where_query.append("        AND ( m.name like '%" + identity + "%' ");
+			where_query.append("        OR m.member_id like '%" + identity + "%' )");
+		}
+		
+		
+		String phone1 = (String) param.get("phone1");
+		if (phone1 != null) {
+			where_query.append("        AND   m.phone like '" + phone1 + ",%' ");
+		}
+		
+		
+		String phone2 = (String) param.get("phone2");
+		if (phone2 != null) {
+			where_query.append("        AND   m.phone like '," + phone2 + ",%' ");
+		}
+		
+		
+		String phone3 = (String) param.get("phone3");
+		if (phone3 != null) {
+			where_query.append("        AND   m.phone like '%," + phone3 + "' ");
+		}
+		
+		
+		String email1 = (String) param.get("email1");
+		if (email1 != null) {
+			where_query.append("        AND m.email like '" + email1 + "%' ");
+		}
+		
+		String email2 = (String) param.get("email2");
+		if (email2 != null) {
+			where_query.append("        AND   m.email like '%" + email2 + "' ");
+		}
+		
+		
+		String cn1 = (String) param.get("cn1");
+		if (cn1 != null) {
+			where_query.append("        AND bt.company_no like '" + cn1 + ",%' ");
+		}
+		
+		String cn2 = (String) param.get("cn2");
+		if (cn2 != null) {
+			where_query.append("        AND   m.company_no like '%," + cn2 + ",%' ");
+		}
+		
+		String cn3 = (String) param.get("cn3");
+		if (cn3 != null) {
+			where_query.append("        AND  m.company_no like '%," + cn3 + "' ");
+		}
+		
+ 
+		
+		
+		StringBuffer  sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY m.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for(Sort.Order order   : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			 sep = ", ";
+		}
+		
+		StringBuffer page_query  = new StringBuffer(); 
+		page_query.append("  limit "); 
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize()); 
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+		 
+		Query count_q =   entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String,Object>> count_list = count_q.getResultList();
+		
+		Query q =   entityManager.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
 
-		// PathBuilder<Member> queryPath = new PathBuilder<Member>(Member.class,
-		// "member");
-		//
-		// for (Order order : page.getSort()) {
-		// PathBuilder<Object> path = queryPath.get(order.getProperty());
-		// query.orderBy(new
-		// OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()),
-		// path));
-		// }
-
-		QueryResults<Tuple> R = query
-				.select(m.id, m.name, m.phone, m.email, m.manager, m.managerPhone, cnh.id, cnh.name, cnh.companyNo)
-				.from(cnh).innerJoin(cnh.member, m)
-				.where(cnh.id.in(JPAExpressions.select(cnh.id.max()).from(cnh).groupBy(cnh.member.id)).and(where))
-				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
-
-		List<Tuple> search_list = R.getResults();
-		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
-
-		for (Tuple row : search_list) {
+		List<Map<String,Object>> return_list = new ArrayList<Map<String,Object>>();
+		
+		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
-
-			search_R.put("member_id", row.get(m.id));
-			search_R.put("member_name", row.get(m.name));
-			search_R.put("member_phone", row.get(m.phone));
-			search_R.put("member_email", row.get(m.email));
-			search_R.put("member_manager", row.get(m.manager));
-			search_R.put("member_managerPhone", row.get(m.managerPhone));
-
-			search_R.put("company_id", row.get(cnh.id));
-			search_R.put("company_name", row.get(cnh.name));
-			search_R.put("company_companyNo", row.get(cnh.companyNo));
-
+ 
+			 
+// [member_id] : [NUMERIC]) - [1]
+// [member_name] : [VARCHAR]) - [김수언]
+// [member_phone] : [VARCHAR]) - [111,1111,1111]
+// [member_email] : [VARCHAR]) - [superpeace@naver.com]
+// [company_name] : [VARCHAR]) - [name_9]
+// [company_id] : [NUMERIC]) - [12]
+// [company_companyNo] : [VARCHAR]) - [companyNo_9]
+// [member_manager] : [VARCHAR]) - [수언이]
+// [member_managerPhone] : [VARCHAR]) - [222,2222,2222]
+			
+			search_R.put("member_id", row[0]);
+			search_R.put("member_name", row[1]);
+			search_R.put("member_phone", row[2]); 
+			search_R.put("member_email", row[3]);
+			search_R.put("company_name", row[4]);
+			search_R.put("company_id", row[5]);
+			search_R.put("company_companyNo", row[6]);
+			search_R.put("member_manager", row[7]);
+			search_R.put("member_managerPhone", row[8]);
+			
 			return_list.add(search_R);
 		}
+		
+		
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
 
-		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+		
+		return R;
 
 	}
 
@@ -310,7 +478,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public String send_confirm_email(String email) throws CommonException{
+	public String send_register_mail(String email) throws CommonException{
 
 		// 이미 이메일이 존재하는지 여부 ..>>> 여러번 보낼수 있다고 가정
  
@@ -349,7 +517,7 @@ public class MemberServiceImpl implements MemberService {
 	
 
 	@Override
-	public String confirm_email(String email,String otp) throws CommonException { 
+	public String confirm_otp(String email,String otp) throws CommonException { 
 		
 		QEmailValidation target = QEmailValidation.emailValidation;
 		

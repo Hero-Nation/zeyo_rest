@@ -103,69 +103,36 @@ public class ItemController extends BaseController {
 			@RequestParam(value = "size_link", required = false) String size_link,
 			@RequestParam(value = "cate", required = false) String category,
 			@RequestParam(value = "sub_cate", required = false) String sub_category,
-			@RequestParam(value = "start_price", defaultValue = "0", required = false) int start_price,
-			@RequestParam(value = "end_price", defaultValue = "0", required = false) int end_price,
+			@RequestParam(value = "start_price",   required = false) String start_price,
+			@RequestParam(value = "end_price",   required = false) String end_price,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QItem target = QItem.item;
-		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
-		QShopmall sm = QShopmall.shopmall;
-
 		
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name);
+		param.put("company", company);
+		param.put("brand", brand);
+		param.put("shopmall", shopmall); 
+		param.put("size_link", size_link); 
+		param.put("category", category); 
+		param.put("sub_category", sub_category); 
+		param.put("start_price", start_price); 
+		param.put("end_price", end_price);   
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-//		if (company != null) {
-//			Long company_id = Long.valueOf(String.valueOf(company));
-//			builder.and(cnh.id.eq(company_id));
-//		}
-
-		if (brand != null) {
-			Long brand_id = Long.valueOf(String.valueOf(brand));
-			builder.and(target.brand.id.eq(brand_id));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-		
-//		if (shopmall != null) {
-//			Long shopmall_id = Long.valueOf(String.valueOf(shopmall));
-//			builder.and(sm.id.eq(shopmall_id));
-//		}
-		
-		if (size_link != null) { 
-			builder.and(target.linkYn.eq(size_link));
-		}
+		  
 
-		if (category != null) {
-			Long category_id = Long.valueOf(String.valueOf(category));
-			builder.and(target.category.id.eq(category_id));
-		}
-
-		if (sub_category != null) {
-			Long sub_category_id = Long.valueOf(String.valueOf(sub_category));
-			builder.and(target.subCategory.id.eq(sub_category_id));
-		}
-
-		if (start_price != 0) {
-			builder.and(target.price.gt(start_price).or(target.price.eq(start_price)));
-		}
-
-		if (end_price != 0) {
-			builder.and(target.price.lt(end_price).or(target.price.eq(end_price)));
-		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start).or(target.createDt.eq(start)));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end).or(target.createDt.eq(end)));
-		}
-
-		return return_success((Object) itemService.search(builder.getValue(), pageable));
+		return return_success((Object) itemService.search(param, pageable));
 	}
 
 	

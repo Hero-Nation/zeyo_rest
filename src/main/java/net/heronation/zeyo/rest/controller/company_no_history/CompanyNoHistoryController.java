@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.company_no_history;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientValidator;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
@@ -11,6 +12,8 @@ import net.heronation.zeyo.rest.repository.madein.QMadein;
 import net.heronation.zeyo.rest.repository.member.QMember;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +66,8 @@ public class CompanyNoHistoryController extends BaseController {
 	public CompanyNoHistoryDistinctNameConverter getCompanyNoHistoryDistinctNameConverter() {
 		return new CompanyNoHistoryDistinctNameConverter();
 	}
+ 
+	
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
@@ -75,36 +80,26 @@ public class CompanyNoHistoryController extends BaseController {
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
+ 
+		
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name);
+		param.put("cn1", cn1);
+		param.put("cn2", cn2);
+		param.put("cn3", cn3); 
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (cn1 != null) {
-			builder.and(target.companyNo.startsWith(cn1));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-
-		if (cn2 != null) {
-			builder.and(target.companyNo.containsIgnoreCase("," + cn2 + ","));
-		}
-
-		if (cn3 != null) {
-			builder.and(target.companyNo.endsWith(cn3));
-		}
-
-		if (start != null) {
-			builder.and(target.changeDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.changeDt.before(end));
-		}
-
-		return return_success((Object) company_no_historyService.search(builder.getValue(), pageable));
+		  
+		
+		return return_success((Object) company_no_historyService.search(param, pageable));
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

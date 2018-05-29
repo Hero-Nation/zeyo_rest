@@ -23,8 +23,10 @@ public interface MemberService {
 
 	String find_id_by_phone();
 
-	Page<Map<String, Object>> search(Predicate where, Pageable page);
+	Map<String, Object> search(Map<String, Object> where, Pageable page);
 
+	
+	
 	CompanyNoHistory getCompanyInfo(Predicate where);
 
 	Map<String, Object> getUserInfo(Predicate where);
@@ -43,9 +45,9 @@ public interface MemberService {
 
 	Member update_email(String email, String confirm_no, Long member_seq);
 
-	String send_confirm_email(String email) throws CommonException;
+	String send_register_mail(String email) throws CommonException;
 	
-	String confirm_email(String email,String otp) throws CommonException;
+	String confirm_otp(String email,String otp) throws CommonException;
 
 	Member update_password(String password, Long member_seq);
 

@@ -15,7 +15,7 @@ import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface ItemService {
-	Page<Map<String, Object>> search(Predicate where, Pageable page);
+	Map<String,Object> search(Map<String,Object> where, Pageable page);
 	Page<Map<String, Object>> client_search(Map<String, Object> param, Pageable page);
 	
 	
