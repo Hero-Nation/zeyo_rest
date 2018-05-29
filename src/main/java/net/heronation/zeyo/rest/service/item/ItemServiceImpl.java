@@ -255,7 +255,7 @@ public class ItemServiceImpl implements ItemService {
 
 		
 		String size_link = (String) param.get("size_link");
-		if (shopmall != null && size_link.equals("Y")) {
+		if (size_link != null && size_link.equals("Y")) {
 			where_query.append("        AND   i.link_yn = 'Y' ");
 		}
 		

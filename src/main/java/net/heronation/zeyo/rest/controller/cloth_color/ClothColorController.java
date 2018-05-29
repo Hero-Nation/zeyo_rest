@@ -2,12 +2,16 @@ package net.heronation.zeyo.rest.controller.cloth_color;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorResourceAssembler;
 import net.heronation.zeyo.rest.repository.cloth_color.QClothColor;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.QItemClothColorMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,26 +62,20 @@ public class ClothColorController extends BaseController {
 
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QItemClothColorMap target = QItemClothColorMap.itemClothColorMap;
-		//QClothColor target = QClothColor.clothColor;
-
-		if (name != null) {
-			builder.and(target.clothColor.name.containsIgnoreCase(name));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (start != null) {
-			builder.and(target.clothColor.createDt.after(start));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-
-		if (end != null) {
-			builder.and(target.clothColor.createDt.before(end));
-		}
-
-		builder.and(target.clothColor.useYn.eq("Y"));
-
-		return return_success((Object) cloth_colorService.search(builder.getValue(), pageable));
+		
+		return return_success((Object) cloth_colorService.search(param, pageable));
 	}
 
 }

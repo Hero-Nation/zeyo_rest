@@ -15,7 +15,7 @@ import net.heronation.zeyo.rest.repository.madein.Madein;
 
 public interface MadeinService {
 
-	Page<Madein> search(Predicate where, Pageable page);
+	Map<String, Object> search(Map<String, Object> where, Pageable page);
 
 	Page<Map<String, Object>> use_list(Predicate where, Pageable page);
 

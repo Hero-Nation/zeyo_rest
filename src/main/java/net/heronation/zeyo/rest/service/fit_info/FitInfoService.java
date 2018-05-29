@@ -12,6 +12,6 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 
 public interface FitInfoService {
-	Page<Map<String,Object>> search(Predicate where, Pageable page); 
+	Map<String,Object> search(Map<String,Object> where, Pageable page); 
 	Page<Map<String,Object>> fitInfoOptions_search(Predicate where, Pageable page); 
 }

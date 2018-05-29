@@ -11,5 +11,5 @@ import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 
 public interface SizeTableService {
-	Page<Map<String, Object>> search(Predicate where, Pageable page);
+	Map<String,Object> search(Map<String,Object> where, Pageable page);
 }

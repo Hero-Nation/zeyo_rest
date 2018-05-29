@@ -2,11 +2,15 @@ package net.heronation.zeyo.rest.controller.size_option;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionResourceAssembler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,40 +67,23 @@ public class SizeOptionController extends BaseController {
 			
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QSizeOption target = QSizeOption.sizeOption;
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
-		}
-
-		if (category != null) {
-			Long category_id = Long.valueOf(String.valueOf(category));
-			builder.and(target.category.id.eq(category_id));
-		}
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		param.put("category", category); 
+		param.put("sub_category", sub_category); 
+		param.put("kindof", kindof); 
 		
-		if (sub_category != null) {
-			Long sub_category_id = Long.valueOf(String.valueOf(sub_category));
-			builder.and(target.subCategory.id.eq(sub_category_id));
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-		
-		if (start != null) {
-			builder.and(target.createDt.after(start));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-		
-		if (kindof != null) {
-			Long kindof_id = Long.valueOf(String.valueOf(kindof));
-			builder.and(target.kindof.id.eq(kindof_id));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success((Object) size_optionService.search(builder.getValue(), pageable));
+		return return_success((Object) size_optionService.search(param, pageable));
 	}
 	
 	

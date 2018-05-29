@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.fit_info;
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoResourceAssembler;
 import net.heronation.zeyo.rest.repository.fit_info.QFitInfo;
@@ -9,6 +10,8 @@ import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,25 +66,20 @@ public class FitInfoController extends BaseController {
 			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end,
 			Pageable pageable) {
 
-		QFitInfo target = QFitInfo.fitInfo;
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
+		}
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
+		}
 		
-		BooleanBuilder builder = new BooleanBuilder();
-
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
-		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-		
-		return return_success((Object) fit_infoService.search(builder.getValue(), pageable));
+		return return_success((Object) fit_infoService.search(param, pageable));
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

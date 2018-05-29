@@ -30,9 +30,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
-import net.heronation.zeyo.rest.repository.brand_member_map.BrandMemberMap;
-import net.heronation.zeyo.rest.repository.brand_member_map.BrandMemberMapRepository;
+import net.heronation.zeyo.rest.repository.brand.QBrand; 
 import net.heronation.zeyo.rest.repository.brand_member_map.QBrandMemberMap;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.QItem;
@@ -57,9 +55,7 @@ public class BrandServiceImpl implements BrandService {
 
 	@Autowired
 	private MemberRepository memberRepository;
-
-	@Autowired
-	private BrandMemberMapRepository brandMemberMapRepository;
+ 
 
 	@Autowired
 	EntityManager entityManager;
@@ -84,14 +80,14 @@ public class BrandServiceImpl implements BrandService {
 		select_query.append("                FROM ");
 		select_query.append("                    company_no_history scnh ");
 		select_query.append("                WHERE ");
-		select_query.append("                    scnh.member_id = m.id)) AS company_name, ");
+		select_query.append("                    scnh.member_id = m.id   GROUP BY scnh.member_id )) AS company_name, ");
 		select_query.append("    m.name AS member_name, ");
 		select_query.append("    b.name AS brand_name, ");
 		select_query.append("    s.name AS shopmall_name, ");
 		select_query.append("    COUNT(i.id) AS item_count, ");
 		select_query.append("    AVG(i.price) AS item_price, ");
-		select_query.append("    (SELECT ");
-		select_query.append("            COUNT(si.id) ");
+		select_query.append("    ( SELECT ");
+		select_query.append("            count(si.id) ");
 		select_query.append("        FROM ");
 		select_query.append("            brand sb ");
 		select_query.append("                LEFT JOIN ");
@@ -110,7 +106,7 @@ public class BrandServiceImpl implements BrandService {
 		select_query.append("                AND sb.id = b.id ");
 		select_query.append("                AND ss.id = s.id ");
 		select_query.append("                AND si.link_yn = 'Y' ");
-		select_query.append("        GROUP BY sm.id , sb.id , ss.id) AS link_count, ");
+		select_query.append("        GROUP BY sm.id , sb.id , ss.id)   AS link_count, ");
 		select_query.append("    b.create_dt AS brand_create_dt ");
 
 		StringBuffer where_query = new StringBuffer();
@@ -462,8 +458,8 @@ public class BrandServiceImpl implements BrandService {
 		QMember qm = QMember.member;
 		QBrandMemberMap qbmm = QBrandMemberMap.brandMemberMap;
 
-		BrandMemberMap db_qbmm = brandMemberMapRepository
-				.findOne(qbmm.brand.id.eq(brand_id).and(qbmm.member.id.eq(member_seq)));
+//		BrandMemberMap db_qbmm = brandMemberMapRepository
+//				.findOne(qbmm.brand.id.eq(brand_id).and(qbmm.member.id.eq(member_seq)));
 
 		if (target == null || target.getUseYn().equals("N")) {
 			// brand is not exist
@@ -490,14 +486,14 @@ public class BrandServiceImpl implements BrandService {
 			//
 			// }else {
 
-			String current_link_yn = db_qbmm.getLinkYn();
-			if (current_link_yn.equals("Y")) {
-				db_qbmm.setLinkYn("N");
-				R.put("CURRENT_LINK_YN", "N");
-			} else {
-				db_qbmm.setLinkYn("Y");
-				R.put("CURRENT_LINK_YN", "Y");
-			}
+//			String current_link_yn = db_qbmm.getLinkYn();
+//			if (current_link_yn.equals("Y")) {
+//				db_qbmm.setLinkYn("N");
+//				R.put("CURRENT_LINK_YN", "N");
+//			} else {
+//				db_qbmm.setLinkYn("Y");
+//				R.put("CURRENT_LINK_YN", "Y");
+//			}
 
 			// }
 

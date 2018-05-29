@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.madein;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
 import net.heronation.zeyo.rest.repository.madein.MadeinResourceAssembler;
@@ -9,6 +10,8 @@ import net.heronation.zeyo.rest.repository.madein.QMadein;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,24 +66,20 @@ public class MadeinController extends BaseController {
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
  
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		if (name != null) {
-			builder.and(QMadein.madein.name.containsIgnoreCase(name));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name);   
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
+		}
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
 
-		if (start != null) {
-			builder.and(QMadein.madein.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(QMadein.madein.createDt.before(end));
-		}
-
-		builder.and(QMadein.madein.useYn.eq("Y"));
-
-		return return_success((Object) madeinService.use_list(builder.getValue(), pageable));
+		return return_success((Object) madeinService.search(param, pageable));
 	}
 
 	// @RequestMapping(method = RequestMethod.GET, value = "/use_list")

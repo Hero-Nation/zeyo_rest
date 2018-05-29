@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.controller.bbs;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.controller.member.MemberRegisterValidator;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;
@@ -14,6 +15,7 @@ import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -83,70 +85,65 @@ public class BbsController extends BaseController {
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QBbs target = QBbs.bbs;
-
-		if (title != null) {
-			builder.and(target.title.containsIgnoreCase(title));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("title", title); 
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
+		}
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
 
-		if (start != null) {
-			builder.and(target.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success((Object) bbsService.search(builder.getValue(), pageable));
+		return return_success((Object) bbsService.search(param, pageable));
 	}
 
-	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
-	@ResponseBody
-	public ResponseEntity<ResultVO> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
-
-		if(auth == null) {
-			return return_fail(CommonConstants.NO_TOKEN);
-		}
-		
-		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
-				.getDecodedDetails();
-		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QBbs target = QBbs.bbs;
-
-		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
-
-		return return_success((Object) bbsService.search(builder.getValue(), pageable));
-	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.GET, value = "/get_stats")
-	@ResponseBody
-	public ResponseEntity<ResultVO> get_stats(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
-
-		if(auth == null) {
-			return return_fail(CommonConstants.NO_TOKEN);
-		}
-		
-		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
-				.getDecodedDetails();
-		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QBbs target = QBbs.bbs;
-
-		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
-
-		return return_success((Object) bbsService.search(builder.getValue(), pageable));
-	}
+//	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
+//	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
+//	@ResponseBody
+//	public ResponseEntity<ResultVO> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+//
+//		if(auth == null) {
+//			return return_fail(CommonConstants.NO_TOKEN);
+//		}
+//		
+//		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+//				.getDecodedDetails();
+//		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+//
+//		BooleanBuilder builder = new BooleanBuilder();
+//
+//		QBbs target = QBbs.bbs;
+//
+//		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
+//
+//		return return_success((Object) bbsService.search(builder.getValue(), pageable));
+//	}
+//	
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@RequestMapping(method = RequestMethod.GET, value = "/get_stats")
+//	@ResponseBody
+//	public ResponseEntity<ResultVO> get_stats(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+//
+//		if(auth == null) {
+//			return return_fail(CommonConstants.NO_TOKEN);
+//		}
+//		
+//		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+//				.getDecodedDetails();
+//		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+//
+//		BooleanBuilder builder = new BooleanBuilder();
+//
+//		QBbs target = QBbs.bbs;
+//
+//		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
+//
+//		return return_success((Object) bbsService.search(builder.getValue(), pageable));
+//	}
 	
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

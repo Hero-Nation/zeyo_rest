@@ -11,7 +11,7 @@ import com.querydsl.core.types.Predicate;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface ShopmallService {
-	Page<Map<String,Object>> search(Map<String,Object> where,Pageable page);
+	Map<String,Object> search(Map<String,Object> where,Pageable page);
 	Page<Map<String,Object>> client_search(Map<String,Object> where,Pageable page); 
 	
 	Shopmall insert(String name,Long member_seq); 

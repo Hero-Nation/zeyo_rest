@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.category;
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.repository.category.QCategory;
@@ -9,6 +10,8 @@ import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,41 +63,31 @@ public class CategoryController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<ResultVO> list(
 			@RequestParam(value = "name",required=false) String name,
-			@RequestParam(value = "cate",required=false) Long cate,
-			@RequestParam(value = "subcate",required=false) Long subcate,
+			@RequestParam(value = "cate",required=false) String cate,
+			@RequestParam(value = "subcate",required=false) String subcate,
 			@RequestParam(value = "measure",required=false) String measure, 
 			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-		//QCategory target = QCategory.category; 
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		param.put("cate", cate); 
+		param.put("subcate", subcate); 
+		param.put("measure", measure); 
 		
-		QSubCategory target = QSubCategory.subCategory; 
-		if (name != null) {
-			builder.and(target.category.name.containsIgnoreCase(name));
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (cate != null) {
-			builder.and(target.category.id.eq(cate));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-
-		if (subcate != null) {
-			builder.and(target.category.id.eq(subcate));
-		}
-
 		
-		if (start != null) {
-			builder.and(target.category.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.category.createDt.before(end));
-		}
-
-		builder.and(target.category.useYn.eq("Y"));
-		
-		return return_success(categoryService.search(builder.getValue(), pageable));
+		return return_success(categoryService.search(param, pageable));
 	}
 
  

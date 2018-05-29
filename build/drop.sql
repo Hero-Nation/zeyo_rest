@@ -1,8 +1,6 @@
 alter table bbs drop foreign key FKenr5nejc0bi4oa346asfqcdon
 alter table bbs drop foreign key FKnaka108edskn5qa9ylk0vpe0x
 alter table brand drop foreign key FK59a73qwpcnt6h66lpmqjsn73n
-alter table brand_member_map drop foreign key FKb8p4c72m2nkrhvesletfdgj8f
-alter table brand_member_map drop foreign key FKrkexskhsadf4lavb3kmsdhpkb
 alter table cloth_color drop foreign key FKr8v9kbek5xgg3ah0le73ikcm0
 alter table company_no_history drop foreign key FK6b2m83qo8rnxd9gijfceuh1gx
 alter table fit_info_option drop foreign key FKcl17pn9grtkgnbxf3ooxc006b
@@ -44,7 +42,6 @@ alter table sub_category_measure_map drop foreign key FK6pddla5y42wkv6a5y9w2u7g5
 alter table warranty drop foreign key FK8hfqdbikdbkajxl9vyd3o61fa
 drop table if exists bbs
 drop table if exists brand
-drop table if exists brand_member_map
 drop table if exists category
 drop table if exists cloth_color
 drop table if exists company_no_history

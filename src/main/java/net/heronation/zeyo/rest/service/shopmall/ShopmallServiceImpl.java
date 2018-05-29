@@ -20,14 +20,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
-import net.heronation.zeyo.rest.repository.brand_member_map.BrandMemberMap;
-import net.heronation.zeyo.rest.repository.brand_member_map.QBrandMemberMap;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -67,7 +63,7 @@ public class ShopmallServiceImpl implements ShopmallService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Map<String,Object>> search(Map<String,Object> param, Pageable page) {
+	public Map<String,Object> search(Map<String,Object> param, Pageable page) {
 		
 		
 		
@@ -76,7 +72,7 @@ public class ShopmallServiceImpl implements ShopmallService{
 		count_query.append("    count(*) "); 
 		
 		
-		StringBuffer  select_query = new StringBuffer();
+		StringBuffer  select_query = new StringBuffer(); 
 		select_query.append("SELECT ");
 		select_query.append("    (SELECT ");
 		select_query.append("            cnh.name ");
@@ -88,63 +84,46 @@ public class ShopmallServiceImpl implements ShopmallService{
 		select_query.append("                FROM ");
 		select_query.append("                    company_no_history scnh ");
 		select_query.append("                WHERE ");
-		select_query.append("                    scnh.member_id = m.id)) AS company_name, ");
-		select_query.append("    ism.id AS ism_id, ");
-		select_query.append("    m.name AS member_name, ");
+		select_query.append("                    scnh.member_id = m.id ");
+		select_query.append("                GROUP BY scnh.member_id)) AS company_name, ");
+		select_query.append("    s.name AS shopmall_name, ");
 		select_query.append("    b.name AS brand_name, ");
-		select_query.append("    s.name AS shopmall_name, "); 
 		select_query.append("    COUNT(i.id) AS item_count, ");
 		select_query.append("    AVG(i.price) AS item_price, ");
-		select_query.append("    IFNULL((SELECT ");
-		select_query.append("                    COUNT(*) ");
-		select_query.append("                FROM ");
-		select_query.append("                    item_shopmall_map sism ");
-		select_query.append("                        INNER JOIN ");
-		select_query.append("                    shopmall ss ON sism.shopmall_id = ss.id ");
-		select_query.append("                        INNER JOIN ");
-		select_query.append("                    item si ON sism.item_id = si.id ");
-		select_query.append("                        INNER JOIN ");
-		select_query.append("                    brand sb ON si.brand_id = sb.id ");
-		select_query.append("                        INNER JOIN ");
-		select_query.append("                    member sm ON si.member_id = sm.id ");
-		select_query.append("                WHERE ");
-		select_query.append("                    sism.use_yn = 'Y' AND ss.use_yn = 'Y' ");
-		select_query.append("                        AND si.use_yn = 'Y' ");
-		select_query.append("                        AND sb.use_yn = 'Y' ");
-		select_query.append("                        AND sm.use_yn = 'Y' ");
-		select_query.append("                        AND si.link_yn = 'Y' ");
-		select_query.append("                        AND sb.id = s.id ");
-		select_query.append("                        AND ss.id = s.id ");
-		select_query.append("                GROUP BY sb.id , ss.id), ");
-		select_query.append("            0) AS link_count, ");
-		select_query.append("    s.create_dt AS shopmall_create_dt ");
+		select_query.append("    s.create_dt AS shopmall_create_dt ,");
+		select_query.append("    (select count(ct.id) from (SELECT ");
+		select_query.append("           si.id ");
+		select_query.append(" FROM ");
+		select_query.append("    shopmall ss ");
+		select_query.append("        LEFT JOIN ");
+		select_query.append("    item_shopmall_map sism ON ss.id = sism.shopmall_id ");
+		select_query.append("        AND sism.use_yn = 'Y' ");
+		select_query.append("        LEFT JOIN ");
+		select_query.append("    item si ON sism.item_id = si.id AND si.use_yn = 'Y' ");
+		select_query.append("        LEFT JOIN ");
+		select_query.append("    member sm ON si.member_id = sm.id AND sm.use_yn = 'Y' ");
+		select_query.append("        LEFT JOIN ");
+		select_query.append("    brand sb ON si.brand_id = sb.id AND sb.use_yn = 'Y' ");
+		select_query.append("        WHERE ");
+		select_query.append("            1 = 1 ");
+		select_query.append("                AND si.link_yn = 'Y' ");
+		select_query.append("        GROUP BY  sm.id , ss.id , sb.id) ct )  AS link_count  ");
 		
 		StringBuffer  where_query = new StringBuffer();
 		where_query.append("FROM ");
-		where_query.append("    item_shopmall_map ism ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    shopmall s ON ism.shopmall_id = s.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    item i ON ism.item_id = i.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    brand b ON i.brand_id = b.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    member m ON i.member_id = m.id ");
+		where_query.append("    shopmall s ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    item_shopmall_map ism ON s.id = ism.shopmall_id ");
+		where_query.append("        AND ism.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    item i ON ism.item_id = i.id AND i.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    member m ON i.member_id = m.id AND m.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    brand b ON i.brand_id = b.id AND b.use_yn = 'Y' ");
 		where_query.append("WHERE ");
-		where_query.append("    ism.use_yn = 'Y' AND s.use_yn = 'Y' ");
-		where_query.append("        AND i.use_yn = 'Y' ");
-		where_query.append("        AND b.use_yn = 'Y' ");
-		where_query.append("        AND m.use_yn = 'Y' "); 
-		
-//		Map<String,Object> param = new HashMap<String,Object>();
-//		param.put("name", "name");
-//		param.put("company", "name");
-//		param.put("brand", null);
-//		param.put("shopmall", null);
-//		param.put("link", null);
-//		param.put("start", null);
-//		param.put("end", null);
-		
+		where_query.append("    s.use_yn = 'Y' ");
+ 
 		
 		String name = (String)param.get("name");
 		if(name != null) {
@@ -152,19 +131,19 @@ public class ShopmallServiceImpl implements ShopmallService{
 		}
 		
 		//  않됨
-//		String company = (String)param.get("company");
-//		if(company != null) {
-//			where_query.append("        AND company_name like '%"+company+"%' ");	
-//		}
+		String company = (String)param.get("company");
+		if(company != null) {
+			where_query.append("        AND m.id  ="+company+" ");	
+		}
 		
 		String brand = (String)param.get("brand");
 		if(brand != null) {
-			where_query.append("        AND b.name like '%"+brand+"%' ");	
+			where_query.append("        AND i.brand_id ="+brand+" ");	
 		}
 		
 		String shopmall = (String)param.get("shopmall");
 		if(shopmall != null) {
-			where_query.append("        AND s.name like '%"+shopmall+"%' ");	
+			where_query.append("        AND ism.shopmall_id ="+shopmall+" ");	
 		}
 		
 		// 않됨
@@ -185,8 +164,7 @@ public class ShopmallServiceImpl implements ShopmallService{
 		}
 		
 		 
-		
-		where_query.append(" GROUP BY  s.id , s.id");
+		where_query.append("GROUP BY m.id , s.id , b.id ");
  
 		
 		
@@ -219,30 +197,47 @@ public class ShopmallServiceImpl implements ShopmallService{
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
  
-//			0 [company_name] : [VARCHAR]) - [name_9]
-//			1 [ism_id] : [NUMERIC]) - [4]
-//			2 [member_name] : [VARCHAR]) - [김수언]
-//			3 [brand_name] : [VARCHAR]) - [nike]
-//			4 [shopmall_name] : [VARCHAR]) - [shopmall1]
-//			5 [item_count] : [NUMERIC]) - [3]
-//			6 [item_price] : [NUMERIC]) - [123123.0000]
-//			7 [link_count] : [NUMERIC]) - [0]
-//			8 [brand_create_dt] : [TIMESTAMP]) - [2018-05-22 14:12:31.0]
+//		[company_name] : [VARCHAR]) - [null]
+//		[shopmall_name] : [VARCHAR]) - [shopmall5]
+//		[brand_name] : [VARCHAR]) - [null]
+//		[item_count] : [NUMERIC]) - [0]
+//		[item_price] : [NUMERIC]) - [null]
+//		[brand_create_dt] : [TIMESTAMP]) - [2018-05-24 14:12:31.0]
 			
+			
+//            <td>{{pageData?.totalElements - ((pageData?.number-1) * listSize) - i}}</td>
+//            <td>{{item.company_name}}</td>
+//            <td>{{item.shopmall_name}}</td>
+//            <td>{{item.brand_name}}</td>
+//            <td>{{item.link_count}}</td>
+//            <td>{{item.item_price}}</td>
+//            <td>{{item.shopmall_create_dt | date: 'yyyy-MM-dd'}}</td>
+//            <td>{{item.link_count > 0?'연동':'중지'}}</td>
 			
 			search_R.put("company_name", row[0]);
-			search_R.put("member_name", row[2]);
-			search_R.put("brand_name", row[3]); 
-			search_R.put("shopmall_name", row[4]);
-			search_R.put("item_count", row[5]);
-			search_R.put("item_price", row[6]);
-			search_R.put("link_count", row[7]);
-			search_R.put("shopmall_create_dt", row[8]);
+			search_R.put("shopmall_name", row[1]);
+			search_R.put("brand_name", row[2]); 
+			search_R.put("item_count", row[3]);
+			search_R.put("item_price", row[4]);
+			search_R.put("shopmall_create_dt", row[5]); 
+			search_R.put("link_count", row[6]); 
 			
 			return_list.add(search_R);
 		}
 		
-		return new PageImpl<Map<String,Object>>(return_list, page, count_list.size());
+		
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R; 
 
 	}
 

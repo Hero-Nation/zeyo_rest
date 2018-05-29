@@ -11,5 +11,5 @@ import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
 public interface ClothColorService {
-	Page<Map<String,Object>>  search(Predicate where,Pageable page); 
+	Map<String,Object>  search(Map<String,Object> where,Pageable page); 
 }

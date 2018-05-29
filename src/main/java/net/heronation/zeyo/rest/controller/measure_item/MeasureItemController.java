@@ -2,12 +2,15 @@ package net.heronation.zeyo.rest.controller.measure_item;
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemRepository;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemResourceAssembler;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 import net.heronation.zeyo.rest.repository.warranty.QWarranty;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,23 +64,21 @@ public class MeasureItemController extends BaseController {
 			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
 
-		if (name != null) {
-			builder.and(QMeasureItem.measureItem.name.containsIgnoreCase(name));
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+		if(start == null) {
+			param.put("start", start);	
+		}else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-
-		if (start != null) {
-			builder.and(QMeasureItem.measureItem.createDt.after(start));
+		if(end == null) {
+			param.put("end", end);	
+		}else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-
-		if (end != null) {
-			builder.and(QMeasureItem.measureItem.createDt.before(end));
-		}
-
-		builder.and(QMeasureItem.measureItem.useYn.eq("Y"));
 		
-		return return_success((Object) measure_itemService.search(builder.getValue(), pageable));
+		return return_success((Object) measure_itemService.search(param, pageable));
 	}
 
  
