@@ -32,10 +32,7 @@ import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.member.QMember;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
-import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
-import net.heronation.zeyo.rest.repository.shopmall_member_map.QShopmallMemberMap;
-import net.heronation.zeyo.rest.repository.shopmall_member_map.ShopmallMemberMap;
-import net.heronation.zeyo.rest.repository.shopmall_member_map.ShopmallMemberMapRepository;
+import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository; 
 
 
 
@@ -50,9 +47,7 @@ public class ShopmallServiceImpl implements ShopmallService{
 	@Autowired
 	private ShopmallRepository shopmallRepository;
 	
-	
-	@Autowired
-	private ShopmallMemberMapRepository shopmallMemberMapRepository;
+	 
 	
 	
 	
@@ -385,17 +380,17 @@ public class ShopmallServiceImpl implements ShopmallService{
 
 			// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
-			QShopmallMemberMap smm = QShopmallMemberMap.shopmallMemberMap;
+			//QShopmallMemberMap smm = QShopmallMemberMap.shopmallMemberMap;
 
-			JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+//			JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+//
+//			Long member_count = query.select(smm.member.countDistinct())
+//					.from(smm)
+//					.innerJoin(smm.shopmall)
+//					.on(smm.shopmall.useYn.eq("Y"))
+//					.where(smm.shopmall.id.eq(shopmall_id).and(smm.useYn.eq("Y"))).fetchCount();
 
-			Long member_count = query.select(smm.member.countDistinct())
-					.from(smm)
-					.innerJoin(smm.shopmall)
-					.on(smm.shopmall.useYn.eq("Y"))
-					.where(smm.shopmall.id.eq(shopmall_id).and(smm.useYn.eq("Y"))).fetchCount();
-
-			if (member_count == 1) {
+			if (1 == 1) {
 
 				target.setName(name);
 				shopmallRepository.save(target);
@@ -433,17 +428,17 @@ public class ShopmallServiceImpl implements ShopmallService{
 			// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
 
-			QShopmallMemberMap smm = QShopmallMemberMap.shopmallMemberMap;
+			//QShopmallMemberMap smm = QShopmallMemberMap.shopmallMemberMap;
 
 			JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
 
-			Long member_count = query.select(smm.member.countDistinct())
-					.from(smm)
-					.innerJoin(smm.shopmall)
-					.on(smm.shopmall.useYn.eq("Y"))
-					.where(smm.shopmall.id.eq(shopmall_id).and(smm.useYn.eq("Y"))).fetchCount();
+//			Long member_count = query.select(smm.member.countDistinct())
+//					.from(smm)
+//					.innerJoin(smm.shopmall)
+//					.on(smm.shopmall.useYn.eq("Y"))
+//					.where(smm.shopmall.id.eq(shopmall_id).and(smm.useYn.eq("Y"))).fetchCount();
 
-			if (member_count == 1) {
+			if (1 == 1) {
 
 				shopmallRepository.delete(target);
 				R.put("CODE", "OK");
@@ -469,9 +464,9 @@ public class ShopmallServiceImpl implements ShopmallService{
 		QMember qm = QMember.member; 
 		QShopmall sm = QShopmall.shopmall;
 		
-		QShopmallMemberMap smm = QShopmallMemberMap.shopmallMemberMap;
-		
-		ShopmallMemberMap db_smm = shopmallMemberMapRepository.findOne(smm.shopmall.id.eq(shopmall_id).and(smm.member.id.eq(member_seq)));
+//		QShopmallMemberMap smm = QShopmallMemberMap.shopmallMemberMap;
+//		
+//		ShopmallMemberMap db_smm = shopmallMemberMapRepository.findOne(smm.shopmall.id.eq(shopmall_id).and(smm.member.id.eq(member_seq)));
 
 		if (target == null || target.getUseYn().equals("N")) {
 			// brand is not exist
@@ -498,12 +493,13 @@ public class ShopmallServiceImpl implements ShopmallService{
 //				
 //			}else {
 				
-				String current_link_yn = db_smm.getLinkYn();
+				//String current_link_yn = db_smm.getLinkYn();
+				String current_link_yn= "Y";
 				if(current_link_yn.equals("Y")) {
-					db_smm.setLinkYn("N");
+					//db_smm.setLinkYn("N");
 					R.put("CURRENT_LINK_YN", "N");
 				}else {
-					db_smm.setLinkYn("Y");
+					//db_smm.setLinkYn("Y");
 					R.put("CURRENT_LINK_YN", "Y");
 				}
 				

@@ -28,8 +28,6 @@ alter table item_size_option_map drop foreign key FKgbh5hm4w2r1r2oju8baveq4f7
 alter table madein drop foreign key FK27fv081gccndufvhbwnyletu3
 alter table member drop foreign key FKqpp8d1imms4qubswn07a3j532
 alter table shopmall drop foreign key FK9v32fg1stcoxidcttmtlyn2xf
-alter table shopmall_member_map drop foreign key FKvslouykqj1tqiwh1nmtp57eo
-alter table shopmall_member_map drop foreign key FK2k36l72akiitu9rmq1wqqd3mx
 alter table size_option drop foreign key FKqi9ebydupvlxrpp8g8vdh847e
 alter table size_option drop foreign key FKq70xqw0aysxxlckxqktrcwrr
 alter table size_option drop foreign key FKk7k3fvg25k3lfv9y076ulrs2w
@@ -66,7 +64,6 @@ drop table if exists material
 drop table if exists measure_item
 drop table if exists member
 drop table if exists shopmall
-drop table if exists shopmall_member_map
 drop table if exists size_option
 drop table if exists size_table
 drop table if exists sub_category

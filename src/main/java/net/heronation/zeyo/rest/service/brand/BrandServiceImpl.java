@@ -30,8 +30,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
-import net.heronation.zeyo.rest.repository.brand.QBrand; 
-import net.heronation.zeyo.rest.repository.brand_member_map.QBrandMemberMap;
+import net.heronation.zeyo.rest.repository.brand.QBrand;  
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -456,7 +455,6 @@ public class BrandServiceImpl implements BrandService {
 
 		QBrand qb = QBrand.brand;
 		QMember qm = QMember.member;
-		QBrandMemberMap qbmm = QBrandMemberMap.brandMemberMap;
 
 //		BrandMemberMap db_qbmm = brandMemberMapRepository
 //				.findOne(qbmm.brand.id.eq(brand_id).and(qbmm.member.id.eq(member_seq)));

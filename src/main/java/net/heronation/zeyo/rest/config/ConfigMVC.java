@@ -84,14 +84,16 @@ public class ConfigMVC implements WebMvcConfigurer {
 		registry.addViewController("/").setViewName("/");
 	}
 
+ 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
+ 
 	}
 
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
-
+ 
+		 registry.jsp().prefix("/WEB-INF/jsp/");
 	}
 
 	@Override

@@ -21,6 +21,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
@@ -44,5 +46,17 @@ public class ConfigBean {
 		ds.setThrowExceptionIfNoHandlerFound(true);
 		return ds;
 	}
- 
+
+//	@Bean(name = "multipartResolver")
+//	public CommonsMultipartResolver multipartResolver() {
+//		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+//		multipartResolver.setMaxUploadSize(1024 * 1024 * 20);
+//		return multipartResolver;
+//	}
+
+	
+//	@Bean
+//	public StandardServletMultipartResolver multipartResolver() {
+//	    return new StandardServletMultipartResolver();
+//	}
 }
