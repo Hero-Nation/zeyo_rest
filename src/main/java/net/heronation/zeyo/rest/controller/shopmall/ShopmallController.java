@@ -4,6 +4,7 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.member.MemberDto;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
@@ -91,17 +92,24 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
-	public ResponseEntity<ResultVO> insert(@RequestParam(value = "name", required = true) String name,
+	public ResponseEntity<ResultVO> insert( 
+			
+			@RequestBody ShopmallDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		if(param.getName() == null || param.getName().equals("")) {
+			return return_fail("name.empty");
+		}
+		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
-
-		Long seq = (Long) user.get("member_seq");
-
-		return return_success((Object) shopmallService.insert(name, seq));
+ 
+		Long seq = Long.valueOf(String.valueOf((int)user.get("member_seq")));
+		
+		return return_success((Object) shopmallService.insert(param, seq));
 	}
 
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
@@ -113,7 +121,7 @@ public class ShopmallController extends BaseController {
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		
-		if(param.getId() == null) {
+		if(param.getId() == null || param.getId().equals("")) {
 			return return_fail("id.empty");
 		}
 		
@@ -164,9 +172,9 @@ public class ShopmallController extends BaseController {
 
 		Long seq = (Long) user.get("member_seq");
 
-		if (param.getId() == null) {
+		if (param.getId() == null || param.getId().equals("")) {
 			return return_fail("id.empty");
-		} else if (param.getLinkYn() == null) {
+		} else if (param.getLink() == null || param.getLink().equals("")) {
 			return return_fail("link.empty");
 		} else {
 			return return_success((Object) shopmallService.toggle_link(param, seq));

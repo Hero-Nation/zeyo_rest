@@ -334,14 +334,14 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 	@Override
 	@Transactional
-	public Shopmall insert(String name, Long member_seq) {
+	public Shopmall insert(ShopmallDto param, Long member_seq) {
 		// TODO Auto-generated method stub
 
 		Member m = memberRepository.getOne(member_seq);
 
 		Shopmall o = new Shopmall();
 		o.setMember(m);
-		o.setName(name);
+		o.setName(param.getName());
 		o.setUseYn("Y");
 		o.setCreateDt(new DateTime());
 		return shopmallRepository.save(o);
@@ -368,12 +368,23 @@ public class ShopmallServiceImpl implements ShopmallService {
 		varname1.append("GROUP BY ism.shopmall_id , i.member_id");
 
 		Query count_q = entityManager.createNativeQuery(varname1.toString());
-		BigInteger use_count = (BigInteger) count_q.getSingleResult();
+ 
+		
+		
+		List results = count_q.getResultList();
+		if(results.isEmpty()) {
+			BigInteger use_count = BigInteger.ZERO;
+			return use_count;
+		}else {
+			BigInteger use_count = (BigInteger) count_q.getSingleResult();
 
-		if (use_count == null)
-			use_count.valueOf(0l);
+			if (use_count == null)
+				use_count = BigInteger.ZERO;
 
-		return use_count;
+			return use_count;
+		} 
+		
+		
 	}
 
 	@Override
@@ -396,7 +407,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 			BigInteger use_count = this.get_shopmall_use_count_of_member(param.getId());
 
-			if (use_count.equals(1) || use_count.equals(0)) {
+			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
 				target.setName(param.getName());
 
@@ -434,7 +445,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 			BigInteger use_count = this.get_shopmall_use_count_of_member(param.getId());
 
-			if (use_count.equals(1) || use_count.equals(0)) {
+			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
 				target.setUseYn("N");
 				target.setDeleteDt(new DateTime());
@@ -600,7 +611,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("brand_count", brand_count);
-		R.put("totalPages", item_count);
+		R.put("item_count", item_count);
 
 		return R;
 

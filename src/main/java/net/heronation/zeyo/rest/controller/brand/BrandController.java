@@ -110,7 +110,7 @@ public class BrandController extends BaseController {
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
-		Long seq = (Long) user.get("member_seq");
+		Long seq = Long.valueOf(String.valueOf((int)user.get("member_seq")));
 
 		return return_success((Object) brandService.insert(param, seq));
 	}

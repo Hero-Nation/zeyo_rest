@@ -16,7 +16,7 @@ public interface ShopmallService {
 
 	Page<Map<String, Object>> client_search(Map<String, Object> where, Pageable page);
 
-	Shopmall insert(String name, Long member_seq);
+	Shopmall insert(ShopmallDto param, Long member_seq);
 
 	Map<String, Object> update_name(ShopmallDto param, Long member_seq);
 

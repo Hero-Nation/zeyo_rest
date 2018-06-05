@@ -49,6 +49,7 @@ public interface ShopmallRepository extends JpaRepository<Shopmall, Long> , Quer
 	List<Brand> findByName(@Param("name") String ktype);
 	
 	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RestResource(path = "", rel = "",exported = true)
 	<S extends Shopmall> S save(S arg0);
 	

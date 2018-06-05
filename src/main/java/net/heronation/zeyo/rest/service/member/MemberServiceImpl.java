@@ -423,10 +423,10 @@ public class MemberServiceImpl implements MemberService {
 		Member user = memberRepository.findOne(member_seq);
 
 		CompanyNoHistory last = list.get(list.size() - 1);
-		last.setCompanyNo(param.getCp_no());
+		last.setBeforeNo(param.getCp_no());
 
 		CompanyNoHistory new_record = new CompanyNoHistory();
-		new_record.setBeforeNo(param.getCp_no());
+		new_record.setCompanyNo(param.getCp_no());
 		new_record.setChangeDt(new DateTime());
 		new_record.setMember(user);
 		new_record.setName(last.getName());

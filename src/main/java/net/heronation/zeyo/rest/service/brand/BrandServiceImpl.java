@@ -508,7 +508,7 @@ public class BrandServiceImpl implements BrandService {
 
 			BigInteger use_count = this.get_brand_use_count_of_member(param.getId());
 
-			if (use_count.equals(1) || use_count.equals(0)) {
+			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
 				target.setUseYn("N");
 				target.setDeleteDt(new DateTime());
@@ -547,7 +547,7 @@ public class BrandServiceImpl implements BrandService {
 
 			BigInteger use_count = this.get_brand_use_count_of_member(param.getId());
 
-			if (use_count.equals(1) || use_count.equals(0)) {
+			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
 				target.setName(param.getName());
 				brandRepository.save(target);
@@ -678,12 +678,20 @@ public class BrandServiceImpl implements BrandService {
 		varname1.append("GROUP BY b.id , i.member_id");
 
 		Query count_q = entityManager.createNativeQuery(varname1.toString());
-		BigInteger use_count = (BigInteger) count_q.getSingleResult();
+		
+		List results = count_q.getResultList();
+		if(results.isEmpty()) {
+			BigInteger use_count = BigInteger.ZERO;
+			return use_count;
+		}else {
+			BigInteger use_count = (BigInteger) count_q.getSingleResult();
 
-		if (use_count == null)
-			use_count.valueOf(0l);
+			if (use_count == null)
+				use_count = BigInteger.ZERO;
 
-		return use_count;
+			return use_count;
+		} 
+		
 	}
 
 	@Override
