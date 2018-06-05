@@ -40,6 +40,7 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> , Quer
 	
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select distinct m from Warranty m where m.useYn = 'Y'")
 	List<Warranty> distinct_name();
  	

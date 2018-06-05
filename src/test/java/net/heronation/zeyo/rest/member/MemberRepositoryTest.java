@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.member;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.junit.After;
 import org.junit.Before;
@@ -229,6 +231,126 @@ public class MemberRepositoryTest {
 			log.debug(search_R.toString());
 			return_list.add(search_R);
 		}
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test 
+	public void statistic_query() {
+		
+		
+		
+//		회원 현황
+//		
+//		일반회원
+//		총 회원 수 : 1231
+//		신규 회원 수 : 14
+//		탈퇴 회원 수 : 5
+//		전일 대비 증감율: 5%
+//		
+//		판매회원
+//		총 업체회원 수 : 1231
+//		신규 업체회원 수 : 14
+//		탈퇴 업체회원 수 : 5
+//		전일 대비 증감율: 5%
+//		
+//		상품 현황
+//		총 상품 수 : 1231
+//		신규 상품 수 : 14
+//		연동 상품 수 : 5
+//		전일 대비 증감율: 5%
+//		
+//		사이즈표
+//		총 등록 수 : 1231
+//		신규 등록 수 : 14
+//		전일 대비 증감율: 5%
+		
+		
+		
+		// 판매회원
+		// 총 회원 수 : 1231
+
+		StringBuffer query = new StringBuffer();
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    member m ");
+		query.append("WHERE ");
+		query.append("    m.use_yn = 'Y'");
+
+		Query q = entityManager.createNativeQuery(query.toString());
+		List<BigInteger> all_count_r = q.getResultList();
+		BigInteger all_count = all_count_r.get(0);
+		log.debug(all_count_r.size() + " " +all_count);
+		
+//		판매회원 
+//		신규 회원 수 : 14
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS today_new_member ");
+		query.append("FROM ");
+		query.append("    member m ");
+		query.append("WHERE ");
+		query.append("    m.use_yn = 'Y'");
+		query.append("        AND DATE(m.create_dt) = DATE(NOW())");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> today_new_member_r = q.getResultList();
+		BigInteger today_new_member = today_new_member_r.get(0);
+		log.debug(today_new_member_r.size() + " " +today_new_member);
+		
+		
+//		판매회원 
+//		탈퇴 회원 수 : 5	
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS today_quit_member ");
+		query.append("FROM ");
+		query.append("    member m ");
+		query.append("WHERE ");
+		query.append("    m.use_yn = 'Y'");
+		query.append("        AND DATE(m.delete_dt) = DATE(NOW())");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> today_quit_member_r = q.getResultList();
+		BigInteger today_quit_member = today_quit_member_r.get(0);
+		log.debug(today_quit_member_r.size() + " " +today_quit_member);
+		
+		
+		
+//		판매회원 
+//		전일 대비 증감율: 5%
+		
+		query = new StringBuffer();
+		   
+		query.append("SELECT ");
+		query.append("    FLOOR((today.new_member / yesterday.new_member) * 100) AS increase_rate ");
+		query.append("FROM ");
+		query.append("    (SELECT ");
+		query.append("        COUNT(*) AS new_member ");
+		query.append("    FROM ");
+		query.append("        member m ");
+		query.append("    WHERE ");
+		query.append("        m.use_yn = 'Y' ");
+		query.append("            AND DATE(m.create_dt) = DATE(NOW() - 1)) yesterday, ");
+		query.append("    (SELECT ");
+		query.append("        COUNT(*) AS new_member ");
+		query.append("    FROM ");
+		query.append("        member m ");
+		query.append("    WHERE ");
+		query.append("        m.use_yn = 'Y' ");
+		query.append("            AND DATE(m.create_dt) = DATE(NOW())) today");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> increase_rate_r = q.getResultList();
+		BigInteger increase_rate = increase_rate_r.get(0);
+		log.debug(increase_rate_r.size() + " " +increase_rate);
+			
 	}
 
 }

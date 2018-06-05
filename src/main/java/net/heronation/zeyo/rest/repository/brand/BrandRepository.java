@@ -38,11 +38,13 @@ public interface BrandRepository extends JpaRepository<Brand, Long> , QueryDslPr
 	@RestResource(path = "", rel = "",exported = true)
 	Page<Brand> findAll(Pageable arg0);
 
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
 	@Query("select distinct m from Brand m where m.useYn = 'Y'")
 	List<Brand> distinct_name();
  	
 	@RestResource(path = "findByName", rel = "findByName",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select m from Brand m where m.name = ?1 and  m.useYn = 'Y'")
 	List<Brand> findByName(@Param("name") String ktype);
 	 

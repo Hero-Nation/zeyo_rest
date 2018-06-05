@@ -22,7 +22,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 @RepositoryRestResource(collectionResourceRel = "company_no_historys", path = "company_no_historys")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+
 
 public interface CompanyNoHistoryRepository
 		extends JpaRepository<CompanyNoHistory, Long>, QueryDslPredicateExecutor<CompanyNoHistory> {
@@ -34,6 +34,7 @@ public interface CompanyNoHistoryRepository
 	
 	
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RestResource(path = "", rel = "", exported = true)
 	Page<CompanyNoHistory> findAll(Pageable arg0);
 	
@@ -44,5 +45,7 @@ public interface CompanyNoHistoryRepository
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
 	@Query("select distinct m  from CompanyNoHistory m   ")
 	List<CompanyNoHistory> distinct_name();
+	
+	
 
 }

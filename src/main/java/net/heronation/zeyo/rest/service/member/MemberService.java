@@ -12,24 +12,29 @@ import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.member.MemberDto;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 
 public interface MemberService {
 	Member registry(MemberRegisterDto param);
 
-	String send_register_mail();
+	String find_id_by_email(String name, String email);
 
-	String find_id_by_email();
+	String find_id_by_email_confirm(String name, String email, String otp);
 
-	String find_id_by_phone();
+	String find_password(String member_id, String member_name, String member_email);
+
+	String find_id_by_phone(String name, String phone);
+
+	String find_id_by_phone_confirm(String name, String phone, String otp);
 
 	Map<String, Object> search(Map<String, Object> where, Pageable page);
 
-	
-	
 	CompanyNoHistory getCompanyInfo(Predicate where);
 
 	Map<String, Object> getUserInfo(Predicate where);
+
+	Map<String, Object> toggle_email_noti(Long member_seq,MemberDto param);
 
 	Map<String, Long> getUserBizInfo(Predicate where);
 
@@ -41,17 +46,18 @@ public interface MemberService {
 
 	Page<Map<String, Object>> cn_history(Predicate where, Pageable page);
 
-	Member update_phone(String phone, Long member_seq);
+	Member update_phone(MemberDto param, Long member_seq);
 
-	Member update_email(String email, String confirm_no, Long member_seq);
+	Member update_email(MemberDto param, Long member_seq);
+ 
 
-	String send_register_mail(String email) throws CommonException;
-	
-	String confirm_otp(String email,String otp) throws CommonException;
+	String send_confirm_email(String email) throws CommonException;
 
-	Member update_password(String password, Long member_seq);
+	String confirm_otp(String email, String otp) throws CommonException;
 
-	CompanyNoHistory update_cp_no(String cp_no, Long member_seq);
+	String update_password(String old_pw, String new_pw, Long member_seq);
+
+	CompanyNoHistory update_cp_no(MemberDto param, Long member_seq);
 
 	Member update_mng_name(String mng_name, Long member_seq);
 
@@ -59,4 +65,5 @@ public interface MemberService {
 
 	Member findByMemberId(String member_id);
 
+	Map<String, Object> getStat();
 }

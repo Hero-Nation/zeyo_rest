@@ -13,6 +13,7 @@ import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
+import net.heronation.zeyo.rest.repository.item.ItemDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.ItemResourceAssembler;
 import net.heronation.zeyo.rest.repository.item.QItem;
@@ -185,37 +186,59 @@ public class ItemController extends BaseController {
 		return return_success((Object) itemService.client_search(param, pageable));
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.GET, value = "/change_connect")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/change_connect")
 	@ResponseBody
 	public ResponseEntity<ResultVO> change_connect(
 
-			@RequestParam(value = "target", required = false, defaultValue = "") String target) {
+			@RequestBody ItemDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
 
-		if (target.equals("")) {
+		
+		// 유저 정보 가지고 오기
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+		
+		
+		if (param.getTarget() == null|| param.getTarget().equals("")) {
 			return return_fail("target.empty");
 		} else {
-			return return_success(itemService.change_connect(target));
+			return return_success(itemService.change_connect(param,seq));
 		}
 
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.GET, value = "/delete")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(
 
-			@RequestParam(value = "target", required = false, defaultValue = "") String target) {
+			@RequestBody ItemDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
 
-		if (target.equals("")) {
+		// 유저 정보 가지고 오기
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+		
+		if (param.getTarget() == null|| param.getTarget().equals("")) {
 			return return_fail("target.empty");
-		} else {
-			return return_success(itemService.delete(target));
+		}else {
+			return return_success(itemService.delete(param,  seq));
 		}
 
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/shopmall_list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> shopmall_list(
@@ -229,7 +252,7 @@ public class ItemController extends BaseController {
 
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/toggle_size_table")
 	@ResponseBody
 	public ResponseEntity<ResultVO> toggle_size_table(
@@ -242,7 +265,7 @@ public class ItemController extends BaseController {
 			String returnValue = itemService.toggle_size_table(item_id);
 
 			if (returnValue == null) {
-				return return_fail("item not exist!");
+				return return_fail("item.not.exist");
 			} else {
 				return return_success(returnValue);
 			}

@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import lombok.Data;
 import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -25,7 +26,7 @@ import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMap;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 
-@Value
+@Data
 public class ItemDto {
 
 	private Long id;
@@ -76,6 +77,8 @@ public class ItemDto {
 
 	private String useYn;
 
+	private String target;
+	
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();

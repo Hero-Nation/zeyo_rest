@@ -41,6 +41,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
 	Page<Category> findAll(Pageable arg0);
 
  
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true) 
 	@Query("select distinct m from Category m where m.useYn = 'Y'")
 	List<Category> distinct_name();
@@ -48,7 +49,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
 	@RestResource(path = "findByName", rel = "findByName",exported = true)
 	@Query("select m from Category m where m.name = ?1 and  m.useYn = 'Y'")
 	List<Category> findByName(@Param("name") String name);
-	 
- 
-	 
+
+	
 }

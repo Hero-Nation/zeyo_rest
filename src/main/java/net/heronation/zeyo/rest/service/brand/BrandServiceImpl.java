@@ -1,3 +1,4 @@
+
 package net.heronation.zeyo.rest.service.brand;
 
 import java.math.BigInteger;
@@ -26,12 +27,15 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
-import net.heronation.zeyo.rest.repository.brand.QBrand;  
+import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.item.Item;
+import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.madein.Madein;
@@ -54,7 +58,9 @@ public class BrandServiceImpl implements BrandService {
 
 	@Autowired
 	private MemberRepository memberRepository;
- 
+
+	@Autowired
+	private ItemRepository itemRepository;
 
 	@Autowired
 	EntityManager entityManager;
@@ -243,51 +249,44 @@ public class BrandServiceImpl implements BrandService {
 		return R;
 
 	}
-
+	
+	
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Map<String, Object>> client_search(Map<String, Object> param, Pageable page) {
+	public Map<String, Object> client_search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) ");
 
-		StringBuffer select_query = new StringBuffer();
+		StringBuffer select_query = new StringBuffer(); 
 		select_query.append("SELECT ");
-		select_query.append("    s.name, ");
-		select_query.append("    s.create_dt, ");
-		select_query.append("    (SELECT ");
-		select_query.append("            COUNT(si.id) ");
-		select_query.append("        FROM ");
-		select_query.append("            item_shopmall_map sism ");
-		select_query.append("                INNER JOIN ");
-		select_query.append("            item si ON sism.item_id = si.id ");
-		select_query.append("                INNER JOIN ");
-		select_query.append("            shopmall ss ON sism.shopmall_id = ss.id ");
-		select_query.append("        WHERE ");
-		select_query.append("            sism.use_yn = 'Y' AND si.use_yn = 'Y' ");
-		select_query.append("                AND ss.use_yn = 'Y' ");
-		select_query.append("                AND si.link_yn = 'Y' ");
-		select_query.append("                AND ss.id = s.id ");
-		select_query.append("        GROUP BY sism.shopmall_id) AS link_count ");
+		select_query.append("    b.id, ");
+		select_query.append("    b.name, ");
+		select_query.append("    b.create_dt, ");
+		select_query.append("    IFNULL((SELECT ");
+		select_query.append("                    COUNT(*) AS use_count ");
+		select_query.append("                FROM ");
+		select_query.append("                    item si ");
+		select_query.append("                WHERE ");
+		select_query.append("                    si.use_yn = 'Y' AND si.link_yn = 'Y' ");
+		select_query.append("                        AND si.brand_id = b.id ");
+		select_query.append("                GROUP BY si.brand_id), ");
+		select_query.append("            0) AS link_count ");
+
 
 		StringBuffer where_query = new StringBuffer();
-
-		where_query.append("FROM ");
-		where_query.append("    item_shopmall_map ism ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    item i ON ism.item_id = i.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    shopmall s ON ism.shopmall_id = s.id ");
-		where_query.append("WHERE ");
-		where_query.append("    ism.use_yn = 'Y' AND i.use_yn = 'Y' ");
-		where_query.append("        AND s.use_yn = 'Y' ");
-		where_query.append("        AND i.member_id = 1 ");
-		where_query.append("GROUP BY ism.shopmall_id");
+		where_query.append(" FROM ");
+		where_query.append("    brand b ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    item i ON b.id = i.brand_id AND i.use_yn = 'Y' ");
+		where_query.append(" WHERE ");
+		where_query.append("    b.use_yn = 'Y' ");
+ 
 
 		String member_id = (String) param.get("member_id");
 
-		where_query.append("        AND m.id = " + member_id + " ");
+		where_query.append("        AND b.member_id = " + member_id + " ");
 
 		String name = (String) param.get("name");
 		if (name != null) {
@@ -304,10 +303,13 @@ public class BrandServiceImpl implements BrandService {
 			where_query.append("        AND b.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
+		where_query.append(" GROUP BY i.brand_id");
+
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY b.");
 		Sort sort = page.getSort();
 		String sep = "";
+		
 		for (Sort.Order order : sort) {
 			sort_query.append(sep);
 			sort_query.append(order.getProperty());
@@ -341,20 +343,144 @@ public class BrandServiceImpl implements BrandService {
 			return_list.add(search_R);
 		}
 
-		return new PageImpl<Map<String, Object>>(return_list, page, count_list.size());
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
 
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
 	}
+	
+
+	@Override
+	@Transactional(readOnly = true)
+	public Map<String, Object> detail(Long brand_id, Long member_seq, Pageable page) {
+
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) ");
+
+		StringBuffer select_query = new StringBuffer(); 
+		select_query.append("SELECT ");
+		select_query.append("    s.name as shopmall_name, ");
+		select_query.append("    COUNT(i.id) AS item_count ");
+
+
+		StringBuffer where_query = new StringBuffer();
+		where_query.append(" FROM ");
+		where_query.append("    item_shopmall_map ism ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    item i ON ism.item_id = i.id AND i.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    shopmall s ON ism.shopmall_id = s.id ");
+		where_query.append("        AND s.use_yn = 'Y' ");
+		where_query.append(" WHERE ");
+		where_query.append("    ism.use_yn = 'Y' AND i.brand_id = "+brand_id+" "); 
+		where_query.append(" GROUP BY ism.shopmall_id");
+		
+		
+		
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY i.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
+		
+		
+
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String, Object>> count_list = count_q.getResultList();
+
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
+		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>();
+			search_R.put("shopmall_name", row[0]);
+			search_R.put("item_count", row[1]); 
+
+			return_list.add(search_R);
+		}
+
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+
+		// Map<String, Object> R = new HashMap<String, Object>();
+		//
+		// QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
+		// QItem qi = QItem.item;
+		// QBrand qb = QBrand.brand;
+		// QShopmall qs = QShopmall.shopmall;
+		//
+		// JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+		//
+		// QueryResults<Tuple> db_result = query.select(qism.shopmall.name,
+		// qism.item.countDistinct()).from(qism)
+		// .innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
+		// .on(qism.shopmall.useYn.eq("Y"))
+		// // .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
+		// // .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
+		// .where(qism.item.brand.id.eq(brand_id).and(qism.useYn.eq("Y"))).groupBy(qism.shopmall)
+		// .offset((page.getPageNumber() - 1) *
+		// page.getPageSize()).limit(page.getPageSize()).fetchResults();
+		//
+		// List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		//
+		// for (Tuple row : db_result.getResults()) {
+		// Map<String, Object> item = new HashMap<String, Object>();
+		//
+		// item.put("shopmall", row.get(qism.shopmall.name));
+		// item.put("item_count", row.get(qism.item.countDistinct()));
+		//
+		// list.add(item);
+		// }
+		//
+		// return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
+	}
+
+
 
 	@Override
 	@Transactional
-	public Brand insert(String name, Long member_seq) {
+	public Brand insert(BrandDto param, Long member_seq) {
 		// TODO Auto-generated method stub
 
 		Member m = memberRepository.getOne(member_seq);
 
 		Brand o = new Brand();
 		o.setMember(m);
-		o.setName(name);
+		o.setName(param.getName());
 		o.setUseYn("Y");
 		o.setCreateDt(new DateTime());
 		return brandRepository.save(o);
@@ -362,11 +488,11 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete(Long brand_id, Long member_seq) {
+	public Map<String, Object> delete(BrandDto param, Long member_seq) {
 
 		Map<String, Object> R = new HashMap<String, Object>();
 
-		Brand target = brandRepository.findOne(brand_id);
+		Brand target = brandRepository.findOne(param.getId());
 		Member user = memberRepository.findOne(member_seq);
 
 		if (target == null || target.getUseYn().equals("N")) {
@@ -380,16 +506,13 @@ public class BrandServiceImpl implements BrandService {
 
 			// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
-			QItem i = QItem.item;
+			BigInteger use_count = this.get_brand_use_count_of_member(param.getId());
 
-			JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+			if (use_count.equals(1) || use_count.equals(0)) {
 
-			Long member_count = query.select(i.member.countDistinct()).from(i).innerJoin(i.brand)
-					.on(i.brand.useYn.eq("Y")).where(i.brand.id.eq(brand_id).and(i.useYn.eq("Y"))).fetchCount();
+				target.setUseYn("N");
+				target.setDeleteDt(new DateTime());
 
-			if (member_count == 1) {
-
-				brandRepository.delete(target);
 				R.put("CODE", "OK");
 
 			} else {
@@ -404,11 +527,11 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> update(Long brand_id, Long member_seq, String name) {
+	public Map<String, Object> update_name(BrandDto param, Long member_seq ) {
 
 		Map<String, Object> R = new HashMap<String, Object>();
 
-		Brand target = brandRepository.findOne(brand_id);
+		Brand target = brandRepository.findOne(param.getId());
 		Member user = memberRepository.findOne(member_seq);
 
 		if (target == null || target.getUseYn().equals("N")) {
@@ -422,16 +545,11 @@ public class BrandServiceImpl implements BrandService {
 
 			// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
-			QItem i = QItem.item;
+			BigInteger use_count = this.get_brand_use_count_of_member(param.getId());
 
-			JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+			if (use_count.equals(1) || use_count.equals(0)) {
 
-			Long member_count = query.select(i.member.countDistinct()).from(i).innerJoin(i.brand)
-					.on(i.brand.useYn.eq("Y")).where(i.brand.id.eq(brand_id).and(i.useYn.eq("Y"))).fetchCount();
-
-			if (member_count == 1) {
-
-				target.setName(name);
+				target.setName(param.getName());
 				brandRepository.save(target);
 				R.put("CODE", "OK");
 
@@ -446,54 +564,39 @@ public class BrandServiceImpl implements BrandService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public Map<String, Object> toggle_link(Long brand_id, Long member_seq) {
+	@Transactional
+	public Map<String, Object> toggle_link(BrandDto param,   Long member_seq ) {
+		log.debug("toggle_link "); 
+
 		Map<String, Object> R = new HashMap<String, Object>();
 
-		Brand target = brandRepository.findOne(brand_id);
+		// 나의 브랜드의 상품의 연동정보를 일괄 변경시킨다.
+
+		Brand target = brandRepository.findOne(param.getId());
 		Member user = memberRepository.findOne(member_seq);
 
 		QBrand qb = QBrand.brand;
 		QMember qm = QMember.member;
-
-//		BrandMemberMap db_qbmm = brandMemberMapRepository
-//				.findOne(qbmm.brand.id.eq(brand_id).and(qbmm.member.id.eq(member_seq)));
+		QItem qi = QItem.item;
 
 		if (target == null || target.getUseYn().equals("N")) {
 			// brand is not exist
 			R.put("CODE", "A");
 
-		}
-		// else if (!target.getMember().equals(user)) {
-		// // user is not owner
-		// R.put("CODE", "B");
-		// }
-		else {
+		} else {
+			JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-			// 토글 데이터가 없다면 새로생성하고 연동으로 만들어서 저장한다. 무조건 존재
-			// if(db_qbmm == null) {
-			// BrandMemberMap new_db_qbmm = new BrandMemberMap();
-			// new_db_qbmm.setBrand(target);
-			// new_db_qbmm.setMember(user);
-			// new_db_qbmm.setLinkYn("Y");
-			// new_db_qbmm.setUseYn("Y");
-			//
-			// brandMemberMapRepository.save(new_db_qbmm);
-			//
-			// R.put("CURRENT_LINK_YN", "Y");
-			//
-			// }else {
+			if (param.getLink().equals("N")) {
 
-//			String current_link_yn = db_qbmm.getLinkYn();
-//			if (current_link_yn.equals("Y")) {
-//				db_qbmm.setLinkYn("N");
-//				R.put("CURRENT_LINK_YN", "N");
-//			} else {
-//				db_qbmm.setLinkYn("Y");
-//				R.put("CURRENT_LINK_YN", "Y");
-//			}
+				queryFactory.update(qi)
+						.where(qi.member.id.eq(member_seq).and(qi.brand.id.eq(param.getId()).and(qi.useYn.eq("Y"))))
+						.set(qi.linkYn, "Y").execute();
 
-			// }
+			} else {
+				queryFactory.update(qi)
+						.where(qi.member.id.eq(member_seq).and(qi.brand.id.eq(param.getId()).and(qi.useYn.eq("Y"))))
+						.set(qi.linkYn, "N").execute();
+			}
 
 			R.put("CODE", "OK");
 
@@ -502,40 +605,7 @@ public class BrandServiceImpl implements BrandService {
 		return R;
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Page<Map<String, Object>> detail(Long brand_id, Long member_seq, Pageable page) {
-
-		Map<String, Object> R = new HashMap<String, Object>();
-
-		QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
-		QItem qi = QItem.item;
-		QBrand qb = QBrand.brand;
-		QShopmall qs = QShopmall.shopmall;
-
-		JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
-
-		QueryResults<Tuple> db_result = query.select(qism.shopmall.name, qism.item.countDistinct()).from(qism)
-				.innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
-				.on(qism.shopmall.useYn.eq("Y"))
-				// .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
-				// .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
-				.where(qism.item.brand.id.eq(brand_id).and(qism.useYn.eq("Y"))).groupBy(qism.shopmall)
-				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
-
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-
-		for (Tuple row : db_result.getResults()) {
-			Map<String, Object> item = new HashMap<String, Object>();
-
-			item.put("shopmall", row.get(qism.shopmall.name));
-			item.put("item_count", row.get(qism.item.countDistinct()));
-
-			list.add(item);
-		}
-
-		return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
-	}
+ 
 
 	@Override
 	public Map<String, Object> distinct_with_member_id() {
@@ -586,11 +656,220 @@ public class BrandServiceImpl implements BrandService {
 		select_query.append("       WHERE b.use_yn = 'Y'");
 
 		Query q = entityManager.createNativeQuery(select_query.toString());
-		BigInteger use_count =  (BigInteger)q.getSingleResult();
+		BigInteger use_count = (BigInteger) q.getSingleResult();
 
 		R.put("contents", use_count);
 
 		return R;
+	}
+
+	private BigInteger get_brand_use_count_of_member(Long brand_id) {
+		StringBuffer varname1 = new StringBuffer();
+		varname1.append("SELECT ");
+		varname1.append("    b.id AS brand, COUNT(i.member_id) ");
+		varname1.append("FROM ");
+		varname1.append("    item i ");
+		varname1.append("        inner JOIN ");
+		varname1.append("    brand b ON b.id = i.brand_id AND i.use_yn = 'Y' ");
+		varname1.append("        AND i.link_yn = 'Y' ");
+		varname1.append("WHERE ");
+		varname1.append("    b.use_yn = 'Y' ");
+		varname1.append("    and b.id = " + brand_id + " ");
+		varname1.append("GROUP BY b.id , i.member_id");
+
+		Query count_q = entityManager.createNativeQuery(varname1.toString());
+		BigInteger use_count = (BigInteger) count_q.getSingleResult();
+
+		if (use_count == null)
+			use_count.valueOf(0l);
+
+		return use_count;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Map<String, Object> getStat() {
+
+		// 브랜드 관리
+
+		// 브랜드
+		// 총 등록 수 : 1231
+		// 단일 사용 : 1231
+		// 신규 등록 수 : 14
+		// 복수 사용 : 1231
+		// 삭제건수 : 5
+		// 연동 건수 : 1231
+		// 전일 대비 증감율 : 5%
+
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> findByName(String name) {
+		Map<String, Object> R = new HashMap<String, Object>(); 
+		R.put("contents", brandRepository.findByName(name));
+		return R;
+	}
+ 
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Map<String, Object> brand_company_use_list(Pageable page) {
+
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) ");
+
+		StringBuffer select_query = new StringBuffer();  
+		select_query.append("SELECT ");
+		select_query.append("    b.name, ");
+		select_query.append("    COUNT(i.member_id) AS company_use_count, ");
+		select_query.append("    b.create_dt ");
+
+
+
+		StringBuffer where_query = new StringBuffer();
+		where_query.append(" FROM ");
+		where_query.append("    brand b ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    item i ON i.brand_id = b.id AND b.use_yn = 'Y' ");
+		where_query.append(" GROUP BY b.id");
+		
+		
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY b.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
+		
+		
+
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String, Object>> count_list = count_q.getResultList();
+
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
+		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>();
+			search_R.put("brand_name", row[0]);
+			search_R.put("company_use_count", row[1]); 
+			search_R.put("brand_create_dt", row[2]); 
+
+			return_list.add(search_R);
+		}
+
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+
+		// Map<String, Object> R = new HashMap<String, Object>();
+		//
+		// QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
+		// QItem qi = QItem.item;
+		// QBrand qb = QBrand.brand;
+		// QShopmall qs = QShopmall.shopmall;
+		//
+		// JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+		//
+		// QueryResults<Tuple> db_result = query.select(qism.shopmall.name,
+		// qism.item.countDistinct()).from(qism)
+		// .innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
+		// .on(qism.shopmall.useYn.eq("Y"))
+		// // .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
+		// // .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
+		// .where(qism.item.brand.id.eq(brand_id).and(qism.useYn.eq("Y"))).groupBy(qism.shopmall)
+		// .offset((page.getPageNumber() - 1) *
+		// page.getPageSize()).limit(page.getPageSize()).fetchResults();
+		//
+		// List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		//
+		// for (Tuple row : db_result.getResults()) {
+		// Map<String, Object> item = new HashMap<String, Object>();
+		//
+		// item.put("shopmall", row.get(qism.shopmall.name));
+		// item.put("item_count", row.get(qism.item.countDistinct()));
+		//
+		// list.add(item);
+		// }
+		//
+		// return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
+	}
+
+
+	@Override
+	@Transactional(readOnly = true)
+	public Map<String, Object> detail_info(Long id) {
+ 
+		
+		StringBuffer  shopmall_count_query = new StringBuffer();
+		shopmall_count_query.append("SELECT ");
+		shopmall_count_query.append("    COUNT(ct.shopmall) ");
+		shopmall_count_query.append("FROM ");
+		shopmall_count_query.append("    (SELECT ");
+		shopmall_count_query.append("        ism.shopmall_id AS shopmall ");
+		shopmall_count_query.append("    FROM ");
+		shopmall_count_query.append("        item_shopmall_map ism ");
+		shopmall_count_query.append("    LEFT JOIN item i ON ism.item_id = i.id AND i.use_yn = 'Y' ");
+		shopmall_count_query.append("    LEFT JOIN shopmall s ON ism.shopmall_id = s.id ");
+		shopmall_count_query.append("        AND i.use_yn = 'Y' ");
+		shopmall_count_query.append("    LEFT JOIN brand b ON i.brand_id = b.id AND b.use_yn = 'Y' ");
+		shopmall_count_query.append("    WHERE ");
+		shopmall_count_query.append("        ism.use_yn = 'Y' AND i.brand_id = " + id + "");
+		shopmall_count_query.append("    GROUP BY i.brand_id , ism.shopmall_id) ct");
+
+		StringBuffer item_count_query = new StringBuffer(); 
+		item_count_query.append("SELECT ");
+		item_count_query.append("    COUNT(ct.item) ");
+		item_count_query.append("FROM ");
+		item_count_query.append("    (SELECT ");
+		item_count_query.append("        ism.item_id AS item ");
+		item_count_query.append("    FROM ");
+		item_count_query.append("        item_shopmall_map ism ");
+		item_count_query.append("    LEFT JOIN item i ON ism.item_id = i.id AND i.use_yn = 'Y' ");
+		item_count_query.append("    LEFT JOIN shopmall s ON ism.shopmall_id = s.id ");
+		item_count_query.append("        AND i.use_yn = 'Y' ");
+		item_count_query.append("    LEFT JOIN brand b ON i.brand_id = b.id AND b.use_yn = 'Y' ");
+		item_count_query.append("    WHERE ");
+		item_count_query.append("        ism.use_yn = 'Y' AND i.brand_id = 1 ");
+		item_count_query.append("    GROUP BY i.brand_id , ism.item_id) ct");
+
+		Query shopmall_count_q = entityManager.createNativeQuery((shopmall_count_query).toString());
+		BigInteger shopmall_count = (BigInteger) shopmall_count_q.getSingleResult();
+
+		Query item_count_q = entityManager.createNativeQuery((item_count_query).toString());
+		BigInteger item_count = (BigInteger) item_count_q.getSingleResult();
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("shopmall_count", shopmall_count);
+		R.put("item_count", item_count);
+
+		return R;
+
 	}
 
 }

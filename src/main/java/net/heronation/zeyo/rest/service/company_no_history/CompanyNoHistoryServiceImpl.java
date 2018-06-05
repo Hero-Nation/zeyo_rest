@@ -1,6 +1,5 @@
 package net.heronation.zeyo.rest.service.company_no_history;
-
-import static org.junit.Assert.assertTrue;
+ 
 
 import java.util.ArrayList;
 import java.util.HashMap;

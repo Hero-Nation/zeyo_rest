@@ -3,6 +3,8 @@ package net.heronation.zeyo.rest.repository.member;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import lombok.Data;
 import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
@@ -12,7 +14,8 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
 import org.joda.time.DateTime;
-@Value
+
+@Data
 public class MemberDto {
 
 	private Long id;
@@ -43,6 +46,21 @@ public class MemberDto {
 
 	private String useYn;
 
+	private String cp_no;
+	
+	private String confirm_no;
+	
+	private String old_pw;
+	
+	private String new_pw; 
+	
+	private String mng_phone;
+	
+	private String mng_name;
+	
+	private String flag;
+	 
+	
 	private List<Item> items = new ArrayList<Item>();
 	private List<Brand> brands = new ArrayList<Brand>();
 	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();

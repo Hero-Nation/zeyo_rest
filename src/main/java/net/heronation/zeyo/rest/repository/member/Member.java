@@ -76,6 +76,9 @@ public class Member {
 	@JsonIgnore
 	private String useYn;
 
+	private String email_noti_yn;
+	
+	
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();

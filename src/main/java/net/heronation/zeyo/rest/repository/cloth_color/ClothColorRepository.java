@@ -42,6 +42,7 @@ public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, Q
 	
 	
 	@RestResource(path = "select_options", rel = "select_options",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select m from ClothColor m where (m.kindof = 1 or m.kindof = 2  ) and  m.useYn = 'Y'")
 	List<ClothColor> select_options();
 	

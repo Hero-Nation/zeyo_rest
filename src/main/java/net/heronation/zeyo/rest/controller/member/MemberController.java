@@ -1,20 +1,5 @@
 package net.heronation.zeyo.rest.controller.member;
 
-import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
-import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.constants.Format;
-import net.heronation.zeyo.rest.repository.bbs.QBbs;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
-import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
-import net.heronation.zeyo.rest.repository.item.QItem;
-import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
-import net.heronation.zeyo.rest.repository.member.MemberRepository;
-import net.heronation.zeyo.rest.repository.member.MemberResourceAssembler;
-import net.heronation.zeyo.rest.repository.member.QMember;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,26 +9,38 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
-
+import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.repository.brand.QBrand;
+import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
+import net.heronation.zeyo.rest.repository.item.QItem;
+import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.member.MemberDto;
+import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
+import net.heronation.zeyo.rest.repository.member.MemberRepository;
+import net.heronation.zeyo.rest.repository.member.MemberResourceAssembler;
+import net.heronation.zeyo.rest.repository.member.QMember;
 import net.heronation.zeyo.rest.service.member.MemberService;
 
 @Slf4j
@@ -61,9 +58,14 @@ public class MemberController extends BaseController {
 
 	private final RepositoryEntityLinks entityLinks;
 
-	@InitBinder
+	@Autowired
+	private MemberRegisterValidator memberRegisterDtoValidator;
+
+	@InitBinder("memberRegisterDto")
 	protected void initBinder(WebDataBinder binder) {
-		binder.addValidators(new MemberRegisterValidator());
+		// binder.addValidators(new MemberRegisterValidator());
+
+		binder.addValidators(memberRegisterDtoValidator);
 	}
 
 	@Autowired
@@ -72,8 +74,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/registry", method = RequestMethod.POST)
-	public ResponseEntity<ResultVO> registry(
-			@ModelAttribute("memberRegisterDto") @Valid MemberRegisterDto memberRegisterDto,
+	public ResponseEntity<ResultVO> registry(@Valid @RequestBody MemberRegisterDto memberRegisterDto,
 			BindingResult bindingResult) {
 		log.debug("/api/members/registry");
 
@@ -88,56 +89,55 @@ public class MemberController extends BaseController {
 
 	}
 
-	@RequestMapping(path = "/send_register_mail", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> send_register_mail(@RequestParam(name = "email", defaultValue = "") String email) {
-		log.debug("/api/members/send_register_mail");
-
-		if (email.equals("")) {
-			return return_fail("email.empty");
-		}else if(!EmailValidator.getInstance().isValid(email)) {
-			return return_fail("email.form.wrong");
-		} else {
-			try {
-				return return_success(memberService.send_register_mail(email));
-			} catch (Exception e) {
-				return  return_fail("email.send.exception");
-			}
-
-		}
-
-	}
-	
 	@RequestMapping(path = "/confirm_otp", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> confirm_otp(@RequestParam(name = "email", defaultValue = "") String email,@RequestParam(name = "otp", defaultValue = "") String otp) {
+	public ResponseEntity<ResultVO> confirm_otp(@RequestParam(name = "email", defaultValue = "") String email,
+			@RequestParam(name = "otp", defaultValue = "") String otp) {
 		log.debug("/api/members/confirm_otp");
 
 		if (email == null && email.equals("")) {
 			return return_fail("email.empty");
-		}else if(otp == null && otp.equals("")) {
+		} else if (otp == null && otp.equals("")) {
 			return return_fail("otp.empty");
-		}else if(!EmailValidator.getInstance().isValid(email)) {
+		} else if (!EmailValidator.getInstance().isValid(email)) {
 			return return_fail("email.form.wrong");
 		} else {
 			try {
-				
-				return return_success(memberService.confirm_otp(email,otp));
-				
+
+				return return_success(memberService.confirm_otp(email, otp));
+
 			} catch (Exception e) {
-				
-				if(e.getMessage().equals("EMAIL.NOT.EXIST")) {
-					return  return_fail("email.not.exist.in.db");
-				}else {
-					return  return_fail("exception.throwed");	
+
+				if (e.getMessage().equals("EMAIL.NOT.EXIST")) {
+					return return_fail("email.not.exist.in.db");
+				} else {
+					return return_fail("exception.throwed");
 				}
-				
+
 			}
 
 		}
 
 	}
- 
-	
-	
+
+	@RequestMapping(path = "/send_confirm_email", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> send_confirm_email(@RequestParam(name = "email", defaultValue = "") String email) {
+		log.debug("/api/members/send_confirm_email");
+
+		if (email.equals("")) {
+			return return_fail("email.empty");
+		} else if (!EmailValidator.getInstance().isValid(email)) {
+			return return_fail("email.form.wrong");
+		} else {
+			try {
+				return return_success(memberService.send_confirm_email(email));
+			} catch (Exception e) {
+				return return_fail("email.send.exception");
+			}
+
+		}
+
+	}
+
 	@RequestMapping(path = "/find_id_by_email", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> find_id_by_email(@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "email", defaultValue = "") String email) {
@@ -147,10 +147,95 @@ public class MemberController extends BaseController {
 			return return_fail("name.empty");
 		} else if (email.equals("")) {
 			return return_fail("email.empty");
-		} else if (EmailValidator.getInstance().isValid(email)) {
+		} else if (!EmailValidator.getInstance().isValid(email)) {
 			return return_fail("email.pattern.wrong");
 		} else {
-			return return_success();
+
+			String r = memberService.find_id_by_email(name, email);
+			if (r.equals("member.not.exist")) {
+				return return_fail(r);
+			} else {
+				return return_success(r);
+			}
+
+		}
+
+	}
+
+	@RequestMapping(path = "/find_id_by_email_confirm", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> find_id_by_email_confirm(
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "email", defaultValue = "") String email,
+			@RequestParam(name = "otp", defaultValue = "") String otp
+
+	) {
+		log.debug("/api/members/find_id_by_email_confirm");
+
+		if (name.equals("")) {
+			return return_fail("name.empty");
+		} else if (email.equals("")) {
+			return return_fail("email.empty");
+		} else if (otp.equals("")) {
+			return return_fail("otp.empty");
+		} else if (!EmailValidator.getInstance().isValid(email)) {
+			return return_fail("email.pattern.wrong");
+		} else {
+
+			String r = memberService.find_id_by_email_confirm(name, email, otp);
+			if (r.equals("member.not.exist") || r.equals("sended.mail.not.exist") || r.equals("otp.not.equal")) {
+				return return_fail(r);
+			} else {
+				return return_success(r);
+			}
+
+		}
+
+	}
+
+	@RequestMapping(path = "/find_id_by_phone", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> find_id_by_phone(@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "phone", defaultValue = "") String phone) {
+		log.debug("/api/members/find_id_by_phone");
+
+		if (name.equals("")) {
+			return return_fail("name.empty");
+		} else if (phone.equals("")) {
+			return return_fail("phone.empty");
+		} else {
+
+			String r = memberService.find_id_by_phone(name, phone);
+			if (r.equals("member.not.exist")) {
+				return return_fail(r);
+			} else {
+				return return_success(r);
+			}
+
+		}
+
+	}
+
+	@RequestMapping(path = "/find_id_by_phone_confirm", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> find_id_by_phone_confirm(
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "phone", defaultValue = "") String phone,
+			@RequestParam(name = "otp", defaultValue = "") String otp) {
+		log.debug("/api/members/find_id_by_phone_confirm");
+
+		if (name.equals("")) {
+			return return_fail("name.empty");
+		} else if (phone.equals("")) {
+			return return_fail("phone.empty");
+		} else if (otp.equals("")) {
+			return return_fail("otp.empty");
+		} else {
+
+			String r = memberService.find_id_by_phone_confirm(name, phone, otp);
+			if (r.equals("member.not.exist") || r.equals("sended.phone.not.exist") || r.equals("otp.not.equal")) {
+				return return_fail(r);
+			} else {
+				return return_success(r);
+			}
+
 		}
 
 	}
@@ -175,22 +260,6 @@ public class MemberController extends BaseController {
 
 	}
 
-	@RequestMapping(path = "/find_id_by_phone", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> find_id_by_phone(@RequestParam(name = "name", defaultValue = "") String name,
-			@RequestParam(name = "phone", defaultValue = "") String phone) {
-		log.debug("/api/members/find_id_by_phone");
-
-		if (name.equals("")) {
-			return return_fail("name.empty");
-		} else if (phone.equals("")) {
-			return return_fail("phone.empty");
-		} else {
-			return return_success();
-		}
-
-	}
- 
-
 	@RequestMapping(path = "/find_password", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> find_password(@RequestParam(name = "member_id", defaultValue = "") String member_id,
 			@RequestParam(name = "member_name", defaultValue = "") String member_name,
@@ -203,15 +272,22 @@ public class MemberController extends BaseController {
 			return return_fail("member_name.empty");
 		} else if (member_email.equals("")) {
 			return return_fail("member_email.empty");
-		} else if (EmailValidator.getInstance().isValid(member_email)) {
+		} else if (!EmailValidator.getInstance().isValid(member_email)) {
 			return return_fail("member_email.pattern.wrong");
 		} else {
-			return return_success();
+
+			String r = memberService.find_password(member_id, member_name, member_email);
+			if (r.equals("member.not.exist")) {
+				return return_fail(r);
+			} else {
+				return return_success(r);
+			}
+
 		}
 
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(path = "my_info", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> my_info(@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/my_info");
@@ -234,7 +310,7 @@ public class MemberController extends BaseController {
 		return return_success(memberService.getUserInfo(builder.getValue()));
 	}
 
-	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(path = "user_info", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> user_info(@RequestParam(value = "member_id", required = false) String member_id) {
 		log.debug("/api/members/user_info");
@@ -248,6 +324,34 @@ public class MemberController extends BaseController {
 		builder.and(target.member.id.eq(id));
 
 		return return_success(memberService.getUserInfo(builder.getValue()));
+	}
+
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(path = "toggle_email_noti", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> toggle_email_noti(
+
+			@RequestBody MemberDto param,
+
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/members/toggle_email_noti");
+
+		// 유저 정보 가지고 오기
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		if (param.getFlag() == null|| param.getFlag().equals("")) {
+			return return_fail("flag.empty");
+		} else {
+
+			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+			return return_success(memberService.toggle_email_noti(seq, param));
+
+		}
+
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
@@ -334,20 +438,19 @@ public class MemberController extends BaseController {
 
 			Pageable pageable) {
 
-		Map<String,Object> param = new HashMap<String,Object>();
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("identity", identity);
 		param.put("phone1", phone1);
 		param.put("phone2", phone2);
 		param.put("phone3", phone3);
-		
+
 		param.put("email1", email1);
 		param.put("email2", email2);
-		
+
 		param.put("cn1", cn1);
 		param.put("cn2", cn2);
 		param.put("cn3", cn3);
-		
- 
+
 		return return_success(memberService.search(param, pageable));
 	}
 
@@ -388,9 +491,10 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_phone", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_phone(@RequestParam(name = "phone", defaultValue = "") String phone,
+	public ResponseEntity<ResultVO> update_phone(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_phone");
+
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -398,20 +502,20 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (phone.equals("")) {
+		if (param.getPhone() == null || param.getPhone().equals("") ) {
 			return return_fail("phone.empty");
 		} else {
-			memberService.update_phone(phone, seq);
+			memberService.update_phone(param, seq);
 			return return_success();
 		}
 
 	}
 
 	@RequestMapping(path = "/update_email", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_email(@RequestParam(name = "email", defaultValue = "") String phone,
-			@RequestParam(name = "confirm_no", defaultValue = "") String confirm_no,
+	public ResponseEntity<ResultVO> update_email(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_email");
+
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -419,13 +523,14 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (phone.equals("")) {
+
+		if (param.getEmail() == null ||param.getEmail().equals("")) {
 			return return_fail("email.empty");
-		} else if (confirm_no.equals("")) {
+		} else if (param.getConfirm_no() == null ||param.getConfirm_no().equals("")) {
 			return return_fail("confirm_no.empty");
 		} else {
 
-			Member R = memberService.update_email(phone, confirm_no, seq);
+			Member R = memberService.update_email(param, seq);
 
 			if (R == null) {
 				return return_fail("confirm_no.wrong");
@@ -436,10 +541,9 @@ public class MemberController extends BaseController {
 		}
 
 	}
- 
 
 	@RequestMapping(path = "/update_password", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_password(@RequestParam(name = "password", defaultValue = "") String password,
+	public ResponseEntity<ResultVO> update_password(@RequestBody MemberDto param,
 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_password");
@@ -450,38 +554,50 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (password.equals("")) {
-			return return_fail("password.empty");
+		String old_pw = param.getOld_pw();
+		String new_pw = param.getNew_pw();
+
+		if (old_pw.equals("")) {
+			return return_fail("old_pw.empty");
+		} else if (new_pw.equals("")) {
+			return return_fail("new_pw.empty");
 		} else {
-			memberService.update_password(password, seq);
-			return return_success();
+			String update_result = memberService.update_password(old_pw, new_pw, seq);
+			if (update_result.equals(CommonConstants.SUCCESS)) {
+				return return_success(update_result);
+			} else {
+				return return_fail(update_result);
+			}
+
 		}
 
 	}
 
 	@RequestMapping(path = "/update_cp_no", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_cp_no(@RequestParam(name = "cp_no", defaultValue = "") String cp_no,
+	public ResponseEntity<ResultVO> update_cp_no(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_cp_no");
+
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
-
-		if (cp_no.equals("")) {
+ 
+		if (param.getCp_no() == null || param.getCp_no().equals("")) {
 			return return_fail("cp_no.empty");
 		} else {
-			memberService.update_cp_no(cp_no, seq);
+			memberService.update_cp_no(param, seq);
 			return return_success();
 		}
 
 	}
 
 	@RequestMapping(path = "/update_mng_name", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_mng_name(@RequestParam(name = "mng_name", defaultValue = "") String mng_name,
-			@AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultVO> update_mng_name(
+
+			@RequestBody MemberDto param, @AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_mng_name");
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -490,18 +606,19 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (mng_name.equals("")) {
+		String manager = param.getMng_name();
+
+		if (manager.equals("")) {
 			return return_fail("mng_name.empty");
 		} else {
-			memberService.update_mng_name(mng_name, seq);
+			memberService.update_mng_name(manager, seq);
 			return return_success();
 		}
 
 	}
 
 	@RequestMapping(path = "/update_mng_phone", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_mng_phone(
-			@RequestParam(name = "mng_phone", defaultValue = "") String mng_phone,
+	public ResponseEntity<ResultVO> update_mng_phone(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_mng_phone");
 		if (auth == null) {
@@ -511,10 +628,12 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (mng_phone.equals("")) {
+		String managerPhone = param.getMng_phone();
+
+		if (managerPhone.equals("")) {
 			return return_fail("mng_phone.empty");
 		} else {
-			memberService.update_mng_phone(mng_phone, seq);
+			memberService.update_mng_phone(managerPhone, seq);
 			return return_success();
 		}
 

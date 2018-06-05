@@ -40,7 +40,7 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 	Page<SubCategory> findAll(Pageable arg0);
 	
  
-	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
 	@Query("select distinct m  from SubCategory m where  m.category = ?1 and m.useYn = 'Y'")
 	List<SubCategory> distinct_name(@Param(value = "category") Category category);

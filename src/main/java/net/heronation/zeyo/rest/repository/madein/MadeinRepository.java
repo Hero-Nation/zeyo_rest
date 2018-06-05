@@ -34,6 +34,7 @@ public interface MadeinRepository extends JpaRepository<Madein, Long>, QueryDslP
  
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select distinct m from Madein m where m.useYn = 'Y'")
 	List<Madein> distinct_name();
     

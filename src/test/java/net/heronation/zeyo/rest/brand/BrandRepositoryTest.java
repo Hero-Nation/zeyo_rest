@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.brand;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,6 +132,7 @@ public class BrandRepositoryTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test  
+	@Ignore
 	public void search_native() {
 		
 		StringBuffer  count_query = new StringBuffer();
@@ -269,9 +271,212 @@ public class BrandRepositoryTest {
 	@Test 
 	@Ignore
 	public void search_iso_format() {
-		DateTime a = new DateTime();
+		StringBuffer  varname1 = new StringBuffer();
+		varname1.append("SELECT ");
+		varname1.append("     COUNT(ct.member_count) as use_count ");
+		varname1.append("FROM ");
+		varname1.append("    (SELECT ");
+		varname1.append("        b.id AS brand, COUNT(i.member_id) AS member_count ");
+		varname1.append("    FROM ");
+		varname1.append("        brand b ");
+		varname1.append("    LEFT JOIN item i ON b.id = i.brand_id AND i.use_yn = 'Y' ");
+		varname1.append("    WHERE ");
+		varname1.append("        b.use_yn = 'Y' ");
+		varname1.append("    GROUP BY b.id , i.member_id) ct ");
+		varname1.append("    WHERE ");
+		varname1.append("        ct.brand = "+2+" ");
+		varname1.append("GROUP BY brand");
 		
-		log.debug(a.toString(""));
+		Query count_q = entityManager.createNativeQuery(varname1.toString());
+		BigInteger use_count =  (BigInteger)count_q.getSingleResult();
+		
+		log.debug(use_count+ " ");
+		
+	}
+	  
+
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test 
+	@Ignore
+	public void statistic_query() {
+		
+		
+ 
+//		브랜드  
+//		전일 대비 증감율 : 5%
+//		단일 사용 : 1231
+//		복수 사용 : 1231
+//		연동 건수 : 1231
+ 
+		
+		 
+//		총 등록 수 : 1231	
+
+		StringBuffer query = new StringBuffer(); 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    brand i ");
+		query.append("WHERE ");
+		query.append("    i.use_yn = 'Y'");
+		
+		Query q = entityManager.createNativeQuery(query.toString());
+		List<BigInteger> all_count_r = q.getResultList();
+		BigInteger all_count = all_count_r.get(0);
+		log.debug(all_count_r.size() + " " +all_count);
+		 
+//		신규 등록 수 : 14	
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    brand i ");
+		query.append("WHERE ");
+		query.append("    i.use_yn = 'Y' ");
+		query.append("        AND DATE(i.create_dt) = DATE(NOW())");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> today_new_item_r = q.getResultList();
+		BigInteger today_new_item = today_new_item_r.get(0);
+		log.debug(today_new_item_r.size() + " " +today_new_item);
+		
+		
+//		삭제건수 : 5	
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    brand i ");
+		query.append("WHERE ");
+		query.append("    i.use_yn = 'Y' ");
+		query.append("        AND DATE(i.delete_dt) = DATE(NOW())");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> today_delete_item_r = q.getResultList();
+		BigInteger today_delete_item = today_delete_item_r.get(0);
+		log.debug(today_delete_item_r.size() + " " +today_delete_item);
+		
+		
+		
+		
+		 
+//		전일 대비 증감율: 5%
+		
+		query = new StringBuffer();
+		   
+		query.append("SELECT ");
+		query.append("    FLOOR((today.new_count / yesterday.new_count) * 100) AS increase_rate ");
+		query.append("FROM ");
+		query.append("    (SELECT ");
+		query.append("        COUNT(*) AS new_count ");
+		query.append("    FROM ");
+		query.append("        brand i ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' ");
+		query.append("            AND DATE(i.create_dt) = DATE(NOW() - 1)) yesterday, ");
+		query.append("    (SELECT ");
+		query.append("        COUNT(*) AS new_count ");
+		query.append("    FROM ");
+		query.append("        brand i ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' ");
+		query.append("            AND DATE(i.create_dt) = DATE(NOW())) today");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> increase_rate_r = q.getResultList();
+		BigInteger increase_rate = increase_rate_r.get(0);
+		log.debug(increase_rate_r.size() + " " +increase_rate);
+		
+		
+
+		 
+//		단일 사용 : 1231
+		
+		query = new StringBuffer();
+		  
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS brand_count ");
+		query.append("FROM ");
+		query.append("    (SELECT ");
+		query.append("        ct.brand, COUNT(ct.member) AS use_count ");
+		query.append("    FROM ");
+		query.append("        (SELECT ");
+		query.append("        i.brand_id AS brand, i.member_id AS member ");
+		query.append("    FROM ");
+		query.append("        item i ");
+		query.append("    JOIN brand b ON i.brand_id = b.id AND b.use_yn = 'Y' ");
+		query.append("    JOIN member m ON i.member_id = m.id AND m.use_yn = 'Y' ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' ");
+		query.append("    GROUP BY i.brand_id , i.member_id) ct ");
+		query.append("    GROUP BY ct.brand) aaa ");
+		query.append("WHERE ");
+		query.append("    aaa.use_count = 1");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> brand_use_count_1_r = q.getResultList();
+		BigInteger brand_use_count_1 = brand_use_count_1_r.get(0);
+		log.debug(brand_use_count_1_r.size() + " " +brand_use_count_1);
+		
+
+		 
+//		복수 사용 : 1231
+		
+		query = new StringBuffer();
+		  
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS brand_count ");
+		query.append("FROM ");
+		query.append("    (SELECT ");
+		query.append("        ct.brand, COUNT(ct.member) AS use_count ");
+		query.append("    FROM ");
+		query.append("        (SELECT ");
+		query.append("        i.brand_id AS brand, i.member_id AS member ");
+		query.append("    FROM ");
+		query.append("        item i ");
+		query.append("    JOIN brand b ON i.brand_id = b.id AND b.use_yn = 'Y' ");
+		query.append("    JOIN member m ON i.member_id = m.id AND m.use_yn = 'Y' ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' ");
+		query.append("    GROUP BY i.brand_id , i.member_id) ct ");
+		query.append("    GROUP BY ct.brand) aaa ");
+		query.append("WHERE ");
+		query.append("    aaa.use_count >= 2");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> brand_use_count_2_r = q.getResultList();
+		BigInteger brand_use_count_2 = brand_use_count_2_r.get(0);
+		log.debug(brand_use_count_2_r.size() + " " +brand_use_count_2);
+		
+
+		 
+//		연동 상품 수 : 5
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(ct.brand) as link_count ");
+		query.append("FROM ");
+		query.append("    (SELECT ");
+		query.append("        i.brand_id AS brand ");
+		query.append("    FROM ");
+		query.append("        item i ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' AND i.link_yn = 'Y' ");
+		query.append("    GROUP BY i.brand_id) ct");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> link_count_r = q.getResultList();
+		BigInteger link_count = link_count_r.get(0);
+		log.debug(link_count_r.size() + " " +link_count);
+			
 	}
 
 }

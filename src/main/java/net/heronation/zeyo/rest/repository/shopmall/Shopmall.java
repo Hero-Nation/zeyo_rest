@@ -20,13 +20,14 @@ import net.heronation.zeyo.rest.repository.member.Member;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
 @Entity
 @Data
 @RequiredArgsConstructor
 @Table(name = "SHOPMALL")
 @TableGenerator(name = "SHOPMALL_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "SHOPMALL_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude="member")
+@ToString(exclude = "member")
 public class Shopmall {
 
 	@OneToMany(mappedBy = "shopmall", fetch = FetchType.LAZY)
@@ -44,9 +45,10 @@ public class Shopmall {
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
-
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime deleteDt;
 	private String useYn;
-	 
+
 	@Override
 	public String toString() {
 		return "Shopmall ]";

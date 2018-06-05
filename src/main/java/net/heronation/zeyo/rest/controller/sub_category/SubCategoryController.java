@@ -53,10 +53,10 @@ public class SubCategoryController extends BaseController {
 
 	private final RepositoryEntityLinks entityLinks;
 
-	@Value(value = "zeyo.item.image.path")
+	@Value(value = "${zeyo.item.image.path}")
 	private String upload_item_path;
 	
-	@Value(value = "zeyo.cloth.image.path")
+	@Value(value = "${zeyo.cloth.image.path}")
 	private String upload_cloth_path;
 	
 
@@ -162,7 +162,11 @@ public class SubCategoryController extends BaseController {
 			byte[] bytes = item_image.getBytes();
 			Path path = Paths.get(upload_item_path + item_image.getOriginalFilename());
 			Files.write(path, bytes);
-
+			
+			log.debug(upload_item_path);
+			log.debug(item_image.getOriginalFilename());
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return return_fail("image.upload.exception");
@@ -198,5 +202,21 @@ public class SubCategoryController extends BaseController {
 
 		return return_success("image.upload.success");
 	}
+	
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/distinct_name")
+	@ResponseBody
+	public ResponseEntity<ResultVO> distinct_name(@RequestParam(name = "cate", defaultValue = "") String cate) {
+		if (cate.equals("")) { 
+			return return_fail("cate.empty");
+		}
+
+		return return_success((Object) sub_categoryService.distinct_name(cate));
+	}
+
+	
+	
+	
 
 }

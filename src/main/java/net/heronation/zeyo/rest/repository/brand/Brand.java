@@ -44,7 +44,8 @@ public class Brand {
 	
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
-
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime deleteDt;
 
 	private String useYn;
 	

@@ -47,6 +47,7 @@ public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryD
 	
 	
 	@RestResource(path = "select_options", rel = "select_options",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select m from FitInfo m where   m.useYn = 'Y'")
 	List<FitInfo> select_options();
 

@@ -101,28 +101,25 @@ public class BbsController extends BaseController {
 		return return_success((Object) bbsService.search(param, pageable));
 	}
 
-//	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
-//	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
-//	@ResponseBody
-//	public ResponseEntity<ResultVO> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
-//
-//		if(auth == null) {
-//			return return_fail(CommonConstants.NO_TOKEN);
-//		}
-//		
-//		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
-//				.getDecodedDetails();
-//		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
-//
-//		BooleanBuilder builder = new BooleanBuilder();
-//
-//		QBbs target = QBbs.bbs;
-//
-//		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
-//
-//		return return_success((Object) bbsService.search(builder.getValue(), pageable));
-//	}
-//	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		Map<String,Object> param = new HashMap<String,Object>(); 
+		param.put("member_id", seq);
+		
+		return return_success((Object) bbsService.client_search(param, pageable));
+	}
+	
 //	@PreAuthorize("hasRole('ROLE_ADMIN')")
 //	@RequestMapping(method = RequestMethod.GET, value = "/get_stats")
 //	@ResponseBody

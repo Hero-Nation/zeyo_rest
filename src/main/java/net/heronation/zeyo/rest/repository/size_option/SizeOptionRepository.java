@@ -39,6 +39,7 @@ public interface SizeOptionRepository extends JpaRepository<SizeOption, Long>, Q
 	
 
 	@RestResource(path = "select_options", rel = "select_options",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select m from SizeOption m where (m.kindof = 6 or m.kindof = 7 or m.kindof = 8) and  m.useYn = 'Y'")
 	List<SizeOption> select_options();
 }

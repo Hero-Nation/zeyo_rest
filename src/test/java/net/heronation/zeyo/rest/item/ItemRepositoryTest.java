@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.item;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,6 +27,8 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 
+import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.member.MemberRepositoryTest;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.category.QCategory;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
@@ -37,6 +41,7 @@ import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class ItemRepositoryTest {
 
 	@Autowired
@@ -148,4 +153,105 @@ public class ItemRepositoryTest {
 		}
 	}
 
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test 
+	public void statistic_query() {
+		
+		
+ 
+//		상품 현황
+//		총 상품 수 : 1231
+//		신규 상품 수 : 14
+//		연동 상품 수 : 5
+//		전일 대비 증감율: 5%
+ 
+		
+		
+//		상품 현황
+//		총 상품 수 : 1231
+
+		StringBuffer query = new StringBuffer(); 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    item i ");
+		query.append("WHERE ");
+		query.append("    i.use_yn = 'Y'");
+		
+		Query q = entityManager.createNativeQuery(query.toString());
+		List<BigInteger> all_count_r = q.getResultList();
+		BigInteger all_count = all_count_r.get(0);
+		log.debug(all_count_r.size() + " " +all_count);
+		
+//		상품 현황 
+//		신규 상품 수 : 14
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    item i ");
+		query.append("WHERE ");
+		query.append("    i.use_yn = 'Y' ");
+		query.append("        AND DATE(i.create_dt) = DATE(NOW())");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> today_new_item_r = q.getResultList();
+		BigInteger today_new_item = today_new_item_r.get(0);
+		log.debug(today_new_item_r.size() + " " +today_new_item);
+		
+		
+//		상품 현황 
+//		연동 상품 수 : 5
+		
+		query = new StringBuffer();
+		 
+		query.append("SELECT ");
+		query.append("    COUNT(*) AS all_count ");
+		query.append("FROM ");
+		query.append("    item i ");
+		query.append("WHERE ");
+		query.append("    i.use_yn = 'Y'");
+		query.append("        AND i.link_yn = 'Y' ");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> link_item_r = q.getResultList();
+		BigInteger link_item = link_item_r.get(0);
+		log.debug(link_item_r.size() + " " +link_item);
+		
+		
+		
+//		상품 현황 
+//		전일 대비 증감율: 5%
+		
+		query = new StringBuffer();
+		   
+		query.append("SELECT ");
+		query.append("    FLOOR((today.new_count / yesterday.new_count) * 100) AS increase_rate ");
+		query.append("FROM ");
+		query.append("    (SELECT ");
+		query.append("        COUNT(*) AS new_count ");
+		query.append("    FROM ");
+		query.append("        item i ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' ");
+		query.append("            AND DATE(i.create_dt) = DATE(NOW() - 1)) yesterday, ");
+		query.append("    (SELECT ");
+		query.append("        COUNT(*) AS new_count ");
+		query.append("    FROM ");
+		query.append("        item i ");
+		query.append("    WHERE ");
+		query.append("        i.use_yn = 'Y' ");
+		query.append("            AND DATE(i.create_dt) = DATE(NOW())) today");
+		
+		q = entityManager.createNativeQuery(query.toString()); 
+		List<BigInteger> increase_rate_r = q.getResultList();
+		BigInteger increase_rate = increase_rate_r.get(0);
+		log.debug(increase_rate_r.size() + " " +increase_rate);
+			
+	}
+	
 }

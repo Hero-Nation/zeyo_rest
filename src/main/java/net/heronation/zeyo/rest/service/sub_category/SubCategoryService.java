@@ -14,4 +14,9 @@ public interface SubCategoryService {
 //	Page<SubCategory> search(Predicate where, Pageable page);
 	Page<Map<String,Object>> subsearch(Predicate where, Pageable page);
 
+	Map<String,Object> distinct_name(String cate);
+
+	
+	
+	
 }
