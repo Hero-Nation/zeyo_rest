@@ -19,6 +19,7 @@ import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 @RepositoryRestResource(collectionResourceRel = "materials", path = "materials")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -36,5 +37,11 @@ public interface MaterialRepository extends JpaRepository<Material, Long>, Query
 	@RestResource(path = "findByName", rel = "findByName",exported = true)
 	@Query("select m  from Material m where m.name = ?1 and  m.useYn = 'Y'")
 	List<Material> findByName(@Param("name") String ktype);
+	
+	
+	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@Query("select distinct m from Material m where m.useYn = 'Y'")
+	List<Material> distinct_name();
 
 }

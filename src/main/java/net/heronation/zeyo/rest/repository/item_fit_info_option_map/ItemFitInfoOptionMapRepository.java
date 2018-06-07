@@ -12,7 +12,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
+
+import net.heronation.zeyo.rest.repository.item.Item;
+import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMap;
 
  
 @RepositoryRestResource(collectionResourceRel = "item_fit_info_option_maps", path = "item_fit_info_option_maps")
@@ -27,5 +31,8 @@ public interface ItemFitInfoOptionMapRepository extends JpaRepository<ItemFitInf
 //	@Override
 //	@RestResource(path = "", rel = "", exported = false)
 //	Page<CompanyNoHistory> findAll(Pageable arg0);
-
+ 	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Iterable<ItemFitInfoOptionMap> findAll(Predicate arg0);
 }

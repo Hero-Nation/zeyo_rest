@@ -131,7 +131,14 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		/// BRAND
 		Long brand_id = Long.valueOf(node.get("brand").textValue());
 
-		Brand brand = brandRepository.findOne(brand_id);
+		Brand brand = null;
+		if(brand_id == 0) {
+			
+		}else {
+			brand = brandRepository.findOne(brand_id);	
+		}
+		
+		
 
 		/// SHOPMALL
 		log.debug("ItemBuildDtoDeserializer : SHOPMALL");

@@ -13,7 +13,9 @@ import lombok.ToString;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.category.Category;
@@ -32,13 +34,14 @@ import org.joda.time.DateTime;
 @ToString(exclude="items,category,subCategoryMeasureMaps,subCategoryFitInfoMaps") 
 public class SubCategory {
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SUB_CATEGORY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
@@ -63,12 +66,15 @@ public class SubCategory {
 
 	private String useYn;
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SubCategoryMeasureMap> subCategoryMeasureMaps = new ArrayList<SubCategoryMeasureMap>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SubCategoryFitInfoMap> subCategoryFitInfoMaps = new ArrayList<SubCategoryFitInfoMap>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
 

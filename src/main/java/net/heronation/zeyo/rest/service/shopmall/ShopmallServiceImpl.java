@@ -627,24 +627,30 @@ public class ShopmallServiceImpl implements ShopmallService {
 		count_query.append("SELECT ");
 		count_query.append("    count(*) ");
 
-		StringBuffer select_query = new StringBuffer();  
+		StringBuffer select_query = new StringBuffer();   
 		select_query.append("SELECT ");
-		select_query.append("    b.name, ");
-		select_query.append("    COUNT(i.member_id) AS company_use_count, ");
-		select_query.append("    b.create_dt ");
-
+		select_query.append("    ct.shopmall, ");
+		select_query.append("    ct.create_dt, ");
+		select_query.append("    COUNT(ct.member) as company_count ");
 
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");
-		where_query.append("    brand b ");
-		where_query.append("        LEFT JOIN ");
-		where_query.append("    item i ON i.brand_id = b.id AND b.use_yn = 'Y' ");
-		where_query.append(" GROUP BY b.id");
-		
+		where_query.append("    (SELECT ");
+		where_query.append("        s.id,s.name AS shopmall, s.create_dt, i.member_id AS member ");
+		where_query.append("    FROM ");
+		where_query.append("        item_shopmall_map ism ");
+		where_query.append("    LEFT JOIN shopmall s ON ism.shopmall_id = s.id ");
+		where_query.append("        AND s.use_yn = 'Y' ");
+		where_query.append("    LEFT JOIN item i ON ism.item_id = i.id AND i.use_yn = 'Y' ");
+		where_query.append("    WHERE ");
+		where_query.append("        ism.use_yn = 'Y' ");
+		where_query.append("    GROUP BY s.id , i.member_id) ct ");
+		where_query.append("    group by ct.shopmall");
+
 		
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
+		sort_query.append("  ORDER BY ct.");
 		Sort sort = page.getSort();
 		String sep = "";
 		for (Sort.Order order : sort) {
@@ -674,10 +680,10 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
-			search_R.put("brand_name", row[0]);
-			search_R.put("company_use_count", row[1]); 
-			search_R.put("brand_create_dt", row[2]); 
-
+			//search_R.put("shopmall_name", row[0]);
+			search_R.put("shopmall_name", row[0]);
+			search_R.put("shopmall_create_dt", row[1]); 
+			search_R.put("company_use_count", row[2]);
 			return_list.add(search_R);
 		}
 

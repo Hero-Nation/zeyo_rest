@@ -13,6 +13,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo; 
@@ -30,7 +31,7 @@ public class FitInfoOption {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "FIT_INFO_OPTION_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FIT_INFO_ID")
 	private FitInfo fitInfo;

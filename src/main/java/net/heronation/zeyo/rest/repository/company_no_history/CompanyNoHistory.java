@@ -15,7 +15,9 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -28,14 +30,14 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @EntityListeners(AuditingEntityListener.class)
 
 public class CompanyNoHistory {
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "companyNoHistory", fetch = FetchType.LAZY)
 	private List<Member> members = new ArrayList<Member>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "COMPANY_NO_HISTORY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER )
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

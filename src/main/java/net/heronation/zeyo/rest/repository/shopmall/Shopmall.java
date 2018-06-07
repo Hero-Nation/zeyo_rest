@@ -13,7 +13,9 @@ import lombok.ToString;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -29,7 +31,7 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 @ToString(exclude = "member")
 public class Shopmall {
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "shopmall", fetch = FetchType.LAZY)
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 
@@ -38,6 +40,7 @@ public class Shopmall {
 	@Column(name = "ID")
 	private Long id;
 
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

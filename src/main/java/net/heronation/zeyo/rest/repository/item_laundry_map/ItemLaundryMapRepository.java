@@ -12,8 +12,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.member.Member;
 
  
@@ -33,4 +35,8 @@ public interface ItemLaundryMapRepository extends JpaRepository<ItemLaundryMap, 
 	@RestResource(path = "", rel = "",exported = false)
 	Page<ItemLaundryMap> findAll(Pageable arg0);
 
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Iterable<ItemLaundryMap> findAll(Predicate arg0);
 }

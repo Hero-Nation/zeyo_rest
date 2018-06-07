@@ -16,6 +16,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
@@ -28,7 +29,7 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 @EntityListeners(AuditingEntityListener.class)
 
 public class FitInfo {
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<SubCategoryFitInfoMap> subCategoryFitInfoMaps = new ArrayList<SubCategoryFitInfoMap>();
 	@Id
@@ -44,7 +45,7 @@ public class FitInfo {
 	private DateTime createDt;
 
 	private String useYn;
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<FitInfoOption> fitInfoOptions = new ArrayList<FitInfoOption>();
 	

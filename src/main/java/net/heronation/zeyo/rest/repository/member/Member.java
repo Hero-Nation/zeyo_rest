@@ -13,7 +13,9 @@ import lombok.ToString;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
@@ -52,7 +54,7 @@ public class Member {
 	
 	@JsonIgnore
 	private String confirm_no;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMPANY_NO_HISTORY_ID")
 	private CompanyNoHistory companyNoHistory;
@@ -78,23 +80,23 @@ public class Member {
 
 	private String email_noti_yn;
 	
-	
+	@JsonManagedReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
-
+	@JsonManagedReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Brand> brands = new ArrayList<Brand>();
-
+	@JsonManagedReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
-
+	@JsonManagedReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<CompanyNoHistory> companyNoHistorys = new ArrayList<CompanyNoHistory>();
-
+	@JsonManagedReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();

@@ -13,13 +13,16 @@ import lombok.ToString;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -28,15 +31,15 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Warranty {
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "warranty", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "WARRANTY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
-	@ManyToOne(fetch = FetchType.EAGER )
+	@JsonBackReference
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
 	private String scope;
@@ -46,7 +49,6 @@ public class Warranty {
 
 	private String useYn;
 
-	
 	@Override
 	public String toString() {
 		return "Warranty ]";

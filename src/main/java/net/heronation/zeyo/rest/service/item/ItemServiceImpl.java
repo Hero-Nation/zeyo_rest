@@ -543,7 +543,9 @@ public class ItemServiceImpl implements ItemService {
 		new_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
 		new_item.setSizeMeasureMode(ibd.getSizeMeasureMode());
 
-		brandRepository.save(ibd.getBrand());
+		if(ibd.getBrand() != null)
+			brandRepository.save(ibd.getBrand());
+		
 		categoryRepository.save(ibd.getCategory());
 		madeinRepository.save(ibd.getMadein());
 		subCategoryRepository.save(ibd.getSubCategory());

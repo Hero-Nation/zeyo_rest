@@ -41,4 +41,8 @@ public interface FitInfoOptionRepository extends JpaRepository<FitInfoOption, Lo
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select m from FitInfoOption m where  m.fitInfo = ?1 and m.useYn = 'Y'")
 	List<FitInfoOption> select_options(@Param("fitInfo") FitInfo fitInfo);
+	
+	
+	
+	
 }

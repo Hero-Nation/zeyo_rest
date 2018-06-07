@@ -16,6 +16,7 @@ import org.joda.time.LocalDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
@@ -34,11 +35,11 @@ public class Bbs {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BBS_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

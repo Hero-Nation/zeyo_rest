@@ -12,8 +12,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoOptionMap;
 import net.heronation.zeyo.rest.repository.member.Member;
 
  
@@ -31,6 +33,11 @@ public interface ItemIroningMapRepository extends JpaRepository<ItemIroningMap, 
 	@Override
 	@RestResource(path = "", rel = "",exported = false)
 	Page<ItemIroningMap> findAll(Pageable arg0);
+	
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Iterable<ItemIroningMap> findAll(Predicate arg0);
 
 
 }

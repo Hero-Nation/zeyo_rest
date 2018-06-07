@@ -12,6 +12,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -32,5 +33,7 @@ public interface ItemBleachMapRepository extends JpaRepository<ItemBleachMap, Lo
 	@RestResource(path = "", rel = "",exported = false)
 	Page<ItemBleachMap> findAll(Pageable arg0);
 
-	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Iterable<ItemBleachMap> findAll(Predicate arg0);
 }

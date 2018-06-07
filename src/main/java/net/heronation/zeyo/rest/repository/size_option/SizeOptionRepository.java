@@ -38,8 +38,18 @@ public interface SizeOptionRepository extends JpaRepository<SizeOption, Long>, Q
 	List<SizeOption> findByName(@Param("name") String name);
 	
 
-	@RestResource(path = "select_options", rel = "select_options",exported = true)
+	@RestResource(path = "select_options_symbol", rel = "select_options_symbol",exported = true)
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
-	@Query("select m from SizeOption m where (m.kindof = 6 or m.kindof = 7 or m.kindof = 8) and  m.useYn = 'Y'")
-	List<SizeOption> select_options();
+	@Query("select m from SizeOption m where (m.kindof = 6 ) and  m.useYn = 'Y'")
+	List<SizeOption> select_options_symbol();
+	
+	@RestResource(path = "select_options_number", rel = "select_options_number",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@Query("select m from SizeOption m where (  m.kindof = 7  ) and  m.useYn = 'Y'")
+	List<SizeOption> select_options_number();
+	
+	@RestResource(path = "select_options_number_bottom", rel = "select_options_number_bottom",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@Query("select m from SizeOption m where ( m.kindof = 9) and  m.useYn = 'Y'")
+	List<SizeOption> select_options_number_bottom();
 }

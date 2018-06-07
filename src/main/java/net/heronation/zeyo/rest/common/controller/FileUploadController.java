@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.ResultVO;
 
 @Controller
 @Slf4j
@@ -24,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FileUploadController extends BaseController {
 
 	// Save the uploaded file to this folder
-	private static String UPLOADED_FOLDER = "D://TEST_SERVER_ROOT//zeyo_image//";
+	private static String UPLOADED_FOLDER = "D://TEST_SERVER_ROOT//zeyo_image//temp";
 
 	@GetMapping("/uploadform")
 	public String index() {
@@ -54,6 +57,32 @@ public class FileUploadController extends BaseController {
 		}
 
 		return "redirect:/common/uploadStatus";
+	}
+	
+	@PostMapping("/temp/upload")
+	public ResponseEntity<ResultVO> tempUpload(@RequestParam("file") MultipartFile file) {
+
+		if (file.isEmpty()) {
+			return return_fail("file.empty");
+		}
+
+		
+		String temp_file_name = UUID.randomUUID().toString().concat(System.nanoTime()+"").concat(file.getContentType());
+		
+		try {
+
+			// Get the file and save it somewhere
+			byte[] bytes = file.getBytes();
+			Path path = Paths.get(UPLOADED_FOLDER + temp_file_name);
+			Files.write(path, bytes);
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return return_fail("upload.failed");
+		}
+
+		return return_success(temp_file_name);
 	}
 
 	@GetMapping("/uploadStatus")

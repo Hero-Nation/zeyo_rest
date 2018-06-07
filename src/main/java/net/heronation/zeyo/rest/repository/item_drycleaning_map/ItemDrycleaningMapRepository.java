@@ -12,8 +12,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
 import net.heronation.zeyo.rest.repository.member.Member;
 
  
@@ -31,5 +33,7 @@ public interface ItemDrycleaningMapRepository extends JpaRepository<ItemDryclean
 	@RestResource(path = "", rel = "",exported = false)
 	Page<ItemDrycleaningMap> findAll(Pageable arg0);
 
-
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Iterable<ItemDrycleaningMap> findAll(Predicate arg0);
 }

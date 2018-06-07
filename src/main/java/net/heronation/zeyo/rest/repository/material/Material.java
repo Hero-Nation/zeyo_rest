@@ -14,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 
@@ -27,7 +28,7 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Material {
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
 	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
 	@Id

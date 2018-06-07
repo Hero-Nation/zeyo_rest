@@ -15,7 +15,9 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -29,6 +31,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @ToString(exclude="member")
 public class Brand {
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	
@@ -36,7 +39,7 @@ public class Brand {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BRAND_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

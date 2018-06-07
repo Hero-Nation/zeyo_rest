@@ -15,7 +15,9 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
@@ -28,14 +30,14 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @EntityListeners(AuditingEntityListener.class)
 
 public class ClothColor {
-
+	@JsonManagedReference
 	@OneToMany(mappedBy = "clothColor", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "CLOTH_COLOR_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;

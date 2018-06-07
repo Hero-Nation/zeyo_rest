@@ -53,6 +53,9 @@ public interface ShopmallRepository extends JpaRepository<Shopmall, Long> , Quer
 	@RestResource(path = "", rel = "",exported = true)
 	<S extends Shopmall> S save(S arg0);
 	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Shopmall findOne(Long arg0);
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")

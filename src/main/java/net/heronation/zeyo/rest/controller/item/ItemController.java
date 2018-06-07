@@ -274,7 +274,7 @@ public class ItemController extends BaseController {
 
 	}
 
-	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.POST, value = "/build")
 	@ResponseBody
 	public ResponseEntity<ResultVO> build(@RequestBody @Valid ItemBuildDto itemBuildDto, BindingResult bindingResult,

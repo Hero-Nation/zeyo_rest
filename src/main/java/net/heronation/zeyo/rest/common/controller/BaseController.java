@@ -31,7 +31,7 @@ public class BaseController {
 		return new ResponseEntity<ResultVO>(R, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	protected ResponseEntity<ResultVO> return_success_obj(String Result) {
+	protected ResponseEntity<ResultVO> return_success(String Result) {
 		ResultVO R = new ResultVO();
 		R.setMsg(CommonConstants.SUCCESS);
 		R.setR(Result);

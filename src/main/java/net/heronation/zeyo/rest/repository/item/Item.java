@@ -17,7 +17,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
@@ -50,19 +52,19 @@ public class Item {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BRAND_ID")
 	private Brand brand;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
@@ -82,13 +84,13 @@ public class Item {
 	private int price;
 
 	private String madeinBuilder;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime madeinDate;
-
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "WARRANTY_ID")
 	private Warranty warranty;
@@ -104,23 +106,27 @@ public class Item {
 	private String bleachYn;
 
 	private String linkYn;
-	
-	private String sizeTableYn;
- 
+
+	private String sizeTableYn; 
+
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 
@@ -134,14 +140,15 @@ public class Item {
 	private ItemDrymethodMap itemDrymethodMap;
 	@OneToOne(mappedBy = "item")
 	private ItemBleachMap itemBleachMap;
-	
+
+	@JsonManagedReference
 	@OneToMany(mappedBy = "item")
 	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "item")
 	private List<SizeTable> sizeTables = new ArrayList<SizeTable>();
-	
-	
+
 	@Override
 	public String toString() {
 		return "Item ]";
