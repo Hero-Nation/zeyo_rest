@@ -1,6 +1,6 @@
 create table bbs (id bigint not null, bbs_content varchar(255), create_dt datetime, reply_content varchar(255), reply_dt datetime, status varchar(255), title varchar(255), use_yn varchar(255), kindof_id bigint, member_id bigint, primary key (id))
 create table brand (id bigint not null, create_dt datetime, delete_dt datetime, name varchar(255), use_yn varchar(255), member_id bigint, primary key (id))
-create table category (id bigint not null, create_dt datetime, name varchar(255), use_yn varchar(255), primary key (id))
+create table category (id bigint not null, create_dt datetime, name varchar(255), parent_id bigint, use_yn varchar(255), primary key (id))
 create table cloth_color (id bigint not null, create_dt datetime, name varchar(255), use_yn varchar(255), kindof_id bigint, primary key (id))
 create table company_no_history (id bigint not null, before_no varchar(255), change_dt datetime, company_no varchar(255), name varchar(255), member_id bigint, primary key (id))
 create table email_validation (email varchar(255) not null, create_dt datetime, otp varchar(255), primary key (email))
