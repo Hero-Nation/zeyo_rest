@@ -42,4 +42,7 @@ public interface SubCategoryFitInfoMapRepository extends JpaRepository<SubCatego
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select fi from SubCategoryFitInfoMap scfim left join scfim.fitInfo fi where  scfim.subCategory.id = ?1 and  fi.useYn = 'Y' and  scfim.useYn = 'Y' ")
 	List<FitInfo> select_by_sub_cate(@Param("scid") Long scid);
+	
+	
+	// new version
 }
