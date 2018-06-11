@@ -31,7 +31,7 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @ToString(exclude="member")
 public class Brand {
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	
@@ -39,7 +39,7 @@ public class Brand {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BRAND_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

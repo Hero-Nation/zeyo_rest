@@ -31,14 +31,14 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Warranty {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "warranty", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "WARRANTY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;

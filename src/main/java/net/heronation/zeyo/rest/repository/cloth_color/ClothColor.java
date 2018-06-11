@@ -30,14 +30,14 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @EntityListeners(AuditingEntityListener.class)
 
 public class ClothColor {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "clothColor", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "CLOTH_COLOR_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;

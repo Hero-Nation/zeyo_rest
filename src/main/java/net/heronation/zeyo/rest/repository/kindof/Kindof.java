@@ -33,23 +33,23 @@ import net.heronation.zeyo.rest.repository.bbs.Bbs;
 
 public class Kindof {
 
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Madein> madeins = new ArrayList<Madein>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Warranty> warrantys = new ArrayList<Warranty>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<ClothColor> clothColors = new ArrayList<ClothColor>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();

@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
@@ -32,14 +33,22 @@ public class SubCategoryFitInfoMap {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SUB_CATEGORY_FIT_INFO_MAP_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	
+	
+	
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
-	@JsonBackReference
+	
+	
+	@JsonManagedReference(value="fit_info_map")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FIT_INFO_ID")
 	private FitInfo fitInfo;
+	
+	
+	
 	private String useYn;
 
 	@Override

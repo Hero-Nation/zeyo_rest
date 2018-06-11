@@ -30,14 +30,14 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @EntityListeners(AuditingEntityListener.class)
 
 public class CompanyNoHistory {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "companyNoHistory", fetch = FetchType.LAZY)
 	private List<Member> members = new ArrayList<Member>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "COMPANY_NO_HISTORY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER )
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

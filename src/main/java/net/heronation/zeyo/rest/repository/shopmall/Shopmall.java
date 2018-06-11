@@ -31,7 +31,7 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 @ToString(exclude = "member")
 public class Shopmall {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "shopmall", fetch = FetchType.LAZY)
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 
@@ -40,7 +40,7 @@ public class Shopmall {
 	@Column(name = "ID")
 	private Long id;
 
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;

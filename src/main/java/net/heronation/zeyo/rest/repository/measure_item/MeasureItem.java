@@ -13,6 +13,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -28,7 +29,7 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class MeasureItem {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "measureItem", fetch = FetchType.LAZY)
 	private List<SubCategoryMeasureMap> subCategoryMeasureMaps = new ArrayList<SubCategoryMeasureMap>();
 	@Id

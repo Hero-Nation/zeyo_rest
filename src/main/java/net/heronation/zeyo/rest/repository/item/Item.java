@@ -52,19 +52,19 @@ public class Item {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BRAND_ID")
 	private Brand brand;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
@@ -84,13 +84,13 @@ public class Item {
 	private int price;
 
 	private String madeinBuilder;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime madeinDate;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "WARRANTY_ID")
 	private Warranty warranty;
@@ -114,19 +114,19 @@ public class Item {
 
 	private String useYn;
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 
@@ -141,11 +141,11 @@ public class Item {
 	@OneToOne(mappedBy = "item")
 	private ItemBleachMap itemBleachMap;
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "item")
 	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "item")
 	private List<SizeTable> sizeTables = new ArrayList<SizeTable>();
 

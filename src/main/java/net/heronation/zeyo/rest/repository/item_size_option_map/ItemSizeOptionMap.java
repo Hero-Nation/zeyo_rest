@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
@@ -33,12 +34,12 @@ public class ItemSizeOptionMap {
 	@Column(name = "ID")
 	private Long id;
 
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
 
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SIZE_OPTION_ID")
 	private SizeOption sizeOption;

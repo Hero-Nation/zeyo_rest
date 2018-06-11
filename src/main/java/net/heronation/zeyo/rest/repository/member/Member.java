@@ -54,7 +54,7 @@ public class Member {
 	
 	@JsonIgnore
 	private String confirm_no;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMPANY_NO_HISTORY_ID")
 	private CompanyNoHistory companyNoHistory;
@@ -80,23 +80,23 @@ public class Member {
 
 	private String email_noti_yn;
 	
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Brand> brands = new ArrayList<Brand>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<CompanyNoHistory> companyNoHistorys = new ArrayList<CompanyNoHistory>();
-	@JsonManagedReference
+	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();

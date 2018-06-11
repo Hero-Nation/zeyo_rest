@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -29,9 +30,10 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 @EntityListeners(AuditingEntityListener.class)
 
 public class FitInfo {
-	@JsonManagedReference
+	@JsonBackReference(value="fit_info_map")
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<SubCategoryFitInfoMap> subCategoryFitInfoMaps = new ArrayList<SubCategoryFitInfoMap>();
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "FIT_INFO_ID_GENERATOR")
 	@Column(name = "ID")
@@ -45,10 +47,11 @@ public class FitInfo {
 	private DateTime createDt;
 
 	private String useYn;
-	@JsonManagedReference
+
+	@JsonBackReference
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<FitInfoOption> fitInfoOptions = new ArrayList<FitInfoOption>();
-	
+
 	@Override
 	public String toString() {
 		return "FitInfo ]";

@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -30,7 +31,7 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 @EntityListeners(AuditingEntityListener.class) 
 public class Category {
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	
@@ -48,11 +49,11 @@ public class Category {
 	
 	private Long parent_id;
 	
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	private List<SubCategory> subCategorys = new ArrayList<SubCategory>();
 	
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
 

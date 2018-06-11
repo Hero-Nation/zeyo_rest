@@ -61,4 +61,8 @@ public interface FitInfoRepository extends JpaRepository<FitInfo, Long> , QueryD
 	@Query("select m from FitInfo m where m.name = ?1 and  m.useYn = 'Y'")
 	List<FitInfo> findByName(@Param("name") String name);
 	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@Override
+	<S extends FitInfo> S save(S arg0);
+	
 }

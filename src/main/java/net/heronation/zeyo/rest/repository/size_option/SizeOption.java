@@ -32,7 +32,7 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class SizeOption {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "sizeOption", fetch = FetchType.LAZY)
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 	@Id
@@ -40,17 +40,17 @@ public class SizeOption {
 	@Column(name = "ID")
 	private Long id;
 
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
 
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
 
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;

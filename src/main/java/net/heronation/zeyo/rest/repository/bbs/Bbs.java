@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -35,11 +36,11 @@ public class Bbs {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BBS_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
@@ -58,11 +59,10 @@ public class Bbs {
 	private String status;
 
 	private String useYn;
-	
+
 	@Override
 	public String toString() {
 		return "Bbs ]";
 	}
-
 
 }

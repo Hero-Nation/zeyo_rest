@@ -31,7 +31,7 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 @TableGenerator(name = "MADEIN_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MADEIN_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class) 
 public class Madein {
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "madein", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 
@@ -39,7 +39,7 @@ public class Madein {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "MADEIN_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;

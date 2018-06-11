@@ -34,14 +34,14 @@ import org.joda.time.DateTime;
 @ToString(exclude="items,category,subCategoryMeasureMaps,subCategoryFitInfoMaps") 
 public class SubCategory {
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SUB_CATEGORY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
@@ -66,15 +66,15 @@ public class SubCategory {
 
 	private String useYn;
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SubCategoryMeasureMap> subCategoryMeasureMaps = new ArrayList<SubCategoryMeasureMap>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SubCategoryFitInfoMap> subCategoryFitInfoMaps = new ArrayList<SubCategoryFitInfoMap>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
 
