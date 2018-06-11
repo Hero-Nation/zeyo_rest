@@ -39,4 +39,13 @@ public interface KindofRepository extends JpaRepository<Kindof, Long> , QueryDsl
  	@RestResource( rel = "check", path = "check")
  	@Query("select a from Kindof a where a.ktype = ?1 and a.kvalue = ?2 and a.useYn = ?3")
  	Kindof check(@Param("ktype") String ktype, @Param("kvalue") String kvalue, @Param("useYn") String useYn);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends Kindof> S save(S arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	Kindof findOne(Long arg0);
+ 	
 }

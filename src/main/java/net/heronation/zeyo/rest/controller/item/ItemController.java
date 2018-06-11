@@ -14,6 +14,7 @@ import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemDto;
+import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.ItemResourceAssembler;
 import net.heronation.zeyo.rest.repository.item.QItem;
@@ -295,6 +296,34 @@ public class ItemController extends BaseController {
 			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
 			Item new_item = itemService.build(itemBuildDto, seq);
+
+			return return_success(new_item);
+		}
+
+	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.POST, value = "/modify")
+	@ResponseBody
+	public ResponseEntity<ResultVO> modify(@RequestBody @Valid ItemModifyDto itemModifyDto, BindingResult bindingResult,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("/api/items/modify");
+		if(auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		if (bindingResult.hasErrors()) {
+			return return_fail(bindingResult.getFieldError());
+		} else {
+
+			log.debug(itemModifyDto.toString());
+
+			Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+					.getDecodedDetails();
+
+			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+			Item new_item = itemService.modify(itemModifyDto, seq);
 
 			return return_success(new_item);
 		}

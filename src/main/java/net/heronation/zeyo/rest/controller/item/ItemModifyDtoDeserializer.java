@@ -26,7 +26,7 @@ import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
+import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
@@ -53,7 +53,7 @@ import net.heronation.zeyo.rest.repository.warranty.Warranty;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 
 @Slf4j
-public class ItemBuildDtoDeserializer extends JsonDeserializer {
+public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 	@Autowired
 	private BrandRepository brandRepository;
@@ -98,7 +98,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 	public Object deserialize(JsonParser jsonParser, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 
-		log.debug("ItemBuildDtoDeserializer : deserialize");
+		log.debug("ItemModifyDtoDeserializer : deserialize");
 
 		
 		// kindof table (변경될수 있음)
@@ -113,7 +113,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //		'9', 'size_option', '숫자 - 하위', 'Y'
 
 		
-
+		
 		// 공통
 //		Kindof kindof_admin_input = kindofRepository.findOne(1L);
 		Kindof kindof_direct_input = kindofRepository.findOne(2L);
@@ -127,7 +127,19 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 		JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-		log.debug("ItemBuildDtoDeserializer : BRAND");
+		
+		
+		
+		log.debug("ItemModifyDtoDeserializer : ITEM ID");
+		/// BRAND
+		Long item_id = Long.valueOf(node.get("item_id").textValue());
+		
+		
+		
+		
+		
+		
+		log.debug("ItemModifyDtoDeserializer : BRAND");
 		/// BRAND
 		Long brand_id = Long.valueOf(node.get("brand").textValue());
 
@@ -141,7 +153,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 
 		/// SHOPMALL
-		log.debug("ItemBuildDtoDeserializer : SHOPMALL");
+		log.debug("ItemModifyDtoDeserializer : SHOPMALL");
 		List<Shopmall> shopmalls = new ArrayList<Shopmall>();
 
 		Iterator<JsonNode> shopmalls_iterator = node.get("shopmalls").elements();
@@ -153,13 +165,13 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		}
 
 		// category
-		log.debug("ItemBuildDtoDeserializer : Category");
+		log.debug("ItemModifyDtoDeserializer : Category");
 		Long category_id = Long.valueOf(node.get("category").textValue());
 
 		Category category = categoryRepository.findOne(category_id);
 
 		// subCategory
-		log.debug("ItemBuildDtoDeserializer : SubCategory");
+		log.debug("ItemModifyDtoDeserializer : SubCategory");
 		Long subCategory_id = Long.valueOf(node.get("subCategory").textValue());
 
 		SubCategory subCategory = subCategoryRepository.findOne(subCategory_id);
@@ -180,7 +192,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 
 		String madeinBuilder = node.get("madeinBuilder").textValue();
 
-		log.debug("ItemBuildDtoDeserializer : Madein");
+		log.debug("ItemModifyDtoDeserializer : Madein");
 		JsonNode madein_node = node.get("madein");
 		Madein madein = null;
 		
@@ -213,7 +225,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 
 		DateTime madeinDate = dtf.parseDateTime(madeinDate_str);
 		
-		log.debug("ItemBuildDtoDeserializer : Warranty");
+		log.debug("ItemModifyDtoDeserializer : Warranty");
 		JsonNode warranty_node = node.get("warranty");
 		Warranty warranty = null;
 		
@@ -242,7 +254,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		 
 
 		
-		log.debug("ItemBuildDtoDeserializer : ItemMaterialMap");
+		log.debug("ItemModifyDtoDeserializer : ItemMaterialMap");
 		List<ItemMaterialMap> materialsmaps = new ArrayList<ItemMaterialMap>();
 		
 		Iterator<JsonNode> materials_iterator = node.get("materials").elements();
@@ -273,7 +285,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //		'7', 'size_option', '숫자', 'Y'
 //		'8', 'size_option', '직접입력', 'Y'
 //		'9', 'size_option', '숫자 - 하위', 'Y'
-		log.debug("ItemBuildDtoDeserializer : ItemSizeOptionMap");
+		log.debug("ItemModifyDtoDeserializer : ItemSizeOptionMap");
 	    List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 		
 	    Iterator<JsonNode> sizeOptions_iterator = node.get("sizeOptions").elements();
@@ -283,6 +295,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		while (sizeOptions_iterator.hasNext()) {
 			JsonNode sizeOptions_node = sizeOptions_iterator.next();
 			
+			Long direct_id = Long.valueOf(sizeOptions_node.get("direct_id").asText());
 			Long sizeOptions_id =Long.valueOf(sizeOptions_node.get("id").asText());
 			String inputValue =sizeOptions_node.get("inputValue").asText();
 			
@@ -292,7 +305,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			
 			
 			// 직접입력일경우
-			if(sizeOptions_id == 0) {  
+			if(direct_id == 0) {  
 				
 				//size_option 테이블에서 이미 존재하는 옵션의 id를 가지고 와서 한다.
 				
@@ -321,7 +334,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		}
 	    
 	    // 색상 입력 
-		log.debug("ItemBuildDtoDeserializer : ItemClothColorMap");
+		log.debug("ItemModifyDtoDeserializer : ItemClothColorMap");
 		 List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>(); 
 		 
 		 Iterator<JsonNode> clothColor_iterator = node.get("clothColor").elements();
@@ -330,7 +343,8 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				JsonNode clothColor_node = clothColor_iterator.next();
 				
 				
-				 
+				
+				Long direct_id = Long.valueOf(clothColor_node.get("direct_id").asText());
 				Long sizeOptions_id =Long.valueOf(clothColor_node.get("id").asText());
 				String inputValue =clothColor_node.get("inputValue").asText();
 				
@@ -340,7 +354,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				
 				
 				// 직접입력일경우
-				if(sizeOptions_id == 0) {  
+				if(direct_id == 0) {  
 					
 					//size_option 테이블에서 이미 존재하는 옵션의 id를 가지고 와서 한다.
 					
@@ -370,7 +384,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //			B : 중성세제
 //			C : 알카리성세제
 //			D: 산성세제"
-			log.debug("ItemBuildDtoDeserializer : ItemLaundryMap");
+			log.debug("ItemModifyDtoDeserializer : ItemLaundryMap");
 			ItemLaundryMap itemLaundryMap = new ItemLaundryMap();
 			
 			JsonNode laundry_node = node.get("laundry");
@@ -397,7 +411,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //			"A : 제한없음
 //			B : 석유계
 //			C : 클로로에틸렌"
-			log.debug("ItemBuildDtoDeserializer : ItemDrycleaningMap");
+			log.debug("ItemModifyDtoDeserializer : ItemDrycleaningMap");
 			ItemDrycleaningMap itemDrycleaningMap = new ItemDrycleaningMap();
 			
 			JsonNode drycleaning_node = node.get("drycleaning");
@@ -415,7 +429,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					itemDrycleaningMap.setUseYn("Y");
 			
 			// 다림질
-			log.debug("ItemBuildDtoDeserializer : ItemIroningMap");		
+			log.debug("ItemModifyDtoDeserializer : ItemIroningMap");		
 			ItemIroningMap itemIroningMap = new ItemIroningMap();
 			
 			JsonNode itemIroning_node = node.get("ironing"); 
@@ -439,7 +453,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 //					 "natureDry":"N", 
 //					 "dryMode":"B", 
 //					 "handDry":"C"
-					log.debug("ItemBuildDtoDeserializer : ItemDrymethodMap");
+					log.debug("ItemModifyDtoDeserializer : ItemDrymethodMap");
 					ItemDrymethodMap itemDrymethodMap = new ItemDrymethodMap();
 					
 					JsonNode itemDrymethod_node = node.get("drymethod"); 
@@ -462,7 +476,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 						
 //							private String chlorine
 //							private String oxygen;
-					log.debug("ItemBuildDtoDeserializer : ItemBleachMap");
+					log.debug("ItemModifyDtoDeserializer : ItemBleachMap");
 					ItemBleachMap itemBleachMap = new ItemBleachMap();
 					
 					JsonNode itemBleach_node = node.get("bleach"); 
@@ -477,7 +491,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 						itemBleachMap.setOxygen(itemBleach_oxygen);
 						itemBleachMap.setUseYn("Y");
 		
-						log.debug("ItemBuildDtoDeserializer : ItemFitInfoOptionMap");
+						log.debug("ItemModifyDtoDeserializer : ItemFitInfoOptionMap");
 		// fit 정보 관리 				
 		List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 						
@@ -504,7 +518,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 		String sizeTableYn = node.get("sizeTableYn").textValue();
 		
-		return new ItemBuildDto(brand, shopmalls, category, subCategory, imageMode, image, sizeMeasureMode,
+		return new ItemModifyDto(item_id,brand, shopmalls, category, subCategory, imageMode, image, sizeMeasureMode,
 				sizeMeasureImage, name, code, price, madeinBuilder, madein, madeinDate,warranty,materialsmaps,itemSizeOptionMaps,itemClothColorMaps,laundryYn,itemLaundryMap,drycleaningYn,itemDrycleaningMap,ironingYn,itemIroningMap,drymethodYn,itemDrymethodMap,bleachYn,itemBleachMap,itemFitInfoOptionMaps,sizeTableYn);
 
 	}

@@ -14,6 +14,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 
  
@@ -43,5 +44,9 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> , Quer
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select distinct m from Warranty m where m.useYn = 'Y'")
 	List<Warranty> distinct_name();
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	Warranty findOne(Long arg0);
  	
 }

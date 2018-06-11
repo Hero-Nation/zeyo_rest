@@ -12,6 +12,7 @@ import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemDto;
+import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
@@ -30,5 +31,8 @@ public interface ItemService {
 
 	Item build(ItemBuildDto itemBuildDto, Long member_id);
 
+	Item modify(ItemModifyDto itemBuildDto, Long member_id);
+
+	
 	Map<String, Object> getStat();
 }

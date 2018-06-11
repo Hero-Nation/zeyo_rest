@@ -49,5 +49,9 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
 	@RestResource(path = "findByName", rel = "findByName",exported = true)
 	@Query("select m from SubCategory m where m.name = ?1 and  m.useYn = 'Y'")
 	List<SubCategory> findByName(@Param("name") String ktype);
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	SubCategory findOne(Long arg0);
 
 }

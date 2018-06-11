@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
@@ -45,5 +46,12 @@ public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, Q
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select m from ClothColor m where (m.kindof = 1 or m.kindof = 2  ) and  m.useYn = 'Y'")
 	List<ClothColor> select_options();
+	
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ClothColor findOne(Long arg0);
+ 	
+ 
 	
 }

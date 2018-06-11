@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.member.Member;
 
@@ -43,6 +44,9 @@ public interface FitInfoOptionRepository extends JpaRepository<FitInfoOption, Lo
 	List<FitInfoOption> select_options(@Param("fitInfo") FitInfo fitInfo);
 	
 	
-	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	FitInfoOption findOne(Long arg0);
+ 	
 	
 }

@@ -107,7 +107,7 @@ public class Item {
 
 	private String linkYn;
 
-	private String sizeTableYn; 
+	private String sizeTableYn;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
@@ -129,15 +129,19 @@ public class Item {
 	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
-
+	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemLaundryMap itemLaundryMap;
+	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemDrycleaningMap itemDrycleaningMap;
+	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemIroningMap itemIroningMap;
+	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemDrymethodMap itemDrymethodMap;
+	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemBleachMap itemBleachMap;
 

@@ -32,10 +32,14 @@ public class ItemLaundryMap {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_LAUNDRY_MAP_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
+	
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
+	
+	
+	
 	private String water;
 
 	private String machine;

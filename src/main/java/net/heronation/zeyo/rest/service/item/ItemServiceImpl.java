@@ -41,6 +41,7 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionReposito
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemDto;
+import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
@@ -860,6 +861,174 @@ public class ItemServiceImpl implements ItemService {
 		// 직접입력 : 5
 
 		return null;
+	}
+
+	@Override
+	public Item modify(ItemModifyDto ibd, Long member_id) {
+		log.debug("build");
+
+		Member user = memberRepository.findOne(member_id);
+		Item old_item = itemRepository.findOne(ibd.getItem_id());
+
+		
+		old_item.setCode(ibd.getCode());
+		old_item.setCreateDt(new DateTime());
+		old_item.setBleachYn(ibd.getBleachYn());
+		old_item.setDrycleaningYn(ibd.getDrycleaningYn());
+		old_item.setDrymethodYn(ibd.getDrymethodYn());
+		old_item.setIroningYn(ibd.getIroningYn());
+		old_item.setLaundryYn(ibd.getLaundryYn());
+
+		old_item.setImage(ibd.getImage());
+		old_item.setImageMode(ibd.getImageMode());
+		old_item.setMadeinBuilder(ibd.getMadeinBuilder());
+		old_item.setMadeinDate(ibd.getMadeinDate());
+		old_item.setName(ibd.getName());
+		old_item.setPrice(ibd.getPrice());
+		old_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
+		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode());
+
+		if(ibd.getBrand() != null)
+			brandRepository.save(ibd.getBrand());
+		
+		categoryRepository.save(ibd.getCategory());
+		madeinRepository.save(ibd.getMadein());
+		subCategoryRepository.save(ibd.getSubCategory());
+		warrantyRepository.save(ibd.getWarranty());
+
+		old_item.setBrand(ibd.getBrand());
+		old_item.setCategory(ibd.getCategory());
+		old_item.setMadein(ibd.getMadein());
+		old_item.setMember(user);
+		old_item.setSubCategory(ibd.getSubCategory());
+		old_item.setWarranty(ibd.getWarranty());
+		old_item.setLinkYn("N");
+		old_item.setUseYn("Y");
+
+		old_item = itemRepository.save(old_item);
+
+		// 사이즈 테이블 처리
+		if (ibd.getSizeTableYn().equals("Y")) {
+			old_item.setSizeTableYn("Y");
+
+			// 사이즈 테이블 생성
+
+			SizeTable new_st = new SizeTable();
+			// 정보입력
+
+			new_st.setCreateDt(new DateTime());
+			new_st.setUseYn("Y");
+			new_st.setItem(old_item);
+			new_st.setVisibleBasicYn("Y");
+			new_st.setVisibleCodeYn("Y");
+			new_st.setVisibleColorYn("Y");
+			new_st.setVisibleFitInfoYn("Y");
+			new_st.setVisibleItemImageYn("Y");
+			new_st.setVisibleLaundryInfoYn("Y");
+			new_st.setVisibleMeasureHowAYn("Y");
+			new_st.setVisibleMeasureHowBYn("Y");
+			new_st.setVisibleMeasureTableYn("Y");
+			new_st.setVisibleNameYn("Y");
+
+			sizeTableRepository.save(new_st);
+		} else {
+
+			old_item.setSizeTableYn("N");
+		}
+
+		List<Shopmall> isms = ibd.getShopmalls();
+		if (isms.size() != 0) {
+
+			List<ItemShopmallMap> ismms = new ArrayList<ItemShopmallMap>();
+			for (Shopmall sm : isms) {
+				ItemShopmallMap ismm = new ItemShopmallMap();
+				ismm.setItem(old_item);
+				ismm.setShopmall(sm);
+				ismm.setUseYn("Y");
+
+				ismms.add(ismm);
+			}
+
+			itemShopmallMapRepository.save(ismms);
+		}
+
+		if (ibd.getBleachYn().equals("Y")) {
+			ItemBleachMap item_bleach = ibd.getItemBleachMap();
+			item_bleach.setItem(old_item);
+
+			itemBleachMapRepository.save(item_bleach);
+		}
+
+		List<ItemClothColorMap> icclist = ibd.getItemClothColorMaps();
+
+		if (icclist.size() != 0) {
+			for (ItemClothColorMap iccitem : icclist) {
+				iccitem.setItem(old_item);
+				if (iccitem.getOptionValue().equals("DIRECT")) {
+					ClothColor injected_cloth_color = clothColorRepository.save(iccitem.getClothColor());
+
+					iccitem.setClothColor(injected_cloth_color);
+				}
+			}
+			itemClothColorMapRepository.save(icclist);
+		}
+
+		if (ibd.getDrycleaningYn().equals("Y")) {
+			ItemDrycleaningMap idcm = ibd.getItemDrycleaningMap();
+			idcm.setItem(old_item);
+			itemDrycleaningMapRepository.save(idcm);
+		}
+
+		if (ibd.getDrymethodYn().equals("Y")) {
+			ItemDrymethodMap idm = ibd.getItemDrymethodMap();
+			idm.setItem(old_item);
+			itemDrymethodMapRepository.save(idm);
+		}
+
+		List<ItemFitInfoOptionMap> ifiolist = ibd.getItemFitInfoOptionMaps();
+
+		if (ifiolist.size() != 0) {
+			for (ItemFitInfoOptionMap ifio : ifiolist) {
+				ifio.setItem(old_item);
+			}
+			itemFitInfoOptionMapRepository.save(ifiolist);
+		}
+
+		if (ibd.getIroningYn().equals("Y")) {
+			ItemIroningMap iim = ibd.getItemIroningMap();
+			iim.setItem(old_item);
+			itemIroningMapRepository.save(iim);
+		}
+
+		if (ibd.getLaundryYn().equals("Y")) {
+			ItemLaundryMap ilm = ibd.getItemLaundryMap();
+			ilm.setItem(old_item);
+			itemLaundryMapRepository.save(ilm);
+		}
+
+		List<ItemSizeOptionMap> isomlist = ibd.getItemSizeOptionMaps();
+
+		if (isomlist.size() != 0) {
+			for (ItemSizeOptionMap isom : isomlist) {
+				isom.setItem(old_item);
+				if (isom.getOptionValue().equals("DIRECT")) {
+					SizeOption injected_size_option = sizeOptionRepository.save(isom.getSizeOption());
+					isom.setSizeOption(injected_size_option);
+				}
+			}
+			itemSizeOptionMapRepository.save(isomlist);
+		}
+
+		List<ItemMaterialMap> imms = ibd.getMaterials();
+
+		if (imms.size() != 0) {
+			for (ItemMaterialMap imm : imms) {
+				imm.setItem(old_item);
+			}
+			itemMaterialMapRepository.save(imms);
+		}
+
+		return old_item;
 	}
 
 }

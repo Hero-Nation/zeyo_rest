@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
@@ -43,5 +44,10 @@ public interface MaterialRepository extends JpaRepository<Material, Long>, Query
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select distinct m from Material m where m.useYn = 'Y'")
 	List<Material> distinct_name();
+	
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	Material findOne(Long arg0);
 
 }

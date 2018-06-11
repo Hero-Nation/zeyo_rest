@@ -14,6 +14,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
 
 @RepositoryRestResource(collectionResourceRel = "madeins", path = "madeins")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -37,5 +38,10 @@ public interface MadeinRepository extends JpaRepository<Madein, Long>, QueryDslP
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select distinct m from Madein m where m.useYn = 'Y'")
 	List<Madein> distinct_name();
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	Madein findOne(Long arg0);
+ 	
     
 }

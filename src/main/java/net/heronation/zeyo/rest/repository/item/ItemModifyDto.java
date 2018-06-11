@@ -25,21 +25,23 @@ import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
+ 
+
 @Data
 @AllArgsConstructor
 @JsonDeserialize(using = ItemBuildDtoDeserializer.class)
-public class ItemBuildDto { 	
+public class ItemModifyDto {
+	
+	private Long item_id;
+	
 	private Brand brand;
 
-	
- 	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
-	
-	
+	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
+
 	private Category category;
 
 	private SubCategory subCategory;
- 
-	
+
 	private String imageMode;
 
 	private String image;
@@ -52,33 +54,32 @@ public class ItemBuildDto {
 
 	private String code;
 
-	private int price; 
-	
+	private int price;
+
 	private String madeinBuilder;
-	
+
 	private Madein madein;
-	
-	
+
 	private DateTime madeinDate;
- 
+
 	private Warranty warranty;
- 
- 	private List<ItemMaterialMap> materials = new ArrayList<ItemMaterialMap>();	
+
+	private List<ItemMaterialMap> materials = new ArrayList<ItemMaterialMap>();
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
-    private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
-    
-    private String laundryYn; 
-	private ItemLaundryMap itemLaundryMap; 
+	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
+
+	private String laundryYn;
+	private ItemLaundryMap itemLaundryMap;
 	private String drycleaningYn;
- 	private ItemDrycleaningMap itemDrycleaningMap; 
- 	private String ironingYn;
-	private ItemIroningMap itemIroningMap; 
+	private ItemDrycleaningMap itemDrycleaningMap;
+	private String ironingYn;
+	private ItemIroningMap itemIroningMap;
 	private String drymethodYn;
-	private ItemDrymethodMap itemDrymethodMap; 
+	private ItemDrymethodMap itemDrymethodMap;
 	private String bleachYn;
- 	private ItemBleachMap itemBleachMap; 
- 	
-    private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
- 
-    private String sizeTableYn;
+	private ItemBleachMap itemBleachMap;
+
+	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
+
+	private String sizeTableYn;
 }

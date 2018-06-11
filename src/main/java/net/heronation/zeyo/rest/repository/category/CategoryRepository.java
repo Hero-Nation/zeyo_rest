@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
@@ -51,4 +52,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
 	List<Category> findByName(@Param("name") String name);
 
 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	Category findOne(Long arg0);
 }
