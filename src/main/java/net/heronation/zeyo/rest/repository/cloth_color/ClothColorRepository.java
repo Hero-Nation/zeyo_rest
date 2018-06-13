@@ -19,6 +19,7 @@ import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
+import net.heronation.zeyo.rest.repository.material.Material;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 
@@ -52,6 +53,8 @@ public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, Q
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	ClothColor findOne(Long arg0);
  	
- 
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ClothColor> S save(S arg0);
 	
 }

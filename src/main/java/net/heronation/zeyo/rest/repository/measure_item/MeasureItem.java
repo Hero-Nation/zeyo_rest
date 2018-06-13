@@ -21,6 +21,7 @@ import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryM
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class MeasureItem {
 	private DateTime createDt;
 
 	private String useYn;
-	
+
 	@Override
 	public String toString() {
 		return "MeasureItem ]";

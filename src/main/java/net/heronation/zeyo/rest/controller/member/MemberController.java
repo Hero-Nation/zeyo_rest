@@ -119,6 +119,25 @@ public class MemberController extends BaseController {
 
 	}
 
+	@RequestMapping(path = "/send_register_mail", method = RequestMethod.GET)
+	public ResponseEntity<ResultVO> send_register_mail(@RequestParam(name = "email", defaultValue = "") String email) {
+		log.debug("/api/members/send_register_mail");
+
+		if (email.equals("")) {
+			return return_fail("email.empty");
+		} else if (!EmailValidator.getInstance().isValid(email)) {
+			return return_fail("email.form.wrong");
+		} else {
+			try {
+				return return_success(memberService.send_register_mail(email));
+			} catch (Exception e) {
+				return return_fail("email.send.exception");
+			}
+
+		}
+
+	}
+
 	@RequestMapping(path = "/send_confirm_email", method = RequestMethod.GET)
 	public ResponseEntity<ResultVO> send_confirm_email(@RequestParam(name = "email", defaultValue = "") String email) {
 		log.debug("/api/members/send_confirm_email");
@@ -342,7 +361,7 @@ public class MemberController extends BaseController {
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
-		if (param.getFlag() == null|| param.getFlag().equals("")) {
+		if (param.getFlag() == null || param.getFlag().equals("")) {
 			return return_fail("flag.empty");
 		} else {
 
@@ -502,7 +521,7 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (param.getPhone() == null || param.getPhone().equals("") ) {
+		if (param.getPhone() == null || param.getPhone().equals("")) {
 			return return_fail("phone.empty");
 		} else {
 			memberService.update_phone(param, seq);
@@ -512,7 +531,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_email", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_email(@RequestBody MemberDto param,
+	public ResponseEntity<ResultVO> update_email(@RequestBody EmailUpdateVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_email");
 
@@ -523,19 +542,18 @@ public class MemberController extends BaseController {
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-
-		if (param.getEmail() == null ||param.getEmail().equals("")) {
+		if (param.getEmail() == null || param.getEmail().equals("")) {
 			return return_fail("email.empty");
-		} else if (param.getConfirm_no() == null ||param.getConfirm_no().equals("")) {
+		} else if (param.getConfirm_no() == null || param.getConfirm_no().equals("")) {
 			return return_fail("confirm_no.empty");
 		} else {
 
-			Member R = memberService.update_email(param, seq);
+			String R = memberService.update_email(param, seq);
 
-			if (R == null) {
+			if (R.equals(CommonConstants.FAIL)) {
 				return return_fail("confirm_no.wrong");
 			} else {
-				return return_success();
+				return return_success(CommonConstants.SUCCESS);
 			}
 
 		}
@@ -543,7 +561,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_password", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_password(@RequestBody MemberDto param,
+	public ResponseEntity<ResultVO> update_password(@RequestBody PasswordUpdateVO param,
 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_password");
@@ -557,9 +575,9 @@ public class MemberController extends BaseController {
 		String old_pw = param.getOld_pw();
 		String new_pw = param.getNew_pw();
 
-		if (old_pw.equals("")) {
+		if (old_pw == null || old_pw.equals("")) {
 			return return_fail("old_pw.empty");
-		} else if (new_pw.equals("")) {
+		} else if (new_pw == null || new_pw.equals("")) {
 			return return_fail("new_pw.empty");
 		} else {
 			String update_result = memberService.update_password(old_pw, new_pw, seq);
@@ -584,7 +602,7 @@ public class MemberController extends BaseController {
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
- 
+
 		if (param.getCp_no() == null || param.getCp_no().equals("")) {
 			return return_fail("cp_no.empty");
 		} else {

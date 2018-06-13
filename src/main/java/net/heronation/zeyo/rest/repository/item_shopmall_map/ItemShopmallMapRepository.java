@@ -1,6 +1,8 @@
 package net.heronation.zeyo.rest.repository.item_shopmall_map;
   
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
@@ -14,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.member.Member;
 
  
@@ -32,5 +35,12 @@ public interface ItemShopmallMapRepository extends JpaRepository<ItemShopmallMap
 	@RestResource(path = "", rel = "",exported = false)
 	Page<ItemShopmallMap> findAll(Pageable arg0);
 
-
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemShopmallMap> S save(S arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemShopmallMap> List<S> save(Iterable<S> arg0);
+ 	
 }

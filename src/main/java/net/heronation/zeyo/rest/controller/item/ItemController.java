@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.controller.item;
 import net.heronation.zeyo.rest.common.authentication.AppUserDetails;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.controller.member.MemberRegisterValidator;
@@ -25,8 +26,10 @@ import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -80,18 +83,9 @@ public class ItemController extends BaseController {
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
-		binder.addValidators(new ItemBuildValidator());
+	//	binder.addValidators(new ItemBuildValidator());
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(path = "download_excel")
-	public ResponseEntity<ResultVO> download_excel(@AuthenticationPrincipal OAuth2Authentication auth) {
-		log.debug("/api/items/download_excel");
-		if(auth == null) {
-			return return_fail(CommonConstants.NO_TOKEN);
-		} 
-		return return_success();
-	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
@@ -188,11 +182,11 @@ public class ItemController extends BaseController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
-	@RequestMapping(method = RequestMethod.PATCH, value = "/change_connect")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_link")
 	@ResponseBody
-	public ResponseEntity<ResultVO> change_connect(
+	public ResponseEntity<ResultVO> toggle_link(
 
-			@RequestBody ItemDto param,
+			@RequestBody List<ToggleVO> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		
@@ -206,10 +200,10 @@ public class ItemController extends BaseController {
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 		
 		
-		if (param.getTarget() == null|| param.getTarget().equals("")) {
+		if (param == null|| param.size() == 0) {
 			return return_fail("target.empty");
-		} else {
-			return return_success(itemService.change_connect(param,seq));
+		}else {
+			return return_success(itemService.toggle_link(param,seq));
 		}
 
 	}
@@ -219,7 +213,7 @@ public class ItemController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(
 
-			@RequestBody ItemDto param,
+			@RequestBody List<ToggleVO> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		// 유저 정보 가지고 오기
@@ -231,7 +225,7 @@ public class ItemController extends BaseController {
 
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 		
-		if (param.getTarget() == null|| param.getTarget().equals("")) {
+		if (param == null|| param.size() == 0) {
 			return return_fail("target.empty");
 		}else {
 			return return_success(itemService.delete(param,  seq));
@@ -254,16 +248,16 @@ public class ItemController extends BaseController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
-	@RequestMapping(method = RequestMethod.GET, value = "/toggle_size_table")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_size_table")
 	@ResponseBody
 	public ResponseEntity<ResultVO> toggle_size_table(
-			@RequestParam(value = "id", required = false, defaultValue = "0") Long item_id) {
+			@RequestBody List<ToggleVO> param) {
 
-		if (item_id == 0) {
-			return return_fail("id.empty");
-		} else {
+		if (param == null|| param.size() == 0) {
+			return return_fail("target.empty");
+		}else { 
 
-			String returnValue = itemService.toggle_size_table(item_id);
+			String returnValue = itemService.toggle_size_table(param);
 
 			if (returnValue == null) {
 				return return_fail("item.not.exist");
@@ -273,6 +267,29 @@ public class ItemController extends BaseController {
 
 		}
 
+	}
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/download_excel")
+	@ResponseBody
+	public ResponseEntity<ResultVO> download_excel(
+			@RequestBody List<ToggleVO> param,
+			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
+
+ 
+		if (param == null|| param.size() == 0) {
+			return return_fail("target.empty");
+		}else {
+			try {
+				return return_success( itemService.arrayExcel(param,pageable));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return return_fail("excel.build.exception");
+			}
+		}
+		
+		
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")

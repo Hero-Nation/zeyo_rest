@@ -8,7 +8,9 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
+import javax.swing.text.StyleConstants.ColorConstants;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.BooleanBuilder;
@@ -27,9 +30,16 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.item.QItem;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
+import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.kindof.QKindof;
 import net.heronation.zeyo.rest.repository.madein.Madein;
+import net.heronation.zeyo.rest.repository.madein.MadeinDto;
 import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
 import net.heronation.zeyo.rest.repository.madein.QMadein;
 
@@ -43,10 +53,15 @@ public class MadeinServiceImpl implements MadeinService {
 	@Autowired
 	private MadeinRepository madeinRepository;
 
+	
+	@Autowired
+	private KindofRepository kindofRepository;
+	
 	@Autowired
 	EntityManager entityManager;
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 		
 		 
@@ -176,6 +191,7 @@ public class MadeinServiceImpl implements MadeinService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Page<Map<String,Object>> use_list(Predicate where, Pageable page) {
 		JPAQuery<Madein> query = new JPAQuery<Madein>(entityManager);
 		
@@ -220,6 +236,47 @@ public class MadeinServiceImpl implements MadeinService {
 		}
 		
 		return new PageImpl<Map<String,Object>>(list, page, R.getTotal());
+	}
+
+	// 어드민 
+	@Override
+	@Transactional
+	public String insert(NameVO param) {
+		// TODO Auto-generated method stub
+		
+		Kindof direct_input = kindofRepository.findOne(1L);
+		
+		Madein iv = new Madein();
+		iv.setKindof(direct_input);
+		iv.setName(param.getName());
+		iv.setCreateDt(new DateTime());
+		iv.setUseYn("Y");
+		
+		madeinRepository.save(iv);
+		
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String update(ToggleVO param) {
+		// TODO Auto-generated method stub
+		
+		Madein a = madeinRepository.findOne(param.getId());
+		a.setName(param.getValue());
+		
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String delete(List<LIdVO> param) {
+		for(LIdVO v :param) {
+			Madein a = madeinRepository.findOne(v.getId());
+			a.setUseYn("N");	
+		}
+		
+		return CommonConstants.SUCCESS;
 	}
 
 }

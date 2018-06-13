@@ -1,6 +1,8 @@
 package net.heronation.zeyo.rest.repository.item_size_option_map;
   
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
@@ -16,6 +18,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.member.Member;
 
  
@@ -38,5 +41,14 @@ public interface ItemSizeOptionMapRepository extends JpaRepository<ItemSizeOptio
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemSizeOptionMap> findAll(Predicate arg0);
+	
 
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemSizeOptionMap> S save(S arg0);
+
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemSizeOptionMap> List<S> save(Iterable<S> arg0);
 }

@@ -129,7 +129,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 
 		log.debug("ItemBuildDtoDeserializer : BRAND");
 		/// BRAND
-		Long brand_id = Long.valueOf(node.get("brand").textValue());
+		Long brand_id = node.get("brand").asLong();
 
 		Brand brand = null;
 		if(brand_id == 0) {
@@ -147,20 +147,21 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		Iterator<JsonNode> shopmalls_iterator = node.get("shopmalls").elements();
 
 		while (shopmalls_iterator.hasNext()) {
-			Long shopmall_index = Long.valueOf(shopmalls_iterator.next().asText());
+			Long shopmall_index = shopmalls_iterator.next().asLong();
 			Shopmall item = shopmallRepository.findOne(shopmall_index);
 			shopmalls.add(item);
 		}
 
 		// category
 		log.debug("ItemBuildDtoDeserializer : Category");
-		Long category_id = Long.valueOf(node.get("category").textValue());
+		Long category_id = node.get("category").asLong();
 
 		Category category = categoryRepository.findOne(category_id);
 
 		// subCategory
 		log.debug("ItemBuildDtoDeserializer : SubCategory");
-		Long subCategory_id = Long.valueOf(node.get("subCategory").textValue());
+		Long subCategory_id = node.get("subCategory").asLong();
+				
 
 		SubCategory subCategory = subCategoryRepository.findOne(subCategory_id);
 
@@ -184,10 +185,10 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		JsonNode madein_node = node.get("madein");
 		Madein madein = null;
 		
-				String madein_kindof = madein_node.get("kindof").textValue();
+				long madein_kindof = madein_node.get("kindof").asLong();
 				
 				// 관리자 1 , 직접입력 2
-				if(madein_kindof.equals("2")) {
+				if(madein_kindof == 2) {
 					
 					String madein_input_value = madein_node.get("inputValue").textValue();
 					
@@ -200,7 +201,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				}else {
 				
 					
-					Long madein_id =  Long.valueOf(madein_node.get("id").textValue());
+					Long madein_id =  madein_node.get("id").asLong();
 					
 					madein = madeinRepository.findOne(madein_id);
 				}
@@ -217,10 +218,10 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		JsonNode warranty_node = node.get("warranty");
 		Warranty warranty = null;
 		
-				String warranty_kindof = warranty_node.get("kindof").textValue();
+				long warranty_kindof = warranty_node.get("kindof").asLong();
 				
 				// 관리자 1 , 직접입력 2
-				if(warranty_kindof.equals("2")) {
+				if(warranty_kindof == 2) {
 					
 					String warranty_input_value = warranty_node.get("inputValue").textValue();
 					
@@ -233,7 +234,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				}else {
 				
 					
-					Long warranty_id =  Long.valueOf(warranty_node.get("id").textValue());
+					Long warranty_id =  warranty_node.get("id").asLong();
 					
 					warranty = warrantyRepository.findOne(warranty_id);
 				}
@@ -251,17 +252,19 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			JsonNode materials_node = materials_iterator.next();
 			
 			String useLocation =materials_node.get("useLocation").asText();
-			Long material_id = Long.valueOf(materials_node.get("material").textValue());
-			String contain =materials_node.get("contain").asText();
-			
-			Material db_material = materialRepository.findOne(material_id);
-			
-			ItemMaterialMap new_material_mapp = new ItemMaterialMap();
-			new_material_mapp.setContain(contain);
-			new_material_mapp.setMaterial(db_material);
-			new_material_mapp.setUseLocatoin(useLocation);
-			new_material_mapp.setUseYn("Y");
-			materialsmaps.add(new_material_mapp);
+			if(!useLocation.equals("A")) {
+				Long material_id =  materials_node.get("material").asLong();
+				String contain =materials_node.get("contain").asText();
+				
+				Material db_material = materialRepository.findOne(material_id);
+				
+				ItemMaterialMap new_material_mapp = new ItemMaterialMap();
+				new_material_mapp.setContain(contain);
+				new_material_mapp.setMaterial(db_material);
+				new_material_mapp.setUseLocatoin(useLocation);
+				new_material_mapp.setUseYn("Y");
+				materialsmaps.add(new_material_mapp);
+			}
 		}
 		
 		// 사이즈 같은 경우는 카테고리 설정에 의존적이다.
@@ -283,7 +286,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		while (sizeOptions_iterator.hasNext()) {
 			JsonNode sizeOptions_node = sizeOptions_iterator.next();
 			
-			Long sizeOptions_id =Long.valueOf(sizeOptions_node.get("id").asText());
+			Long sizeOptions_id = sizeOptions_node.get("id").asLong();
 			String inputValue =sizeOptions_node.get("inputValue").asText();
 			
 			
@@ -331,7 +334,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				
 				
 				 
-				Long sizeOptions_id =Long.valueOf(clothColor_node.get("id").asText());
+				Long sizeOptions_id = clothColor_node.get("id").asLong();
 				String inputValue =clothColor_node.get("inputValue").asText();
 				
 				
@@ -376,22 +379,26 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			JsonNode laundry_node = node.get("laundry");
 			 
 					String laundryYn =  laundry_node.get("useYn").textValue();
-			
-					String laundry_detergent = laundry_node.get("detergent").textValue();
-					String laundry_hand = laundry_node.get("hand").textValue();
-					String laundry_intensity = laundry_node.get("intensity").textValue();
-					String laundry_machine = laundry_node.get("machine").textValue();
-					String laundry_water = laundry_node.get("water").textValue();
-					String laundry_waterTemp = laundry_node.get("waterTemp").textValue(); 
 					
- 
-					itemLaundryMap.setDetergent(laundry_detergent);
-					itemLaundryMap.setHand(laundry_hand);
-					itemLaundryMap.setIntensity(laundry_intensity);
-					itemLaundryMap.setMachine(laundry_machine);
-					itemLaundryMap.setUseYn("Y");
-					itemLaundryMap.setWater(laundry_water);
-					itemLaundryMap.setWaterTemp(laundry_waterTemp);
+					if(laundryYn.equals("Y")) {
+						String laundry_detergent = laundry_node.get("detergent").textValue();
+						String laundry_hand = laundry_node.get("hand").textValue();
+						String laundry_intensity = laundry_node.get("intensity").textValue();
+						String laundry_machine = laundry_node.get("machine").textValue();
+						String laundry_water = laundry_node.get("water").textValue();
+						String laundry_waterTemp = laundry_node.get("waterTemp").textValue(); 
+						
+	 
+						itemLaundryMap.setDetergent(laundry_detergent);
+						itemLaundryMap.setHand(laundry_hand);
+						itemLaundryMap.setIntensity(laundry_intensity);
+						itemLaundryMap.setMachine(laundry_machine);
+						itemLaundryMap.setUseYn("Y");
+						itemLaundryMap.setWater(laundry_water);
+						itemLaundryMap.setWaterTemp(laundry_waterTemp);
+					}
+					
+	
 					 
 			
 //			"A : 제한없음
@@ -404,15 +411,18 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			
 					String drycleaningYn =  drycleaning_node.get("useYn").textValue();
 			
+					if(drycleaningYn.equals("Y")) {
+						String drycleaning_drycan = drycleaning_node.get("drycan").textValue();
+						String drycleaning_storecan = drycleaning_node.get("storecan").textValue();
+						String drycleaning_detergent = drycleaning_node.get("detergent").textValue();
+					 
+						itemDrycleaningMap.setDetergent(drycleaning_detergent); 
+						itemDrycleaningMap.setStorecan(drycleaning_storecan); 
+						itemDrycleaningMap.setDrycan(drycleaning_drycan); 
+						itemDrycleaningMap.setUseYn("Y");
+					}
 			
-					String drycleaning_drycan = drycleaning_node.get("drycan").textValue();
-					String drycleaning_storecan = drycleaning_node.get("storecan").textValue();
-					String drycleaning_detergent = drycleaning_node.get("detergent").textValue();
-				 
-					itemDrycleaningMap.setDetergent(drycleaning_detergent); 
-					itemDrycleaningMap.setStorecan(drycleaning_storecan); 
-					itemDrycleaningMap.setDrycan(drycleaning_drycan); 
-					itemDrycleaningMap.setUseYn("Y");
+
 			
 			// 다림질
 			log.debug("ItemBuildDtoDeserializer : ItemIroningMap");		
@@ -422,16 +432,21 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 			
 					String ironingYn =  itemIroning_node.get("useYn").textValue();
 			
-					String itemIroning_ironcan = itemIroning_node.get("ironcan").textValue();
-					String itemIroning_addprotection = itemIroning_node.get("addprotection").textValue();
-					String itemIroning_startTemp = itemIroning_node.get("startTemp").textValue();
-					String itemIroning_endTemp = itemIroning_node.get("endTemp").textValue();
-					 
-					itemIroningMap.setIroncan(itemIroning_ironcan); 
-					itemIroningMap.setAddprotection(itemIroning_addprotection); 
-					itemIroningMap.setStartTemp(itemIroning_startTemp);
-					itemIroningMap.setEndTemp(itemIroning_endTemp);
-					itemIroningMap.setUseYn("Y");
+					
+					if(ironingYn.equals("Y")) {
+						String itemIroning_ironcan = itemIroning_node.get("ironcan").textValue();
+						String itemIroning_addprotection = itemIroning_node.get("addprotection").textValue();
+						String itemIroning_startTemp = itemIroning_node.get("startTemp").textValue();
+						String itemIroning_endTemp = itemIroning_node.get("endTemp").textValue();
+						 
+						itemIroningMap.setIroncan(itemIroning_ironcan); 
+						itemIroningMap.setAddprotection(itemIroning_addprotection); 
+						itemIroningMap.setStartTemp(itemIroning_startTemp);
+						itemIroningMap.setEndTemp(itemIroning_endTemp);
+						itemIroningMap.setUseYn("Y");
+					}
+					
+
 					
 			// 건조방법
 					
@@ -446,17 +461,19 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					
 							String drymethodYn =  itemDrymethod_node.get("useYn").textValue();
 					
-					
-							String itemDrymethod_machineDry = itemDrymethod_node.get("machineDry").textValue();
-							String itemDrymethod_natureDry = itemDrymethod_node.get("natureDry").textValue();
-							String itemDrymethod_dryMode = itemDrymethod_node.get("dryMode").textValue();
-							String itemDrymethod_handDry = itemDrymethod_node.get("handDry").textValue();
-							 
-							itemDrymethodMap.setMachineDry(itemDrymethod_machineDry);
-							itemDrymethodMap.setNatureDry(itemDrymethod_natureDry);
-							itemDrymethodMap.setDryMode(itemDrymethod_dryMode);
-							itemDrymethodMap.setHandDry(itemDrymethod_handDry);
-							itemDrymethodMap.setUseYn("Y");
+							if(drymethodYn.equals("Y")) {
+								String itemDrymethod_machineDry = itemDrymethod_node.get("machineDry").textValue();
+								String itemDrymethod_natureDry = itemDrymethod_node.get("natureDry").textValue();
+								String itemDrymethod_dryMode = itemDrymethod_node.get("dryMode").textValue();
+								String itemDrymethod_handDry = itemDrymethod_node.get("handDry").textValue();
+								 
+								itemDrymethodMap.setMachineDry(itemDrymethod_machineDry);
+								itemDrymethodMap.setNatureDry(itemDrymethod_natureDry);
+								itemDrymethodMap.setDryMode(itemDrymethod_dryMode);
+								itemDrymethodMap.setHandDry(itemDrymethod_handDry);
+								itemDrymethodMap.setUseYn("Y");
+							}
+
 					
 					// 표백제 사용법
 						
@@ -468,16 +485,18 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					JsonNode itemBleach_node = node.get("bleach"); 
 							
 						String bleachYn =  itemBleach_node.get("useYn").textValue();
+						if(bleachYn.equals("Y")) {
+							String itemBleach_chlorine = itemBleach_node.get("chlorine").textValue();
+							String itemBleach_oxygen = itemBleach_node.get("oxygen").textValue();
+							
+							itemBleachMap.setChlorine(itemBleach_chlorine);
+							itemBleachMap.setOxygen(itemBleach_oxygen);
+							itemBleachMap.setUseYn("Y");
+			
+						}
 					
-					
-						String itemBleach_chlorine = itemBleach_node.get("chlorine").textValue();
-						String itemBleach_oxygen = itemBleach_node.get("oxygen").textValue();
-						
-						itemBleachMap.setChlorine(itemBleach_chlorine);
-						itemBleachMap.setOxygen(itemBleach_oxygen);
-						itemBleachMap.setUseYn("Y");
-		
-						log.debug("ItemBuildDtoDeserializer : ItemFitInfoOptionMap");
+
+		log.debug("ItemBuildDtoDeserializer : ItemFitInfoOptionMap");
 		// fit 정보 관리 				
 		List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 						
@@ -486,7 +505,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		while (itemFitInfoOption_iterator.hasNext()) {
 			JsonNode itemFitInfoOption_node = itemFitInfoOption_iterator.next();
 			
-			Long fitInfoOptionId =Long.valueOf(itemFitInfoOption_node.get("fitInfoOptionId").asText());
+			Long fitInfoOptionId = itemFitInfoOption_node.get("fitInfoOptionId").asLong();
 			
 			
 			ItemFitInfoOptionMap new_FitInfoOption_mapp = new ItemFitInfoOptionMap();

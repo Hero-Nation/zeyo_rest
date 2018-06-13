@@ -18,18 +18,9 @@ import net.heronation.zeyo.rest.repository.member.MemberDto;
 
 @Data
 public class ShopmallDto {
-
-	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
-	private Long id;
-
-	private Member member;
-
-	private String name;
-
-	private String useYn;
-	
-	// etc
-	
+ 
+	private Long id; 
+	private String name; 
 	private String link;
 
 }

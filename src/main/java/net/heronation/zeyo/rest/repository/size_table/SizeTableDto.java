@@ -1,21 +1,23 @@
 package net.heronation.zeyo.rest.repository.size_table;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.Data;
-import lombok.Value;
-
 import net.heronation.zeyo.rest.repository.item.Item;
-import org.joda.time.DateTime;
+import net.heronation.zeyo.rest.repository.item.ItemRepository;
 
 @Data
 public class SizeTableDto {
+	
+	@Autowired
+	ItemRepository itemRepo;
 
 	private Long id;
 
 	private Item item;
+	
+	private Long item_id;
 
 	private String visibleNameYn;
 
@@ -40,14 +42,14 @@ public class SizeTableDto {
 	private DateTime createDt;
 
 	private String useYn;
-	
-	private String target;
+	 
 	
 	public SizeTable convertToEntity() {
 		SizeTable st = new SizeTable();
 		
 		if(id != null) st.setId(id);
 		if(item != null) st.setItem(item);
+		if(item_id != null) st.setItem(itemRepo.findOne(item_id));
 		if(visibleNameYn != null) st.setVisibleNameYn(visibleNameYn);
 		if(visibleCodeYn != null) st.setVisibleCodeYn(visibleCodeYn);
 		if(visibleBasicYn != null) st.setVisibleBasicYn(visibleBasicYn);
@@ -59,7 +61,9 @@ public class SizeTableDto {
 		if(visibleMeasureHowBYn != null) st.setVisibleMeasureHowBYn(visibleMeasureHowBYn);
 		if(visibleFitInfoYn != null) st.setVisibleFitInfoYn(visibleFitInfoYn);
 		if(createDt != null) st.setCreateDt(createDt);
-		if(useYn != null) st.setUseYn(useYn); 
+		if(createDt == null) st.setCreateDt(new DateTime());
+		if(useYn != null) st.setUseYn(useYn);
+		if(useYn == null) st.setUseYn("Y"); 
 		
 		return st;
 	}

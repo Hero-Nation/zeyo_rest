@@ -36,4 +36,8 @@ public interface ItemDrycleaningMapRepository extends JpaRepository<ItemDryclean
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemDrycleaningMap> findAll(Predicate arg0);
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemDrycleaningMap> S save(S arg0);
 }

@@ -1,6 +1,8 @@
 package net.heronation.zeyo.rest.repository.item_fit_info_option_map;
   
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
@@ -35,4 +37,15 @@ public interface ItemFitInfoOptionMapRepository extends JpaRepository<ItemFitInf
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemFitInfoOptionMap> findAll(Predicate arg0);
+	
+	
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemFitInfoOptionMap> S save(S arg0);
+ 	
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemFitInfoOptionMap> List<S> save(Iterable<S> arg0);
 }

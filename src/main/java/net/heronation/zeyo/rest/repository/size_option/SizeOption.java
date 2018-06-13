@@ -32,7 +32,7 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class SizeOption {
-	@JsonBackReference
+	@JsonBackReference(value="sizeOption_kindof")
 	@OneToMany(mappedBy = "sizeOption", fetch = FetchType.LAZY)
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 	@Id

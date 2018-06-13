@@ -30,6 +30,9 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.IdNameVO;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
@@ -68,6 +71,7 @@ public class BrandServiceImpl implements BrandService {
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
+		log.debug("search");
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -254,6 +258,7 @@ public class BrandServiceImpl implements BrandService {
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> client_search(Map<String, Object> param, Pageable page) {
+		log.debug("client_search");
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -303,7 +308,7 @@ public class BrandServiceImpl implements BrandService {
 			where_query.append("        AND b.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
-		where_query.append(" GROUP BY i.brand_id");
+		where_query.append(" GROUP BY b.id");
 
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY b.");
@@ -361,6 +366,7 @@ public class BrandServiceImpl implements BrandService {
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> detail(Long brand_id, Long member_seq, Pageable page) {
+		log.debug("detail");
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -473,8 +479,8 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Brand insert(BrandDto param, Long member_seq) {
-		// TODO Auto-generated method stub
+	public Brand insert(NameVO param, Long member_seq) { 
+		log.debug("insert");
 
 		Member m = memberRepository.getOne(member_seq);
 
@@ -488,46 +494,52 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete(BrandDto param, Long member_seq) {
+	public Map<String, Object> delete( List<LIdVO> param, Long member_seq) {
+		log.debug("delete");
 
 		Map<String, Object> R = new HashMap<String, Object>();
+		
+		for(LIdVO id : param) {
 
-		Brand target = brandRepository.findOne(param.getId());
-		Member user = memberRepository.findOne(member_seq);
+			Brand target = brandRepository.findOne(id.getId());
+			Member user = memberRepository.findOne(member_seq);
 
-		if (target == null || target.getUseYn().equals("N")) {
-			// brand is not exist
-			R.put("CODE", "A");
+			if (target == null || target.getUseYn().equals("N")) {
 
-		} else if (!target.getMember().equals(user)) {
-			// user is not owner
-			R.put("CODE", "B");
-		} else {
-
-			// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
-
-			BigInteger use_count = this.get_brand_use_count_of_member(param.getId());
-
-			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
-
-				target.setUseYn("N");
-				target.setDeleteDt(new DateTime());
-
-				R.put("CODE", "OK");
-
+			} else if (!target.getMember().equals(user)) {
+				
+				
 			} else {
-				// Brand count in use is more than 1.
-				R.put("CODE", "C");
-			}
 
+				// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
+
+				BigInteger use_count = this.get_brand_use_count_of_member(id.getId());
+
+				if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
+
+					target.setUseYn("N");
+					target.setDeleteDt(new DateTime());
+
+					R.put("CODE", "OK");
+
+				} else {
+					// Brand count in use is more than 1.
+					R.put("CODE", "C");
+				}
+
+			}
+			
 		}
+
+
 
 		return R;
 	}
 
 	@Override
 	@Transactional
-	public Map<String, Object> update_name(BrandDto param, Long member_seq ) {
+	public Map<String, Object> update_name(IdNameVO param, Long member_seq ) {
+		log.debug("update_name");
 
 		Map<String, Object> R = new HashMap<String, Object>();
 
@@ -609,6 +621,7 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	public Map<String, Object> distinct_with_member_id() {
+		log.debug("distinct_with_member_id");
 
 		Map<String, Object> R = new HashMap<String, Object>();
 
@@ -646,6 +659,8 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	public Map<String, Object> use_count() {
+		log.debug("use_count");
+
 		Map<String, Object> R = new HashMap<String, Object>();
 
 		StringBuffer select_query = new StringBuffer();
@@ -664,6 +679,8 @@ public class BrandServiceImpl implements BrandService {
 	}
 
 	private BigInteger get_brand_use_count_of_member(Long brand_id) {
+		log.debug("get_brand_use_count_of_member");
+
 		StringBuffer varname1 = new StringBuffer();
 		varname1.append("SELECT ");
 		varname1.append("    b.id AS brand, COUNT(i.member_id) ");

@@ -37,7 +37,7 @@ public class ClothColor {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "CLOTH_COLOR_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonManagedReference
+	@JsonManagedReference(value="clothColor_kindof")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;

@@ -2,6 +2,7 @@ package net.heronation.zeyo.rest.controller.size_table;
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.brand.Brand;
@@ -17,6 +18,7 @@ import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -161,7 +163,7 @@ public class SizeTableController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(
 
-			@RequestBody SizeTableDto param,
+			@RequestBody List<ToggleVO> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		// 유저 정보 가지고 오기
@@ -173,9 +175,9 @@ public class SizeTableController extends BaseController {
 
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 		
-		if (param.getTarget() == null|| param.getTarget().equals("")) {
+		if (param == null|| param.size() == 0) {
 			return return_fail("target.empty");
-		}else {
+		}else { 
 			return return_success(size_tableService.delete(param,  seq));
 		}
 
@@ -186,7 +188,7 @@ public class SizeTableController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> batch_build(
 
-			@RequestBody SizeTableDto param,
+			@RequestBody List<ToggleVO> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		// 유저 정보 가지고 오기
@@ -198,10 +200,10 @@ public class SizeTableController extends BaseController {
 
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 		
-		if (param.getTarget() == null|| param.getTarget().equals("")) {
+		if (param == null|| param.size() == 0) {
 			return return_fail("target.empty");
 		}else {
-			return return_success(size_tableService.delete(param,  seq));
+			 return return_success(size_tableService.batch_build(param,  seq));
 		}
 
 	}
@@ -228,6 +230,8 @@ public class SizeTableController extends BaseController {
 		return return_success((Object) size_tableService.preview(item_id));
 	}
 	
+
+	
 	
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
@@ -248,4 +252,29 @@ public class SizeTableController extends BaseController {
 		
 		return return_success((Object) size_tableService.modify(param));
 	}
+	
+	
+	
+	
+	
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/create")
+	@ResponseBody
+	public ResponseEntity<ResultVO> create(
+			@RequestBody SizeTableDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+ 
+		
+		return return_success((Object) size_tableService.create(param));
+	}
+	
 }

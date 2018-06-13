@@ -52,18 +52,22 @@ public class Item {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
+	
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
+	
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BRAND_ID")
 	private Brand brand;
+	
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
+	
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
@@ -84,13 +88,18 @@ public class Item {
 	private int price;
 
 	private String madeinBuilder;
-	@JsonManagedReference
+	
+	
+	@JsonManagedReference(value="madein_items")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
+	
+	
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime madeinDate;
-	@JsonManagedReference
+	
+	@JsonManagedReference(value="warranty_items")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "WARRANTY_ID")
 	private Warranty warranty;
@@ -129,18 +138,23 @@ public class Item {
 	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
+	
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemLaundryMap itemLaundryMap;
+	
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemDrycleaningMap itemDrycleaningMap;
+	
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemIroningMap itemIroningMap;
+	
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemDrymethodMap itemDrymethodMap;
+	
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemBleachMap itemBleachMap;

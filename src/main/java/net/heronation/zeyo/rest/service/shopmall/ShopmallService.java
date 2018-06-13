@@ -14,7 +14,7 @@ import net.heronation.zeyo.rest.repository.shopmall.ShopmallDto;
 public interface ShopmallService {
 	Map<String, Object> search(Map<String, Object> where, Pageable page);
 
-	Page<Map<String, Object>> client_search(Map<String, Object> where, Pageable page);
+	Map<String, Object> client_search(Map<String, Object> where, Pageable page);
 
 	Shopmall insert(ShopmallDto param, Long member_seq);
 

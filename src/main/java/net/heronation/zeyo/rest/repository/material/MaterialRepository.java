@@ -50,4 +50,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long>, Query
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	Material findOne(Long arg0);
 
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends Material> S save(S arg0);
 }

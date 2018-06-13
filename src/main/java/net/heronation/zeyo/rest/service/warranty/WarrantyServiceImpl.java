@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,7 +27,14 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.item.QItem;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
+import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.kindof.QKindof;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.madein.QMadein;
@@ -43,6 +52,9 @@ public class WarrantyServiceImpl implements WarrantyService {
 
 	@Autowired
 	private WarrantyRepository warrantyRepository;
+	
+	@Autowired
+	private KindofRepository kindofRepository;
 
 	@Autowired
 	EntityManager entityManager;
@@ -208,4 +220,48 @@ public class WarrantyServiceImpl implements WarrantyService {
 //		return new PageImpl<Map<String, Object>>(list, page, R.getTotal());
 
 	}
+	
+	
+	@Override
+	@Transactional
+	public String insert(NameVO param) {
+		// TODO Auto-generated method stub
+		
+		Kindof direct_input = kindofRepository.findOne(1L);
+		
+		Warranty iv = new Warranty();
+		iv.setKindof(direct_input);
+		iv.setScope(param.getName());
+		iv.setCreateDt(new DateTime());
+		iv.setUseYn("Y");
+		
+		warrantyRepository.save(iv);
+		
+		return CommonConstants.SUCCESS;
+	}
+	
+	@Override
+	@Transactional
+	public String update(ToggleVO param) {
+		// TODO Auto-generated method stub
+		
+		Warranty a = warrantyRepository.findOne(param.getId());
+		a.setScope(param.getValue());
+		
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String delete(List<LIdVO> param) {
+		
+		for(LIdVO n : param) {
+			Warranty a = warrantyRepository.findOne(n.getId());
+			a.setUseYn("N");
+		}
+		
+
+		return CommonConstants.SUCCESS;
+	}
+
 }

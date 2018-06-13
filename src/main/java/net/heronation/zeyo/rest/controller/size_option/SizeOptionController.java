@@ -1,15 +1,20 @@
 package net.heronation.zeyo.rest.controller.size_option;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
+import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionResourceAssembler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -23,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
 
@@ -124,5 +130,32 @@ public class SizeOptionController extends BaseController {
 
 		return return_success((Object) size_optionService.category_count(builder.getValue()));
 	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	public ResponseEntity<ResultVO> insert(@RequestBody SizeOptionDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) size_optionService.insert(param));
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
+	public ResponseEntity<ResultVO> update(@RequestBody SizeOptionDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) size_optionService.update(param));
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) size_optionService.delete(param));
+	}
+
+	
 
 }

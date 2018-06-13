@@ -1,7 +1,10 @@
 package net.heronation.zeyo.rest.controller.warranty; 
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.madein.QMadein;
 import net.heronation.zeyo.rest.repository.warranty.QWarranty;
@@ -10,6 +13,7 @@ import net.heronation.zeyo.rest.repository.warranty.WarrantyResourceAssembler;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -21,7 +25,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,7 +59,7 @@ public class WarrantyController extends BaseController {
 	public WarrantyController(RepositoryEntityLinks entityLinks) {
 		this.entityLinks = entityLinks;
 	} 
-
+ 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
@@ -76,6 +82,31 @@ public class WarrantyController extends BaseController {
 		}
 		
 		return return_success((Object) warrantyService.search(param, pageable));
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	public ResponseEntity<ResultVO> insert(@RequestBody NameVO param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) warrantyService.insert(param));
+	}
+	
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
+	public ResponseEntity<ResultVO> update(@RequestBody ToggleVO param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) warrantyService.update(param));
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) warrantyService.delete(param));
 	}
  
 }

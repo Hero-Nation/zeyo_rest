@@ -54,7 +54,10 @@ public class Member {
 	
 	@JsonIgnore
 	private String confirm_no;
-	@JsonManagedReference
+	
+	
+	
+	@JsonManagedReference(value="companyNoHistoryssss_member")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMPANY_NO_HISTORY_ID")
 	private CompanyNoHistory companyNoHistory;
@@ -84,19 +87,23 @@ public class Member {
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
+	
 	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Brand> brands = new ArrayList<Brand>();
+	
 	@JsonBackReference
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
-	@JsonBackReference
+	
+	@JsonBackReference(value="companyNoHistory_member")
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<CompanyNoHistory> companyNoHistorys = new ArrayList<CompanyNoHistory>();
-	@JsonBackReference
+	
+	@JsonBackReference(value="bbss_member")
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();

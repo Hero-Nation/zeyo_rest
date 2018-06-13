@@ -227,50 +227,35 @@ public class ShopmallServiceImpl implements ShopmallService {
 	}
 
 	@Override
-	public Page<Map<String, Object>> client_search(Map<String, Object> param, Pageable page) {
+	public Map<String, Object> client_search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) ");
 
 		StringBuffer select_query = new StringBuffer();
-		select_query.append("SELECT ");
-		select_query.append("    s.id 		as shopmall_id, ");
-		select_query.append("    s.name 		as shopmall_name, ");
-		select_query.append("    s.create_dt	as shopmall_create_dt, ");
-		select_query.append("    (SELECT ");
-		select_query.append("            COUNT(si.id) ");
-		select_query.append("        FROM ");
-		select_query.append("            item_shopmall_map sism ");
-		select_query.append("                INNER JOIN ");
-		select_query.append("            item si ON sism.item_id = si.id ");
-		select_query.append("                INNER JOIN ");
-		select_query.append("            shopmall ss ON sism.shopmall_id = ss.id ");
-		select_query.append("        WHERE ");
-		select_query.append("            sism.use_yn = 'Y' AND si.use_yn = 'Y' ");
-		select_query.append("                AND ss.use_yn = 'Y' ");
-		select_query.append("                AND si.link_yn = 'Y' ");
-		select_query.append("                AND ss.id = s.id ");
-		select_query.append("        GROUP BY sism.shopmall_id) AS link_count ");
-
+		select_query.append("SELECT s.id             AS shopmall_id, ");
+		select_query.append("       s.name           AS shopmall_name, ");
+		select_query.append("       s.create_dt      AS shopmall_create_dt, ");
+		select_query.append("       Count(i.link_yn) AS link_count ");
+ 
+		
 		StringBuffer where_query = new StringBuffer();
-		where_query.append("FROM ");
-		where_query.append("    item_shopmall_map ism ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    item i ON ism.item_id = i.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    shopmall s ON ism.shopmall_id = s.id ");
-		where_query.append("WHERE ");
-		where_query.append("    ism.use_yn = 'Y'  ");
-		where_query.append("        AND i.use_yn = 'Y' ");
-		where_query.append("        AND s.use_yn = 'Y' ");
+		where_query.append(" FROM   shopmall s ");
+		where_query.append("       LEFT JOIN item_shopmall_map ism ");
+		where_query.append("              ON ism.shopmall_id = s.id ");
+		where_query.append("                 AND ism.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN item i ");
+		where_query.append("              ON ism.item_id = i.id ");
+		where_query.append("                 AND i.use_yn = 'Y' ");
+		where_query.append(" WHERE  s.use_yn = 'Y' ");
 
 		String member_id = (String) param.get("member_id");
-		where_query.append("        AND i.member_id = " + member_id + " ");
+		where_query.append("        AND s.member_id = " + member_id + " ");
 
 		String name = (String) param.get("name");
 		if (name != null) {
-			where_query.append("        AND i.name like '%" + name + "%' ");
+			where_query.append("        AND s.name like '%" + name + "%' ");
 		}
 
 		// 않됨
@@ -288,9 +273,8 @@ public class ShopmallServiceImpl implements ShopmallService {
 		if (end != null) {
 			where_query.append("        AND s.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
-
-		where_query.append(" GROUP BY  ism.shopmall_id");
-
+		
+		where_query.append(" GROUP  BY s.id ");  
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY s.");
 		Sort sort = page.getSort();
@@ -329,7 +313,18 @@ public class ShopmallServiceImpl implements ShopmallService {
 			return_list.add(search_R);
 		}
 
-		return new PageImpl<Map<String, Object>>(return_list, page, count_list.size());
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
 	}
 
 	@Override

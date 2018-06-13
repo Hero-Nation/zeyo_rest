@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import javax.persistence.Query; 
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
@@ -24,23 +24,32 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.category.Category;
+import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.QCategory;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
+import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.kindof.QKindof;
+import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.QMember;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
+import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
 
 @Slf4j
 @Service
@@ -52,10 +61,23 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 
 	@Autowired
 	private SizeOptionRepository size_optionRepository;
+	
+	@Autowired
+	private CategoryRepository categroyRepository;
+	
+	@Autowired
+	private SubCategoryRepository subCategoryRepository;
+	
+	
+	@Autowired
+	private KindofRepository kindRepository;
+	
+	
 	@Autowired
 	EntityManager entityManager;
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
@@ -240,6 +262,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String, Object> category_count(Predicate where) {
 
 		Map<String, Object> RV = new HashMap<String, Object>();
@@ -260,6 +283,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String, Object> single(Predicate where) {
 
 		Map<String, Object> R = new HashMap<String, Object>();
@@ -300,6 +324,61 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		R.put("kindof_id", db_R.get(ko.id));
 
 		return R;
+	}
+
+	@Override
+	@Transactional
+	public String insert(SizeOptionDto param) {
+		
+		Category cate = categroyRepository.findOne(param.getCategory());
+		SubCategory subCate = subCategoryRepository.findOne(param.getSubCategory());
+		Kindof ko = kindRepository.findOne(param.getKindof());
+		
+		SizeOption insertvo = new SizeOption();
+		insertvo.setCategory(cate);
+		insertvo.setSubCategory(subCate);
+		insertvo.setCreateDt(new DateTime());
+		insertvo.setKindof(ko);
+		insertvo.setName(param.getName());
+		insertvo.setUseYn("Y");
+		
+		
+		size_optionRepository.save(insertvo);
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String update(SizeOptionDto param) {
+		SizeOption so = size_optionRepository.findOne(param.getId());
+		
+		Category cate = categroyRepository.findOne(param.getCategory());
+		SubCategory subCate = subCategoryRepository.findOne(param.getSubCategory());
+		Kindof ko = kindRepository.findOne(param.getKindof());
+		
+		so.setCategory(cate);
+		so.setSubCategory(subCate);
+		so.setCreateDt(so.getCreateDt());
+		so.setKindof(ko);
+		so.setName(param.getName());
+		so.setUseYn("Y");
+		
+		
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String delete(List<LIdVO> param) {
+		// TODO Auto-generated method stub
+		
+		for(LIdVO v :param) {
+			SizeOption a = size_optionRepository.findOne(v.getId());
+			a.setUseYn("N");	
+		}
+		
+		
+		return CommonConstants.SUCCESS;
 	}
 
 }

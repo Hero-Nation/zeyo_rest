@@ -53,4 +53,9 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QueryDslPredi
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Item findOne(Long arg0);
 
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	Iterable<Item> findAll(Predicate arg0, Sort arg1);
+ 
 }

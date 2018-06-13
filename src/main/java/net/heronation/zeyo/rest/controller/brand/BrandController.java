@@ -1,6 +1,9 @@
 package net.heronation.zeyo.rest.controller.brand;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.IdNameVO;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
@@ -14,6 +17,7 @@ import net.heronation.zeyo.rest.repository.madein.QMadein;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -71,7 +75,8 @@ public class BrandController extends BaseController {
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
-
+		log.debug("list");
+		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("name", name);
 		param.put("company", company);
@@ -96,8 +101,9 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
 	public ResponseEntity<ResultVO> insert(
-			@RequestBody BrandDto param,
+			@RequestBody NameVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("insert");
 		
 		
 		if(param.getName() == null || param.getName().equals("") ) {
@@ -119,6 +125,12 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/distinct_with_member_id")
 	@ResponseBody
 	public ResponseEntity<ResultVO> distinct_with_member_id(@AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		log.debug("distinct_with_member_id");
+		
+		
+		
+		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -130,6 +142,10 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/use_count")
 	@ResponseBody
 	public ResponseEntity<ResultVO> use_count(@AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		log.debug("use_count");
+		
+		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -141,10 +157,12 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update_name")
 	@ResponseBody
 	public ResponseEntity<ResultVO> update_name(
-			@RequestBody BrandDto param,
+			@RequestBody IdNameVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("update_name");
 		
-		if(param.getId() == null || param.getId().equals("") ) {
+		
+		if(param.getId() == 0) {
 			return return_fail("id.empty");	
 		}
 		
@@ -169,10 +187,12 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
 	public ResponseEntity<ResultVO> delete(
-			@RequestBody BrandDto param,
+			@RequestBody List<LIdVO> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("delete");
 		
-		if(param.getId() == null|| param.getId().equals("")) {
+		
+		if(param.size() == 0) {
 			return return_fail("id.empty");	
 		}
 		
@@ -193,6 +213,8 @@ public class BrandController extends BaseController {
 	public ResponseEntity<ResultVO> toggle_link(
 			@RequestBody BrandDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		log.debug("toggle_link");
 		
 		
 		if(param.getId() == null|| param.getId().equals("")) {
@@ -222,6 +244,10 @@ public class BrandController extends BaseController {
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+		
+		log.debug("brand_list");
+		
+		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -255,6 +281,10 @@ public class BrandController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> detail(@RequestParam(value = "id", required = false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
+		
+		log.debug("detail");
+		
+		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -271,6 +301,9 @@ public class BrandController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> brand_company_use_list(@AuthenticationPrincipal OAuth2Authentication auth,
 			Pageable pageable) {
+		
+		log.debug("brand_company_use_list");
+		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -285,7 +318,8 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/detail_info")
 	@ResponseBody
 	public ResponseEntity<ResultVO> detail_info(@RequestParam(value = "id", required = false) Long id) {
-
+		log.debug("detail_info");
+		
 		return return_success((Object) brandService.detail_info(id));
 
 	}
@@ -295,6 +329,8 @@ public class BrandController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> findByName(@RequestParam(value = "name") String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("findByName");
+		
 
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);

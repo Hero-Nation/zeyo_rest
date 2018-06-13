@@ -1,6 +1,8 @@
 package net.heronation.zeyo.rest.repository.item_cloth_color_map;
   
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
@@ -40,4 +42,13 @@ public interface ItemClothColorMapRepository extends JpaRepository<ItemClothColo
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemClothColorMap> findAll(Predicate arg0);
 
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemClothColorMap> S save(S arg0);
+ 	
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemClothColorMap> List<S> save(Iterable<S> arg0);
 }

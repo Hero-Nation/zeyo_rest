@@ -11,20 +11,23 @@ import lombok.Value;
 
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 
 @Data
-public class FitInfoDto {
+public class FitInfoUpdateDto {
 
+	private Long id;
 
 	private String name;
 
 	private String metaDesc; 
 
-	private List<NameVO> options;
+	private List<ToggleVO> options;
 	
 	public FitInfo convertToEntity() {
 		FitInfo R = new FitInfo();
+		R.setId(id);
 		R.setName(name);
 		R.setMetaDesc(metaDesc);
 		

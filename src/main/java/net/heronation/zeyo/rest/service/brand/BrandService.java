@@ -9,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 
+import net.heronation.zeyo.rest.common.value.IdNameVO;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.madein.Madein;
@@ -18,13 +21,13 @@ public interface BrandService {
 
 	Map<String, Object> client_search(Map<String, Object> where, Pageable page);
 
-	Brand insert(BrandDto name, Long member_seq);
+	Brand insert(NameVO name, Long member_seq);
 
 	Map<String, Object> findByName(String name);
 
-	Map<String, Object> update_name(BrandDto param,Long member_seq);
+	Map<String, Object> update_name(IdNameVO param,Long member_seq);
 
-	Map<String, Object> delete(BrandDto param, Long member_seq);
+	Map<String, Object> delete( List<LIdVO> param, Long member_seq);
 
 	Map<String, Object> toggle_link(BrandDto param,  Long member_seq );
 

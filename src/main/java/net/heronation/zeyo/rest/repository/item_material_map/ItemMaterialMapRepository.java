@@ -1,6 +1,8 @@
 package net.heronation.zeyo.rest.repository.item_material_map;
   
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
@@ -38,5 +40,13 @@ public interface ItemMaterialMapRepository extends JpaRepository<ItemMaterialMap
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemMaterialMap> findAll(Predicate arg0);
+	
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemMaterialMap> S save(S arg0);
 
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemMaterialMap> List<S> save(Iterable<S> arg0);
 }

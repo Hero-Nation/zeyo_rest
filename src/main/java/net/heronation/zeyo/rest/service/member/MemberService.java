@@ -9,6 +9,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -48,10 +49,13 @@ public interface MemberService {
 
 	Member update_phone(MemberDto param, Long member_seq);
 
-	Member update_email(MemberDto param, Long member_seq);
+	String update_email(EmailUpdateVO param, Long member_seq);
  
 
 	String send_confirm_email(String email) throws CommonException;
+	
+	String send_register_mail(String email) throws CommonException;
+	
 
 	String confirm_otp(String email, String otp) throws CommonException;
 

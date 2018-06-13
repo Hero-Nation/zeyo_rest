@@ -1,7 +1,10 @@
 package net.heronation.zeyo.rest.controller.fit_info_option;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionResourceAssembler;
 
@@ -12,7 +15,9 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -54,5 +59,29 @@ public class FitInfoOptionController extends BaseController {
 
 		return return_success((Object) fit_info_optionService.select_options(fitinfo));
 	}
+	
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+//	public ResponseEntity<ResultVO> insert(@RequestBody FitinfoOption param,
+//			@AuthenticationPrincipal OAuth2Authentication auth) {
+//
+//		return return_success((Object) fit_info_optionService.insert(param));
+//	}
+//
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
+//	public ResponseEntity<ResultVO> update(@RequestBody ToggleVO param,
+//			@AuthenticationPrincipal OAuth2Authentication auth) {
+//
+//		return return_success((Object) fit_info_optionService.update(param));
+//	}
+//	
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+//	public ResponseEntity<ResultVO> delete(@RequestBody LIdVO param,
+//			@AuthenticationPrincipal OAuth2Authentication auth) {
+//
+//		return return_success((Object) fit_info_optionService.delete(param));
+//	}
 
 }

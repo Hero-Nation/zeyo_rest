@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.querydsl.core.QueryResults;
@@ -50,6 +51,23 @@ public class ItemRepositoryTest {
 	@Autowired
 	EntityManager entityManager;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	
+	@Test
+	public void password_encode() {
+		log.debug(passwordEncoder.encode("icay_admin1"));
+		log.debug(passwordEncoder.encode("jaja98"));
+		log.debug(passwordEncoder.encode("!zeyo073502"));
+
+
+		
+//		2018-06-13 10:04:50.382 DEBUG 101732 --- [           main] n.h.zeyo.rest.item.ItemRepositoryTest    : $2a$10$Zp12ZzI9X9cx55b4uhvYLukdC5dKN7z1hFcUXk0TQCt9xxT8SXzMC
+//		2018-06-13 10:04:50.569 DEBUG 101732 --- [           main] n.h.zeyo.rest.item.ItemRepositoryTest    : $2a$10$iGtb/QhHQd/KfdKdZx57su/dxBE2wcDK375gG9BwpyWH75/i5si5S
+//		2018-06-13 10:04:50.639 DEBUG 101732 --- [           main] n.h.zeyo.rest.item.ItemRepositoryTest    : $2a$10$QEkyJWiZNw/dAZr31mw0ueyXdDe/n.pCMfvWdgEYNOA04ETFKe19S
+		
+	}
 	
 	@Test
 	@Ignore
@@ -96,6 +114,7 @@ public class ItemRepositoryTest {
 	
 	
 	@Test
+	@Ignore
 	public void asdf() {
 //		QItem target = QItem.item;
 //		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
@@ -157,6 +176,7 @@ public class ItemRepositoryTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test 
+	@Ignore
 	public void statistic_query() {
 		
 		

@@ -54,4 +54,9 @@ public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> 
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	SubCategory findOne(Long arg0);
 
+ 	
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends SubCategory> S save(S arg0);
 }

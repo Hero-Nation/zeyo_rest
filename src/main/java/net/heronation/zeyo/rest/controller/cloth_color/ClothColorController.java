@@ -1,16 +1,20 @@
 package net.heronation.zeyo.rest.controller.cloth_color;
 
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorResourceAssembler;
 import net.heronation.zeyo.rest.repository.cloth_color.QClothColor;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.QItemClothColorMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
+import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -24,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,4 +83,31 @@ public class ClothColorController extends BaseController {
 		return return_success((Object) cloth_colorService.search(param, pageable));
 	}
 
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	public ResponseEntity<ResultVO> insert(@RequestBody ClothColorDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) cloth_colorService.insert(param));
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
+	public ResponseEntity<ResultVO> update(@RequestBody ClothColorDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) cloth_colorService.update(param));
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) cloth_colorService.delete(param));
+	}
+
+	
 }

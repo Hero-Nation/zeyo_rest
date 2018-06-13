@@ -31,17 +31,23 @@ import org.joda.time.DateTime;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Warranty {
-	@JsonBackReference
+	@JsonBackReference(value="warranty_items")
 	@OneToMany(mappedBy = "warranty", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "WARRANTY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonManagedReference
+	
+	
+	@JsonManagedReference(value="warranty_kindof")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
+	
+	
+	
 	private String scope;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")

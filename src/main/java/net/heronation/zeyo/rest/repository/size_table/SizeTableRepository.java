@@ -22,6 +22,9 @@ public interface SizeTableRepository extends JpaRepository<SizeTable, Long>, Que
 
 	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	<S extends SizeTable> S save(S arg0);
 	// @Override
 	// @RestResource(path = "", rel = "", exported = false)
 	// Page<CompanyNoHistory> findAll(Pageable arg0);

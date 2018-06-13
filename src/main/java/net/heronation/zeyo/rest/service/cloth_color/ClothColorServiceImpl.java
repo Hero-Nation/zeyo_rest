@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,16 +27,24 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
+import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.QClothColor;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.QItemClothColorMap;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
+import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.kindof.QKindof;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.madein.QMadein;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
+import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
 @Slf4j
 @Service
@@ -46,6 +56,14 @@ public class ClothColorServiceImpl implements ClothColorService {
 
 	@Autowired
 	private ClothColorRepository cloth_colorRepository;
+	
+	@Autowired
+	private KindofRepository kindofRepository;
+	
+	
+	
+	
+	
 	@Autowired
 	EntityManager entityManager;
 	@Override
@@ -213,4 +231,51 @@ public class ClothColorServiceImpl implements ClothColorService {
 //		return new PageImpl<Map<String,Object>>(list, page, R.getTotal());
 //
 //	}
+	
+	
+	
+
+	@Override
+	@Transactional
+	public String insert(ClothColorDto param) {
+		 
+		Kindof ko = kindofRepository.findOne(1L);
+		
+		ClothColor iv = new ClothColor();
+		iv.setKindof(ko);
+		iv.setName(param.getName());
+		iv.setCreateDt(new DateTime());
+		iv.setUseYn("Y");
+		
+		cloth_colorRepository.save(iv);
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String update(ClothColorDto param) {
+		ClothColor so = cloth_colorRepository.findOne(param.getId()); 
+		so.setKindof(so.getKindof());
+		so.setName(param.getName());
+		so.setCreateDt(so.getCreateDt());
+		so.setUseYn("Y");
+		
+		
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String delete(List<LIdVO> param) {
+		// TODO Auto-generated method stub
+		
+		for(LIdVO v :param) {
+			ClothColor a = cloth_colorRepository.findOne(v.getId());
+			a.setUseYn("N");	
+		}
+		
+		
+		return CommonConstants.SUCCESS;
+	}
+	
 }

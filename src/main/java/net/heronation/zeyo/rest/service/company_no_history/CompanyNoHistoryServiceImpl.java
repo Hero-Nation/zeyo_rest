@@ -105,13 +105,13 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 
 		String start = (String)param.get("start");
 		if(start != null  ) {
-			where_query.append("        AND bt.create_dt >= STR_TO_DATE('"+start+"', '%Y-%m-%d %H:%i:%s')");	
+			where_query.append("        AND bt.change_dt >= STR_TO_DATE('"+start+"', '%Y-%m-%d %H:%i:%s')");	
 		}
 		
 		
 		String end = (String)param.get("end");
 		if(end != null  ) {
-			where_query.append("        AND bt.create_dt <= STR_TO_DATE('"+end+"', '%Y-%m-%d %H:%i:%s')");	
+			where_query.append("        AND bt.change_dt <= STR_TO_DATE('"+end+"', '%Y-%m-%d %H:%i:%s')");	
 		}
 		
 		 

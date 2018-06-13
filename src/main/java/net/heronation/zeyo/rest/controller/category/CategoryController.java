@@ -1,7 +1,10 @@
 package net.heronation.zeyo.rest.controller.category; 
  
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
@@ -11,6 +14,7 @@ import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -24,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,12 +102,33 @@ public class CategoryController extends BaseController {
 	public ResponseEntity<ResultVO> pure_list(
 			 Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-		QCategory target = QCategory.category; 
-		 
- 
-		builder.and(target.useYn.eq("Y"));
-		
-		return return_success(categoryService.pure_search(builder.getValue(), pageable));
+		Map<String,Object> param = new HashMap<String,Object>();
+
+		return return_success(categoryService.pure_search(param, pageable));
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	public ResponseEntity<ResultVO> insert(@RequestBody NameVO param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) categoryService.insert(param));
+	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
+	public ResponseEntity<ResultVO> update(@RequestBody ToggleVO param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) categoryService.update(param));
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success((Object) categoryService.delete(param));
 	}
 }

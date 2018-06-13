@@ -39,4 +39,11 @@ public interface ItemLaundryMapRepository extends JpaRepository<ItemLaundryMap, 
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemLaundryMap> findAll(Predicate arg0);
+	
+	
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemLaundryMap> S save(S arg0);
+	
 }

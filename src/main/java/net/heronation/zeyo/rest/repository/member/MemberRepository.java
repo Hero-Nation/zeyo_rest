@@ -20,8 +20,10 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 
+import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+
 @RepositoryRestResource(collectionResourceRel = "members", path = "members")
-// @PreAuthorize("hasRole('ROLE_ADMIN')") << 인증을 타야되기 때문에 다 막으면 않된다..
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslPredicateExecutor<Member> {
 
 	default void customize(QuerydslBindings bindings, QMember member) {
@@ -29,10 +31,16 @@ public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslP
 	}
 
 	@RestResource(path = "findByMemberId", rel = "findByMemberId", exported = false)
+	@PreAuthorize("permitAll()")
 	Member findByMemberId(@Param(value = "member_id") String member_id);
 
 	@Override
+	//@PreAuthorize("permitAll()")
 	@RestResource(path = "", rel = "", exported = false)
 	Page<Member> findAll(Pageable arg0);
 
+	
+ 	@Override 
+ 	@PreAuthorize("permitAll()")
+ 	<S extends Member> S save(S arg0);
 }

@@ -30,7 +30,7 @@ import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 @EntityListeners(AuditingEntityListener.class)
 
 public class FitInfo {
-	@JsonBackReference(value="fit_info_map")
+	@JsonBackReference(value="sub_cate_fit_info_map")
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<SubCategoryFitInfoMap> subCategoryFitInfoMaps = new ArrayList<SubCategoryFitInfoMap>();
 

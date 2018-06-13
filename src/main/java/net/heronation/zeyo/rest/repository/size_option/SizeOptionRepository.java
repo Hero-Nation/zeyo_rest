@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.querydsl.core.types.dsl.StringPath;
 
 import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
@@ -58,4 +59,8 @@ public interface SizeOptionRepository extends JpaRepository<SizeOption, Long>, Q
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	SizeOption findOne(Long arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends SizeOption> S save(S arg0);
 }

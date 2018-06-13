@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.hibernate.loader.custom.sql.SQLCustomQuery;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -37,6 +41,7 @@ import com.querydsl.jpa.sql.JPASQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
@@ -66,6 +71,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberRepository memberRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private EmailValidationRepository emailValidationRepository;
@@ -81,6 +89,7 @@ public class MemberServiceImpl implements MemberService {
 	public Member registry(MemberRegisterDto param) {
 
 		Member newUser = param.getInitMember();
+		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 		memberRepository.save(newUser);
 
 		CompanyNoHistory newCompanyNo = new CompanyNoHistory();
@@ -93,6 +102,9 @@ public class MemberServiceImpl implements MemberService {
 
 		return newUser;
 	}
+
+	@Autowired
+	public JavaMailSender emailSender;
 
 	// @Override
 	// @Transactional(readOnly = true)
@@ -319,14 +331,15 @@ public class MemberServiceImpl implements MemberService {
 		QCompanyNoHistory cnh = QCompanyNoHistory.companyNoHistory;
 
 		Tuple R = query
-				.select(m.memberId, m.name, m.phone, m.email, m.manager, m.managerPhone,m.email_noti_yn ,  cnh.id, cnh.name, cnh.companyNo)
+				.select(m.memberId, m.name, m.phone, m.email, m.manager, m.managerPhone, m.email_noti_yn, cnh.id,
+						cnh.name, cnh.companyNo)
 				.from(cnh).innerJoin(cnh.member, m)
 				.where(cnh.id.in(JPAExpressions.select(cnh.id.max()).from(cnh).groupBy(cnh.member.id)).and(where))
 				.fetchOne();
 
 		Map<String, Object> search_R = new HashMap<String, Object>();
 
-		search_R.put("member_id", R.get(m.memberId));
+		//search_R.put("member_id", R.get(m.memberId));
 		search_R.put("member_name", R.get(m.name));
 		search_R.put("member_phone", R.get(m.phone));
 		search_R.put("member_email", R.get(m.email));
@@ -386,33 +399,38 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public Member update_email(MemberDto param, Long member_seq) {
+	public String update_email(EmailUpdateVO param, Long member_seq) {
 		Member user = memberRepository.findOne(member_seq);
+		
+		QEmailValidation target = QEmailValidation.emailValidation;
 
-		if (param.getConfirm_no().equals(user.getConfirm_no())) {
-			return null;
-		} else {
+		EmailValidation db_v = emailValidationRepository.findOne(target.email.eq(param.getEmail()));
+		
+		if (param.getConfirm_no().trim().equals(db_v.getOtp().trim())) {
+			
 			user.setEmail(param.getEmail());
-			return user;
+			return CommonConstants.SUCCESS;
+			
+		} else {
+			
+			return CommonConstants.FAIL;
 		}
 
 	}
 
 	@Override
 	@Transactional
-	public String update_password(String old_pw,String new_pw, Long member_seq) {
-		
-		
+	public String update_password(String old_pw, String new_pw, Long member_seq) {
+
 		Member user = memberRepository.findOne(member_seq);
-		
-		if(user.getPassword().equals(old_pw)) {
-			user.setPassword(new_pw);	
+
+		if (user.getPassword().equals(passwordEncoder.encode(old_pw))) {
+			user.setPassword(passwordEncoder.encode(new_pw));
 			return CommonConstants.SUCCESS;
-		}else {
+		} else {
 			return "old.pw.not.equal";
 		}
-		
- 
+
 	}
 
 	@Override
@@ -446,6 +464,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
+	
 	public Member update_mng_phone(String mng_phone, Long member_seq) {
 		Member user = memberRepository.findOne(member_seq);
 		user.setManagerPhone(mng_phone);
@@ -459,12 +478,8 @@ public class MemberServiceImpl implements MemberService {
 
 		// 이미 이메일이 존재하는지 여부 ..>>> 여러번 보낼수 있다고 가정
 
-		// 랜덤 문자열 생성 6자리
-
-		EmailValidation a = new EmailValidation();
-		a.setEmail(email);
-		a.setCreateDt(new DateTime());
-		a.setOtp("1111");
+		String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
+	 
 
 		QEmailValidation target = QEmailValidation.emailValidation;
 
@@ -472,22 +487,28 @@ public class MemberServiceImpl implements MemberService {
 
 		if (db_v != null) {
 			// 새로운 번호로 입력한다.
-			db_v.setOtp("111");
+			db_v.setOtp(ri);
 			// db_v.set
 		} else {
+			
+			EmailValidation a = new EmailValidation();
+			a.setEmail(email);
+			a.setCreateDt(new DateTime());
+			a.setOtp(ri);			
 			emailValidationRepository.save(a);
 		}
 
-		// 이메일 보낸다.
-		// 우선 무조건 성공한다고 가정한다.
-		boolean email_send_event = false;
 
-		if (email_send_event) {
-			CommonException exp = new CommonException("SENDING EMAIL ERROR");
 
-			throw exp;
-		}
+		// 임시 패스워드 이메일 발송
 
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setFrom("help@heronation.net");
+		message.setTo(db_v.getEmail());
+		message.setSubject("히어로네이션 이메일 변경 인증 메일입니다.");
+		message.setText("인증 번호는 "+ri+" 입니다.");
+		emailSender.send(message);
+		
 		return CommonConstants.COMPLETE;
 	}
 
@@ -707,8 +728,6 @@ public class MemberServiceImpl implements MemberService {
 				db_ev.setOtp("1111");
 			}
 
-			
-			
 			// 이메일을 발송한다.
 
 		}
@@ -743,7 +762,6 @@ public class MemberServiceImpl implements MemberService {
 					}
 				}
 			}
- 
 
 		}
 
@@ -761,7 +779,7 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 
 			EmailValidation db_ev = emailValidationRepository.findOne(target.email.eq(phone));
-			
+
 			if (db_ev == null) {
 
 				db_ev = new EmailValidation();
@@ -807,7 +825,7 @@ public class MemberServiceImpl implements MemberService {
 						return "otp.not.equal";
 					}
 				}
-			} 
+			}
 		}
 	}
 
@@ -815,34 +833,90 @@ public class MemberServiceImpl implements MemberService {
 	public String find_password(String member_id, String member_name, String member_email) {
 		QMember m = QMember.member;
 		QEmailValidation target = QEmailValidation.emailValidation;
-
-		Member db_v = memberRepository.findOne(m.memberId.eq(member_id).and(m.name.eq(member_name)).and(m.email.eq(member_email)));
+ 
+		Member db_v = memberRepository
+				.findOne(m.memberId.eq(member_id).and(m.name.eq(member_name)).and(m.email.eq(member_email)));
 
 		if (db_v == null) {
 			return "member.not.exist";
 		} else {
-			db_v.setPassword("1111");
 			
+			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
+			db_v.setPassword(passwordEncoder.encode(ri));
+
 			// 임시 패스워드 이메일 발송
-			
+
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setFrom("help@heronation.net");
+			message.setTo(db_v.getEmail());
+			message.setSubject("히어로네이션 임시 비밀번호");
+			message.setText("임시비밀번호는 "+ri+"입니다.");
+			emailSender.send(message);
+
 			return "new.password.sended";
 		}
 	}
 
 	@Override
 	@Transactional
-	public Map<String, Object> toggle_email_noti( Long member_seq,MemberDto param) {
+	public Map<String, Object> toggle_email_noti(Long member_seq, MemberDto param) {
 		// TODO Auto-generated method stub
 		Member user = memberRepository.findOne(member_seq);
 		user.setEmail_noti_yn(param.getFlag());
-		
+
 		Map<String, Object> search_R = new HashMap<String, Object>();
 
-		search_R.put("current_email_noti",user.getEmail_noti_yn());
+		search_R.put("current_email_noti", user.getEmail_noti_yn());
 
 		return search_R;
 	}
 
+	@Override
+	@Transactional
+	public String send_register_mail(String email) throws CommonException {
+		log.debug("send_register_mail");
+		// 이미 이메일이 존재하는지 여부 ..>>> 여러번 보낼수 있다고 가정
+
+		// 랜덤 문자열 생성 6자리
+		String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
+
+
+		QEmailValidation target = QEmailValidation.emailValidation;
+
+		EmailValidation db_v = emailValidationRepository.findOne(target.email.eq(email));
+
+		if (db_v != null) {
+			// 새로운 번호로 입력한다.
+			db_v.setOtp(ri);
+			db_v.setCreateDt(new DateTime());
+			// db_v.set
+		} else {
+			
+			EmailValidation a = new EmailValidation();
+			a.setEmail(email);
+			a.setCreateDt(new DateTime());
+			a.setOtp(ri);
+			
+			emailValidationRepository.save(a);
+		}
+
+		try {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setFrom("help@heronation.net");
+			message.setTo(email);
+			message.setSubject("히어로네이션 회원 가입 이메일 확인");
+			message.setText("임시비밀번호는 "+ri+"입니다.");
+			emailSender.send(message);
+		}catch(Exception e) {
+			CommonException exp = new CommonException("SENDING EMAIL ERROR");
+
+			throw exp;
+		}
+
+		
  
+
+		return CommonConstants.COMPLETE;
+	}
 
 }

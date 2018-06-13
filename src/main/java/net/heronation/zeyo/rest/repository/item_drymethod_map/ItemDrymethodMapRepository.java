@@ -37,4 +37,9 @@ public interface ItemDrymethodMapRepository extends JpaRepository<ItemDrymethodM
 	@Override
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemDrymethodMap> findAll(Predicate arg0);
+	
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemDrymethodMap> S save(S arg0);
 }

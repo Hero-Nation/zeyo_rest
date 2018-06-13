@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,9 +28,15 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.QCategory;
+import net.heronation.zeyo.rest.repository.kindof.Kindof;
+import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
 import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
@@ -141,10 +149,10 @@ public class CategoryServiceImpl implements CategoryService{
 		}
 
  
-		where_query.append("  GROUP BY sc.id");
+		where_query.append("  GROUP BY c.id");
 		
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY sc.");
+		sort_query.append("  ORDER BY c.");
 		Sort sort = page.getSort();
 		String sep = "";
 		for (Sort.Order order : sort) {
@@ -274,43 +282,179 @@ public class CategoryServiceImpl implements CategoryService{
 	}
 
 	@Override
-	public Page<Map<String, Object>> pure_search(Predicate where, Pageable page) {
-		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
-  
+	public Map<String, Object> pure_search(Map<String, Object> where, Pageable page) {
 		
-		PathBuilder<Category> queryPath = new PathBuilder<Category>(Category.class, "category");
 
-		for (Order order : page.getSort()) {
-			PathBuilder<Object> path = queryPath.get(order.getProperty());
-			query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()), path));
-		}
 		
-		QCategory c = QCategory.category;  
+		
+		
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) ");
+		 
 
-		QueryResults<Tuple> R = query.select(
-				 c.id
-				,c.name
-				,c.createDt
-				)
-				.from(c) 
-				.where(where) 
-				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
-				.limit(page.getPageSize()).fetchResults();
-				
+		StringBuffer select_query = new StringBuffer();    
+		select_query.append("SELECT ");
+		select_query.append("    c.id							AS cate_id, ");
+		select_query.append("    c.name							AS cate_name, ");  
+		select_query.append("    c.create_dt 					AS createDt      ");
+		
+//		search_R.put("cate_id", row.get(sc.category.id));
+//		search_R.put("cate_name", row.get(sc.category.name));
+//		search_R.put("subcate_name", row.get(sc.name));
+//		search_R.put("subcate_id", row.get(sc.id));
+//		search_R.put("itemImage", row.get(sc.itemImage));
+//		search_R.put("clothImage", row.get(sc.clothImage));
+//		search_R.put("subCategoryFitInfoMaps_count", row.get(scfi.id.countDistinct()));
+//		search_R.put("subCategoryMeasureMaps_count", row.get(scmm.id.countDistinct()));
+//		search_R.put("createDt", row.get(sc.category.createDt)); 
+
+
  
-		List<Tuple> search_list = R.getResults();
-		List<Map<String,Object>> return_list = new ArrayList<Map<String,Object>>(); 
+		StringBuffer where_query = new StringBuffer();
+		where_query.append("FROM ");
+		where_query.append("    category c "); 
+		where_query.append("WHERE ");
+		where_query.append("    c.use_yn = 'Y' ");
+ 
+ 
+
+ 
+		where_query.append("  GROUP BY c.id");
 		
-		for(Tuple row : search_list) {
-			Map<String,Object> search_R = new HashMap<String,Object>();
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY c.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
+
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String, Object>> count_list = count_q.getResultList();
+
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
+		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>(); 
 			
-			search_R.put("cate_id", row.get(c.id));
-			search_R.put("cate_name", row.get(c.name));
-			search_R.put("cate_create_dt", row.get(c.createDt)); 
+//			 {
+//		      "cate_name" : "상위",
+//		      "cate_id" : 1,
+//		      "cate_create_dt" : "2018-06-12T06:02:17.694Z"
+//		    } ],
 			
+
+			search_R.put("cate_id", row[0]);
+			search_R.put("cate_name", row[1]);
+			search_R.put("cate_create_dt", row[2]);   
+
 			return_list.add(search_R);
 		}
+
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
 		
-		return new PageImpl<Map<String,Object>>(return_list, page, R.getTotal());
+		
+		
+//		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
+//  
+//		
+//		PathBuilder<Category> queryPath = new PathBuilder<Category>(Category.class, "category");
+//
+//		for (Order order : page.getSort()) {
+//			PathBuilder<Object> path = queryPath.get(order.getProperty());
+//			query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()), path));
+//		}
+//		
+//		QCategory c = QCategory.category;  
+//
+//		QueryResults<Tuple> R = query.select(
+//				 c.id
+//				,c.name
+//				,c.createDt
+//				)
+//				.from(c) 
+//				.where(where) 
+//				.offset((page.getPageNumber() - 1)* page.getPageSize()) 
+//				.limit(page.getPageSize()).fetchResults();
+//				
+// 
+//		List<Tuple> search_list = R.getResults();
+//		List<Map<String,Object>> return_list = new ArrayList<Map<String,Object>>(); 
+//		
+//		for(Tuple row : search_list) {
+//			Map<String,Object> search_R = new HashMap<String,Object>();
+//			
+//			search_R.put("cate_id", row.get(c.id));
+//			search_R.put("cate_name", row.get(c.name));
+//			search_R.put("cate_create_dt", row.get(c.createDt)); 
+//			
+//			return_list.add(search_R);
+//		}
+//		
+//		return new PageImpl<Map<String,Object>>(return_list, page, R.getTotal());
+	}
+	
+	@Override
+	@Transactional
+	public String insert(NameVO param) {
+		// TODO Auto-generated method stub 
+		
+		Category iv = new Category(); 
+		iv.setName(param.getName());
+		iv.setCreateDt(new DateTime());
+		iv.setUseYn("Y");
+		
+		categoryRepository.save(iv);
+		
+		return CommonConstants.SUCCESS;
+	}
+	
+	
+	@Override
+	@Transactional
+	public String update(ToggleVO param) {
+		// TODO Auto-generated method stub
+		
+		Category a = categoryRepository.findOne(param.getId());
+		a.setName(param.getValue());
+		
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String delete(List<LIdVO> param) {
+		for(LIdVO v : param) {
+			Category a = categoryRepository.findOne(v.getId());
+			a.setUseYn("N");
+		}
+
+		return CommonConstants.SUCCESS;
 	}
 }

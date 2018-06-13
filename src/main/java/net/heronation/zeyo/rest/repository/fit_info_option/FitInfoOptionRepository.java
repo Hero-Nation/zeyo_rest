@@ -48,5 +48,10 @@ public interface FitInfoOptionRepository extends JpaRepository<FitInfoOption, Lo
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	FitInfoOption findOne(Long arg0);
  	
+	@RestResource(path = "findByFitInfoId", rel = "findByFitInfoId",exported = true)
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@Query("select m from FitInfoOption m where  m.fitInfo.id = ?1 and m.useYn = 'Y'")
+	List<FitInfoOption> findByFitInfoId(Long fitInfoId);
+	
 	
 }

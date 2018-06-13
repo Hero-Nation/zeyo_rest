@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -41,6 +42,10 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 	@Autowired
 	AppUserDetailService userService;
 	
+    
+    @Autowired
+	PasswordEncoder oPasswordEncoder;
+	
 	@Autowired
 	public void globalUserDetails(final AuthenticationManagerBuilder auth) throws Exception {
 		
@@ -50,7 +55,9 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 //		.and().withUser("user1").password("pass").roles("USER")
 //		.and().withUser("admin").password("nimda").roles("ADMIN");
 		
-		auth.userDetailsService(userService);
+		auth.userDetailsService(userService).passwordEncoder(oPasswordEncoder);
+		//auth.userDetailsService(userService);
+		
 		
 	}
 

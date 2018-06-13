@@ -7,14 +7,14 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
@@ -25,14 +25,24 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
-import net.heronation.zeyo.rest.repository.category.QCategory;
-import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
+import net.heronation.zeyo.rest.repository.category.CategoryRepository;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
+import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
+import net.heronation.zeyo.rest.repository.measure_item.MeasureItemRepository;
 import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
+import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.QSubCategoryFitInfoMap;
+import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
+import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMapRepository;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.QSubCategoryMeasureMap;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMapRepository;
 
 @Slf4j
 @Service
@@ -44,6 +54,24 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 	@Autowired
 	private SubCategoryRepository sub_categoryRepository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
+	
+	
+	@Autowired
+	private SubCategoryFitInfoMapRepository scfimRepository;
+	
+	@Autowired
+	private SubCategoryMeasureMapRepository scmmRepository;
+	
+	@Autowired
+	private MeasureItemRepository miRepository;
+	
+	@Autowired
+	private FitInfoRepository fiRepository;
+	
+	
 
 	@Autowired
 	EntityManager entityManager;
@@ -69,6 +97,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	// }
 
 	@Override
+	@Transactional(readOnly=true)
 	public Page<Map<String, Object>> subsearch(Predicate where, Pageable page) {
 
 		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
@@ -112,6 +141,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String, Object> distinct_name(String cate) {
 
 		StringBuffer select_query = new StringBuffer();
@@ -140,6 +170,174 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 		R.put("content", return_list);
 
 		return R;
+	}
+
+	@Override
+	@Transactional
+	public String insert(SubCategoryDto param) {
+		
+		Category c = categoryRepository.findOne(param.getCategory());
+		SubCategory sc = param.convertToEntity();
+		sc.setCategory(c);
+		sc = sub_categoryRepository.save(sc);
+		
+		
+		
+		List<LIdVO> milist = param.getMeasureItem();
+		
+		for(LIdVO vo : milist) {
+			SubCategoryMeasureMap temp_scmm = new SubCategoryMeasureMap();
+			
+			MeasureItem this_item = miRepository.findOne(vo.getId());
+			temp_scmm.setSubCategory(sc);
+			temp_scmm.setMeasureItem(this_item);
+			temp_scmm.setUseYn("Y");
+
+			scmmRepository.save(temp_scmm);
+		}
+		
+		
+		
+		
+		List<LIdVO> filist = param.getFitinfos();
+		for(LIdVO vo : filist) {
+			SubCategoryFitInfoMap temp_scfi = new SubCategoryFitInfoMap();
+			
+			
+			FitInfo this_item = fiRepository.findOne(vo.getId());
+			
+			temp_scfi.setSubCategory(sc);
+			temp_scfi.setFitInfo(this_item);
+			temp_scfi.setUseYn("Y");
+			
+			scfimRepository.save(temp_scfi);
+		}
+		
+		
+
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public String update(SubCategoryDto param) {
+		
+		SubCategory sc = sub_categoryRepository.findOne(param.getId());
+		sc.setBleachYn(param.getBleachYn());
+		sc.setClothImage(param.getClothImage());
+		sc.setDrycleaningYn(param.getDrycleaningYn());
+		sc.setDrymethodYn(param.getDrymethodYn());
+		sc.setIroningYn(param.getIroningYn());
+		sc.setItemImage(param.getItemImage());
+		sc.setLaundryYn(param.getLaundryYn());
+		sc.setName(param.getName());
+		
+		
+		QSubCategoryMeasureMap qscmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
+		
+		List<LIdVO> milist = param.getMeasureItem();
+		
+		
+		
+		Iterable<SubCategoryMeasureMap> scmm = scmmRepository.findAll(qscmm.subCategory.id.eq(param.getId()));
+		
+		for(LIdVO vo : milist) {
+			
+			boolean shouldBeDeleted = true;
+			boolean db_exist = false;
+			SubCategoryMeasureMap should_delete_map = new SubCategoryMeasureMap();
+			for(SubCategoryMeasureMap db_scmm : scmm) {
+				should_delete_map = db_scmm;
+				if(db_scmm.getMeasureItem().getId() == vo.getId()) {
+					shouldBeDeleted=false;
+					db_exist = true;
+				}
+			}
+			
+			
+			if(shouldBeDeleted) {
+				should_delete_map.setUseYn("N");
+			} 
+			
+			
+			if(!db_exist) {
+				SubCategoryMeasureMap temp_scmm = new SubCategoryMeasureMap();
+				
+				MeasureItem this_item = miRepository.findOne(vo.getId());
+				temp_scmm.setSubCategory(sc);
+				temp_scmm.setMeasureItem(this_item);
+				temp_scmm.setUseYn("Y");
+
+				scmmRepository.save(temp_scmm);				
+			}
+			
+
+		}
+		
+		QSubCategoryFitInfoMap qscfim = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
+		
+		Iterable<SubCategoryFitInfoMap> scfilist = scfimRepository.findAll(qscfim.subCategory.id.eq(param.getId()));
+		
+		List<LIdVO> filist = param.getFitinfos();
+		for(LIdVO vo : filist) {
+			
+			
+			
+			boolean shouldBeDeleted = true;
+			boolean db_exist = false;
+			SubCategoryFitInfoMap should_delete_map = new SubCategoryFitInfoMap();
+			for(SubCategoryFitInfoMap db_scfim : scfilist) {
+				should_delete_map = db_scfim;
+				if(db_scfim.getFitInfo().getId() == vo.getId()) {
+					shouldBeDeleted=false;
+					db_exist = true;
+				}
+			}
+			
+			
+			if(shouldBeDeleted) {
+				should_delete_map.setUseYn("N");
+				scfimRepository.save(should_delete_map);
+			} 
+			
+			
+			if(!db_exist) {
+				SubCategoryFitInfoMap temp_scfim = new SubCategoryFitInfoMap();
+				
+				FitInfo this_item = fiRepository.findOne(vo.getId());
+				temp_scfim.setSubCategory(sc);
+				temp_scfim.setFitInfo(this_item);
+				temp_scfim.setUseYn("Y");
+
+				scfimRepository.save(temp_scfim);				
+			}
+			 
+			
+			SubCategoryFitInfoMap temp_scfi = new SubCategoryFitInfoMap();
+			
+			
+			FitInfo this_item = fiRepository.findOne(vo.getId());
+			
+			temp_scfi.setSubCategory(sc);
+			temp_scfi.setFitInfo(this_item);
+			temp_scfi.setUseYn("Y");
+			
+			scfimRepository.save(temp_scfi);
+		}
+		
+		
+
+		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	public String delete(List<LIdVO> param) {
+		for(LIdVO v : param) {
+			SubCategory a = sub_categoryRepository.findOne(v.getId());
+			a.setUseYn("N");
+		}
+
+		return CommonConstants.SUCCESS;
 	}
 
 }

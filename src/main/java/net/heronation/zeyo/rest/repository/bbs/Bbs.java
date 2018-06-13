@@ -36,14 +36,22 @@ public class Bbs {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BBS_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	@JsonManagedReference
+	
+	
+	@JsonManagedReference(value="bbss_kindof")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
-	@JsonManagedReference
+	
+	
+	
+	@JsonManagedReference(value="bbss_member")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
+	
+	
+	
 	private String title;
 
 	private String bbsContent;

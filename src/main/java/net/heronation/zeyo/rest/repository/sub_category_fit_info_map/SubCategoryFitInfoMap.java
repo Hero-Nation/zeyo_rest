@@ -42,7 +42,7 @@ public class SubCategoryFitInfoMap {
 	private SubCategory subCategory;
 	
 	
-	@JsonManagedReference(value="fit_info_map")
+	@JsonManagedReference(value="sub_cate_fit_info_map")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FIT_INFO_ID")
 	private FitInfo fitInfo;

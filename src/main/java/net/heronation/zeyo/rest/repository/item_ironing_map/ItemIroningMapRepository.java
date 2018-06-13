@@ -39,5 +39,9 @@ public interface ItemIroningMapRepository extends JpaRepository<ItemIroningMap, 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	Iterable<ItemIroningMap> findAll(Predicate arg0);
 
+	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends ItemIroningMap> S save(S arg0);
 
 }

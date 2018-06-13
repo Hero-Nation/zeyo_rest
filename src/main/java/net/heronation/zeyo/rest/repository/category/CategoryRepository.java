@@ -55,4 +55,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Quer
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	Category findOne(Long arg0);
+ 	
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends Category> S save(S arg0);
+ 	
 }

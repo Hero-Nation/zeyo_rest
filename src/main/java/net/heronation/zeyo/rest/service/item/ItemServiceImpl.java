@@ -1,13 +1,23 @@
 package net.heronation.zeyo.rest.service.item;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
@@ -29,6 +40,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
@@ -343,14 +355,12 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public String change_connect(ItemDto param, Long seq) {
+	public String toggle_link(List<ToggleVO> param, Long seq) {
 		// TODO Auto-generated method stub
 
-		String[] targets = param.getTarget().split(",");
+		for (ToggleVO tv : param) {
 
-		for (int a = 0; a < targets.length; a++) {
-
-			Item i = itemRepository.findOne(Long.valueOf(targets[a]));
+			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
 				continue;
@@ -359,11 +369,7 @@ public class ItemServiceImpl implements ItemService {
 			if (linkYN == null) {
 
 			} else {
-				if (linkYN.equals("Y")) {
-					i.setLinkYn("N");
-				} else {
-					i.setLinkYn("Y");
-				}
+				i.setLinkYn(tv.getValue());
 			}
 		}
 
@@ -372,12 +378,10 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public String delete(ItemDto param, Long seq) {
-		String[] targets = param.getTarget().split(",");
+	public String delete(List<ToggleVO> param, Long seq) {
+		for (ToggleVO tv : param) {
 
-		for (int a = 0; a < targets.length; a++) {
-
-			Item i = itemRepository.findOne(Long.valueOf(targets[a]));
+			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
 				continue;
@@ -469,51 +473,57 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public String toggle_size_table(Long item_id) {
-		Item item = itemRepository.findOne(item_id);
+	public String toggle_size_table(List<ToggleVO> param) {
 
-		if (item == null) {
-			return null;
-		} else {
-			String table = item.getSizeTableYn();
-			QSizeTable st = QSizeTable.sizeTable;
+		for (ToggleVO tv : param) {
 
-			if (table.equals("N")) {
+			Item item = itemRepository.findOne(tv.getId());
 
-				SizeTable db_st = sizeTableRepository.findOne(st.item.id.eq(item_id));
-
-				if (db_st == null) {
-
-					SizeTable new_st = new SizeTable();
-					// 정보입력
-
-					new_st.setCreateDt(new DateTime());
-					new_st.setUseYn("Y");
-					new_st.setItem(item);
-					new_st.setVisibleBasicYn("Y");
-					new_st.setVisibleCodeYn("Y");
-					new_st.setVisibleColorYn("Y");
-					new_st.setVisibleFitInfoYn("Y");
-					new_st.setVisibleItemImageYn("Y");
-					new_st.setVisibleLaundryInfoYn("Y");
-					new_st.setVisibleMeasureHowAYn("Y");
-					new_st.setVisibleMeasureHowBYn("Y");
-					new_st.setVisibleMeasureTableYn("Y");
-					new_st.setVisibleNameYn("Y");
-
-					sizeTableRepository.save(new_st);
-
-				} else {
-
-					db_st.setUseYn("Y");
-					item.setSizeTableYn("Y");
-
-				}
-
-				item.setSizeTableYn("Y");
+			if (item == null) {
+				continue;
 			} else {
-				item.setSizeTableYn("N");
+
+				String table = item.getSizeTableYn();
+				QSizeTable st = QSizeTable.sizeTable;
+
+				if (table.equals("N")) {
+
+					SizeTable db_st = sizeTableRepository.findOne(st.item.id.eq(tv.getId()));
+
+					if (db_st == null) {
+
+						SizeTable new_st = new SizeTable();
+						// 정보입력
+
+						new_st.setCreateDt(new DateTime());
+						new_st.setUseYn("Y");
+						new_st.setItem(item);
+						new_st.setVisibleBasicYn("Y");
+						new_st.setVisibleCodeYn("Y");
+						new_st.setVisibleColorYn("Y");
+						new_st.setVisibleFitInfoYn("Y");
+						new_st.setVisibleItemImageYn("Y");
+						new_st.setVisibleLaundryInfoYn("Y");
+						new_st.setVisibleMeasureHowAYn("Y");
+						new_st.setVisibleMeasureHowBYn("Y");
+						new_st.setVisibleMeasureTableYn("Y");
+						new_st.setVisibleNameYn("Y");
+
+						sizeTableRepository.save(new_st);
+
+					} else {
+
+						db_st.setUseYn("Y");
+						item.setSizeTableYn("Y");
+
+					}
+
+					item.setSizeTableYn("Y");
+				} else {
+					item.setSizeTableYn("N");
+				}
 			}
+
 		}
 
 		return "S";
@@ -544,9 +554,9 @@ public class ItemServiceImpl implements ItemService {
 		new_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
 		new_item.setSizeMeasureMode(ibd.getSizeMeasureMode());
 
-		if(ibd.getBrand() != null)
+		if (ibd.getBrand() != null)
 			brandRepository.save(ibd.getBrand());
-		
+
 		categoryRepository.save(ibd.getCategory());
 		madeinRepository.save(ibd.getMadein());
 		subCategoryRepository.save(ibd.getSubCategory());
@@ -688,7 +698,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public Page<Map<String, Object>> client_search(Map<String, Object> param, Pageable page) {
+	public Map<String, Object> client_search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -828,7 +838,18 @@ public class ItemServiceImpl implements ItemService {
 			return_list.add(search_R);
 		}
 
-		return new PageImpl<Map<String, Object>>(return_list, page, count_list.size());
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
 	}
 
 	@Override
@@ -870,7 +891,6 @@ public class ItemServiceImpl implements ItemService {
 		Member user = memberRepository.findOne(member_id);
 		Item old_item = itemRepository.findOne(ibd.getItem_id());
 
-		
 		old_item.setCode(ibd.getCode());
 		old_item.setCreateDt(new DateTime());
 		old_item.setBleachYn(ibd.getBleachYn());
@@ -888,9 +908,9 @@ public class ItemServiceImpl implements ItemService {
 		old_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
 		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode());
 
-		if(ibd.getBrand() != null)
+		if (ibd.getBrand() != null)
 			brandRepository.save(ibd.getBrand());
-		
+
 		categoryRepository.save(ibd.getCategory());
 		madeinRepository.save(ibd.getMadein());
 		subCategoryRepository.save(ibd.getSubCategory());
@@ -1029,6 +1049,184 @@ public class ItemServiceImpl implements ItemService {
 		}
 
 		return old_item;
+	}
+
+	@Override
+	public String change_connect(ItemDto param, Long seq) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String arrayExcel(List<ToggleVO> param, Pageable pageable) throws IOException {
+
+		String today = DateTime.now().toString("yyyy-MM-dd");
+		String temp_path = "D:\\TEST_SERVER_ROOT\\temp\\".concat(today).concat("\\");
+		String excel_path = UUID.randomUUID().toString().concat(".xls");
+
+		
+		FileUtils.forceMkdir(new File(temp_path));
+		
+		QItem i = QItem.item;
+
+		BooleanBuilder builder = new BooleanBuilder();
+
+		for (ToggleVO tv : param) {
+			builder.or(i.id.eq(tv.getId()));
+		}
+
+		Iterable<Item> list = itemRepository.findAll(builder, pageable.getSort());
+
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet("히어로 네이션 상품 목록");
+		HSSFRow row = null;
+		HSSFCell cell = null;
+
+		// 엑셀 첫번째 줄, 엑셀 파일에 쓰기
+		// 헤더만들기
+		row = sheet.createRow((short) 0);
+		
+		
+		HSSFCell nameCellHeader = row.createCell(0);
+		nameCellHeader.setCellValue("이름");
+		
+		HSSFCell codeCellHeader = row.createCell(1);
+		codeCellHeader.setCellValue("코드");
+		
+		HSSFCell priceCellHeader = row.createCell(2);
+		priceCellHeader.setCellValue("가격");
+
+		HSSFCell linkCellHeader = row.createCell(3);
+		linkCellHeader.setCellValue("연동여부");
+		
+		
+		HSSFCell sizeTableCellHeader = row.createCell(4);
+		sizeTableCellHeader.setCellValue("사이즈표");
+		
+		HSSFCell sizeMeasureModeCellHeader = row.createCell(5);
+		sizeMeasureModeCellHeader.setCellValue("측정모드");
+		
+		HSSFCell sizeMeasureImageCellHeader = row.createCell(6);
+		sizeMeasureImageCellHeader.setCellValue("측정이미지");
+		
+		HSSFCell imageCellHeader = row.createCell(7);
+		imageCellHeader.setCellValue("제품 이미지");
+		
+
+		HSSFCell imageModeCellHeader = row.createCell(8);
+		imageModeCellHeader.setCellValue("제품 모드");
+		
+		HSSFCell madeinBuilderCellHeader = row.createCell(9);
+		madeinBuilderCellHeader.setCellValue("제조국");
+		
+		HSSFCell madeinDateCellHeader = row.createCell(10); 
+		madeinDateCellHeader.setCellValue("제조일시");
+		
+		HSSFCell bleachCellHeader = row.createCell(11);
+		bleachCellHeader.setCellValue("표백제 사용법");
+		
+		HSSFCell drycleaningCellHeader = row.createCell(12);
+		drycleaningCellHeader.setCellValue("드라이클리닝");
+		
+		HSSFCell drymethodCellHeader = row.createCell(13);
+		drymethodCellHeader.setCellValue("건조방법");
+		
+		HSSFCell irongingCellHeader = row.createCell(14);
+		irongingCellHeader.setCellValue("다림질 ");
+		
+		HSSFCell laundryCellHeader = row.createCell(15);
+		laundryCellHeader.setCellValue("세탁 방법");
+		
+		
+		
+		
+		int row_index = 1;
+		
+		for (Item db_item : list) {
+
+			row = sheet.createRow((short)row_index);
+			row_index++;
+	
+			
+			HSSFCell nameCell = row.createCell(0);
+			nameCell.setCellValue(db_item.getName());
+			
+			HSSFCell codeCell = row.createCell(1);
+			codeCell.setCellValue(db_item.getCode());
+			
+			HSSFCell priceCell = row.createCell(2);
+			priceCell.setCellValue(db_item.getPrice());
+
+			HSSFCell linkCell = row.createCell(3);
+			linkCell.setCellValue(db_item.getLinkYn());
+			
+			
+			HSSFCell sizeTableCell = row.createCell(4);
+			sizeTableCell.setCellValue(db_item.getSizeTableYn());
+			
+			HSSFCell sizeMeasureModeCell = row.createCell(5);
+			sizeMeasureModeCell.setCellValue(db_item.getSizeMeasureMode());
+			
+			HSSFCell sizeMeasureImageCell = row.createCell(6);
+			sizeMeasureImageCell.setCellValue(db_item.getSizeMeasureImage());
+			
+			HSSFCell imageCell = row.createCell(7);
+			imageCell.setCellValue(db_item.getImage());
+			
+
+			HSSFCell imageModeCell = row.createCell(8);
+			imageModeCell.setCellValue(db_item.getImageMode());
+			
+			HSSFCell madeinBuilderCell = row.createCell(9);
+			madeinBuilderCell.setCellValue(db_item.getMadeinBuilder());
+			
+			HSSFCell madeinDateCell = row.createCell(10);
+			DateTime madeinDateTime = db_item.getMadeinDate();
+			madeinDateCell.setCellValue(madeinDateTime.toString());
+			
+			HSSFCell bleachCell = row.createCell(11);
+			bleachCell.setCellValue(db_item.getBleachYn());
+			
+			HSSFCell drycleaningCell = row.createCell(12);
+			drycleaningCell.setCellValue(db_item.getDrycleaningYn());
+			
+			HSSFCell drymethodCell = row.createCell(13);
+			drymethodCell.setCellValue(db_item.getDrymethodYn());
+			
+			HSSFCell irongingCell = row.createCell(14);
+			irongingCell.setCellValue(db_item.getIroningYn());
+			
+			HSSFCell laundryCell = row.createCell(15);
+			laundryCell.setCellValue(db_item.getLaundryYn());
+			
+			
+			
+		}
+
+		// // 엑셀 와이드 설정
+		// for (int i = 0; i < 4; i++) {
+		// sheet.autoSizeColumn(i, true);
+		// if (i == 0) {
+		// sheet.setColumnWidth(i, 8000);
+		// }
+		// if (i == 1 || i == 2) {
+		// sheet.setColumnWidth(i, 22000);
+		// }
+		// if (i == 3) {
+		// sheet.setColumnWidth(i, 4000);
+		// }
+		// }
+
+		// 엑셀 생성 경로 설정 및 자원 종료
+		
+
+		
+		FileOutputStream fileoutputstream = new FileOutputStream(temp_path.concat(excel_path));
+		workbook.write(fileoutputstream);
+		fileoutputstream.close();
+
+		return "/temp/".concat(today).concat("/").concat(excel_path);
+
 	}
 
 }

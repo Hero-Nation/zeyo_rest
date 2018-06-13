@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.madein.Madein;
+import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
  
 @RepositoryRestResource(collectionResourceRel = "warrantys", path = "warrantys")
@@ -49,4 +50,8 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> , Quer
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	Warranty findOne(Long arg0);
  	
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	<S extends Warranty> S save(S arg0);
 }

@@ -24,9 +24,14 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.category.QCategory;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.QItem;
@@ -81,6 +86,15 @@ public class SizeTableServiceImpl implements SizeTableService {
 	@Autowired
 	private ItemRepository itemRepository;
 
+	
+	@Autowired
+	private FitInfoRepository fitInfoRepository;
+
+	@Autowired
+	private FitInfoOptionRepository fitInfoOptionRepository;
+
+	
+	
 	@Autowired
 	EntityManager entityManager;
 
@@ -478,38 +492,32 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 	@Override
 	@Transactional
-	public String delete(SizeTableDto param, Long seq) {
-		String[] targets = param.getTarget().split(",");
-
-		for (int a = 0; a < targets.length; a++) {
-
-			Item i = itemRepository.findOne(Long.valueOf(targets[a]));
+	public String delete(List<ToggleVO> param, Long seq) {
+	 
+		for(ToggleVO tv : param) {
+			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
 				continue;
 
 			QSizeTable st = QSizeTable.sizeTable;
-			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(Long.valueOf(targets[a])));
-			this_st.setUseYn("N");
+			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()));
+			this_st.setUseYn(tv.getValue());			
 		}
-
 		return "Y";
 	}
 
 	@Override
 	@Transactional
-	public String batch_build(SizeTableDto param, Long seq) {
-		String[] targets = param.getTarget().split(",");
-
-		for (int a = 0; a < targets.length; a++) {
-
-			Item i = itemRepository.findOne(Long.valueOf(targets[a]));
+	public String batch_build(List<ToggleVO> param, Long seq) { 
+		for(ToggleVO tv : param) {
+			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
 				continue;
 
 			QSizeTable st = QSizeTable.sizeTable;
-			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(Long.valueOf(targets[a])));
+			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()));
 
 			if (this_st == null) {
 				this_st = new SizeTable();
@@ -528,12 +536,14 @@ public class SizeTableServiceImpl implements SizeTableService {
 				this_st.setVisibleNameYn("Y");
 				
 			} else {
-				if (this_st.getUseYn().equals("N")) {
+				if (tv.getValue().equals("N")) {
 					this_st.setUseYn("Y");
 				} 
 			}
+ 
+		} 
 
-		}
+
 
 		return "Y";
 	}
@@ -600,11 +610,50 @@ public class SizeTableServiceImpl implements SizeTableService {
 		
 		R.put("dry_method", ridmm);
 		
+		
+		
+		
 		QItemFitInfoOptionMap ifop = QItemFitInfoOptionMap.itemFitInfoOptionMap;
 		
 		Iterable<ItemFitInfoOptionMap> rifop = itemFitInfoOptionMapRepository.findAll(ifop.item.id.eq(item_id).and(ifop.useYn.eq("Y"))) ;
 		
-		R.put("fit_info_option", rifop);
+		R.put("user_select_fit_info_option", rifop);
+		
+		
+		List<Map<String, Object>> fit_infos = new ArrayList<Map<String, Object>>();
+		
+		for(ItemFitInfoOptionMap m : rifop) {
+			
+			FitInfoOption this_option = m.getFitInfoOption();
+			FitInfo this_info = this_option.getFitInfo();
+			
+			if(this_info.getUseYn().equals("Y")) {
+				
+				Map<String, Object> fitinfo_db = new HashMap<String,Object>();
+				fitinfo_db.put("fit_info", this_info);
+				log.debug("-----------------------------");
+				log.debug(this_info.toString());
+				//List<FitInfoOption> fio = fitInfoOptionRepository.select_options(this_info);
+				List<FitInfoOption> fio = fitInfoOptionRepository.findByFitInfoId(this_info.getId());
+				
+				for(FitInfoOption a : fio) {
+					log.debug(a.toString());
+				}
+				
+				
+				this_info.setFitInfoOptions(fio);
+				
+				fitinfo_db.put("fit_info_option", fio);
+				
+				fit_infos.add(fitinfo_db);	
+			}
+			
+			
+		}
+		
+		R.put("fit_infos", fit_infos);
+		
+		
 		
 		QItemIroningMap iim = QItemIroningMap.itemIroningMap;
 		
@@ -642,4 +691,16 @@ public class SizeTableServiceImpl implements SizeTableService {
 		size_tableRepository.save(update_entity);
 		return "Y";
 	}
+	
+	@Override
+	@Transactional
+	public String create(SizeTableDto param) {
+		// TODO Auto-generated method stub
+		SizeTable update_entity = param.convertToEntity();
+		size_tableRepository.save(update_entity);
+		return "Y";
+	}
+	
+	
+	
 }
