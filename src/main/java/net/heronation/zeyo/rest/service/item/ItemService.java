@@ -4,20 +4,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Predicate;
-
 import net.heronation.zeyo.rest.common.value.ToggleVO;
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemDto;
 import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
-import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface ItemService {
 	Map<String, Object> search(Map<String, Object> where, Pageable page);
@@ -28,7 +21,7 @@ public interface ItemService {
 
 	String delete(List<ToggleVO> param,Long seq);
 
-	Page<Map<String, Object>> shopmall_list(Long item_id, Pageable pageable);
+	Map<String, Object> shopmall_list(Long item_id, Pageable pageable);
 
 	String toggle_size_table( List<ToggleVO> param);
 

@@ -215,6 +215,17 @@ public class SubCategoryController extends BaseController {
 	}
 
 	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/single_info")
+	@ResponseBody
+	public ResponseEntity<ResultVO> single_info(@RequestParam(value = "id", required = false) Long id) {
+		if (id == null || id == 0) { 
+			return return_fail("id.empty");
+		}
+
+		return return_success((Object) sub_categoryService.single_info(id));
+	}
+	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	public ResponseEntity<ResultVO> insert(@RequestBody SubCategoryDto param,

@@ -3,6 +3,7 @@ package net.heronation.zeyo.rest.service.item;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,38 +18,23 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
-import net.heronation.zeyo.rest.repository.category.QCategory;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
-import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
@@ -74,16 +60,12 @@ import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
-import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
 import net.heronation.zeyo.rest.repository.material.MaterialRepository;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
-import net.heronation.zeyo.rest.repository.member.QMember;
-import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
@@ -91,7 +73,6 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.size_table.QSizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableRepository;
-import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 
@@ -300,8 +281,8 @@ public class ItemServiceImpl implements ItemService {
 		page_query.append(page.getPageSize());
 
 		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
-
+		BigInteger use_count = (BigInteger) count_q.getSingleResult();
+ 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -338,14 +319,14 @@ public class ItemServiceImpl implements ItemService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (use_count.intValue()/ page.getPageSize());
+		if (use_count.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", use_count);
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
@@ -395,7 +376,7 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Map<String, Object>> shopmall_list(Long item_id, Pageable page) {
+	public Map<String, Object> shopmall_list(Long item_id, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -464,7 +445,19 @@ public class ItemServiceImpl implements ItemService {
 			return_list.add(search_R);
 		}
 
-		return new PageImpl<Map<String, Object>>(return_list, page, count_list.size());
+
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
 	}
 
 	private void build_size_table() throws CommonException {

@@ -14,10 +14,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import net.heronation.zeyo.rest.repository.kindof.Kindof;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
-
  
 @RepositoryRestResource(collectionResourceRel = "warrantys", path = "warrantys")
 @PreAuthorize("hasRole('ROLE_ADMIN')")

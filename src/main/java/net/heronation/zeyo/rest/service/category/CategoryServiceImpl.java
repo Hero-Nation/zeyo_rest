@@ -1,6 +1,5 @@
 package net.heronation.zeyo.rest.service.category;
  
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,38 +11,18 @@ import javax.transaction.Transactional;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.impl.JPAQuery;
-
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.IdNameVO;
 import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
-import net.heronation.zeyo.rest.repository.category.QCategory;
-import net.heronation.zeyo.rest.repository.kindof.Kindof;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
-import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
-import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
-import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.QSubCategoryFitInfoMap;
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.QSubCategoryMeasureMap;
-import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 
 
@@ -436,13 +415,13 @@ public class CategoryServiceImpl implements CategoryService{
 	}
 	
 	
-	@Override
+	@Override 
 	@Transactional
-	public String update(ToggleVO param) {
+	public String update(IdNameVO param) {
 		// TODO Auto-generated method stub
 		
 		Category a = categoryRepository.findOne(param.getId());
-		a.setName(param.getValue());
+		a.setName(param.getName());
 		
 		return CommonConstants.SUCCESS;
 	}

@@ -1,13 +1,13 @@
 package net.heronation.zeyo.rest.repository.warranty;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import lombok.Value;
 
+import org.joda.time.DateTime;
+
+import lombok.Value;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
-import org.joda.time.DateTime;
 
 @Value
 public class WarrantyDto {

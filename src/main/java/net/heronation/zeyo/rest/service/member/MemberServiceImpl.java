@@ -1,11 +1,6 @@
 package net.heronation.zeyo.rest.service.member;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +9,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.RandomUtils;
-import org.hibernate.loader.custom.sql.SQLCustomQuery;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,12 +24,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.sql.JPASQLQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
@@ -49,11 +39,8 @@ import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidation;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidationRepository;
 import net.heronation.zeyo.rest.repository.email_validation.QEmailValidation;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.madein.QMadein;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberDto;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
@@ -716,16 +703,19 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 
 			EmailValidation db_ev = emailValidationRepository.findOne(target.email.eq(email));
+			
+			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
+			
 			if (db_ev == null) {
 
 				db_ev = new EmailValidation();
 				db_ev.setCreateDt(new DateTime());
 				db_ev.setEmail(email);
-				db_ev.setOtp("1111");
+				db_ev.setOtp(ri);
 				emailValidationRepository.save(db_ev);
 
 			} else {
-				db_ev.setOtp("1111");
+				db_ev.setOtp(ri);
 			}
 
 			// 이메일을 발송한다.
@@ -779,17 +769,18 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 
 			EmailValidation db_ev = emailValidationRepository.findOne(target.email.eq(phone));
-
+			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
+			
 			if (db_ev == null) {
 
 				db_ev = new EmailValidation();
 				db_ev.setCreateDt(new DateTime());
 				db_ev.setEmail(phone);
-				db_ev.setOtp("1111");
+				db_ev.setOtp(ri);
 				emailValidationRepository.save(db_ev);
 
 			} else {
-				db_ev.setOtp("1111");
+				db_ev.setOtp(ri);
 			}
 
 			// 문자 메세지를 전송한다.

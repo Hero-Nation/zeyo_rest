@@ -1,43 +1,48 @@
 package net.heronation.zeyo.rest.repository.item;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.size_table.SizeTable;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.category.Category;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.warranty.Warranty;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
-import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
-import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
+import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
-import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_drycleaning_map.ItemDrycleaningMap;
-import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMap;
 import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoOptionMap;
-import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
+import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
+import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
+import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
+import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
+import net.heronation.zeyo.rest.repository.madein.Madein;
+import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.repository.size_table.SizeTable;
+import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 @Entity
 @Data

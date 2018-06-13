@@ -9,13 +9,8 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
-import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
-import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 
 public interface FitInfoService {
 	Map<String,Object> search(Map<String,Object> where, Pageable page); 

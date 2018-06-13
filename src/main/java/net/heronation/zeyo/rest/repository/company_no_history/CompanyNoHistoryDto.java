@@ -1,14 +1,11 @@
 package net.heronation.zeyo.rest.repository.company_no_history;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
 import lombok.Value;
-
-import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.Member;
 
 @Value

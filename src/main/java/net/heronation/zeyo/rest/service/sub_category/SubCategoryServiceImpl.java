@@ -54,24 +54,21 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 	@Autowired
 	private SubCategoryRepository sub_categoryRepository;
-	
+
 	@Autowired
 	private CategoryRepository categoryRepository;
-	
-	
+
 	@Autowired
 	private SubCategoryFitInfoMapRepository scfimRepository;
-	
+
 	@Autowired
 	private SubCategoryMeasureMapRepository scmmRepository;
-	
+
 	@Autowired
 	private MeasureItemRepository miRepository;
-	
+
 	@Autowired
 	private FitInfoRepository fiRepository;
-	
-	
 
 	@Autowired
 	EntityManager entityManager;
@@ -97,7 +94,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	// }
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Page<Map<String, Object>> subsearch(Predicate where, Pageable page) {
 
 		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
@@ -141,7 +138,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> distinct_name(String cate) {
 
 		StringBuffer select_query = new StringBuffer();
@@ -175,19 +172,17 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Override
 	@Transactional
 	public String insert(SubCategoryDto param) {
-		
+
 		Category c = categoryRepository.findOne(param.getCategory());
 		SubCategory sc = param.convertToEntity();
 		sc.setCategory(c);
 		sc = sub_categoryRepository.save(sc);
-		
-		
-		
+
 		List<LIdVO> milist = param.getMeasureItem();
-		
-		for(LIdVO vo : milist) {
+
+		for (LIdVO vo : milist) {
 			SubCategoryMeasureMap temp_scmm = new SubCategoryMeasureMap();
-			
+
 			MeasureItem this_item = miRepository.findOne(vo.getId());
 			temp_scmm.setSubCategory(sc);
 			temp_scmm.setMeasureItem(this_item);
@@ -195,25 +190,19 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 			scmmRepository.save(temp_scmm);
 		}
-		
-		
-		
-		
+
 		List<LIdVO> filist = param.getFitinfos();
-		for(LIdVO vo : filist) {
+		for (LIdVO vo : filist) {
 			SubCategoryFitInfoMap temp_scfi = new SubCategoryFitInfoMap();
-			
-			
+
 			FitInfo this_item = fiRepository.findOne(vo.getId());
-			
+
 			temp_scfi.setSubCategory(sc);
 			temp_scfi.setFitInfo(this_item);
 			temp_scfi.setUseYn("Y");
-			
+
 			scfimRepository.save(temp_scfi);
 		}
-		
-		
 
 		return CommonConstants.SUCCESS;
 	}
@@ -221,7 +210,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Override
 	@Transactional
 	public String update(SubCategoryDto param) {
-		
+
 		SubCategory sc = sub_categoryRepository.findOne(param.getId());
 		sc.setBleachYn(param.getBleachYn());
 		sc.setClothImage(param.getClothImage());
@@ -231,113 +220,119 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 		sc.setItemImage(param.getItemImage());
 		sc.setLaundryYn(param.getLaundryYn());
 		sc.setName(param.getName());
-		
-		
+
 		QSubCategoryMeasureMap qscmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
-		
+
 		List<LIdVO> milist = param.getMeasureItem();
-		
-		
-		
+
 		Iterable<SubCategoryMeasureMap> scmm = scmmRepository.findAll(qscmm.subCategory.id.eq(param.getId()));
-		
-		for(LIdVO vo : milist) {
-			
+
+		for (LIdVO vo : milist) {
+
 			boolean shouldBeDeleted = true;
 			boolean db_exist = false;
 			SubCategoryMeasureMap should_delete_map = new SubCategoryMeasureMap();
-			for(SubCategoryMeasureMap db_scmm : scmm) {
+			for (SubCategoryMeasureMap db_scmm : scmm) {
 				should_delete_map = db_scmm;
-				if(db_scmm.getMeasureItem().getId() == vo.getId()) {
-					shouldBeDeleted=false;
+				if (db_scmm.getMeasureItem().getId() == vo.getId()) {
+					shouldBeDeleted = false;
 					db_exist = true;
 				}
 			}
-			
-			
-			if(shouldBeDeleted) {
+
+			if (shouldBeDeleted) {
 				should_delete_map.setUseYn("N");
-			} 
-			
-			
-			if(!db_exist) {
+			}
+
+			if (!db_exist) {
 				SubCategoryMeasureMap temp_scmm = new SubCategoryMeasureMap();
-				
+
 				MeasureItem this_item = miRepository.findOne(vo.getId());
 				temp_scmm.setSubCategory(sc);
 				temp_scmm.setMeasureItem(this_item);
 				temp_scmm.setUseYn("Y");
 
-				scmmRepository.save(temp_scmm);				
+				scmmRepository.save(temp_scmm);
 			}
-			
 
 		}
-		
+
 		QSubCategoryFitInfoMap qscfim = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
-		
+
 		Iterable<SubCategoryFitInfoMap> scfilist = scfimRepository.findAll(qscfim.subCategory.id.eq(param.getId()));
-		
+
 		List<LIdVO> filist = param.getFitinfos();
-		for(LIdVO vo : filist) {
-			
-			
-			
+		for (LIdVO vo : filist) {
+
 			boolean shouldBeDeleted = true;
 			boolean db_exist = false;
 			SubCategoryFitInfoMap should_delete_map = new SubCategoryFitInfoMap();
-			for(SubCategoryFitInfoMap db_scfim : scfilist) {
+			for (SubCategoryFitInfoMap db_scfim : scfilist) {
 				should_delete_map = db_scfim;
-				if(db_scfim.getFitInfo().getId() == vo.getId()) {
-					shouldBeDeleted=false;
+				if (db_scfim.getFitInfo().getId() == vo.getId()) {
+					shouldBeDeleted = false;
 					db_exist = true;
 				}
 			}
-			
-			
-			if(shouldBeDeleted) {
+
+			if (shouldBeDeleted) {
 				should_delete_map.setUseYn("N");
 				scfimRepository.save(should_delete_map);
-			} 
-			
-			
-			if(!db_exist) {
+			}
+
+			if (!db_exist) {
 				SubCategoryFitInfoMap temp_scfim = new SubCategoryFitInfoMap();
-				
+
 				FitInfo this_item = fiRepository.findOne(vo.getId());
 				temp_scfim.setSubCategory(sc);
 				temp_scfim.setFitInfo(this_item);
 				temp_scfim.setUseYn("Y");
 
-				scfimRepository.save(temp_scfim);				
+				scfimRepository.save(temp_scfim);
 			}
-			 
-			
+
 			SubCategoryFitInfoMap temp_scfi = new SubCategoryFitInfoMap();
-			
-			
+
 			FitInfo this_item = fiRepository.findOne(vo.getId());
-			
+
 			temp_scfi.setSubCategory(sc);
 			temp_scfi.setFitInfo(this_item);
 			temp_scfi.setUseYn("Y");
-			
+
 			scfimRepository.save(temp_scfi);
 		}
-		
-		
 
 		return CommonConstants.SUCCESS;
 	}
 
 	@Override
 	public String delete(List<LIdVO> param) {
-		for(LIdVO v : param) {
+		for (LIdVO v : param) {
 			SubCategory a = sub_categoryRepository.findOne(v.getId());
 			a.setUseYn("N");
 		}
 
 		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	public Map<String, Object> single_info(Long id) {
+		QSubCategory sc = QSubCategory.subCategory;
+		QSubCategoryFitInfoMap scfi = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
+		QSubCategoryMeasureMap scmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+
+		SubCategory scr = sub_categoryRepository.findOne(id);
+
+		Iterable<SubCategoryFitInfoMap> scfimr = scfimRepository.findAll(scfi.subCategory.id.eq(id));
+		Iterable<SubCategoryMeasureMap> scmmr = scmmRepository.findAll(scmm.subCategory.id.eq(id));
+
+		R.put("sub_category", scr);
+		R.put("fit_infos", scfimr);
+		R.put("measure_items", scmmr);
+
+		return R;
 	}
 
 }

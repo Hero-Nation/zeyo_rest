@@ -1,17 +1,5 @@
 package net.heronation.zeyo.rest.controller.warranty; 
  
-import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
-import net.heronation.zeyo.rest.constants.Format;
-import net.heronation.zeyo.rest.repository.madein.QMadein;
-import net.heronation.zeyo.rest.repository.warranty.QWarranty;
-import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
-import net.heronation.zeyo.rest.repository.warranty.WarrantyResourceAssembler;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,23 +7,28 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
-import org.springframework.web.bind.annotation.*;
-
-import com.querydsl.core.BooleanBuilder;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
-
-
+import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.IdNameVO;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
+import net.heronation.zeyo.rest.repository.warranty.WarrantyResourceAssembler;
 import net.heronation.zeyo.rest.service.warranty.WarrantyService; 
 
 @Slf4j
@@ -95,7 +88,7 @@ public class WarrantyController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody ToggleVO param,
+	public ResponseEntity<ResultVO> update(@RequestBody IdNameVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) warrantyService.update(param));

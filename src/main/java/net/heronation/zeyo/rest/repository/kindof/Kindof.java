@@ -1,28 +1,31 @@
 package net.heronation.zeyo.rest.repository.kindof;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.warranty.Warranty;
-import net.heronation.zeyo.rest.repository.size_option.SizeOption;
-import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
+import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
+import net.heronation.zeyo.rest.repository.madein.Madein;
+import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 @Entity
 @Data

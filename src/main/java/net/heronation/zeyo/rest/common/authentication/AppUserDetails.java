@@ -2,16 +2,8 @@ package net.heronation.zeyo.rest.common.authentication;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
-import net.heronation.zeyo.rest.repository.member.Member;
 
 public class AppUserDetails implements UserDetails {
 

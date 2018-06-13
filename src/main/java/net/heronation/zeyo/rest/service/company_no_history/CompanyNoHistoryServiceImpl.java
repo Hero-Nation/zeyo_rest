@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.service.company_no_history;
  
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,12 +24,9 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.madein.QMadein;
 
 @Slf4j
 @Service
@@ -134,9 +133,18 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString()); 
 
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+		
+		
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -162,14 +170,14 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 

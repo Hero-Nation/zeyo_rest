@@ -11,34 +11,18 @@ import javax.transaction.Transactional;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.impl.JPAQuery;
-
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.IdNameVO;
 import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
-import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
-import net.heronation.zeyo.rest.repository.kindof.QKindof;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.madein.QMadein;
-import net.heronation.zeyo.rest.repository.warranty.QWarranty;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 
@@ -114,7 +98,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 		}
 
  
-		where_query.append("GROUP BY i.id");
+		where_query.append("GROUP BY w.id");
 		
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY w.");
@@ -242,11 +226,11 @@ public class WarrantyServiceImpl implements WarrantyService {
 	
 	@Override
 	@Transactional
-	public String update(ToggleVO param) {
+	public String update(IdNameVO param) {
 		// TODO Auto-generated method stub
 		
 		Warranty a = warrantyRepository.findOne(param.getId());
-		a.setScope(param.getValue());
+		a.setScope(param.getName());
 		
 		return CommonConstants.SUCCESS;
 	}

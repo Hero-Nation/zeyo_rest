@@ -1,19 +1,16 @@
 package net.heronation.zeyo.rest.repository.member;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import lombok.Data;
-import lombok.Value;
+import org.joda.time.DateTime;
 
+import lombok.Data;
+import net.heronation.zeyo.rest.repository.bbs.Bbs;
+import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
-import net.heronation.zeyo.rest.repository.bbs.Bbs;
-import org.joda.time.DateTime;
 
 @Data
 public class MemberDto {

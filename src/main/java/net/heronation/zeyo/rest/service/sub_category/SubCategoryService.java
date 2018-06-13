@@ -16,6 +16,8 @@ public interface SubCategoryService {
 	Page<Map<String, Object>> subsearch(Predicate where, Pageable page);
 
 	Map<String, Object> distinct_name(String cate);
+	
+	Map<String, Object> single_info(Long id);
 
 	String insert(SubCategoryDto param);
 

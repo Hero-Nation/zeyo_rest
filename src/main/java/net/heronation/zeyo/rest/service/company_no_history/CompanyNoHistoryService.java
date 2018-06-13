@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
-import net.heronation.zeyo.rest.repository.madein.Madein;
 
 public interface CompanyNoHistoryService { 
 	

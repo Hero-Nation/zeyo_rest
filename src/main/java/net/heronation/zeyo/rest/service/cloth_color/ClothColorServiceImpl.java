@@ -11,40 +11,19 @@ import javax.transaction.Transactional;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
-import net.heronation.zeyo.rest.repository.cloth_color.QClothColor;
-import net.heronation.zeyo.rest.repository.item.QItem;
-import net.heronation.zeyo.rest.repository.item_cloth_color_map.QItemClothColorMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
-import net.heronation.zeyo.rest.repository.kindof.QKindof;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.madein.QMadein;
-import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
-import net.heronation.zeyo.rest.repository.size_option.SizeOption;
-import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
 @Slf4j
 @Service

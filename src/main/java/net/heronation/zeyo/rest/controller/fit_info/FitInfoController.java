@@ -1,20 +1,5 @@
 package net.heronation.zeyo.rest.controller.fit_info;
 
-import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
-import net.heronation.zeyo.rest.constants.Format;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoResourceAssembler;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
-import net.heronation.zeyo.rest.repository.fit_info.QFitInfo;
-import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
-import net.heronation.zeyo.rest.repository.measure_item.QMeasureItem;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,22 +7,31 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
-
+import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoResourceAssembler;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
+import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
 import net.heronation.zeyo.rest.service.fit_info.FitInfoService;
 
 @Slf4j

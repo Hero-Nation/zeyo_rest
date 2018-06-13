@@ -1,13 +1,12 @@
 package net.heronation.zeyo.rest.repository.category;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import lombok.Value;
 
+import lombok.Value;
 import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 
 @Value
 public class CategoryDto {

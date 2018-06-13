@@ -1,22 +1,11 @@
 package net.heronation.zeyo.rest.repository.sub_category;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import lombok.Data;
-import lombok.Value;
-
-import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.repository.category.Category;
-import net.heronation.zeyo.rest.repository.category.CategoryRepository;
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
-import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.SubCategoryFitInfoMap;
-import net.heronation.zeyo.rest.repository.size_option.SizeOption;
-
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.Data;
+import net.heronation.zeyo.rest.common.value.LIdVO;
 
 @Data
 public class SubCategoryDto {

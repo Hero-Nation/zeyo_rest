@@ -3,7 +3,6 @@ package net.heronation.zeyo.rest.service.brand;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,20 +12,12 @@ import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryResults;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,16 +28,11 @@ import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
-import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.QItem;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.madein.QMadein;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.member.QMember;
-import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 
 @Slf4j
 @Service
@@ -201,8 +187,14 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(page.getPageSize());
 
 		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
-
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -239,14 +231,14 @@ public class BrandServiceImpl implements BrandService {
 		// "number" : 1, >> 현재 페이지
 		// "size" : 20, >> 페이지 크기
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
@@ -370,7 +362,7 @@ public class BrandServiceImpl implements BrandService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from (");
 
 		StringBuffer select_query = new StringBuffer(); 
 		select_query.append("SELECT ");
@@ -388,7 +380,11 @@ public class BrandServiceImpl implements BrandService {
 		where_query.append("        AND s.use_yn = 'Y' ");
 		where_query.append(" WHERE ");
 		where_query.append("    ism.use_yn = 'Y' AND i.brand_id = "+brand_id+" "); 
-		where_query.append(" GROUP BY ism.shopmall_id");
+		where_query.append("       AND i.member_id = "+member_seq);
+		
+		StringBuffer group_query = new StringBuffer();
+		
+		group_query.append(" GROUP BY i.id ");
 		
 		
 		
@@ -412,11 +408,17 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
-
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(sort_query).append(" ) count_table ").toString());
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
 		Query q = entityManager
-				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
@@ -429,14 +431,14 @@ public class BrandServiceImpl implements BrandService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
@@ -782,8 +784,14 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(page.getPageSize());
 
 		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
-
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -799,17 +807,16 @@ public class BrandServiceImpl implements BrandService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
-
 		return R;
 
 		// Map<String, Object> R = new HashMap<String, Object>();

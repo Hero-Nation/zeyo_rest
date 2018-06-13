@@ -1,16 +1,14 @@
 package net.heronation.zeyo.rest.repository.kindof;
  
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import lombok.Value;
 
-import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.warranty.Warranty;
-import net.heronation.zeyo.rest.repository.size_option.SizeOption;
-import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
+import lombok.Value;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
+import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
+import net.heronation.zeyo.rest.repository.madein.Madein;
+import net.heronation.zeyo.rest.repository.size_option.SizeOption;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 
 @Value

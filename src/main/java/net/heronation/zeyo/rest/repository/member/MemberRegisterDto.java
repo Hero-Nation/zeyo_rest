@@ -1,8 +1,6 @@
 package net.heronation.zeyo.rest.repository.member;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Value; 
+import lombok.Data; 
 
 @Data
 public class MemberRegisterDto {

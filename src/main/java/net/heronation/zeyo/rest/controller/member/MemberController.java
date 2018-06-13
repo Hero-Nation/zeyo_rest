@@ -584,7 +584,7 @@ public class MemberController extends BaseController {
 			if (update_result.equals(CommonConstants.SUCCESS)) {
 				return return_success(update_result);
 			} else {
-				return return_fail(update_result);
+				return return_success(update_result);
 			}
 
 		}
