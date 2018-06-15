@@ -151,5 +151,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="D:/sueon/tool/ppuriyo_java/j_uds_lib.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
