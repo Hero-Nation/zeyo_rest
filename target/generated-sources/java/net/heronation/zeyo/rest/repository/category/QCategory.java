@@ -28,6 +28,8 @@ public class QCategory extends EntityPathBase<Category> {
 
     public final StringPath name = createString("name");
 
+    public final NumberPath<Long> parent_id = createNumber("parent_id", Long.class);
+
     public final ListPath<net.heronation.zeyo.rest.repository.size_option.SizeOption, net.heronation.zeyo.rest.repository.size_option.QSizeOption> sizeOptions = this.<net.heronation.zeyo.rest.repository.size_option.SizeOption, net.heronation.zeyo.rest.repository.size_option.QSizeOption>createList("sizeOptions", net.heronation.zeyo.rest.repository.size_option.SizeOption.class, net.heronation.zeyo.rest.repository.size_option.QSizeOption.class, PathInits.DIRECT2);
 
     public final ListPath<net.heronation.zeyo.rest.repository.sub_category.SubCategory, net.heronation.zeyo.rest.repository.sub_category.QSubCategory> subCategorys = this.<net.heronation.zeyo.rest.repository.sub_category.SubCategory, net.heronation.zeyo.rest.repository.sub_category.QSubCategory>createList("subCategorys", net.heronation.zeyo.rest.repository.sub_category.SubCategory.class, net.heronation.zeyo.rest.repository.sub_category.QSubCategory.class, PathInits.DIRECT2);
