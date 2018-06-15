@@ -191,7 +191,6 @@
 			<version>3.17</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -217,19 +216,37 @@
 			</plugin>
 			<plugin>
 				<groupId>com.mysema.maven</groupId>
-				<artifactId>apt-maven-plugin</artifactId>
-				<version>1.1.3</version>
+				<artifactId>maven-apt-plugin</artifactId>
+				<version>1.0.4</version>
 				<executions>
 					<execution>
+						<id>process-common-model</id>
 						<goals>
 							<goal>process</goal>
 						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources/java</outputDirectory>
-							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-						</configuration>
+						<phase>generate-sources</phase>
+						<!-- <configuration> <sourceDirectory>src/main/java/com/uniarb/autogds/dao/entity</sourceDirectory> 
+							</configuration> -->
 					</execution>
 				</executions>
+				<configuration>
+					<outputDirectory>target/generated-sources/apt</outputDirectory>
+					<processors>
+						<processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>
+					</processors>
+					<options>
+						<querydsl.entityAccessors>true</querydsl.entityAccessors>
+						<querydsl.createDefaultVariable>true</querydsl.createDefaultVariable>
+						<querydsl.packageSuffix>.apt</querydsl.packageSuffix>
+					</options>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.mysema.querydsl</groupId>
+						<artifactId>querydsl-apt</artifactId>
+						<version>3.7.3</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 		</plugins>
