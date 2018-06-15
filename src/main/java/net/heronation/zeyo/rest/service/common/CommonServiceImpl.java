@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.daou.BizSend;
-import com.daou.entity.SendMsgEntity;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.constants.CommonConstants;
