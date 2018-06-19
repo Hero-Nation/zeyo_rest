@@ -146,4 +146,93 @@ public class MeasureItemServiceImpl implements MeasureItemService{
 
 	}
 
+	@Override
+	public Map<String, Object> detail_list(Map<String, Object> param, Pageable page) {
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) from ( ");
+
+		StringBuffer select_query = new StringBuffer();
+		select_query.append("SELECT c.name as cate_name, ");
+		select_query.append("       sc.name as sub_cate_name , ");
+		select_query.append("       mi.create_dt  as measure_create_dt");
+
+		StringBuffer where_query = new StringBuffer();
+		where_query.append(" FROM   sub_category_measure_map scmm ");
+		where_query.append("       LEFT JOIN sub_category sc ");
+		where_query.append("              ON scmm.sub_category_id = sc.id ");
+		where_query.append("                 AND sc.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN category c ");
+		where_query.append("              ON sc.category_id = c.id ");
+		where_query.append("                 AND c.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN measure_item mi ");
+		where_query.append("              ON scmm.measure_item_id = mi.id ");
+		where_query.append("                 AND mi.use_yn = 'Y' ");
+		where_query.append(" WHERE  scmm.use_yn = 'Y' ");
+
+		String id = (String) param.get("id");
+
+		where_query.append("       AND mi.id = " + id);
+
+		StringBuffer group_query = new StringBuffer();
+
+		group_query.append(" GROUP BY c.id ");
+
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY c.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
+
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(" ) count_table ").toString());
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
+		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>(); 
+
+			search_R.put("cate_name", row[0]);
+			search_R.put("sub_cate_name", row[1]);
+			search_R.put("measure_create_dt", row[2]); 
+
+			return_list.add(search_R);
+		}
+
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.intValue());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+	}
 }

@@ -46,6 +46,8 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 		
 	}
 
+	
+	
 	@Override
 	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -56,7 +58,8 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 	protected void configure(final HttpSecurity http) throws Exception {
 
 		http
-		
+		.requiresChannel().anyRequest().requiresSecure()
+		.and()
 		.authorizeRequests()
 				.antMatchers("/login").permitAll()
 				.antMatchers("/oauth/token/**").permitAll()
@@ -64,6 +67,7 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 		
 		.antMatchers("/api/*").authenticated()
 				.and().csrf().disable();
+		
 
  
 	}

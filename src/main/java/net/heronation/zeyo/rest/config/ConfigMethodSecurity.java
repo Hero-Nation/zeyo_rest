@@ -15,4 +15,5 @@ public class ConfigMethodSecurity extends GlobalMethodSecurityConfiguration {
 		return new OAuth2MethodSecurityExpressionHandler();
 	}
 
+	
 }

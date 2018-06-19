@@ -1,5 +1,4 @@
 package net.heronation.zeyo.rest.repository.sub_category;
-  
 
 import java.util.List;
 
@@ -16,40 +15,34 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import net.heronation.zeyo.rest.repository.category.Category;
 
- 
 @RepositoryRestResource(collectionResourceRel = "sub_categorys", path = "sub_categorys")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 
-public interface SubCategoryRepository extends JpaRepository<SubCategory, Long> , QueryDslPredicateExecutor<SubCategory>{
- 
- 	default void customize(QuerydslBindings bindings, QSubCategory sub_category) {
+public interface SubCategoryRepository
+		extends JpaRepository<SubCategory, Long>, QueryDslPredicateExecutor<SubCategory> {
 
- 
+	default void customize(QuerydslBindings bindings, QSubCategory sub_category) {
+
 	}
- 	 
 
 	@Override
-	@RestResource(path = "", rel = "",exported = true)
+	@RestResource(path = "", rel = "", exported = true)
 	Page<SubCategory> findAll(Pageable arg0);
-	
- 
+
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
-	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
+	@RestResource(path = "distinct_name", rel = "distinct_name", exported = true)
 	@Query("select distinct m  from SubCategory m where  m.category = ?1 and m.useYn = 'Y'")
 	List<SubCategory> distinct_name(@Param(value = "category") Category category);
-	
-	
-	@RestResource(path = "findByName", rel = "findByName",exported = true)
+
+	@RestResource(path = "findByName", rel = "findByName", exported = true)
 	@Query("select m from SubCategory m where m.name = ?1 and  m.useYn = 'Y'")
 	List<SubCategory> findByName(@Param("name") String ktype);
-	
- 	@Override
- 	@PreAuthorize("hasRole('ROLE_CLIENT')")
- 	SubCategory findOne(Long arg0);
 
- 	
- 	
- 	@Override
- 	@PreAuthorize("hasRole('ROLE_CLIENT')")
- 	<S extends SubCategory> S save(S arg0);
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	SubCategory findOne(Long arg0);
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	<S extends SubCategory> S save(S arg0);
 }

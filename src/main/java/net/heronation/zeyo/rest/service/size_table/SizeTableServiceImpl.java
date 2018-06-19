@@ -49,13 +49,20 @@ import net.heronation.zeyo.rest.repository.item_laundry_map.QItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
 import net.heronation.zeyo.rest.repository.item_material_map.QItemMaterialMap;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.QItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
 import net.heronation.zeyo.rest.repository.item_size_option_map.QItemSizeOptionMap;
+import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
 import net.heronation.zeyo.rest.repository.size_table.QSizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableRepository;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.QSubCategoryMeasureMap;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMapRepository;
 
 @Slf4j
 @Service 
@@ -566,6 +573,11 @@ public class SizeTableServiceImpl implements SizeTableService {
 	private ItemSizeOptionMapRepository itemSizeOptionMapRepository;
 	
 	
+	@Autowired
+	private ItemScmmSoValueRepository itemScmmSoValueRepository;
+	
+	@Autowired
+	SubCategoryMeasureMapRepository subCategoryMeasureMapRepository;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -599,7 +611,6 @@ public class SizeTableServiceImpl implements SizeTableService {
 		Iterable<ItemDrymethodMap> ridmm = itemDrymethodMapRepository.findAll(idmm.item.id.eq(item_id).and(idmm.useYn.eq("Y"))) ;
 		
 		R.put("dry_method", ridmm);
-		
 		
 		
 		
@@ -644,6 +655,11 @@ public class SizeTableServiceImpl implements SizeTableService {
 		R.put("fit_infos", fit_infos);
 		
 		
+		List<MeasureItem>  mm_list = subCategoryMeasureMapRepository.select_by_sub_cate(i.getSubCategory().getId());
+		
+ 
+		R.put("measure_items", mm_list);
+		
 		
 		QItemIroningMap iim = QItemIroningMap.itemIroningMap;
 		
@@ -669,6 +685,12 @@ public class SizeTableServiceImpl implements SizeTableService {
 		
 		R.put("size_option", risom);
 	
+		QItemScmmSoValue issv = QItemScmmSoValue.itemScmmSoValue;
+		
+		Iterable<ItemScmmSoValue> rissv = itemScmmSoValueRepository.findAll(issv.item.id.eq(item_id).and(issv.useYn.eq("Y"))) ;
+	
+		R.put("sccm_so_value", rissv);
+		
 		
 		return  R;
 	}

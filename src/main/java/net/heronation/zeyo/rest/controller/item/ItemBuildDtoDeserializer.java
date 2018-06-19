@@ -2,8 +2,10 @@ package net.heronation.zeyo.rest.controller.item;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -34,6 +36,7 @@ import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoO
 import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
@@ -47,6 +50,8 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
+import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMapRepository;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 
@@ -85,7 +90,8 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 	@Autowired
 	private FitInfoOptionRepository fitInfoOptionRepository;
 	
-	
+	@Autowired
+	private SubCategoryMeasureMapRepository subCategoryMeasureMapRepository;
 	
 	@Autowired
 	private KindofRepository kindofRepository;
@@ -279,7 +285,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 	    Iterator<JsonNode> sizeOptions_iterator = node.get("sizeOptions").elements();
 		
-	 
+	    Map<String,Object> direct_size_option_store = new HashMap<String,Object>();
 	    
 		while (sizeOptions_iterator.hasNext()) {
 			JsonNode sizeOptions_node = sizeOptions_iterator.next();
@@ -311,6 +317,10 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				
 				new_sizeoptoins_mapp.setSizeOption(direct_input_size_option);
 				new_sizeoptoins_mapp.setOptionValue("DIRECT"); 
+				
+				direct_size_option_store.put(inputValue, direct_input_size_option);
+				
+				
 			}else {
 				
 				SizeOption db_sizeoption = sizeOptionRepository.findOne(sizeOptions_id); 
@@ -519,10 +529,59 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		}
 		
 		
+		log.debug("ItemBuildDtoDeserializer : mi_so_value");
+		// fit 정보 관리 	
+		
+		List<ItemScmmSoValue> issvList = new ArrayList<ItemScmmSoValue>();
+		
+		Iterator<JsonNode> mi_so_value_iterator = node.get("mi_so_value").elements();
+		
+		while (mi_so_value_iterator.hasNext()) {
+			
+			JsonNode mi_so_value_node = mi_so_value_iterator.next();
+			
+					JsonNode sub_category_measure_map_sub_node = mi_so_value_node.get("sub_category_measure_map");
+					
+					Long scmm_id  = sub_category_measure_map_sub_node.get("id").asLong();
+					
+					SubCategoryMeasureMap this_scmm = subCategoryMeasureMapRepository.findOne(scmm_id);
+					
+					JsonNode sizeOption_sub_node = mi_so_value_node.get("sizeOption");
+					
+					Long sizeOption_id =  sizeOption_sub_node.get("id").asLong();
+					
+					String sizeOption_inputValue =  sizeOption_sub_node.get("inputValue").asText();
+					
+					SizeOption this_so = new SizeOption();
+					
+					if(sizeOption_id == 0) { // 사이즈 옵션이 직접입력인 경우 앞에서 입력한 객체를 사용한다. 
+						this_so = (SizeOption) direct_size_option_store.get(sizeOption_inputValue);
+						this_so.setId(0L);
+					}else {
+						this_so = sizeOptionRepository.findOne(sizeOption_id);
+					}
+					
+					
+					String mi_so_value_input_value = mi_so_value_node.get("input_value").textValue();
+					
+					
+					ItemScmmSoValue this_issv = new ItemScmmSoValue();
+					this_issv.setInputValue(mi_so_value_input_value);
+					this_issv.setSizeOption(this_so);
+					this_issv.setSubCategoryMeasureMap(this_scmm);
+					this_issv.setUseYn("Y");
+					
+					issvList.add(this_issv);
+		}
+		
+		
+		
+		
+		
 		String sizeTableYn = node.get("sizeTableYn").textValue();
 		
 		return new ItemBuildDto(brand, shopmalls, category, subCategory, imageMode, image, sizeMeasureMode,
-				sizeMeasureImage, name, code, price, madeinBuilder, madein, madeinDate,warranty,materialsmaps,itemSizeOptionMaps,itemClothColorMaps,laundryYn,itemLaundryMap,drycleaningYn,itemDrycleaningMap,ironingYn,itemIroningMap,drymethodYn,itemDrymethodMap,bleachYn,itemBleachMap,itemFitInfoOptionMaps,sizeTableYn);
+				sizeMeasureImage, name, code, price, madeinBuilder, madein, madeinDate,warranty,materialsmaps,itemSizeOptionMaps,itemClothColorMaps,issvList, laundryYn,itemLaundryMap,drycleaningYn,itemDrycleaningMap,ironingYn,itemIroningMap,drymethodYn,itemDrymethodMap,bleachYn,itemBleachMap,itemFitInfoOptionMaps,sizeTableYn);
 
 	}
 	

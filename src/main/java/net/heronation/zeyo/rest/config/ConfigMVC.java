@@ -91,6 +91,8 @@ public class ConfigMVC implements WebMvcConfigurer {
 		 registry.jsp().prefix("/WEB-INF/jsp/");
 	}
 
+	
+	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();

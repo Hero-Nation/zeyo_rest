@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -60,6 +61,9 @@ public interface MemberService {
 	String update_password(String old_pw, String new_pw, Long member_seq);
 
 	CompanyNoHistory update_cp_no(MemberDto param, Long member_seq);
+	
+	String admin_update(AdminUpdateDto param)  throws CommonException;
+	
 
 	Member update_mng_name(String mng_name, Long member_seq);
 

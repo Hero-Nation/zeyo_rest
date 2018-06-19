@@ -58,6 +58,8 @@ import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMapRepository;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
@@ -152,6 +154,11 @@ public class ItemServiceImpl implements ItemService {
 
 	@Autowired
 	private ItemSizeOptionMapRepository itemSizeOptionMapRepository;
+	
+	@Autowired
+	private ItemScmmSoValueRepository itemScmmSoValueRepository;
+	
+	
 
 	@Autowired
 	EntityManager entityManager;
@@ -665,6 +672,8 @@ public class ItemServiceImpl implements ItemService {
 			itemLaundryMapRepository.save(ilm);
 		}
 
+		Map<String,Object> direct_size_option_store = new HashMap<String,Object>();
+		
 		List<ItemSizeOptionMap> isomlist = ibd.getItemSizeOptionMaps();
 
 		if (isomlist.size() != 0) {
@@ -673,6 +682,8 @@ public class ItemServiceImpl implements ItemService {
 				if (isom.getOptionValue().equals("DIRECT")) {
 					SizeOption injected_size_option = sizeOptionRepository.save(isom.getSizeOption());
 					isom.setSizeOption(injected_size_option);
+					
+					direct_size_option_store.put(injected_size_option.getName(), injected_size_option);
 				}
 			}
 			itemSizeOptionMapRepository.save(isomlist);
@@ -687,6 +698,24 @@ public class ItemServiceImpl implements ItemService {
 			itemMaterialMapRepository.save(imms);
 		}
 
+		List<ItemScmmSoValue> issv_list = ibd.getItemScmmSoValues();
+		
+		if (issv_list.size() != 0) {
+			for (ItemScmmSoValue issv : issv_list) {
+				issv.setItem(new_item);
+				
+				if(issv.getSizeOption().getId() == 0L) {
+					issv.setSizeOption((SizeOption)direct_size_option_store.get(issv.getSizeOption().getName()));	
+				}  
+			}
+			
+			
+			
+			itemScmmSoValueRepository.save(issv_list);
+		}
+		
+		
+		
 		return new_item;
 	}
 

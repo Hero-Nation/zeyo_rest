@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallDto;
 
@@ -12,7 +13,7 @@ public interface ShopmallService {
 
 	Map<String, Object> client_search(Map<String, Object> where, Pageable page);
 
-	Shopmall insert(ShopmallDto param, Long member_seq);
+	Shopmall insert(NameVO param, Long member_seq);
 
 	Map<String, Object> update_name(ShopmallDto param, Long member_seq);
 

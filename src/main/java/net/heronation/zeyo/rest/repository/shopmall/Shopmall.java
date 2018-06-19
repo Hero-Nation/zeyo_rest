@@ -57,6 +57,14 @@ public class Shopmall {
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime deleteDt;
 	private String useYn;
+	
+	
+	private String storeType;
+	private String storeId;
+	private String tempIdentity;
+	private String oauthCode;
+	private String accessToken;
+	private String refreshToken;
 
 	@Override
 	public String toString() {

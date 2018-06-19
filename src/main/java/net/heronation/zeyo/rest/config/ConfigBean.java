@@ -8,10 +8,19 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.servlet.DispatcherServlet;
 
 @Configuration
 public class ConfigBean {
+	
+	@Bean
+	public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+	    DefaultHttpFirewall firewall = new DefaultHttpFirewall();
+	    firewall.setAllowUrlEncodedSlash(true);
+	    return firewall;
+	}
 
 	@Bean
 	PasswordEncoder passwordEncoder() {

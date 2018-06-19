@@ -77,6 +77,24 @@ public class FitInfoController extends BaseController {
 
 		return return_success((Object) fit_infoService.search(param, pageable));
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/detail_list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> detail_list(@RequestParam(value = "id", required = false) String id,
+			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
+			Pageable pageable) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		if(id == null) {
+			return return_fail("id.empty");
+		}else {
+			param.put("id", id); 
+			return return_success((Object) fit_infoService.detail_list(param, pageable));	
+		}
+		
+	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/fitInfoOptions")

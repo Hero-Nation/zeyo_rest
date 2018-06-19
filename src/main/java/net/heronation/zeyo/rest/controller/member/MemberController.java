@@ -656,5 +656,25 @@ public class MemberController extends BaseController {
 		}
 
 	}
+	
+	
+	
+	@RequestMapping(path = "/admin_update", method = RequestMethod.PATCH)
+	public ResponseEntity<ResultVO> admin_update(@RequestBody AdminUpdateDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) { 
+		log.debug("/api/members/admin_update");
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+ 
+		try {
+			return return_success(memberService.admin_update(param));
+		}catch(Exception e) {
+			return return_fail(e);
+		}
+		
+		
+
+	}
 
 }

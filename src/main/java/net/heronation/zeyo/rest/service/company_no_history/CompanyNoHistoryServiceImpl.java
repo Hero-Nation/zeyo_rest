@@ -55,7 +55,7 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 		
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from (");
 
 		StringBuffer select_query = new StringBuffer();  
 		select_query.append("SELECT ");
@@ -133,7 +133,7 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString()); 
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString()); 
 
 		BigInteger count_list = BigInteger.ZERO;
 		
@@ -186,18 +186,120 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 	}
 
 	@Override
-	public Page<CompanyNoHistory> mylist(Predicate where, Pageable page) {
-		JPAQuery<CompanyNoHistory> query = new JPAQuery<CompanyNoHistory>(entityManager);
+	public Map<String, Object> mylist(Map<String, Object> param, Pageable page) {
+ 
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) from ( ");
 
-		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
+		StringBuffer select_query = new StringBuffer();  
+		select_query.append("SELECT ");
+		select_query.append("    ch.id , ");
+		select_query.append("    ch.before_no , ");
+		select_query.append("    ch.company_no , ");
+		select_query.append("    ch.name , ");
+		select_query.append("    ch.change_dt , ");
+		select_query.append("    ch.member_id ");
+ 
+		StringBuffer where_query = new StringBuffer();
+		where_query.append("  FROM ");
+		where_query.append("    company_no_history ch ");
+ 
+		where_query.append("   WHERE ");
+		where_query.append("   1 = 1");
+		
+		
+		String member_id = (String) param.get("member_id");
+		if (member_id != null) {
+			where_query.append("        AND   ch.member_id = " + member_id + " "); 
+		}
+ 
+		
+		 
 
-		QueryResults<CompanyNoHistory> R = query.from(target)
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY ch.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
 
-				.where(where)
-				// .orderBy(target.id.desc())
-				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
 
-		return new PageImpl<CompanyNoHistory>(R.getResults(), page, R.getTotal());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString()); 
+
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+		
+		
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
+		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>();
+
+//			select_query.append("    ch.id , ");
+//			select_query.append("    ch.before_no , ");
+//			select_query.append("    ch.company_no , ");
+//			select_query.append("    ch.name , ");
+//			select_query.append("    ch.change_dt , ");
+//			select_query.append("    ch.member_id ");
+	 
+
+			
+			search_R.put("beforeNo", row[1]);
+			search_R.put("companyNo", row[2]);
+			search_R.put("name", row[3]);
+			search_R.put("changeDt", row[4]); 
+			search_R.put("memberId", row[5]); 
+
+			return_list.add(search_R);
+		}
+
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.intValue());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+
+		
+		
+//		JPAQuery<CompanyNoHistory> query = new JPAQuery<CompanyNoHistory>(entityManager);
+//
+//		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;
+//
+//		QueryResults<CompanyNoHistory> R = query.from(target)
+//
+//				.where(where)
+//				// .orderBy(target.id.desc())
+//				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
+//
+//		return new PageImpl<CompanyNoHistory>(R.getResults(), page, R.getTotal());
 	}
 
 }

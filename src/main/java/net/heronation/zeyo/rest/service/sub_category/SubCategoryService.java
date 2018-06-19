@@ -13,7 +13,7 @@ import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 
 public interface SubCategoryService {
 	// Page<SubCategory> search(Predicate where, Pageable page);
-	Page<Map<String, Object>> subsearch(Predicate where, Pageable page);
+	Map<String, Object> subsearch(Map<String, Object> where, Pageable page);
 
 	Map<String, Object> distinct_name(String cate);
 	

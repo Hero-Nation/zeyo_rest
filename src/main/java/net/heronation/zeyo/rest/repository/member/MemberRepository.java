@@ -31,4 +31,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslP
  	@Override 
  	@PreAuthorize("permitAll()")
  	<S extends Member> S save(S arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	Member getOne(Long arg0);
 }

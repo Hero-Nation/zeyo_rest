@@ -11,6 +11,7 @@ import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 public interface ClothColorService {
 	Map<String,Object>  search(Map<String,Object> where,Pageable page); 
 	
+
 	
 	String insert(ClothColorDto param);
 

@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.common.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.service.common.CommonService;
 
-@Controller
+@RepositoryRestController
 @Slf4j
 @RequestMapping("/statistic")
 public class StatisticController extends BaseController {

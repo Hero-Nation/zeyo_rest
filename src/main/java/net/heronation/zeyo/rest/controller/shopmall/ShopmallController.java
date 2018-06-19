@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
@@ -86,7 +87,7 @@ public class ShopmallController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultVO> insert( 
 			
-			@RequestBody ShopmallDto param,
+			@RequestBody NameVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		if(param.getName() == null || param.getName().equals("")) {

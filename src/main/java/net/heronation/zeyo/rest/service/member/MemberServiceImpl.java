@@ -31,6 +31,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
@@ -428,9 +429,10 @@ public class MemberServiceImpl implements MemberService {
 		Member user = memberRepository.findOne(member_seq);
 
 		CompanyNoHistory last = list.get(list.size() - 1);
-		last.setBeforeNo(param.getCp_no());
+		//last.setBeforeNo(param.getCp_no());
 
 		CompanyNoHistory new_record = new CompanyNoHistory();
+		new_record.setBeforeNo(last.getCompanyNo());
 		new_record.setCompanyNo(param.getCp_no());
 		new_record.setChangeDt(new DateTime());
 		new_record.setMember(user);
@@ -908,6 +910,38 @@ public class MemberServiceImpl implements MemberService {
  
 
 		return CommonConstants.COMPLETE;
+	}
+
+	@Override
+	@Transactional
+	public String admin_update(AdminUpdateDto param) throws CommonException {
+		String R = CommonConstants.OK;
+		
+		
+		Member db_val = memberRepository.findOne(param.getMember_id());
+		
+		db_val.setEmail(param.getMember_email());
+		db_val.setManager(param.getMember_manager());
+		db_val.setManagerPhone(param.getMember_manager_phone());
+		db_val.setPhone(param.getMember_phone());
+		
+		
+		CompanyNoHistory last = companyNoHistoryRepository.findOne(param.getCompany_id());
+		Member user = memberRepository.findOne(param.getMember_id()); 
+		
+		// 사업자 번호가 변경되면 이력을 넣어주고 변경시킨다. 
+		if(!last.getCompanyNo().equals(param.getCompany_companyNo())) { 
+			
+			CompanyNoHistory new_cnh = new CompanyNoHistory();
+			new_cnh.setBeforeNo(last.getCompanyNo());
+			new_cnh.setChangeDt(new DateTime());
+			new_cnh.setCompanyNo(param.getCompany_companyNo());
+			new_cnh.setMember(user);
+			new_cnh.setName(last.getName());
+			companyNoHistoryRepository.save(new_cnh);
+		}
+		
+		return R;
 	}
 
 }

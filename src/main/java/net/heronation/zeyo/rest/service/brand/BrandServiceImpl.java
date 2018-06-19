@@ -61,7 +61,7 @@ public class BrandServiceImpl implements BrandService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*)  from ( ");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
@@ -186,7 +186,7 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -195,6 +195,8 @@ public class BrandServiceImpl implements BrandService {
 		} else {
 			count_list = count_result.get(0);
 		}
+		
+		
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -408,7 +410,7 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(sort_query).append(" ) count_table ").toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();

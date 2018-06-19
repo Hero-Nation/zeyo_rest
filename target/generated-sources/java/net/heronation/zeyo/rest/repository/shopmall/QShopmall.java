@@ -22,6 +22,8 @@ public class QShopmall extends EntityPathBase<Shopmall> {
 
     public static final QShopmall shopmall = new QShopmall("shopmall");
 
+    public final StringPath accessToken = createString("accessToken");
+
     public final DateTimePath<org.joda.time.DateTime> createDt = createDateTime("createDt", org.joda.time.DateTime.class);
 
     public final DateTimePath<org.joda.time.DateTime> deleteDt = createDateTime("deleteDt", org.joda.time.DateTime.class);
@@ -33,6 +35,14 @@ public class QShopmall extends EntityPathBase<Shopmall> {
     public final net.heronation.zeyo.rest.repository.member.QMember member;
 
     public final StringPath name = createString("name");
+
+    public final StringPath oauthCode = createString("oauthCode");
+
+    public final StringPath refreshToken = createString("refreshToken");
+
+    public final StringPath storeType = createString("storeType");
+
+    public final StringPath tempIdentity = createString("tempIdentity");
 
     public final StringPath useYn = createString("useYn");
 

@@ -14,6 +14,10 @@ import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
 
 public interface FitInfoService {
 	Map<String,Object> search(Map<String,Object> where, Pageable page); 
+	Map<String,Object> detail_list(Map<String,Object> where, Pageable page); 
+	
+	
+	
 	Page<Map<String,Object>> fitInfoOptions_search(Predicate where, Pageable page); 
 	String insert(FitInfoDto param);
 	String update(FitInfoUpdateDto param);

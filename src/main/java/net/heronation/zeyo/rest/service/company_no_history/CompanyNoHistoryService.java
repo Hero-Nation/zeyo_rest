@@ -9,12 +9,10 @@ import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 
-public interface CompanyNoHistoryService { 
-	
-	
+public interface CompanyNoHistoryService {
+
 	Map<String, Object> search(Map<String, Object> where, Pageable page);
-	
-	
-	Page<CompanyNoHistory> mylist(Predicate where, Pageable page);
+
+	Map<String, Object> mylist(Map<String, Object> where, Pageable page);
 
 }

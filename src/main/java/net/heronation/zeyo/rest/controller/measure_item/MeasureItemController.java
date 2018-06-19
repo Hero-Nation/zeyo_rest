@@ -72,5 +72,22 @@ public class MeasureItemController extends BaseController {
 		return return_success((Object) measure_itemService.search(param, pageable));
 	}
 
- 
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/detail_list")
+	@ResponseBody
+	public ResponseEntity<ResultVO> detail_list(@RequestParam(value = "id", required = false) String id,
+
+			Pageable pageable) {
+		if(id == null) {
+			return return_fail("id.empty");
+		}else {
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("id", id);
+
+			return return_success((Object) measure_itemService.detail_list(param, pageable));			
+		}
+
+
+	}
 }

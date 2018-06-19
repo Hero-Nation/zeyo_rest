@@ -21,6 +21,9 @@ alter table item_ironing_map drop foreign key FKpwtd1s97vwgubuji09oxddv98
 alter table item_laundry_map drop foreign key FKg4wmy9noxkxyyncw2i37flisr
 alter table item_material_map drop foreign key FKqn2dhw7g6upbdgpo7d1apewfr
 alter table item_material_map drop foreign key FKkahmyyniph988jgmbgru7luiv
+alter table item_scmm_so_value drop foreign key FKobtikn1n9atr45m156fffoqh4
+alter table item_scmm_so_value drop foreign key FKosap26muju3jyj856ueyueyy
+alter table item_scmm_so_value drop foreign key FKjhnbr19hqwkkvwljn3ltbbqt6
 alter table item_shopmall_map drop foreign key FKbrwddijlb6k9ijq3dbxmtkvek
 alter table item_shopmall_map drop foreign key FKp96tmk8n6j24kaf110uv6qhf9
 alter table item_size_option_map drop foreign key FKmda4wwdmcm5madmihlj6fqcjp
@@ -55,6 +58,7 @@ drop table if exists item_fit_info_option_map
 drop table if exists item_ironing_map
 drop table if exists item_laundry_map
 drop table if exists item_material_map
+drop table if exists item_scmm_so_value
 drop table if exists item_shopmall_map
 drop table if exists item_size_option_map
 drop table if exists jpa_id_table

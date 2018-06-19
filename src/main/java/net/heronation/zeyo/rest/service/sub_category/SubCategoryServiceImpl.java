@@ -1,5 +1,6 @@
 package net.heronation.zeyo.rest.service.sub_category;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,45 +97,171 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Map<String, Object>> subsearch(Predicate where, Pageable page) {
+	public Map<String, Object> subsearch(Map<String, Object> param, Pageable page) {
 
-		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) from ( ");
 
-		QSubCategory sc = QSubCategory.subCategory;
-		QSubCategoryFitInfoMap scfi = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
-		QSubCategoryMeasureMap scmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
+		StringBuffer select_query = new StringBuffer(); 
+		select_query.append("SELECT sc.id                                  AS subcate_id, ");
+		select_query.append("       (SELECT Count(*) ");
+		select_query.append("        FROM   sub_category_fit_info_map a ");
+		select_query.append("        WHERE  a.use_yn = 'Y' ");
+		select_query.append("               AND a.sub_category_id = sc.id) AS subCategoryFitInfoMaps_count, ");
+		select_query.append("       (SELECT Count(*) ");
+		select_query.append("        FROM   sub_category_measure_map a ");
+		select_query.append("        WHERE  a.use_yn = 'Y' ");
+		select_query.append("               AND a.sub_category_id = sc.id) AS subCategoryMeasureMaps_count, ");
+		select_query.append("       sc.name                                AS subcate_name, ");
+		select_query.append("       sc.cloth_image, ");
+		select_query.append("       sc.item_image, ");
+		select_query.append("       sc.create_dt ");
 
-		PathBuilder<SubCategory> queryPath = new PathBuilder<SubCategory>(SubCategory.class, "subCategory");
 
-		for (Order order : page.getSort()) {
-			PathBuilder<Object> path = queryPath.get(order.getProperty());
-			query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()), path));
+		StringBuffer where_query = new StringBuffer();
+		where_query.append(" FROM   sub_category sc ");
+		where_query.append(" WHERE  1 = 1");
+
+		String cate = (String) param.get("cate");
+		if(cate != null  ) {
+			where_query.append("       AND sc.category_id = " + cate);
+		}
+		
+		String name = (String) param.get("name");
+		if(name != null  ) {
+			where_query.append("       AND sc.name = '%" + name + "%'");
+		}
+		
+		
+		String start = (String)param.get("start");
+		if(start != null  ) {
+			where_query.append("        AND sc.create_dt >= STR_TO_DATE('"+start+"', '%Y-%m-%d %H:%i:%s')");	
+		}
+		
+		
+		String end = (String)param.get("end");
+		if(end != null  ) {
+			where_query.append("        AND sc.create_dt <= STR_TO_DATE('"+end+"', '%Y-%m-%d %H:%i:%s')");	
 		}
 
-		QueryResults<Tuple> R = query
-				.select(sc.id, sc.name, sc.itemImage, sc.clothImage, scfi.id.countDistinct(), scmm.id.countDistinct(),
-						sc.createDt)
-				.from(sc).leftJoin(sc.subCategoryFitInfoMaps, scfi).on(scfi.useYn.eq("Y"))
-				.leftJoin(sc.subCategoryMeasureMaps, scmm).on(scmm.useYn.eq("Y")).groupBy(sc.id).where(where)
-				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
+		
+		StringBuffer group_query = new StringBuffer();
 
-		List<Tuple> search_list = R.getResults();
+		//group_query.append(" GROUP BY sc.id ");
+
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY sc.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
+
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
+
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(" ) count_table ").toString());
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
-		for (Tuple row : search_list) {
-			Map<String, Object> search_R = new HashMap<String, Object>();
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>(); 
 
-			search_R.put("subcate_name", row.get(sc.name));
-			search_R.put("subcate_id", row.get(sc.id));
-			search_R.put("itemImage", row.get(sc.itemImage));
-			search_R.put("clothImage", row.get(sc.clothImage));
-			search_R.put("subCategoryFitInfoMaps_count", row.get(scfi.id.countDistinct()));
-			search_R.put("subCategoryMeasureMaps_count", row.get(scmm.id.countDistinct()));
-			search_R.put("createDt", row.get(sc.createDt));
+			
+//		    "content" : [ {
+//		        "subcate_id" : 7,
+//		        "subCategoryFitInfoMaps_count" : 2,
+//		        "subCategoryMeasureMaps_count" : 1,
+//		        "subcate_name" : "2차카테고리2",
+//		        "clothImage" : "hopangmen_1.jpg",
+//		        "createDt" : "2018-06-18T02:15:59.000Z",
+//		        "itemImage" : "다운로드.jpg"
+//		      } ],
+			
+			search_R.put("subcate_id", row[0]);
+			search_R.put("subCategoryFitInfoMaps_count", row[1]);
+			search_R.put("subCategoryMeasureMaps_count", row[2]); 
+			search_R.put("subcate_name", row[3]); 
+			search_R.put("clothImage", row[4]); 
+			search_R.put("createDt", row[5]); 
+			search_R.put("itemImage", row[6]); 
+			
 
 			return_list.add(search_R);
 		}
-		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
+
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.intValue());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+		
+		
+		
+//		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
+//
+//		QSubCategory sc = QSubCategory.subCategory;
+//		QSubCategoryFitInfoMap scfi = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
+//		QSubCategoryMeasureMap scmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
+//
+//		PathBuilder<SubCategory> queryPath = new PathBuilder<SubCategory>(SubCategory.class, "subCategory");
+//
+//		for (Order order : page.getSort()) {
+//			PathBuilder<Object> path = queryPath.get(order.getProperty());
+//			query.orderBy(new OrderSpecifier(com.querydsl.core.types.Order.valueOf(order.getDirection().name()), path));
+//		}
+//
+//		QueryResults<Tuple> R = query
+//				.select(sc.id, sc.name, sc.itemImage, sc.clothImage, scfi.id.countDistinct(), scmm.id.countDistinct(),
+//						sc.createDt)
+//				.from(sc).leftJoin(sc.subCategoryFitInfoMaps, scfi).on(scfi.useYn.eq("Y"))
+//				.leftJoin(sc.subCategoryMeasureMaps, scmm).on(scmm.useYn.eq("Y")).groupBy(sc.id).where(where)
+//				.offset((page.getPageNumber() - 1) * page.getPageSize()).limit(page.getPageSize()).fetchResults();
+//
+//		List<Tuple> search_list = R.getResults();
+//		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
+//
+//		for (Tuple row : search_list) {
+//			Map<String, Object> search_R = new HashMap<String, Object>();
+//
+//			search_R.put("subcate_name", row.get(sc.name));
+//			search_R.put("subcate_id", row.get(sc.id));
+//			search_R.put("itemImage", row.get(sc.itemImage));
+//			search_R.put("clothImage", row.get(sc.clothImage));
+//			search_R.put("subCategoryFitInfoMaps_count", row.get(scfi.id.countDistinct()));
+//			search_R.put("subCategoryMeasureMaps_count", row.get(scmm.id.countDistinct()));
+//			search_R.put("createDt", row.get(sc.createDt));
+//
+//			return_list.add(search_R);
+//		}
+//		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
 
 	}
 
@@ -259,7 +387,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		QSubCategoryFitInfoMap qscfim = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
 
-		Iterable<SubCategoryFitInfoMap> scfilist = scfimRepository.findAll(qscfim.subCategory.id.eq(param.getId()));
+		Iterable<SubCategoryFitInfoMap> scfi_db_list = scfimRepository.findAll(qscfim.subCategory.id.eq(param.getId()));
 
 		List<LIdVO> filist = param.getFitinfos();
 		for (LIdVO vo : filist) {
@@ -267,7 +395,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			boolean shouldBeDeleted = true;
 			boolean db_exist = false;
 			SubCategoryFitInfoMap should_delete_map = new SubCategoryFitInfoMap();
-			for (SubCategoryFitInfoMap db_scfim : scfilist) {
+			
+			
+			
+			for (SubCategoryFitInfoMap db_scfim : scfi_db_list) {
 				should_delete_map = db_scfim;
 				if (db_scfim.getFitInfo().getId() == vo.getId()) {
 					shouldBeDeleted = false;

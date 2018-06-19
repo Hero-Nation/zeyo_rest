@@ -20,6 +20,7 @@ import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoO
 import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
@@ -67,7 +68,8 @@ public class ItemModifyDto {
 	private List<ItemMaterialMap> materials = new ArrayList<ItemMaterialMap>();
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
-
+    private List<ItemScmmSoValue> itemScmmSoValues = new ArrayList<ItemScmmSoValue>();
+    
 	private String laundryYn;
 	private ItemLaundryMap itemLaundryMap;
 	private String drycleaningYn;

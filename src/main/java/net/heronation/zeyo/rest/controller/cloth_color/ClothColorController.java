@@ -59,24 +59,23 @@ public class ClothColorController extends BaseController {
 
 			Pageable pageable) {
 
-		Map<String,Object> param = new HashMap<String,Object>();
-		param.put("name", name); 
-		if(start == null) {
-			param.put("start", start);	
-		}else {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("name", name);
+		if (start == null) {
+			param.put("start", start);
+		} else {
 			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-		if(end == null) {
-			param.put("end", end);	
-		}else {
+		if (end == null) {
+			param.put("end", end);
+		} else {
 			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
-		
+
 		return return_success((Object) cloth_colorService.search(param, pageable));
 	}
 
-	
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	public ResponseEntity<ResultVO> insert(@RequestBody ClothColorDto param,
@@ -92,7 +91,7 @@ public class ClothColorController extends BaseController {
 
 		return return_success((Object) cloth_colorService.update(param));
 	}
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
@@ -101,5 +100,4 @@ public class ClothColorController extends BaseController {
 		return return_success((Object) cloth_colorService.delete(param));
 	}
 
-	
 }

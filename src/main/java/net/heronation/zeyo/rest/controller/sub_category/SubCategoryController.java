@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
@@ -111,35 +114,27 @@ public class SubCategoryController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/sublist")
 	@ResponseBody
-	public ResponseEntity<ResultVO> sublist(@RequestParam(value = "cate", required = false) Long cate,
+	public ResponseEntity<ResultVO> sublist(@RequestParam(value = "cate", required = false) String cate,
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QSubCategory target = QSubCategory.subCategory;
-
-		if (cate != null) {
-			builder.and(target.category.id.eq(cate));
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("cate",cate);
+		param.put("name", name);  
+		if (start == null) {
+			param.put("start", start);
+		} else {
+			param.put("start", start.toString(Format.ISO_DATETIME));
+		}
+		if (end == null) {
+			param.put("end", end);
+		} else {
+			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
 
-		if (name != null) {
-			builder.and(target.name.containsIgnoreCase(name));
-		}
-
-		if (start != null) {
-			builder.and(target.createDt.after(start));
-		}
-
-		if (end != null) {
-			builder.and(target.createDt.before(end));
-		}
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success((Object) sub_categoryService.subsearch(builder.getValue(), pageable));
+		return return_success((Object) sub_categoryService.subsearch(param, pageable));
 	}
 
 	@PostMapping("/upload_item_image")
