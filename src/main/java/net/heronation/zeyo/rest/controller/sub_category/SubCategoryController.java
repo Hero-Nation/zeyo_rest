@@ -27,14 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.querydsl.core.BooleanBuilder;
-
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.Format;
-import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryResourceAssembler;

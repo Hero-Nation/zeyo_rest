@@ -17,15 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.querydsl.core.BooleanBuilder;
-
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryResourceAssembler;
-import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.service.company_no_history.CompanyNoHistoryService;
 
 @Slf4j

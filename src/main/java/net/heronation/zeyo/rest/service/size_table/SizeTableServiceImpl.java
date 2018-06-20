@@ -60,8 +60,6 @@ import net.heronation.zeyo.rest.repository.size_table.QSizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableRepository;
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.QSubCategoryMeasureMap;
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMapRepository;
 
 @Slf4j

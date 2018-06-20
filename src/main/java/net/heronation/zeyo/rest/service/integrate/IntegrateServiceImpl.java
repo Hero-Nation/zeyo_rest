@@ -1,20 +1,14 @@
 package net.heronation.zeyo.rest.service.integrate;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
-import net.heronation.zeyo.rest.service.item.ItemService;
-import net.heronation.zeyo.rest.service.item.ItemServiceImpl;
 
 @Slf4j
 @Service

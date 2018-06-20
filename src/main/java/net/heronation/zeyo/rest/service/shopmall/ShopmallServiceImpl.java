@@ -69,7 +69,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		select_query.append("                FROM ");
 		select_query.append("                    company_no_history scnh ");
 		select_query.append("                WHERE ");
-		select_query.append("                    scnh.member_id = m.id ");
+		select_query.append("                    scnh.member_id =  s.member_id ");
 		select_query.append("                GROUP BY scnh.member_id)) AS company_name, ");
 		select_query.append("    s.name AS shopmall_name, ");
 		select_query.append("    b.name AS brand_name, ");

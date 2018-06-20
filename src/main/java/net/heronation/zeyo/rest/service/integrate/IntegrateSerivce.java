@@ -1,8 +1,5 @@
 package net.heronation.zeyo.rest.service.integrate;
 
-import java.util.List;
-
-import net.heronation.zeyo.rest.common.value.ToggleVO;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 
 public interface IntegrateSerivce {

@@ -1,23 +1,9 @@
 package net.heronation.zeyo.rest.controller.integrate;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,16 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.constants.Format;
-import net.heronation.zeyo.rest.controller.category.CategoryController;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
-import net.heronation.zeyo.rest.service.category.CategoryService;
 import net.heronation.zeyo.rest.service.integrate.IntegrateSerivce;
 
 @Slf4j

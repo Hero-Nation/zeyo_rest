@@ -3,6 +3,9 @@ package net.heronation.zeyo.rest.controller.integrate.cafe24.dto;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import lombok.Data;
+
+@Data
 public class Product {
 	private Long shop_no;
 	private Long product_no;
