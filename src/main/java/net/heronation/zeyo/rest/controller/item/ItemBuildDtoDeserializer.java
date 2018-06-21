@@ -191,7 +191,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		
 				long madein_kindof = madein_node.get("kindof").asLong();
 				
-				// 관리자 1 , 직접입력 2
+				// 관리자 1 , 직접입력 2 
 				if(madein_kindof == 2) {
 					
 					String madein_input_value = madein_node.get("inputValue").textValue();

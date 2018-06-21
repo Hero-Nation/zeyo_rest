@@ -78,6 +78,8 @@ public class Item {
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
 
+	private String shopProductId;
+	
 	private String imageMode;
 
 	private String image;

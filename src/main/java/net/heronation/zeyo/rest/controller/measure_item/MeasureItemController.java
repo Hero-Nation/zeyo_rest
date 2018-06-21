@@ -11,15 +11,21 @@ import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
+import net.heronation.zeyo.rest.repository.measure_item.MeasureItemDto;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemRepository;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemResourceAssembler;
 import net.heronation.zeyo.rest.service.measure_item.MeasureItemService; 
@@ -70,7 +76,7 @@ public class MeasureItemController extends BaseController {
 		}
 		
 		return return_success((Object) measure_itemService.search(param, pageable));
-	}
+	} 
 
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -90,4 +96,14 @@ public class MeasureItemController extends BaseController {
 
 
 	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	public ResponseEntity<ResultVO> insert(@RequestBody MeasureItemDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success(measure_itemService.insert(param));
+	}
+	
 }

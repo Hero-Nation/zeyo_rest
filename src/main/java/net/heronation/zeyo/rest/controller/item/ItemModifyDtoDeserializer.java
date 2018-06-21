@@ -80,7 +80,7 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 	@Autowired
 	private MaterialRepository materialRepository;
 
-	@Autowired
+	@Autowired 
 	private  SizeOptionRepository sizeOptionRepository;
 	
 	
@@ -534,7 +534,7 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 		
 		
 		
-		log.debug("ItemBuildDtoDeserializer : mi_so_value");
+		log.debug("ItemModifyDtoDeserializer : mi_so_value");
 		// fit 정보 관리 	
 		
 		List<ItemScmmSoValue> issvList = new ArrayList<ItemScmmSoValue>();

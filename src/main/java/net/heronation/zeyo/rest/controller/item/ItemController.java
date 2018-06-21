@@ -70,7 +70,7 @@ public class ItemController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	public ResponseEntity<ResultVO> list(
-
+ 
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "company", required = false) String company,
 			@RequestParam(value = "brand", required = false) String brand,
@@ -91,7 +91,7 @@ public class ItemController extends BaseController {
 		param.put("brand", brand);
 		param.put("shopmall", shopmall); 
 		param.put("size_link", size_link); 
-		param.put("category", category); 
+		param.put("category", category);  
 		param.put("sub_category", sub_category); 
 		param.put("start_price", start_price); 
 		param.put("end_price", end_price);   
@@ -300,7 +300,7 @@ public class ItemController extends BaseController {
 	
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
-	@RequestMapping(method = RequestMethod.POST, value = "/modify")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/modify")
 	@ResponseBody
 	public ResponseEntity<ResultVO> modify(@RequestBody @Valid ItemModifyDto itemModifyDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {

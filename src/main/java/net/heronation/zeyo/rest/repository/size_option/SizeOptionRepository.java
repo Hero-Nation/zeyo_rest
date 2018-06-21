@@ -28,6 +28,9 @@ public interface SizeOptionRepository extends JpaRepository<SizeOption, Long>, Q
 	@RestResource(path = "findByName", rel = "findByName", exported = true)
 	@Query("select m from SizeOption m where m.name = ?1 and  m.useYn = 'Y'")
 	List<SizeOption> findByName(@Param("name") String name);
+
+	@Query("select m from SizeOption m where m.name = ?1 and  m.useYn = 'Y' and m.category = 5 and m.subCategory = 7 ")
+	List<SizeOption> findByNameDirect(@Param("name") String name);
 	
 
 	@RestResource(path = "select_options_symbol", rel = "select_options_symbol",exported = true)

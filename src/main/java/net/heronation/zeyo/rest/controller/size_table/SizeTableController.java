@@ -212,7 +212,7 @@ public class SizeTableController extends BaseController {
 
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
  
-		Long item_id = Long.valueOf(id);
+		Long item_id = Long.valueOf(id); 
 		
 		
 		return return_success((Object) size_tableService.preview(item_id));

@@ -1,18 +1,22 @@
 package net.heronation.zeyo.rest.oauth;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -28,9 +32,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.AccessTokenByOauthCode;
+import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Product;
+import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Products;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -54,12 +62,12 @@ public class OauthTest {
 		@Override
 		public boolean hasError(ClientHttpResponse clienthttpresponse) throws IOException {
 			log.debug("hasError");
-			
+
 			log.debug(clienthttpresponse.getStatusText());
 
 			String text = IOUtils.toString(clienthttpresponse.getBody(), StandardCharsets.UTF_8.name());
 			log.debug(text);
-			
+
 			if (clienthttpresponse.getStatusCode() != HttpStatus.OK) {
 
 				if (clienthttpresponse.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -72,13 +80,13 @@ public class OauthTest {
 	}
 
 	@Test
+	@Ignore
 	public void getAccessTokenByOauthCode() {
 		log.debug("updateAccessTokenByOauthCode");
 
-		
 		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 		requestFactory.setOutputStreaming(false);
-		
+
 		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
 		converters.add(new MappingJackson2HttpMessageConverter());
 		converters.add(new FormHttpMessageConverter());
@@ -100,7 +108,7 @@ public class OauthTest {
 		// -d 'code=xu2xG1rfDimVP2oe6fopRE' \
 		// -d 'redirect_uri=https://test.com/oauth/callback'
 
-		//log.debug("Basic " + Base64Utils.encode(userAndPass.getBytes()));
+		// log.debug("Basic " + Base64Utils.encode(userAndPass.getBytes()));
 
 		String uri = "https://heronation.cafe24api.com/api/v2/oauth/token";
 
@@ -113,8 +121,8 @@ public class OauthTest {
 		headers.set("Authorization", "Basic aHJvNEUyZGdQdHZpaVRZM0JlejlEQTppaWVMbU42VUNxWVV2WTJvVEo0aXJG");
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers); 
-		
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
 		try {
 
 			AccessTokenByOauthCode result = restTemplate.postForObject(uri, request, AccessTokenByOauthCode.class);
@@ -126,8 +134,7 @@ public class OauthTest {
 			log.error(e.getStatusText());
 
 		}
- 
-		
+
 		// ResourceOwnerPasswordResourceDetails resourceDetails = new
 		// ResourceOwnerPasswordResourceDetails();
 		// resourceDetails.setUsername("heronation");
@@ -205,8 +212,47 @@ public class OauthTest {
 
 	}
 
-	public OAuth2RestTemplate getOauth2RestTemplate(OAuth2ProtectedResourceDetails details) {
-		return new OAuth2RestTemplate(details);
+	@Test
+	public void get_product() {
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		requestFactory.setOutputStreaming(false);
+
+		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+		converters.add(new MappingJackson2HttpMessageConverter());
+		converters.add(new FormHttpMessageConverter());
+		converters.add(new StringHttpMessageConverter());
+
+		RestTemplate restTemplate = new RestTemplate(requestFactory);
+		restTemplate.setMessageConverters(converters);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", String.format("Bearer %s", "GlMJ0JaSHxdikQnoJdB3eA"));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity entity = new HttpEntity(headers);
+
+		try {
+
+			URI uri = UriComponentsBuilder.newInstance().scheme("https")
+					.host(String.format("%s.cafe24api.com", "heronation")).path("/api/v2/admin/products")
+					.queryParam("limit", 100)
+					.queryParam("offset", 0)
+					.build()
+					.encode()
+					.toUri();
+
+			ResponseEntity<Products> response = restTemplate.exchange(uri, HttpMethod.GET, entity, Products.class);
+			log.debug(response.getStatusCodeValue()+ " " );
+			Products list = response.getBody();
+
+			for (Product p : list.getProducts()) {
+				log.debug(p.toString());
+			}
+		} catch (HttpClientErrorException e) {
+			e.printStackTrace();
+			log.error(e.getResponseBodyAsString());
+
+		}
 	}
 
 }

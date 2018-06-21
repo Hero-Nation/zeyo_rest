@@ -28,9 +28,12 @@ public interface ClothColorRepository extends JpaRepository<ClothColor, Long>, Q
 
 	@RestResource(path = "findByName", rel = "findByName", exported = true)
 	@Query("select m from ClothColor m where m.name = ?1 and  m.useYn = 'Y'")
+	@PreAuthorize("permitAll()")
 	List<ClothColor> findByName(@Param("name") String name);
 	
-	
+	@Query("select m from ClothColor m where m.name = ?1 and  m.useYn = 'Y' and m.kindof = 2")
+	@PreAuthorize("permitAll()")
+	List<ClothColor> findByNameDirect(@Param("name") String name);
 	
 	
 	@RestResource(path = "select_options", rel = "select_options",exported = true)

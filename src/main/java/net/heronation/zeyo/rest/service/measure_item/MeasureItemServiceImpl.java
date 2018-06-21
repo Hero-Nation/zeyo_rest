@@ -1,5 +1,5 @@
 package net.heronation.zeyo.rest.service.measure_item;
- 
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,82 +7,71 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import javax.persistence.Query;  
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.repository.measure_item.MeasureItemDto;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemRepository;
 
-
-
 @Slf4j
-@Service
-@Transactional
-public class MeasureItemServiceImpl implements MeasureItemService{
+@Service 
+public class MeasureItemServiceImpl implements MeasureItemService {
 
-    	@Autowired
-	private RestTemplate restTemplate; 
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private MeasureItemRepository measure_itemRepository;
 
 	@Autowired
 	EntityManager entityManager;
-	
+
 	@Override
-	public  Map<String,Object> search( Map<String,Object> param, Pageable page) {
+	@Transactional(readOnly=true)
+	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) ");
-		
-		 
 
-		StringBuffer select_query = new StringBuffer();    
+		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
 		select_query.append("    mi.id, ");
 		select_query.append("    mi.name, ");
 		select_query.append("    mi.meta_desc, ");
 		select_query.append("    mi.create_dt ");
 
-
- 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");
 		where_query.append("    measure_item mi ");
 		where_query.append(" WHERE ");
 		where_query.append("    mi.use_yn = 'Y'");
 
- 
-		
-		
 		String name = (String) param.get("name");
 		if (name != null) {
-			where_query.append("        AND   mi.name like '%" + name + "%' "); 
+			where_query.append("        AND   mi.name like '%" + name + "%' ");
 		}
 
-	 
-		
-		String start = (String)param.get("start");
-		if(start != null  ) {
-			where_query.append("        AND mi.create_dt >= STR_TO_DATE('"+start+"', '%Y-%m-%d %H:%i:%s')");	
-		}
-		
-		
-		String end = (String)param.get("end");
-		if(end != null  ) {
-			where_query.append("        AND mi.create_dt <= STR_TO_DATE('"+end+"', '%Y-%m-%d %H:%i:%s')");	
+		String start = (String) param.get("start");
+		if (start != null) {
+			where_query.append("        AND mi.create_dt >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
- 
-		//where_query.append("GROUP BY mi.id");
-		
+		String end = (String) param.get("end");
+		if (end != null) {
+			where_query.append("        AND mi.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
+		}
+
+		// where_query.append("GROUP BY mi.id");
+
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY mi.");
 		Sort sort = page.getSort();
@@ -101,12 +90,12 @@ public class MeasureItemServiceImpl implements MeasureItemService{
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString()); 
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -119,14 +108,14 @@ public class MeasureItemServiceImpl implements MeasureItemService{
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
 
-//			select_query.append("    mi.name, ");
-//			select_query.append("    mi.meta_desc, ");
-//			select_query.append("    mi.create_dt ");
+			// select_query.append(" mi.name, ");
+			// select_query.append(" mi.meta_desc, ");
+			// select_query.append(" mi.create_dt ");
 
 			search_R.put("id", row[0]);
 			search_R.put("name", row[1]);
-			search_R.put("metaDesc", row[2]); 
-			search_R.put("createDt", row[3]);   
+			search_R.put("metaDesc", row[2]);
+			search_R.put("createDt", row[3]);
 
 			return_list.add(search_R);
 		}
@@ -142,11 +131,12 @@ public class MeasureItemServiceImpl implements MeasureItemService{
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
-		return R; 
+		return R;
 
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Map<String, Object> detail_list(Map<String, Object> param, Pageable page) {
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -196,28 +186,29 @@ public class MeasureItemServiceImpl implements MeasureItemService{
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(" ) count_table ").toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query)
+				.append(group_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
 
-		Query q = entityManager
-				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
+		Query q = entityManager.createNativeQuery(
+				select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
 		for (Object[] row : list) {
-			Map<String, Object> search_R = new HashMap<String, Object>(); 
+			Map<String, Object> search_R = new HashMap<String, Object>();
 
 			search_R.put("cate_name", row[0]);
 			search_R.put("sub_cate_name", row[1]);
-			search_R.put("measure_create_dt", row[2]); 
+			search_R.put("measure_create_dt", row[2]);
 
 			return_list.add(search_R);
 		}
@@ -234,5 +225,14 @@ public class MeasureItemServiceImpl implements MeasureItemService{
 		R.put("size", return_list.size());
 
 		return R;
+	}
+
+	@Override
+	@Transactional
+	public String insert(MeasureItemDto param) {
+
+		measure_itemRepository.save(param.convertToEntity());
+
+		return CommonConstants.SUCCESS;
 	}
 }

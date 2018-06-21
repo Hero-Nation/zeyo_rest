@@ -18,7 +18,7 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
-import net.heronation.zeyo.rest.service.integrate.IntegrateSerivce;
+import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
 
 @Slf4j
 @Controller
@@ -26,7 +26,7 @@ import net.heronation.zeyo.rest.service.integrate.IntegrateSerivce;
 public class ZeyoAppController extends BaseController {
 
 	@Autowired
-	private IntegrateSerivce integrateSerivce;
+	private Cafe24Service cafe24Service;
 
 	@Autowired
 	private CategoryRepository repository;
@@ -44,11 +44,11 @@ public class ZeyoAppController extends BaseController {
 	public String login(@RequestParam(value = "id", required = false) long shopmall_id, Model m,@AuthenticationPrincipal OAuth2Authentication auth) {
 
 //		if(auth == null) {
-//			return "zeyo_app/need_token";
+//			return "zeyo_app/need_token"; 
 //		}
 //		
-		Shopmall sm = integrateSerivce.get_shopmall_temp_identity(shopmall_id);
-		m.addAttribute("state", sm.getTempIdentity());
+		Shopmall sm = cafe24Service.get_shopmall_temp_identity(shopmall_id);
+		m.addAttribute("state", sm.getOauthID());
 		
 		
 		return "zeyo_app/login";

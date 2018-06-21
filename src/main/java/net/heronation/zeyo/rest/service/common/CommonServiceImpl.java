@@ -43,7 +43,7 @@ public class CommonServiceImpl implements CommonService {
 
 		Map<String, Object> bbs_related = new HashMap<String, Object>();
 		// 게시판 글 관련 통계
-		// 총 게시글 수 : 1231
+		// 총 게시글 수 : 1231 
 		StringBuffer query = new StringBuffer();
 		query.append("SELECT ");
 		query.append("    COUNT(*) AS all_count ");

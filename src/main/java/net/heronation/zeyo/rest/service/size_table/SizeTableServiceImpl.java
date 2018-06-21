@@ -52,10 +52,14 @@ import net.heronation.zeyo.rest.repository.item_material_map.QItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.QItemScmmSoValue;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
 import net.heronation.zeyo.rest.repository.item_size_option_map.QItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
+import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.size_table.QSizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
@@ -574,6 +578,11 @@ public class SizeTableServiceImpl implements SizeTableService {
 	@Autowired
 	private ItemScmmSoValueRepository itemScmmSoValueRepository;
 	
+	
+	@Autowired
+	private ItemShopmallMapRepository itemShopmallMapRepository;
+	
+	
 	@Autowired
 	SubCategoryMeasureMapRepository subCategoryMeasureMapRepository;
 	
@@ -609,7 +618,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 		Iterable<ItemDrymethodMap> ridmm = itemDrymethodMapRepository.findAll(idmm.item.id.eq(item_id).and(idmm.useYn.eq("Y"))) ;
 		
 		R.put("dry_method", ridmm);
-		
+		 
 		
 		
 		QItemFitInfoOptionMap ifop = QItemFitInfoOptionMap.itemFitInfoOptionMap;
@@ -688,6 +697,19 @@ public class SizeTableServiceImpl implements SizeTableService {
 		Iterable<ItemScmmSoValue> rissv = itemScmmSoValueRepository.findAll(issv.item.id.eq(item_id).and(issv.useYn.eq("Y"))) ;
 	
 		R.put("sccm_so_value", rissv);
+		
+		
+		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
+		
+		Iterable<ItemShopmallMap> rism = itemShopmallMapRepository.findAll(ism.item.id.eq(item_id).and(ism.useYn.eq("Y"))) ;
+		
+		List<Shopmall> slist = new ArrayList<Shopmall>();
+		
+		for(ItemShopmallMap item_ism : rism) {
+			slist.add(item_ism.getShopmall());
+		}
+		
+		R.put("shopmall", slist);
 		
 		
 		return  R;

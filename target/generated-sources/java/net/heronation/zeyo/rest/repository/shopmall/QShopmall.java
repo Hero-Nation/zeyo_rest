@@ -38,11 +38,13 @@ public class QShopmall extends EntityPathBase<Shopmall> {
 
     public final StringPath oauthCode = createString("oauthCode");
 
+    public final StringPath oauthID = createString("oauthID");
+
     public final StringPath refreshToken = createString("refreshToken");
 
-    public final StringPath storeType = createString("storeType");
+    public final StringPath storeId = createString("storeId");
 
-    public final StringPath tempIdentity = createString("tempIdentity");
+    public final StringPath storeType = createString("storeType");
 
     public final StringPath useYn = createString("useYn");
 

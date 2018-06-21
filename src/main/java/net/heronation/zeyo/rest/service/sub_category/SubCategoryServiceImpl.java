@@ -188,13 +188,22 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 //		        "itemImage" : "다운로드.jpg"
 //		      } ],
 			
+			
+//		    sc.id AS subcate_id,
+//		    subCategoryFitInfoMaps_count,
+//		     subCategoryMeasureMaps_count,
+//		    sc.name AS subcate_name,
+//		    sc.cloth_image,
+//		    sc.item_image,
+//		    sc.create_dt
+			
 			search_R.put("subcate_id", row[0]);
 			search_R.put("subCategoryFitInfoMaps_count", row[1]);
 			search_R.put("subCategoryMeasureMaps_count", row[2]); 
 			search_R.put("subcate_name", row[3]); 
 			search_R.put("clothImage", row[4]); 
-			search_R.put("createDt", row[5]); 
-			search_R.put("itemImage", row[6]); 
+			search_R.put("itemImage", row[5]); 
+			search_R.put("createDt", row[6]); 
 			
 
 			return_list.add(search_R);
@@ -347,11 +356,19 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		for (LIdVO vo : milist) {
 
+			if(vo == null) continue;
+			
 			boolean shouldBeDeleted = true;
 			boolean db_exist = false;
 			SubCategoryMeasureMap should_delete_map = new SubCategoryMeasureMap();
 			for (SubCategoryMeasureMap db_scmm : scmm) {
+				
 				should_delete_map = db_scmm;
+				
+				if(db_scmm == null || db_scmm.getMeasureItem() == null) {
+					continue;
+				}
+				
 				if (db_scmm.getMeasureItem().getId() == vo.getId()) {
 					shouldBeDeleted = false;
 					db_exist = true;
@@ -381,7 +398,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		List<LIdVO> filist = param.getFitinfos();
 		for (LIdVO vo : filist) {
-
+			if(vo == null) continue;
 			boolean shouldBeDeleted = true;
 			boolean db_exist = false;
 			SubCategoryFitInfoMap should_delete_map = new SubCategoryFitInfoMap();
@@ -390,6 +407,12 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			
 			for (SubCategoryFitInfoMap db_scfim : scfi_db_list) {
 				should_delete_map = db_scfim;
+				
+				
+				if(db_scfim == null || db_scfim.getFitInfo() == null) {
+					continue;
+				}
+				
 				if (db_scfim.getFitInfo().getId() == vo.getId()) {
 					shouldBeDeleted = false;
 					db_exist = true;

@@ -61,13 +61,7 @@ public class BbsServiceImpl implements BbsService {
 		select_query.append("    m.name			as member_name, ");
 		select_query.append("    b.create_dt	as createDt, ");
 		select_query.append("    b.status 		as status");
-
-		// item.kindof
-		// item.id
-		// item.title
-		// item.member.name
-		// item.createDt
-		// item.status
+ 
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");

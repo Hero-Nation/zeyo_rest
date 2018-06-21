@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,20 +20,20 @@ import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
-import net.heronation.zeyo.rest.service.category.CategoryService;
+import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
 
  
 
 @Slf4j
 @Controller
-@RequestMapping("/integrate/")
-public class ApiController extends BaseController {
+@RequestMapping("/integrate")
+public class Cafe24ApiController extends BaseController {
 	
 
 	
 	
     @Autowired
-    private CategoryService categoryService;
+    private Cafe24Service cafe24Service;
  
      @Autowired
     private CategoryRepository repository; 
@@ -44,14 +45,15 @@ public class ApiController extends BaseController {
  
 
  	@Autowired
-	public ApiController(RepositoryEntityLinks entityLinks) {
+	public Cafe24ApiController(RepositoryEntityLinks entityLinks) {
 		this.entityLinks = entityLinks;
 	} 
 
  
-	@RequestMapping(method = RequestMethod.GET, value = "/cafe24/produc/sync")
+	@RequestMapping(method = RequestMethod.GET, value = "/cafe24_product_sync")
 	@ResponseBody
-	public ResponseEntity<ResultVO> cafe24_sync_produc(@AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultVO> cafe24_sync_produc(@AuthenticationPrincipal OAuth2Authentication auth,
+			@RequestParam(value = "shopmall_id", required = false) long shopmall_id) {
 		log.debug("/integrate/cafe24/produc/sync");
 		
 		// 유저 정보 가지고 오기
@@ -62,10 +64,14 @@ public class ApiController extends BaseController {
 		
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 		
+		String R = cafe24Service.sync_product(shopmall_id, 0, null, seq);
 		
+		if(R.equals(CommonConstants.SUCCESS)) {
+			return return_success(CommonConstants.SUCCESS);	
+		}else{
+			return return_fail(R);
+		}
 		
-		
-		return return_success("Asdf");
 	}
 	
  

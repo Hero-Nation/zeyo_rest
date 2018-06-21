@@ -61,13 +61,13 @@ public class Shopmall {
 	
 	private String storeType;
 	private String storeId;
-	private String tempIdentity;
+	private String oauthID;
 	private String oauthCode;
 	private String accessToken;
 	private String refreshToken;
 
-	@Override
-	public String toString() {
-		return "Shopmall ]";
-	}
+//	@Override
+//	public String toString() {
+//		return "Shopmall ]";
+//	}
 }

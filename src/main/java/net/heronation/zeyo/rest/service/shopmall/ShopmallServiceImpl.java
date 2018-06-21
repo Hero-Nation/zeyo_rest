@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.service.shopmall;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -324,7 +325,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 	@Override
 	@Transactional
 	public Shopmall insert(NameVO param, Long member_seq) {
-		// TODO Auto-generated method stub
+		SecureRandom random = new SecureRandom(); 
 
 		Member m = memberRepository.getOne(member_seq);
 
@@ -333,6 +334,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		o.setName(param.getName());
 		o.setUseYn("Y");
 		o.setCreateDt(new DateTime());
+		o.setOauthID(new BigInteger(130, random).toString(22));
 		return shopmallRepository.save(o);
 	}
 

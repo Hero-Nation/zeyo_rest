@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.heronation.zeyo.rest.controller.item.ItemBuildDtoDeserializer;
+import net.heronation.zeyo.rest.controller.item.ItemModifyDtoDeserializer;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
@@ -30,7 +31,7 @@ import net.heronation.zeyo.rest.repository.warranty.Warranty;
 
 @Data
 @AllArgsConstructor
-@JsonDeserialize(using = ItemBuildDtoDeserializer.class)
+@JsonDeserialize(using = ItemModifyDtoDeserializer.class)
 public class ItemModifyDto {
 	
 	private Long item_id;
@@ -61,7 +62,7 @@ public class ItemModifyDto {
 
 	private Madein madein;
 
-	private DateTime madeinDate;
+	private DateTime madeinDate; 
 
 	private Warranty warranty;
 

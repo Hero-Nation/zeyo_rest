@@ -15,7 +15,7 @@ import net.heronation.zeyo.rest.common.value.ResultVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
-import net.heronation.zeyo.rest.service.integrate.IntegrateSerivce;
+import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
 
 @Slf4j
 @Controller
@@ -23,7 +23,7 @@ import net.heronation.zeyo.rest.service.integrate.IntegrateSerivce;
 public class OauthController extends BaseController {
 
 	@Autowired
-	private IntegrateSerivce integrateSerivce;
+	private Cafe24Service cafe24Service;
 
 	@Autowired
 	private CategoryRepository repository;
@@ -43,11 +43,27 @@ public class OauthController extends BaseController {
 			@RequestParam(value = "state", required = false) String state) {
 		log.debug("/cafe24/callback");
 		log.debug(code);
-		String R = integrateSerivce.update_oauth_code(code, state);
+		String R = cafe24Service.update_oauth_code_and_get_access_token(code, state);
 		
-		if(CommonConstants.FAIL.equals(R)) {
+		if(!CommonConstants.SUCCESS.equals(R)) {
 			return return_fail(R);
 		}else {
+			return return_success(R);	
+		}
+		
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/cafe24/refresh_access_token")
+	@ResponseBody
+	public ResponseEntity<ResultVO> refresh_access_token(@RequestParam(value = "id", required = false) Long id) {
+		log.debug("/cafe24/refresh_access_token");
+		log.debug(id+" " );
+		String R = cafe24Service.get_access_token_by_refresh_token(id);
+		
+		if(!CommonConstants.SUCCESS.equals(R)) {
+			return return_fail(R);
+		}else { 
 			return return_success(R);	
 		}
 		
