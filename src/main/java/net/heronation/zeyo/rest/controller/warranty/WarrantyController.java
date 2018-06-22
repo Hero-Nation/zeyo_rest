@@ -63,7 +63,7 @@ public class WarrantyController extends BaseController {
 
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("scope", scope); 
-		if(start == null) {
+		if(start == null) { 
 			param.put("start", start);	
 		}else {
 			param.put("start", start.toString(Format.ISO_DATETIME));
@@ -79,7 +79,7 @@ public class WarrantyController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody NameVO param,
+	public ResponseEntity<ResultVO> insert(@RequestBody ScopeVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) warrantyService.insert(param));

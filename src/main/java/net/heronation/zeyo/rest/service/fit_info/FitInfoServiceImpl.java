@@ -95,7 +95,7 @@ public class FitInfoServiceImpl implements FitInfoService {
 		if (end != null) {
 			where_query.append("        AND fi.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
-
+ 
 		// where_query.append("GROUP BY mi.id");
 
 		StringBuffer sort_query = new StringBuffer();
@@ -261,6 +261,8 @@ public class FitInfoServiceImpl implements FitInfoService {
 
 	@Override
 	public String update(FitInfoUpdateDto param) {
+		log.debug("update");
+		log.debug(param.toString());
 		FitInfo fi = fit_infoRepository.findOne(param.getId()); 
 		
 		fi.setName(param.getName());

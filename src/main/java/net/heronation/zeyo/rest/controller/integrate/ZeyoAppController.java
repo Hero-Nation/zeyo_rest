@@ -54,7 +54,7 @@ public class ZeyoAppController extends BaseController {
 		return "zeyo_app/login";
 	}
 
-	public String generateState() {
+	public String generateState() { 
 		SecureRandom random = new SecureRandom();
 		return new BigInteger(130, random).toString(32);
 	}

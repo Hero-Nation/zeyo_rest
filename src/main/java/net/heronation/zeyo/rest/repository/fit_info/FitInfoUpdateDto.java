@@ -22,6 +22,6 @@ public class FitInfoUpdateDto {
 		R.setName(name);
 		R.setMetaDesc(metaDesc);
 		
-		return R;
+		return R; 
 	}
 }

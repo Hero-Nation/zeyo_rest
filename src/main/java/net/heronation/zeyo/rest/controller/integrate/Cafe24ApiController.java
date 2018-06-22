@@ -57,7 +57,7 @@ public class Cafe24ApiController extends BaseController {
 		log.debug("/integrate/cafe24/produc/sync");
 		
 		// 유저 정보 가지고 오기
-		if (auth == null) {
+		if (auth == null) { 
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
@@ -65,7 +65,7 @@ public class Cafe24ApiController extends BaseController {
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 		
 		String R = cafe24Service.sync_product(shopmall_id, 0, null, seq);
-		
+		 
 		if(R.equals(CommonConstants.SUCCESS)) {
 			return return_success(CommonConstants.SUCCESS);	
 		}else{

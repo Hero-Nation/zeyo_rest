@@ -72,7 +72,7 @@ public class FitInfoController extends BaseController {
 		if (end == null) {
 			param.put("end", end);
 		} else {
-			param.put("end", end.toString(Format.ISO_DATETIME));
+			param.put("end", end.toString(Format.ISO_DATETIME)); 
 		}
 
 		return return_success((Object) fit_infoService.search(param, pageable));

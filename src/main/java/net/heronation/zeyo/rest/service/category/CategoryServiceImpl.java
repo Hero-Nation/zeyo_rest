@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService{
 		select_query.append("    c.id							AS cate_id, ");
 		select_query.append("    c.name							AS cate_name, ");
 		select_query.append("    sc.id							AS subcate_id, ");
-		select_query.append("    sc.name						AS subcate_name,   ");
+		select_query.append("    sc.name						AS subcate_name,   "); 
 		select_query.append("    sc.item_image					AS itemImage, ");
 		select_query.append("    sc.cloth_image					AS clothImage, ");
 		select_query.append("    COUNT(scfim.fit_info_id)		AS subCategoryFitInfoMaps_count, ");
@@ -128,7 +128,7 @@ public class CategoryServiceImpl implements CategoryService{
 		}
 
  
-		where_query.append("  GROUP BY c.id");
+		where_query.append("  GROUP BY c.id ,sc.id");
 		
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY c.");

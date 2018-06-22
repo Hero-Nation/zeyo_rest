@@ -125,7 +125,7 @@ public class SubCategoryController extends BaseController {
 		} else {
 			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-		if (end == null) {
+		if (end == null) { 
 			param.put("end", end);
 		} else {
 			param.put("end", end.toString(Format.ISO_DATETIME));
@@ -133,66 +133,7 @@ public class SubCategoryController extends BaseController {
 
 		return return_success((Object) sub_categoryService.subsearch(param, pageable));
 	}
-
-	@PostMapping("/upload_item_image")
-	@ResponseBody
-	public ResponseEntity<ResultVO> upload_item_image(@RequestParam("item_image") MultipartFile item_image
-	// ,RedirectAttributes redirectAttributes
-	) {
-
-		if (item_image.isEmpty()) {
-			// redirectAttributes.addFlashAttribute("message", "Please select a file to
-			// upload");
-
-			return return_fail("image.empty");
-		}
-
-		try {
-
-			// Get the file and save it somewhere
-			byte[] bytes = item_image.getBytes();
-			Path path = Paths.get(upload_item_path + item_image.getOriginalFilename());
-			Files.write(path, bytes);
-			
-			log.debug(upload_item_path);
-			log.debug(item_image.getOriginalFilename());
-			
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			return return_fail("image.upload.exception");
-		}
-
-		return return_success("image.upload.success");
-	}
-
-	@PostMapping("/upload_cloth_image")
-	@ResponseBody
-	public ResponseEntity<ResultVO> upload_cloth_image(@RequestParam("cloth_image") MultipartFile cloth_image
-	// ,RedirectAttributes redirectAttributes
-	) {
-
-		if (cloth_image.isEmpty()) {
-			// redirectAttributes.addFlashAttribute("message", "Please select a file to
-			// upload");
-
-			return return_fail("image.empty");
-		}
-
-		try {
-
-			// Get the file and save it somewhere
-			byte[] bytes = cloth_image.getBytes();
-			Path path = Paths.get(upload_cloth_path + cloth_image.getOriginalFilename());
-			Files.write(path, bytes);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			return return_fail("image.upload.exception");
-		}
-
-		return return_success("image.upload.success");
-	}
+ 
 	
 	
 	

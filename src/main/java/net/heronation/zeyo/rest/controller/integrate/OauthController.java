@@ -40,13 +40,20 @@ public class OauthController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/cafe24/callback")
 	@ResponseBody
 	public ResponseEntity<ResultVO> cafe24_callback(@RequestParam(value = "code", required = false) String code,
-			@RequestParam(value = "state", required = false) String state) {
+			@RequestParam(value = "state", required = false) String state,
+			@RequestParam(value = "error", required = false) String error) {
 		log.debug("/cafe24/callback");
 		log.debug(code);
+		
+		
+		if(error != null) {
+			return return_fail(error);
+		}
+		 
 		String R = cafe24Service.update_oauth_code_and_get_access_token(code, state);
 		
 		if(!CommonConstants.SUCCESS.equals(R)) {
-			return return_fail(R);
+			return return_fail(R); 
 		}else {
 			return return_success(R);	
 		}

@@ -67,7 +67,7 @@
 
 
 							<br> <br> <br> <a
-								href="https://heronation.cafe24api.com/api/v2/oauth/authorize?response_type=code&client_id=hro4E2dgPtviiTY3Bez9DA&state=${state}&redirect_uri=https://www.zeyo.co.kr/oauth/cafe24/callback&scope=mall.read_category,mall.read_customer,mall.read_order,mall.read_product,mall.read_supply"
+								href="https://heronation.cafe24api.com/api/v2/oauth/authorize?response_type=code&client_id=lTXWDxObBNEtZNE7sF9QkB&state=${state}&redirect_uri=https://www.zeyo.co.kr/oauth/cafe24/callback&scope=mall.read_application,mall.write_application,mall.read_collection,mall.read_customer,mall.read_personal,mall.read_product,mall.read_store"
 								class="genric-btn info circle btn-lg">&nbsp;&nbsp;&nbsp;cafe24
 								로그인&nbsp;&nbsp;&nbsp;</a> <br> <a
 								href="https://nid.naver.com/oauth2.0/authorize?client_id=FErhZOHFFXjHRTFwqb11&response_type=code&redirect_uri=https%3A%2F%2Fzeyo.co.kr%2Foauth%2Fnaver%2Fcallback&state=${state}"

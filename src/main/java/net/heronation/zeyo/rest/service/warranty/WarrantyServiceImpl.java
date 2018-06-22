@@ -21,6 +21,7 @@ import net.heronation.zeyo.rest.common.value.IdNameVO;
 import net.heronation.zeyo.rest.common.value.LIdVO;
 import net.heronation.zeyo.rest.common.value.NameVO;
 import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
@@ -45,7 +46,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 
 	@Override
 	public Map<String,Object> search(Map<String,Object> param, Pageable page) {
-		
+		 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) ");
@@ -208,14 +209,14 @@ public class WarrantyServiceImpl implements WarrantyService {
 	
 	@Override
 	@Transactional
-	public String insert(NameVO param) {
+	public String insert(ScopeVO param) {
 		// TODO Auto-generated method stub
 		
 		Kindof direct_input = kindofRepository.findOne(1L);
 		
 		Warranty iv = new Warranty();
 		iv.setKindof(direct_input);
-		iv.setScope(param.getName());
+		iv.setScope(param.getScope());
 		iv.setCreateDt(new DateTime());
 		iv.setUseYn("Y");
 		

@@ -10,7 +10,7 @@ class SecurityUtils {
  
 	public static void runAs(String username, String password, String... roles) {
 
-		Assert.notNull(username, "Username must not be null!");
+		Assert.notNull(username, "Username must not be null!"); 
 		Assert.notNull(password, "Password must not be null!");
 
 		SecurityContextHolder.getContext().setAuthentication(

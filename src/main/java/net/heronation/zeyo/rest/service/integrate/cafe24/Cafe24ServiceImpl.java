@@ -60,6 +60,8 @@ import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMa
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
+import net.heronation.zeyo.rest.repository.madein.Madein;
+import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
@@ -69,6 +71,8 @@ import net.heronation.zeyo.rest.repository.size_option.SizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
+import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 
 @Slf4j
 @Service
@@ -102,6 +106,12 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 	@Autowired
 	BrandRepository brandRepository;
 	
+	@Autowired
+	MadeinRepository madeinRepository;
+	
+	@Autowired
+	WarrantyRepository warrantyRepository;
+	
 	
 	
 	
@@ -121,7 +131,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 	
 	
 	
-	@Autowired
+	@Autowired 
 	EntityManager entityManager;
 
 
@@ -160,6 +170,12 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 	@Value(value = "${zeyo.config.index.default.import.brand}")
 	private String index_default_import_brand;
 	
+	@Value(value = "${zeyo.config.index.default.import.madein}")
+	private String index_default_import_madein;
+	
+	@Value(value = "${zeyo.config.index.default.import.warranty}")
+	private String index_default_import_warranty;
+	
 	
 
 	@Override
@@ -176,16 +192,13 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 		QShopmall sm = QShopmall.shopmall;
 
 		Shopmall this_shopmall = shopmallRepository.findOne(sm.oauthID.eq(oauth_id));
-
+		log.debug(this_shopmall.toString());
+		
 		if (this_shopmall == null) {
-			return CommonConstants.FAIL;
+			return "shopmall.data.null";
 		} else {
 
-			// log.debug(app_key);
-			// log.debug(app_secret);
-			// log.debug(header_credential);
-			// log.debug(redirect_url);
-			// log.debug(oauth_code_url);
+			
 
 			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 			requestFactory.setOutputStreaming(false);
@@ -214,7 +227,6 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 				AccessTokenByOauthCode result = restTemplate.postForObject(
 						String.format(oauth_code_url, this_shopmall.getStoreId()), request,
 						AccessTokenByOauthCode.class);
-				;
 
 				this_shopmall.setAccessToken(result.getAccess_token());
 				this_shopmall.setRefreshToken(result.getRefresh_token());
@@ -222,9 +234,17 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 				this_shopmall.setOauthCode(auth_code);
 				return CommonConstants.SUCCESS;
 			} catch (HttpClientErrorException e) {
+				
+				 log.debug(app_key);
+				 log.debug(app_secret);
+				 log.debug(header_credential);
+				 log.debug(redirect_url);
+				 log.debug(oauth_code_url);
+				
+				
 				e.printStackTrace();
 				log.error(e.getResponseBodyAsString());
-				return CommonConstants.FAIL;
+				return e.getResponseBodyAsString();
 
 			}
 
@@ -331,6 +351,8 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 		SubCategory import_default_sub_cateogry = subCategoryRepository.findOne(Long.valueOf(index_default_import_subcategory));
 		Brand import_default_brand = brandRepository.findOne(Long.valueOf(index_default_import_brand));
 		
+		Madein import_default_madein = madeinRepository.findOne(Long.valueOf(index_default_import_madein));
+		Warranty import_default_warranty = warrantyRepository.findOne(Long.valueOf(index_default_import_warranty));
 		
 		
 		
@@ -391,7 +413,14 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 					i.setBrand(import_default_brand);
 					i.setCategory(import_default_cateogry);
 					i.setSubCategory(import_default_sub_cateogry); 
-					
+					i.setMadein(import_default_madein);
+					i.setWarranty(import_default_warranty);
+					i.setBleachYn("N");
+					i.setDrycleaningYn("Y");
+					i.setDrymethodYn("Y");
+					i.setIroningYn("Y");
+					i.setLaundryYn("Y");
+					i.setMadeinBuilder("IMPORT_DEFAULT");
 					i = itemRepository.save(i);
 
 					Shopmall s = shopmallRepository.findOne(shopmall_id);
@@ -447,7 +476,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 						//colors.next()
 						
 						String this_color_value = colors.next();
-						List<ClothColor> color_db_list = clothColorRepository.findByNameDirect(this_color_value);
+						List<ClothColor> color_db_list = clothColorRepository.findByName(this_color_value);
 						
 						ClothColor this_cc = new ClothColor();
 						
@@ -491,7 +520,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 						// sub_category 7  >>> 기본값
 						// findByNameDirect 값을 가지고 올때 where 절을 조절할것.. 
 						
-						List<SizeOption> sizeop_db_list = sizeOptionRepository.findByNameDirect(this_size_value);
+						List<SizeOption> sizeop_db_list = sizeOptionRepository.findByName(this_size_value);
 						
 						SizeOption this_so = new SizeOption();
 						

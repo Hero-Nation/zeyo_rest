@@ -1,5 +1,6 @@
 package net.heronation.zeyo.rest.common.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,11 +21,11 @@ import net.heronation.zeyo.rest.common.value.ResultVO;
 
 @Controller
 @Slf4j
-@RequestMapping("/common")
+@RequestMapping("/commons")
 public class FileUploadController extends BaseController {
 
 	// Save the uploaded file to this folder
-	private static String UPLOADED_FOLDER = "D://TEST_SERVER_ROOT//zeyo_image//temp";
+	private static String UPLOADED_FOLDER = "D:"+File.separator+"TEST_SERVER_ROOT"+File.separator+"zeyo_image"+File.separator+"temp";
 
 	@GetMapping("/uploadform")
 	public String index() {
@@ -41,7 +42,7 @@ public class FileUploadController extends BaseController {
 
 		try {
 
-			// Get the file and save it somewhere
+			// Get the file and save it somewhere 
 			byte[] bytes = file.getBytes();
 			Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
 			Files.write(path, bytes);
@@ -64,16 +65,24 @@ public class FileUploadController extends BaseController {
 		}
 
 		
-		String temp_file_name = UUID.randomUUID().toString().concat(System.nanoTime()+"").concat(file.getContentType());
+		String temp_file_name = UUID.randomUUID().toString().concat(System.nanoTime()+"").concat(file.getName());
 		
 		try {
 
 			// Get the file and save it somewhere
+			log.debug(temp_file_name);
+			log.debug(UPLOADED_FOLDER.concat(File.separator).concat(temp_file_name));
+			
 			byte[] bytes = file.getBytes();
-			Path path = Paths.get(UPLOADED_FOLDER + temp_file_name);
+			Path path = Paths.get(UPLOADED_FOLDER.concat(File.separator).concat(temp_file_name));
 			Files.write(path, bytes);
-
-
+ 
+			
+			
+			//org.apache.commons.io.FileUtils.copyFile(source, dest);
+			
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return return_fail("upload.failed");
