@@ -42,7 +42,7 @@ public interface MemberService {
 
 	Page<Map<String, Object>> my_shopmall(Predicate where, Pageable page);
 
-	Page<Map<String, Object>> my_item(Predicate where, Pageable page);
+	Map<String, Object> my_item(Map<String, Object> where, Pageable page);
 
 	Page<Map<String, Object>> cn_history(Predicate where, Pageable page);
 

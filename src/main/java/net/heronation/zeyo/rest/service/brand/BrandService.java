@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandDto;
 
@@ -16,13 +16,13 @@ public interface BrandService {
 
 	Map<String, Object> client_search(Map<String, Object> where, Pageable page);
 
-	Brand insert(NameVO name, Long member_seq);
+	Brand insert(NameDto name, Long member_seq);
 
 	Map<String, Object> findByName(String name);
 
-	Map<String, Object> update_name(IdNameVO param,Long member_seq);
+	Map<String, Object> update_name(IdNameDto param,Long member_seq);
 
-	Map<String, Object> delete( List<LIdVO> param, Long member_seq);
+	Map<String, Object> delete( List<LIdDto> param, Long member_seq);
 
 	Map<String, Object> toggle_link(BrandDto param,  Long member_seq );
 

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 
 public interface SubCategoryService {
@@ -20,6 +20,6 @@ public interface SubCategoryService {
 
 	String update(SubCategoryDto param);
 
-	String delete(List<LIdVO> param);
+	String delete(List<LIdDto> param);
 
 }

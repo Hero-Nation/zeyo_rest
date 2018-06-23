@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.brand.BrandDto;
@@ -57,7 +57,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "name", required = false) String name,
 
 			@RequestParam(value = "company", required = false) String company,
 			@RequestParam(value = "brand", required = false) String brand,
@@ -84,7 +84,7 @@ public class BrandController extends BaseController {
 			param.put("end", end);
 		} else {
 			param.put("end", end.toString(Format.ISO_DATETIME));
-		}
+		} 
 
 		return return_success((Object) brandService.search(param, pageable));
 	}
@@ -92,8 +92,8 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
-	public ResponseEntity<ResultVO> insert(
-			@RequestBody NameVO param,
+	public ResponseEntity<ResultDto> insert(
+			@RequestBody NameDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("insert");
 		
@@ -116,7 +116,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/distinct_with_member_id")
 	@ResponseBody
-	public ResponseEntity<ResultVO> distinct_with_member_id(@AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultDto> distinct_with_member_id(@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		log.debug("distinct_with_member_id");
 		
@@ -133,7 +133,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/use_count")
 	@ResponseBody
-	public ResponseEntity<ResultVO> use_count(@AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultDto> use_count(@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		log.debug("use_count");
 		
@@ -148,8 +148,8 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update_name")
 	@ResponseBody
-	public ResponseEntity<ResultVO> update_name(
-			@RequestBody IdNameVO param,
+	public ResponseEntity<ResultDto> update_name(
+			@RequestBody IdNameDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("update_name");
 		
@@ -178,8 +178,8 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
-	public ResponseEntity<ResultVO> delete(
-			@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(
+			@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("delete");
 		
@@ -202,7 +202,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_link")
 	@ResponseBody
-	public ResponseEntity<ResultVO> toggle_link(
+	public ResponseEntity<ResultDto> toggle_link(
 			@RequestBody BrandDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
@@ -231,7 +231,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> brand_list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> brand_list(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "link", required = false) String link,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
@@ -271,7 +271,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
 	@ResponseBody
-	public ResponseEntity<ResultVO> detail(@RequestParam(value = "id", required = false) Long id,
+	public ResponseEntity<ResultDto> detail(@RequestParam(value = "id", required = false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
 		
 		log.debug("detail");
@@ -291,7 +291,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/brand_company_use_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> brand_company_use_list(@AuthenticationPrincipal OAuth2Authentication auth,
+	public ResponseEntity<ResultDto> brand_company_use_list(@AuthenticationPrincipal OAuth2Authentication auth,
 			Pageable pageable) {
 		
 		log.debug("brand_company_use_list");
@@ -309,7 +309,7 @@ public class BrandController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/detail_info")
 	@ResponseBody
-	public ResponseEntity<ResultVO> detail_info(@RequestParam(value = "id", required = false) Long id) {
+	public ResponseEntity<ResultDto> detail_info(@RequestParam(value = "id", required = false) Long id) {
 		log.debug("detail_info");
 		
 		return return_success((Object) brandService.detail_info(id));
@@ -319,7 +319,7 @@ public class BrandController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/findByName")
 	@ResponseBody
-	public ResponseEntity<ResultVO> findByName(@RequestParam(value = "name") String name,
+	public ResponseEntity<ResultDto> findByName(@RequestParam(value = "name") String name,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("findByName");
 		

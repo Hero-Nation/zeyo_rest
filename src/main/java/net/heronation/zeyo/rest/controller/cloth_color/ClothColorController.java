@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
@@ -53,7 +53,7 @@ public class ClothColorController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 
@@ -78,7 +78,7 @@ public class ClothColorController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody ClothColorDto param,
+	public ResponseEntity<ResultDto> insert(@RequestBody ClothColorDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) cloth_colorService.insert(param));
@@ -86,7 +86,7 @@ public class ClothColorController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody ClothColorDto param,
+	public ResponseEntity<ResultDto> update(@RequestBody ClothColorDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) cloth_colorService.update(param));
@@ -94,7 +94,7 @@ public class ClothColorController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
-	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) cloth_colorService.delete(param));

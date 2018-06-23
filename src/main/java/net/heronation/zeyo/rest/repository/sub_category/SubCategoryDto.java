@@ -5,7 +5,9 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import lombok.Data;
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.FileDto;
+import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 
 @Data
 public class SubCategoryDto {
@@ -30,10 +32,11 @@ public class SubCategoryDto {
 	private String bleachYn;
 
  
-	private List<LIdVO> measureItem;
+	private List<LIdMapIdDto> measureItem;
 	
-	private List<LIdVO> fitinfos;
-	 
+	private List<LIdMapIdDto> fitinfos;
+	
+	private List<FileDto> files;
 
 	
 	public SubCategory convertToEntity() {

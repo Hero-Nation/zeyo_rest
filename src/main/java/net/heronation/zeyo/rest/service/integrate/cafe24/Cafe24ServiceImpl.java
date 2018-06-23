@@ -53,6 +53,8 @@ import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMapRepository;
+import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
+import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -62,6 +64,8 @@ import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
+import net.heronation.zeyo.rest.repository.material.Material;
+import net.heronation.zeyo.rest.repository.material.MaterialRepository;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
@@ -86,6 +90,10 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 	ItemShopmallMapRepository itemShopmallMapRepository;
 
 	@Autowired
+	ItemMaterialMapRepository itemMaterialMapRepository;
+
+	
+	@Autowired
 	MemberRepository memberRepository;
 
 	@Autowired
@@ -103,17 +111,17 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 	@Autowired
 	SubCategoryRepository subCategoryRepository;
 	
-	@Autowired
+	@Autowired 
 	BrandRepository brandRepository;
 	
 	@Autowired
 	MadeinRepository madeinRepository;
-	
+	 
 	@Autowired
 	WarrantyRepository warrantyRepository;
 	
-	
-	
+	@Autowired
+	MaterialRepository materialRepository;
 	
 	@Autowired
 	ItemClothColorMapRepository itemClothColorMapRepository;
@@ -176,6 +184,8 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 	@Value(value = "${zeyo.config.index.default.import.warranty}")
 	private String index_default_import_warranty;
 	
+	@Value(value = "${zeyo.config.index.default.import.material}")
+	private String index_default_import_material;
 	
 
 	@Override
@@ -353,6 +363,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 		
 		Madein import_default_madein = madeinRepository.findOne(Long.valueOf(index_default_import_madein));
 		Warranty import_default_warranty = warrantyRepository.findOne(Long.valueOf(index_default_import_warranty));
+		Material import_default_material = materialRepository.findOne(Long.valueOf(index_default_import_material));
 		
 		
 		
@@ -416,11 +427,12 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 					i.setMadein(import_default_madein);
 					i.setWarranty(import_default_warranty);
 					i.setBleachYn("N");
-					i.setDrycleaningYn("Y");
-					i.setDrymethodYn("Y");
-					i.setIroningYn("Y");
-					i.setLaundryYn("Y");
+					i.setDrycleaningYn("N");
+					i.setDrymethodYn("N");
+					i.setIroningYn("N");
+					i.setLaundryYn("N");
 					i.setMadeinBuilder("IMPORT_DEFAULT");
+					i.setMadeinDate(new DateTime());
 					i = itemRepository.save(i);
 
 					Shopmall s = shopmallRepository.findOne(shopmall_id);
@@ -432,6 +444,13 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 
 					itemShopmallMapRepository.save(ism);
 					
+					ItemMaterialMap imm = new ItemMaterialMap();
+					imm.setContain("100");
+					imm.setItem(i);
+					imm.setMaterial(import_default_material);
+					imm.setUseLocatoin("A");
+					imm.setUseYn("Y");
+					itemMaterialMapRepository.save(imm);
 					
 					
 					
@@ -554,8 +573,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 						
 						itemSizeOptionMapRepository.save(isom);
 					}
-					
-					
+					 
 
 				}
 			}

@@ -13,6 +13,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -30,11 +31,13 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
@@ -44,27 +47,38 @@ import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
 import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMapRepository;
+import net.heronation.zeyo.rest.repository.item_bleach_map.QItemBleachMap;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMapRepository;
+import net.heronation.zeyo.rest.repository.item_cloth_color_map.QItemClothColorMap;
 import net.heronation.zeyo.rest.repository.item_drycleaning_map.ItemDrycleaningMap;
 import net.heronation.zeyo.rest.repository.item_drycleaning_map.ItemDrycleaningMapRepository;
+import net.heronation.zeyo.rest.repository.item_drycleaning_map.QItemDrycleaningMap;
 import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMap;
 import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMapRepository;
+import net.heronation.zeyo.rest.repository.item_drymethod_map.QItemDrymethodMap;
 import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoOptionMap;
 import net.heronation.zeyo.rest.repository.item_fit_info_option_map.ItemFitInfoOptionMapRepository;
+import net.heronation.zeyo.rest.repository.item_fit_info_option_map.QItemFitInfoOptionMap;
 import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMapRepository;
+import net.heronation.zeyo.rest.repository.item_ironing_map.QItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMapRepository;
+import net.heronation.zeyo.rest.repository.item_laundry_map.QItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
+import net.heronation.zeyo.rest.repository.item_material_map.QItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
+import net.heronation.zeyo.rest.repository.item_size_option_map.QItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
+import net.heronation.zeyo.rest.repository.material.Material;
 import net.heronation.zeyo.rest.repository.material.MaterialRepository;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
@@ -154,11 +168,9 @@ public class ItemServiceImpl implements ItemService {
 
 	@Autowired
 	private ItemSizeOptionMapRepository itemSizeOptionMapRepository;
-	
+
 	@Autowired
 	private ItemScmmSoValueRepository itemScmmSoValueRepository;
-	
-	
 
 	@Autowired
 	EntityManager entityManager;
@@ -168,7 +180,7 @@ public class ItemServiceImpl implements ItemService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from ( ");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
@@ -249,7 +261,7 @@ public class ItemServiceImpl implements ItemService {
 			where_query.append("        AND   i.link_yn = 'Y' ");
 		}
 
-		String start_price = (String) param.get("start");
+		String start_price = (String) param.get("start_price");
 		if (start_price != null) {
 			where_query.append("        AND   i.price >= " + start_price + " ");
 		}
@@ -287,9 +299,19 @@ public class ItemServiceImpl implements ItemService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		BigInteger use_count = (BigInteger) count_q.getSingleResult();
- 
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ") .toString());
+		
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+		
+		
+
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -326,14 +348,14 @@ public class ItemServiceImpl implements ItemService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (use_count.intValue()/ page.getPageSize());
-		if (use_count.intValue() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", use_count);
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
@@ -343,10 +365,10 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public String toggle_link(List<ToggleVO> param, Long seq) {
+	public String toggle_link(List<ToggleDto> param, Long seq) {
 		// TODO Auto-generated method stub
 
-		for (ToggleVO tv : param) {
+		for (ToggleDto tv : param) {
 
 			Item i = itemRepository.findOne(tv.getId());
 
@@ -366,8 +388,8 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public String delete(List<ToggleVO> param, Long seq) {
-		for (ToggleVO tv : param) {
+	public String delete(List<ToggleDto> param, Long seq) {
+		for (ToggleDto tv : param) {
 
 			Item i = itemRepository.findOne(tv.getId());
 
@@ -452,7 +474,6 @@ public class ItemServiceImpl implements ItemService {
 			return_list.add(search_R);
 		}
 
-
 		int totalPages = (count_list.size() / page.getPageSize());
 		if (count_list.size() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
@@ -473,9 +494,9 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public String toggle_size_table(List<ToggleVO> param) {
+	public String toggle_size_table(List<ToggleDto> param) {
 
-		for (ToggleVO tv : param) {
+		for (ToggleDto tv : param) {
 
 			Item item = itemRepository.findOne(tv.getId());
 
@@ -672,8 +693,8 @@ public class ItemServiceImpl implements ItemService {
 			itemLaundryMapRepository.save(ilm);
 		}
 
-		Map<String,Object> direct_size_option_store = new HashMap<String,Object>();
-		
+		Map<String, Object> direct_size_option_store = new HashMap<String, Object>();
+
 		List<ItemSizeOptionMap> isomlist = ibd.getItemSizeOptionMaps();
 
 		if (isomlist.size() != 0) {
@@ -682,7 +703,7 @@ public class ItemServiceImpl implements ItemService {
 				if (isom.getOptionValue().equals("DIRECT")) {
 					SizeOption injected_size_option = sizeOptionRepository.save(isom.getSizeOption());
 					isom.setSizeOption(injected_size_option);
-					
+
 					direct_size_option_store.put(injected_size_option.getName(), injected_size_option);
 				}
 			}
@@ -699,23 +720,19 @@ public class ItemServiceImpl implements ItemService {
 		}
 
 		List<ItemScmmSoValue> issv_list = ibd.getItemScmmSoValues();
-		
+
 		if (issv_list.size() != 0) {
 			for (ItemScmmSoValue issv : issv_list) {
 				issv.setItem(new_item);
-				
-				if(issv.getSizeOption().getId() == 0L) {
-					issv.setSizeOption((SizeOption)direct_size_option_store.get(issv.getSizeOption().getName()));	
-				}  
+
+				if (issv.getSizeOption().getId() == 0L) {
+					issv.setSizeOption((SizeOption) direct_size_option_store.get(issv.getSizeOption().getName()));
+				}
 			}
-			
-			
-			
+
 			itemScmmSoValueRepository.save(issv_list);
 		}
-		
-		
-		
+
 		return new_item;
 	}
 
@@ -751,8 +768,8 @@ public class ItemServiceImpl implements ItemService {
 		where_query.append("    size_table st ON i.id = st.item_id ");
 		where_query.append("WHERE ");
 		where_query.append("    i.use_yn = 'Y' ");
-//		where_query.append("    AND c.use_yn = 'Y' ");
-//		where_query.append("	AND sc.use_yn = 'Y'");
+		// where_query.append(" AND c.use_yn = 'Y' ");
+		// where_query.append(" AND sc.use_yn = 'Y'");
 
 		String member_id = (String) param.get("member_id");
 
@@ -797,12 +814,12 @@ public class ItemServiceImpl implements ItemService {
 
 		String start = (String) param.get("start");
 		if (start != null) {
-			where_query.append("        AND b.create_dt >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%s')");
+			where_query.append("        AND i.create_dt >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
 		String end = (String) param.get("end");
 		if (end != null) {
-			where_query.append("        AND b.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
+			where_query.append("        AND i.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
 		StringBuffer sort_query = new StringBuffer();
@@ -823,19 +840,17 @@ public class ItemServiceImpl implements ItemService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
- 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
-		
-		
+
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
@@ -918,7 +933,7 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public Item modify(ItemModifyDto ibd, Long member_id) {
-		log.debug("build");
+		log.debug("modify 1  ________________________________________________________ ");
 
 		Member user = memberRepository.findOne(member_id);
 		Item old_item = itemRepository.findOne(ibd.getItem_id());
@@ -938,7 +953,7 @@ public class ItemServiceImpl implements ItemService {
 		old_item.setName(ibd.getName());
 		old_item.setPrice(ibd.getPrice());
 		old_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
-		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode());
+		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode()); 
 
 //		if (ibd.getBrand() != null)
 //			brandRepository.save(ibd.getBrand());
@@ -954,11 +969,12 @@ public class ItemServiceImpl implements ItemService {
 		old_item.setMember(user);
 		old_item.setSubCategory(ibd.getSubCategory());
 		old_item.setWarranty(ibd.getWarranty());
-		old_item.setLinkYn("N");
-		old_item.setUseYn("Y");
+//		old_item.setLinkYn("N");
+//		old_item.setUseYn("Y");
 
 		//old_item = itemRepository.save(old_item);
 
+		log.debug("modify 2 size_table ________________________________________________________"); 
 		// 사이즈 테이블 처리
 		if (ibd.getSizeTableYn().equals("Y")) {
 			old_item.setSizeTableYn("Y");
@@ -988,97 +1004,651 @@ public class ItemServiceImpl implements ItemService {
 			old_item.setSizeTableYn("N");
 		}
 
-		List<Shopmall> isms = ibd.getShopmalls();
-		if (isms.size() != 0) {
-
-			List<ItemShopmallMap> ismms = new ArrayList<ItemShopmallMap>();
-			for (Shopmall sm : isms) {
-				ItemShopmallMap ismm = new ItemShopmallMap();
-				ismm.setItem(old_item);
-				ismm.setShopmall(sm);
-				ismm.setUseYn("Y");
-
-				ismms.add(ismm);
-			}
-
-			itemShopmallMapRepository.save(ismms);
-		}
-
+ 
+ 
+		log.debug("modify 3 bleach ________________________________________________________");
+		// 표백 여부 
+		
+		// 데이터 베이스에 존재하는가?
+		QItemBleachMap qibm = QItemBleachMap.itemBleachMap;
+		
+		Iterable<ItemBleachMap> db_ibm_list_iter = itemBleachMapRepository.findAll(qibm.item.id.eq(ibd.getItem_id()));
+		
+		boolean db_exist = false; 
+		
+		List<ItemBleachMap> db_ibm_list = IteratorUtils.toList(db_ibm_list_iter.iterator());   
+		
+		if(db_ibm_list.size() > 0) db_exist = true; 
+		
+		log.debug("modify 3 bleach "+ibd.getBleachYn()+ " db_exist "+db_exist);
+		
 		if (ibd.getBleachYn().equals("Y")) {
-			ItemBleachMap item_bleach = ibd.getItemBleachMap();
-			item_bleach.setItem(old_item);
-
-			itemBleachMapRepository.save(item_bleach);
-		}
-
-		List<ItemClothColorMap> icclist = ibd.getItemClothColorMaps();
-
-		if (icclist.size() != 0) {
-			for (ItemClothColorMap iccitem : icclist) {
-				iccitem.setItem(old_item);
-				if (iccitem.getOptionValue().equals("DIRECT")) {
-					ClothColor injected_cloth_color = clothColorRepository.save(iccitem.getClothColor());
-
-					iccitem.setClothColor(injected_cloth_color);
-				}
+ 
+			if(db_exist) {
+				
+				ItemBleachMap db_item_bleach = db_ibm_list.get(0);
+				ItemBleachMap user_item_bleach = ibd.getItemBleachMap();
+				
+				db_item_bleach.setChlorine(user_item_bleach.getChlorine());
+				db_item_bleach.setOxygen(user_item_bleach.getOxygen());
+				db_item_bleach.setUseYn("Y");
+				
+			}else {
+				ItemBleachMap item_bleach = ibd.getItemBleachMap();
+				item_bleach.setItem(old_item);
+				itemBleachMapRepository.save(item_bleach);
 			}
-			itemClothColorMapRepository.save(icclist);
+			
+			
+		}else{
+			if(db_exist) {
+				
+				ItemBleachMap db_item_bleach = db_ibm_list.get(0); 
+				db_item_bleach.setUseYn("N");
+				
+				//itemBleachMapRepository.save(db_item_bleach);
+				
+			}
 		}
+		
+		log.debug("modify 4 dry cleaning ________________________________________________________");
+		
+		
+		
+		// 데이터 베이스에 존재하는가?
+		QItemDrycleaningMap qidcm = QItemDrycleaningMap.itemDrycleaningMap;
+		
+		Iterable<ItemDrycleaningMap> db_idcm_list_iter = itemDrycleaningMapRepository.findAll(qidcm.item.id.eq(ibd.getItem_id()));
+		
+		db_exist = false; 
+		
+		List<ItemDrycleaningMap> db_idc_list = IteratorUtils.toList(db_idcm_list_iter.iterator());   
+		if(db_idc_list.size() > 0) db_exist = true; 
 
+		log.debug("modify 4 dry cleaning "+ibd.getBleachYn()+ " db_exist "+db_exist);
+		
 		if (ibd.getDrycleaningYn().equals("Y")) {
-			ItemDrycleaningMap idcm = ibd.getItemDrycleaningMap();
-			idcm.setItem(old_item);
-			itemDrycleaningMapRepository.save(idcm);
-		}
+ 
 
-		if (ibd.getDrymethodYn().equals("Y")) {
-			ItemDrymethodMap idm = ibd.getItemDrymethodMap();
-			idm.setItem(old_item);
-			itemDrymethodMapRepository.save(idm);
-		}
-
-		List<ItemFitInfoOptionMap> ifiolist = ibd.getItemFitInfoOptionMaps();
-
-		if (ifiolist.size() != 0) {
-			for (ItemFitInfoOptionMap ifio : ifiolist) {
-				ifio.setItem(old_item);
+			
+			
+			
+			if(db_exist) {
+				
+				ItemDrycleaningMap db_item_drycleaning = db_idc_list.get(0);
+				ItemDrycleaningMap user_item_drycleaning = ibd.getItemDrycleaningMap();
+				
+				db_item_drycleaning.setDetergent(user_item_drycleaning.getDetergent());
+				db_item_drycleaning.setDrycan(user_item_drycleaning.getDrycan());
+				db_item_drycleaning.setStorecan(user_item_drycleaning.getStorecan());
+				db_item_drycleaning.setUseYn("Y");
+				
+			}else {
+				ItemDrycleaningMap user_item_drycleaning = ibd.getItemDrycleaningMap();
+				user_item_drycleaning.setItem(old_item);
+				itemDrycleaningMapRepository.save(user_item_drycleaning);
 			}
-			itemFitInfoOptionMapRepository.save(ifiolist);
+			
+			
+			
+		}else{
+			if(db_exist) {
+				
+				ItemDrycleaningMap db_item_drycleaning = db_idc_list.get(0); 
+				db_item_drycleaning.setUseYn("N");
+				//itemDrycleaningMapRepository.save(db_item_drycleaning);
+				
+			}
 		}
 
-		if (ibd.getIroningYn().equals("Y")) {
-			ItemIroningMap iim = ibd.getItemIroningMap();
-			iim.setItem(old_item);
-			itemIroningMapRepository.save(iim);
+		log.debug("modify 5 dry method ________________________________________________________");
+		
+		
+		// 데이터 베이스에 존재하는가?
+		QItemDrymethodMap qidm = QItemDrymethodMap.itemDrymethodMap;
+		
+		Iterable<ItemDrymethodMap> db_idm_list_iter = itemDrymethodMapRepository.findAll(qidm.item.id.eq(ibd.getItem_id()));
+		 
+		db_exist = false; 
+		
+		List<ItemDrymethodMap> db_idm_list = IteratorUtils.toList(db_idm_list_iter.iterator());   
+		if(db_idm_list.size() > 0) db_exist = true;
+		
+		log.debug("modify 5 dry method "+ibd.getDrymethodYn()+ " db_exist "+db_exist);
+		
+		if (ibd.getDrymethodYn().equals("Y")) { 
+			
+			
+			
+			if(db_exist) {
+				
+				ItemDrymethodMap db_item_drycleaning = db_idm_list.get(0);
+				ItemDrymethodMap user_item_drycleaning = ibd.getItemDrymethodMap();
+				
+				db_item_drycleaning.setDryMode(user_item_drycleaning.getDryMode());
+				db_item_drycleaning.setHandDry(user_item_drycleaning.getHandDry());
+				db_item_drycleaning.setMachineDry(user_item_drycleaning.getMachineDry());
+				db_item_drycleaning.setNatureDry(user_item_drycleaning.getNatureDry());
+				db_item_drycleaning.setUseYn("Y");
+				
+			}else {
+				ItemDrymethodMap user_item_drycleaning = ibd.getItemDrymethodMap();
+				user_item_drycleaning.setItem(old_item);
+				itemDrymethodMapRepository.save(user_item_drycleaning);
+			} 
+		}else{
+			if(db_exist) {
+				
+				ItemDrymethodMap db_ItemDrymethodMap = db_idm_list.get(0); 
+				db_ItemDrymethodMap.setUseYn("N");
+				//itemDrymethodMapRepository.save(db_ItemDrymethodMap);
+				
+			}
+		}
+		
+		log.debug("modify 6 ironing ________________________________________________________");
+		
+		// 데이터 베이스에 존재하는가?
+		QItemIroningMap qiim = QItemIroningMap.itemIroningMap;
+		
+		Iterable<ItemIroningMap> db_iim_list_iter = itemIroningMapRepository.findAll(qiim.item.id.eq(ibd.getItem_id()));
+		
+		List<ItemIroningMap> db_iim_list = IteratorUtils.toList(db_iim_list_iter.iterator());       
+		
+		db_exist = false;
+		
+		if(db_iim_list.size() > 0) db_exist = true;
+
+		log.debug("modify 6 ironing "+ibd.getIroningYn()+ " db_exist "+db_exist);
+		
+		if (ibd.getIroningYn().equals("Y")) {  
+			
+			if(db_exist) {
+				
+				ItemIroningMap db_ItemIroning = db_iim_list.get(0);
+				ItemIroningMap user_ItemIroning = ibd.getItemIroningMap();
+				
+				db_ItemIroning.setAddprotection(user_ItemIroning.getAddprotection());
+				db_ItemIroning.setEndTemp(user_ItemIroning.getEndTemp());
+				db_ItemIroning.setIroncan(user_ItemIroning.getIroncan());
+				db_ItemIroning.setStartTemp(user_ItemIroning.getStartTemp());
+				db_ItemIroning.setUseYn("Y");
+				
+			}else {
+				ItemIroningMap user_ItemIroning = ibd.getItemIroningMap();
+				user_ItemIroning.setItem(old_item);
+				itemIroningMapRepository.save(user_ItemIroning);
+			}
+			 
+		}else{
+			if(db_exist) {
+				ItemIroningMap db_ItemIroningMap = db_iim_list.get(0); 
+				db_ItemIroningMap.setUseYn("N");
+				//itemIroningMapRepository.save(db_ItemIroningMap);
+				
+			}
 		}
 
+		log.debug("modify 7 laundry ________________________________________________________");
+		
+		// 데이터 베이스에 존재하는가?
+		QItemLaundryMap qilm = QItemLaundryMap.itemLaundryMap;
+		
+		Iterable<ItemLaundryMap> db_ilm_list_iter = itemLaundryMapRepository.findAll(qilm.item.id.eq(ibd.getItem_id()));
+		
+		db_exist = false;
+		
+		List<ItemLaundryMap> db_ilm_list = IteratorUtils.toList(db_ilm_list_iter.iterator());   
+		
+		if(db_ilm_list.size() > 0) db_exist = true; 
+		
+		log.debug("modify 7 laundry "+ibd.getLaundryYn()+ " db_exist "+db_exist);
+		
+		
+		
 		if (ibd.getLaundryYn().equals("Y")) {
 			ItemLaundryMap ilm = ibd.getItemLaundryMap();
 			ilm.setItem(old_item);
 			itemLaundryMapRepository.save(ilm);
+
+			
+			
+			if(db_exist) {
+				
+				ItemLaundryMap db_ItemLaundry = db_ilm_list.get(0);
+				ItemLaundryMap user_ItemLaundry = ibd.getItemLaundryMap();
+				
+				db_ItemLaundry.setDetergent(user_ItemLaundry.getDetergent());
+				db_ItemLaundry.setHand(user_ItemLaundry.getHand());
+				db_ItemLaundry.setIntensity(user_ItemLaundry.getIntensity());
+				db_ItemLaundry.setMachine(user_ItemLaundry.getMachine());
+				db_ItemLaundry.setWater(user_ItemLaundry.getWater());
+				db_ItemLaundry.setWaterTemp(user_ItemLaundry.getWaterTemp());
+				db_ItemLaundry.setUseYn("Y");
+				
+			}else {
+				ItemLaundryMap user_ItemLaundry = ibd.getItemLaundryMap();
+				user_ItemLaundry.setItem(old_item);
+				itemLaundryMapRepository.save(user_ItemLaundry);
+			} 
+			
+		}else{
+			if(db_exist) {
+				ItemLaundryMap db_ItemLaundryMap = db_ilm_list.get(0); 
+				db_ItemLaundryMap.setUseYn("N"); 
+				//itemLaundryMapRepository.save(db_ItemLaundryMap);
+			}
 		}
+		
+		
 
-		List<ItemSizeOptionMap> isomlist = ibd.getItemSizeOptionMaps();
+		
+		
+		
+		/// 동적 select box 처리 
+		
+		
+		
+		
 
-		if (isomlist.size() != 0) {
-			for (ItemSizeOptionMap isom : isomlist) {
-				isom.setItem(old_item);
-				if (isom.getOptionValue().equals("DIRECT")) {
-					SizeOption injected_size_option = sizeOptionRepository.save(isom.getSizeOption());
-					isom.setSizeOption(injected_size_option);
+		// shopmall 목록 정리 
+		
+		
+		log.debug("modify 8 shopmall ________________________________________________________");
+		
+		List<ItemShopmallMap> user_shopmall_list = ibd.getShopmalls();
+		QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
+		Iterable<ItemShopmallMap> db_ism_list_iter = itemShopmallMapRepository.findAll(qism.item.id.eq(ibd.getItem_id()));
+		List<ItemShopmallMap> db_ism_list = IteratorUtils.toList(db_ism_list_iter.iterator()); 
+		
+		
+		for(ItemShopmallMap sm : user_shopmall_list) {
+			
+			
+			boolean is_shopmall_added = true;
+			
+			for(ItemShopmallMap db_ism : db_ism_list) {
+				
+
+				if (db_ism.getId() == sm.getId()) {
+					
+					if(db_ism.getUseYn().equals("Y")) {
+						is_shopmall_added = false;	
+					}else {
+						is_shopmall_added = false;
+						db_ism.setUseYn("Y");
+					}
 				}
 			}
-			itemSizeOptionMapRepository.save(isomlist);
-		}
+			
+			
+			if (is_shopmall_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
-		List<ItemMaterialMap> imms = ibd.getMaterials();
+					Shopmall new_sm = shopmallRepository.findOne(sm.getId());
 
-		if (imms.size() != 0) {
-			for (ItemMaterialMap imm : imms) {
-				imm.setItem(old_item);
+					ItemShopmallMap new_ism = new ItemShopmallMap();
+					new_ism.setShopmall(new_sm);
+					new_ism.setItem(old_item);
+					new_ism.setUseYn("Y");
+
+					itemShopmallMapRepository.save(new_ism);					
+				
 			}
-			itemMaterialMapRepository.save(imms);
+ 
 		}
+		
+		for(ItemShopmallMap db_ism : db_ism_list) { 
+			
+			boolean did_user_delete_this_option = true;
+			
+			
+			for(ItemShopmallMap sm : user_shopmall_list) { 
+				if (db_ism.getId() == sm.getId()) {
+					
+					did_user_delete_this_option = false;
+					
+					if(db_ism.getUseYn().equals("Y")) {
+							
+					}else {
+						
+						db_ism.setUseYn("N");
+					}
+				}
+			}
+			
+			
+			if (did_user_delete_this_option) { // 유저가 삭제한 값이면 삭제한다. 
+				db_ism.setUseYn("N");
+			}
+ 
+		}
+ 
+		
+		
+		
+		
+		
+		
+		// 색상 
+
+		log.debug("modify 9 cloth color ________________________________________________________");
+		
+		List<ItemClothColorMap> user_item_color_map_list = ibd.getItemClothColorMaps(); 
+		QItemClothColorMap qiccm = QItemClothColorMap.itemClothColorMap;
+		Iterable<ItemClothColorMap> db_color_list_iter = itemClothColorMapRepository.findAll(qiccm.item.id.eq(ibd.getItem_id()));
+		List<ItemClothColorMap> db_color_list = IteratorUtils.toList(db_color_list_iter.iterator()); 
+		
+		for(ItemClothColorMap user_data : user_item_color_map_list) {
+			
+			
+			boolean is_this_option_added = true;
+			
+			for(ItemClothColorMap db_data : db_color_list) {  
+				
+				if (db_data.getClothColor() == null)
+					continue;
+
+				if (db_data.getClothColor().getId() == user_data.getClothColor().getId()) {
+					db_data.setOptionValue(user_data.getOptionValue());
+					if(db_data.getUseYn().equals("Y")) {
+						is_this_option_added = false;	
+					}else {
+						is_this_option_added = false;
+						db_data.setUseYn("Y");
+					}
+				}
+			}
+			
+			
+			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
+
+					ClothColor cc = clothColorRepository.findOne(user_data.getClothColor().getId());
+
+					ItemClothColorMap new_iccm = new ItemClothColorMap();
+					new_iccm.setClothColor(cc);
+					new_iccm.setItem(old_item);
+					new_iccm.setUseYn("Y");
+
+					itemClothColorMapRepository.save(new_iccm);					
+				
+			}
+ 
+		}
+		
+		for(ItemClothColorMap db_data : db_color_list) {  
+		 
+			
+			boolean did_user_delete_this_option = true;
+			
+			
+			for(ItemClothColorMap user_data : user_item_color_map_list) {
+				if (db_data.getClothColor() == null)
+					continue;
+
+				if (db_data.getClothColor().getId() == user_data.getClothColor().getId()) {
+					
+					db_data.setOptionValue(user_data.getOptionValue());
+					
+					did_user_delete_this_option = false;
+					if(db_data.getUseYn().equals("Y")) {	
+					}else {
+						
+						db_data.setUseYn("N");
+					}
+				}
+			}
+			
+			
+			if (did_user_delete_this_option) { // 유저가 삭제한 값이면 삭제한다. 
+				db_data.setUseYn("N");
+			}
+ 
+		}
+ 
+		
+		
+		
+		
+		// fit 정보 
+		
+
+		log.debug("modify 10 FitInfoOption ________________________________________________________");
+		
+		List<ItemFitInfoOptionMap> user_FitInfo_list = ibd.getItemFitInfoOptionMaps(); 
+		QItemFitInfoOptionMap qifiom = QItemFitInfoOptionMap.itemFitInfoOptionMap;
+		Iterable<ItemFitInfoOptionMap> db_FitInfo_list_iter = itemFitInfoOptionMapRepository.findAll(qifiom.item.id.eq(ibd.getItem_id()));
+		List<ItemFitInfoOptionMap> db_FitInfo_list = IteratorUtils.toList(db_FitInfo_list_iter.iterator()); 
+		
+		
+		for(ItemFitInfoOptionMap user_data : user_FitInfo_list) { 
+			boolean is_this_option_added = true;
+			
+			for(ItemFitInfoOptionMap db_data : db_FitInfo_list) {   
+				
+				if (db_data.getFitInfoOption() == null)
+					continue;
+
+				if (db_data.getFitInfoOption().getId() == user_data.getFitInfoOption().getId()) {
+					
+					if(db_data.getUseYn().equals("Y")) {
+						is_this_option_added = false;	
+					}else {
+						is_this_option_added = false;
+						db_data.setUseYn("Y");
+					}
+				}
+			}
+			
+			
+			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
+
+					FitInfoOption fio = fitInfoOptionRepository.findOne(user_data.getFitInfoOption().getId());
+
+					ItemFitInfoOptionMap new_ifiom = new ItemFitInfoOptionMap();
+					new_ifiom.setFitInfoOption(fio);
+					new_ifiom.setItem(old_item);
+					new_ifiom.setUseYn("Y");
+
+					itemFitInfoOptionMapRepository.save(new_ifiom);					
+				
+			}
+ 
+		}
+		
+		for(ItemFitInfoOptionMap db_data : db_FitInfo_list) {   
+			
+			boolean did_user_delete_this_option = true;
+			
+			
+			for(ItemFitInfoOptionMap user_data : user_FitInfo_list) {
+				if (db_data.getFitInfoOption() == null)
+					continue;
+
+				if (db_data.getFitInfoOption().getId() == user_data.getFitInfoOption().getId()) {
+					
+					did_user_delete_this_option = false;
+					
+					if(db_data.getUseYn().equals("Y")) {
+							
+					}else {
+						db_data.setUseYn("N");
+					}
+				}
+			}
+			
+			
+			if (did_user_delete_this_option) { // 유저가 삭제한 값이면 삭제한다. 
+				db_data.setUseYn("N");
+			}
+ 
+		}
+		
+		
+		// 사이즈 옵션 값 
+		
+		log.debug("modify 11 SizeOption ________________________________________________________");
+		
+		List<ItemSizeOptionMap> user_isom_list = ibd.getItemSizeOptionMaps();
+		QItemSizeOptionMap qisom = QItemSizeOptionMap.itemSizeOptionMap;
+		Iterable<ItemSizeOptionMap> db_isom_list_iter = itemSizeOptionMapRepository.findAll(qisom.item.id.eq(ibd.getItem_id()));
+		List<ItemSizeOptionMap> db_isom_list = IteratorUtils.toList(db_isom_list_iter.iterator()); 
+		
+		
+		
+		for(ItemSizeOptionMap user_data : user_isom_list) { 
+			boolean is_this_option_added = true;
+			
+			for(ItemSizeOptionMap db_data : db_isom_list) {    
+				
+				if (db_data.getSizeOption() == null)
+					continue;
+
+				if (db_data.getSizeOption().getId() == user_data.getSizeOption().getId()) {
+					db_data.setOptionValue(user_data.getOptionValue());
+					
+					is_this_option_added = false;	
+					
+					if(db_data.getUseYn().equals("Y")) {
+						
+					}else {
+						db_data.setUseYn("Y");
+					}
+				}
+			}
+			
+			
+			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
+
+					SizeOption so = sizeOptionRepository.findOne(user_data.getSizeOption().getId());
+
+					ItemSizeOptionMap new_isom = new ItemSizeOptionMap();
+					new_isom.setSizeOption(so);
+					new_isom.setItem(old_item);
+					new_isom.setUseYn("Y");
+
+					itemSizeOptionMapRepository.save(new_isom);					
+				
+			}
+ 
+		}
+		
+		for(ItemSizeOptionMap db_data : db_isom_list) {     
+			
+			boolean did_user_delete_this_option = true;
+			
+			
+			for(ItemSizeOptionMap user_data : user_isom_list) {
+				if (db_data.getSizeOption() == null)
+					continue;
+
+				if (db_data.getSizeOption().getId() == user_data.getSizeOption().getId()) {
+					
+					db_data.setOptionValue(user_data.getOptionValue());
+					
+					did_user_delete_this_option = false;
+					
+					if(db_data.getUseYn().equals("Y")) {	
+					}else {
+						
+						db_data.setUseYn("N");
+					}
+				}
+			}
+			
+			
+			if (did_user_delete_this_option) { // 유저가 삭제한 값이면 삭제한다. 
+				db_data.setUseYn("N");
+			}
+ 
+		}
+		
+		
+		
+ 
+		
+		// 소재 정보
+		
+		log.debug("modify 12 Material ________________________________________________________");
+		
+		List<ItemMaterialMap> user_imm_list = ibd.getMaterials(); 
+		QItemMaterialMap qimm = QItemMaterialMap.itemMaterialMap;
+		Iterable<ItemMaterialMap> db_imm_list_iter = itemMaterialMapRepository.findAll(qimm.item.id.eq(ibd.getItem_id()));
+		List<ItemMaterialMap> db_imm_list = IteratorUtils.toList(db_imm_list_iter.iterator()); 
+		
+		
+		
+		for(ItemMaterialMap user_data : user_imm_list) { 
+			boolean is_this_option_added = true;
+			
+			for(ItemMaterialMap db_data : db_imm_list) {      
+				
+				if (db_data.getMaterial() == null)
+					continue;
+
+				if (db_data.getMaterial().getId() == user_data.getMaterial().getId()) {
+					
+					is_this_option_added = false;	
+					
+					db_data.setContain(user_data.getContain());
+					db_data.setUseLocatoin(user_data.getUseLocatoin());
+					
+					if(db_data.getUseYn().equals("Y")) {
+						
+					}else {
+						db_data.setUseYn("Y");
+					}
+				}
+			}
+			
+			
+			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
+
+					Material m = materialRepository.findOne(user_data.getMaterial().getId());
+
+					ItemMaterialMap new_imm = new ItemMaterialMap();
+					new_imm.setContain(user_data.getContain());
+					new_imm.setUseLocatoin(user_data.getUseLocatoin());
+					new_imm.setMaterial(m);
+					new_imm.setItem(old_item);
+					new_imm.setUseYn("Y");
+
+					itemMaterialMapRepository.save(new_imm);					
+				
+			}
+ 
+		}
+		
+		for(ItemMaterialMap db_data : db_imm_list) {   
+		 
+			
+			boolean did_user_delete_this_option = true;
+			
+			
+			for(ItemMaterialMap user_data : user_imm_list) {
+				if (db_data.getMaterial() == null)
+					continue;
+
+				if (db_data.getMaterial().getId() == user_data.getMaterial().getId()) {
+					
+					db_data.setContain(user_data.getContain());
+					db_data.setUseLocatoin(user_data.getUseLocatoin());
+					
+					did_user_delete_this_option = false;	
+					if(db_data.getUseYn().equals("Y")) {
+						
+					}else {
+						db_data.setUseYn("N");
+					}
+				}
+			}
+			
+			
+			if (did_user_delete_this_option) { // 유저가 삭제한 값이면 삭제한다. 
+				db_data.setUseYn("N");
+			}
+ 
+		}
+ 
 
 		return old_item;
 	}
@@ -1089,25 +1659,23 @@ public class ItemServiceImpl implements ItemService {
 		return null;
 	}
 
-	public String arrayExcel(List<ToggleVO> param, Pageable pageable) throws IOException {
+	public String arrayExcel(List<ToggleDto> param, Pageable pageable) throws IOException {
 
 		String today = DateTime.now().toString("yyyy-MM-dd");
 		String temp_path = "D:\\TEST_SERVER_ROOT\\temp\\".concat(today).concat("\\");
 		String excel_path = UUID.randomUUID().toString().concat(".xls");
 
-		
 		FileUtils.forceMkdir(new File(temp_path));
-		
+
 		QItem i = QItem.item;
 
 		BooleanBuilder builder = new BooleanBuilder();
 
-		for (ToggleVO tv : param) {
+		for (ToggleDto tv : param) {
 			builder.or(i.id.eq(tv.getId()));
 		}
 
 		Iterable<Item> list = itemRepository.findAll(builder, pageable.getSort());
-
 
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("히어로 네이션 상품 목록");
@@ -1117,122 +1685,111 @@ public class ItemServiceImpl implements ItemService {
 		// 엑셀 첫번째 줄, 엑셀 파일에 쓰기
 		// 헤더만들기
 		row = sheet.createRow((short) 0);
-		
-		
+
 		HSSFCell nameCellHeader = row.createCell(0);
 		nameCellHeader.setCellValue("이름");
-		
+
 		HSSFCell codeCellHeader = row.createCell(1);
 		codeCellHeader.setCellValue("코드");
-		
+
 		HSSFCell priceCellHeader = row.createCell(2);
 		priceCellHeader.setCellValue("가격");
 
 		HSSFCell linkCellHeader = row.createCell(3);
 		linkCellHeader.setCellValue("연동여부");
-		
-		
+
 		HSSFCell sizeTableCellHeader = row.createCell(4);
 		sizeTableCellHeader.setCellValue("사이즈표");
-		
+
 		HSSFCell sizeMeasureModeCellHeader = row.createCell(5);
 		sizeMeasureModeCellHeader.setCellValue("측정모드");
-		
+
 		HSSFCell sizeMeasureImageCellHeader = row.createCell(6);
 		sizeMeasureImageCellHeader.setCellValue("측정이미지");
-		
+
 		HSSFCell imageCellHeader = row.createCell(7);
 		imageCellHeader.setCellValue("제품 이미지");
-		
 
 		HSSFCell imageModeCellHeader = row.createCell(8);
 		imageModeCellHeader.setCellValue("제품 모드");
-		
+
 		HSSFCell madeinBuilderCellHeader = row.createCell(9);
 		madeinBuilderCellHeader.setCellValue("제조국");
-		
-		HSSFCell madeinDateCellHeader = row.createCell(10); 
+
+		HSSFCell madeinDateCellHeader = row.createCell(10);
 		madeinDateCellHeader.setCellValue("제조일시");
-		
+
 		HSSFCell bleachCellHeader = row.createCell(11);
 		bleachCellHeader.setCellValue("표백제 사용법");
-		
+
 		HSSFCell drycleaningCellHeader = row.createCell(12);
 		drycleaningCellHeader.setCellValue("드라이클리닝");
-		
+
 		HSSFCell drymethodCellHeader = row.createCell(13);
 		drymethodCellHeader.setCellValue("건조방법");
-		
+
 		HSSFCell irongingCellHeader = row.createCell(14);
 		irongingCellHeader.setCellValue("다림질 ");
-		
+
 		HSSFCell laundryCellHeader = row.createCell(15);
 		laundryCellHeader.setCellValue("세탁 방법");
-		
-		
-		
-		
+
 		int row_index = 1;
-		
+
 		for (Item db_item : list) {
 
-			row = sheet.createRow((short)row_index);
+			row = sheet.createRow((short) row_index);
 			row_index++;
-	
-			
+
 			HSSFCell nameCell = row.createCell(0);
 			nameCell.setCellValue(db_item.getName());
-			
+
 			HSSFCell codeCell = row.createCell(1);
 			codeCell.setCellValue(db_item.getCode());
-			
+
 			HSSFCell priceCell = row.createCell(2);
 			priceCell.setCellValue(db_item.getPrice());
 
 			HSSFCell linkCell = row.createCell(3);
 			linkCell.setCellValue(db_item.getLinkYn());
-			
-			
+
 			HSSFCell sizeTableCell = row.createCell(4);
 			sizeTableCell.setCellValue(db_item.getSizeTableYn());
-			
+
 			HSSFCell sizeMeasureModeCell = row.createCell(5);
 			sizeMeasureModeCell.setCellValue(db_item.getSizeMeasureMode());
-			
+
 			HSSFCell sizeMeasureImageCell = row.createCell(6);
 			sizeMeasureImageCell.setCellValue(db_item.getSizeMeasureImage());
-			
+
 			HSSFCell imageCell = row.createCell(7);
 			imageCell.setCellValue(db_item.getImage());
-			
 
 			HSSFCell imageModeCell = row.createCell(8);
 			imageModeCell.setCellValue(db_item.getImageMode());
-			
+
 			HSSFCell madeinBuilderCell = row.createCell(9);
 			madeinBuilderCell.setCellValue(db_item.getMadeinBuilder());
-			
+
 			HSSFCell madeinDateCell = row.createCell(10);
 			DateTime madeinDateTime = db_item.getMadeinDate();
 			madeinDateCell.setCellValue(madeinDateTime.toString());
-			
+
 			HSSFCell bleachCell = row.createCell(11);
 			bleachCell.setCellValue(db_item.getBleachYn());
-			
+
 			HSSFCell drycleaningCell = row.createCell(12);
 			drycleaningCell.setCellValue(db_item.getDrycleaningYn());
-			
+
 			HSSFCell drymethodCell = row.createCell(13);
 			drymethodCell.setCellValue(db_item.getDrymethodYn());
-			
+
 			HSSFCell irongingCell = row.createCell(14);
 			irongingCell.setCellValue(db_item.getIroningYn());
-			
+
 			HSSFCell laundryCell = row.createCell(15);
 			laundryCell.setCellValue(db_item.getLaundryYn());
-			
-			
-			
+
 		}
 
 		// // 엑셀 와이드 설정
@@ -1250,9 +1807,7 @@ public class ItemServiceImpl implements ItemService {
 		// }
 
 		// 엑셀 생성 경로 설정 및 자원 종료
-		
 
-		
 		FileOutputStream fileoutputstream = new FileOutputStream(temp_path.concat(excel_path));
 		workbook.write(fileoutputstream);
 		fileoutputstream.close();

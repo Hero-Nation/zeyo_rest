@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallDto;
@@ -53,7 +53,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "name", required = false) String name,
 
 			@RequestParam(value = "company", required = false) String company,
 			@RequestParam(value = "brand", required = false) String brand,
@@ -85,9 +85,9 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
 	@ResponseBody
-	public ResponseEntity<ResultVO> insert( 
+	public ResponseEntity<ResultDto> insert( 
 			
-			@RequestBody NameVO param,
+			@RequestBody NameDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		if(param.getName() == null || param.getName().equals("")) {
@@ -107,7 +107,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
-	public ResponseEntity<ResultVO> delete(
+	public ResponseEntity<ResultDto> delete(
 
 			@RequestBody ShopmallDto param,
 
@@ -131,7 +131,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update_name")
 	@ResponseBody
-	public ResponseEntity<ResultVO> update_name(@RequestBody ShopmallDto param,
+	public ResponseEntity<ResultDto> update_name(@RequestBody ShopmallDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		if(param.getId() == null) {
@@ -155,7 +155,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_link")
 	@ResponseBody
-	public ResponseEntity<ResultVO> toggle_link(@RequestBody ShopmallDto param,
+	public ResponseEntity<ResultDto> toggle_link(@RequestBody ShopmallDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -177,7 +177,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/check_unique_name")
 	@ResponseBody
-	public ResponseEntity<ResultVO> check_unique_name(@RequestParam(value = "name") String name) {
+	public ResponseEntity<ResultDto> check_unique_name(@RequestParam(value = "name") String name) {
 
 		if (name == null) {
 			return return_fail("name.empty");
@@ -190,7 +190,7 @@ public class ShopmallController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/shopmall_company_use_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> shopmall_company_use_list(@AuthenticationPrincipal OAuth2Authentication auth,
+	public ResponseEntity<ResultDto> shopmall_company_use_list(@AuthenticationPrincipal OAuth2Authentication auth,
 			Pageable pageable) {
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -205,7 +205,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/detail_info")
 	@ResponseBody
-	public ResponseEntity<ResultVO> detail_info(@RequestParam(value = "id", required = false) Long id) {
+	public ResponseEntity<ResultDto> detail_info(@RequestParam(value = "id", required = false) Long id) {
 
 		return return_success((Object) shopmallService.detail_info(id));
 
@@ -213,7 +213,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> client_list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> client_list(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "link", required = false) String link,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
@@ -248,7 +248,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
 	@ResponseBody
-	public ResponseEntity<ResultVO> detail(@RequestParam(value = "id", required = false) Long id,
+	public ResponseEntity<ResultDto> detail(@RequestParam(value = "id", required = false) Long id,
 			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);

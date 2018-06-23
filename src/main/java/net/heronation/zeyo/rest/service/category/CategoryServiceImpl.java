@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
@@ -401,7 +401,7 @@ public class CategoryServiceImpl implements CategoryService{
 	
 	@Override
 	@Transactional
-	public String insert(NameVO param) {
+	public String insert(NameDto param) {
 		// TODO Auto-generated method stub 
 		
 		Category iv = new Category(); 
@@ -417,7 +417,7 @@ public class CategoryServiceImpl implements CategoryService{
 	
 	@Override 
 	@Transactional
-	public String update(IdNameVO param) {
+	public String update(IdNameDto param) {
 		// TODO Auto-generated method stub
 		
 		Category a = categoryRepository.findOne(param.getId());
@@ -428,8 +428,8 @@ public class CategoryServiceImpl implements CategoryService{
 
 	@Override
 	@Transactional
-	public String delete(List<LIdVO> param) {
-		for(LIdVO v : param) {
+	public String delete(List<LIdDto> param) {
+		for(LIdDto v : param) {
 			Category a = categoryRepository.findOne(v.getId());
 			a.setUseYn("N");
 		}

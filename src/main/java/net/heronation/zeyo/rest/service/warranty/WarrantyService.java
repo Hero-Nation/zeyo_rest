@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
 
 public interface WarrantyService {
@@ -15,7 +15,7 @@ public interface WarrantyService {
 
 	String insert(ScopeVO param);
 
-	String update(IdNameVO param);
+	String update(IdNameDto param);
 
-	String delete(List<LIdVO> param);
+	String delete(List<LIdDto> param);
 }

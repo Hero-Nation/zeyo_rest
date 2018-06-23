@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 
 public interface ClothColorService {
@@ -17,5 +17,5 @@ public interface ClothColorService {
 
 	String update(ClothColorDto param);
 
-	String delete(List<LIdVO> param);
+	String delete(List<LIdDto> param);
 }

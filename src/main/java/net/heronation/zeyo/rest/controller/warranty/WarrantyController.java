@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyResourceAssembler;
@@ -55,7 +55,7 @@ public class WarrantyController extends BaseController {
  	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(
+	public ResponseEntity<ResultDto> list(
 			@RequestParam(value = "scope",required=false) String scope,
 			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime end,
@@ -79,7 +79,7 @@ public class WarrantyController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody ScopeVO param,
+	public ResponseEntity<ResultDto> insert(@RequestBody ScopeVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) warrantyService.insert(param));
@@ -88,7 +88,7 @@ public class WarrantyController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody IdNameVO param,
+	public ResponseEntity<ResultDto> update(@RequestBody IdNameDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) warrantyService.update(param));
@@ -96,7 +96,7 @@ public class WarrantyController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
-	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) warrantyService.delete(param));

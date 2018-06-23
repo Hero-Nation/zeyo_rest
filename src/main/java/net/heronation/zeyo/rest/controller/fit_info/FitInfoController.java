@@ -24,8 +24,8 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
@@ -57,7 +57,7 @@ public class FitInfoController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
@@ -81,7 +81,7 @@ public class FitInfoController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/detail_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> detail_list(@RequestParam(value = "id", required = false) String id,
+	public ResponseEntity<ResultDto> detail_list(@RequestParam(value = "id", required = false) String id,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
@@ -99,7 +99,7 @@ public class FitInfoController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/fitInfoOptions")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "fitInfoId", required = false) Long fitInfoId,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "fitInfoId", required = false) Long fitInfoId,
 			Pageable pageable) {
 
 		QFitInfoOption target = QFitInfoOption.fitInfoOption;
@@ -112,7 +112,7 @@ public class FitInfoController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody FitInfoDto param,
+	public ResponseEntity<ResultDto> insert(@RequestBody FitInfoDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success(fit_infoService.insert(param));
@@ -121,7 +121,7 @@ public class FitInfoController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody FitInfoUpdateDto param,
+	public ResponseEntity<ResultDto> update(@RequestBody FitInfoUpdateDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success(  fit_infoService.update(param));
@@ -129,7 +129,7 @@ public class FitInfoController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
-	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success(  fit_infoService.delete(param));

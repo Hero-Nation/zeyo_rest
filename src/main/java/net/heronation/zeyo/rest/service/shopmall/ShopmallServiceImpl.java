@@ -22,7 +22,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -324,7 +324,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 	@Override
 	@Transactional
-	public Shopmall insert(NameVO param, Long member_seq) {
+	public Shopmall insert(NameDto param, Long member_seq) {
 		SecureRandom random = new SecureRandom(); 
 
 		Member m = memberRepository.getOne(member_seq);

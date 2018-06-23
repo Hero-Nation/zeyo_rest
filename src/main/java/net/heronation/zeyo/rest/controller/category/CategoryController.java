@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
@@ -58,7 +58,7 @@ public class CategoryController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<ResultVO> list(
+	public ResponseEntity<ResultDto> list(
 			@RequestParam(value = "name",required=false) String name,
 			@RequestParam(value = "cate",required=false) String cate,
 			@RequestParam(value = "subcate",required=false) String subcate,
@@ -91,7 +91,7 @@ public class CategoryController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/pure_list")
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<ResultVO> pure_list(
+	public ResponseEntity<ResultDto> pure_list(
 			 Pageable pageable) {
 
 		Map<String,Object> param = new HashMap<String,Object>();
@@ -101,7 +101,7 @@ public class CategoryController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody NameVO param,
+	public ResponseEntity<ResultDto> insert(@RequestBody NameDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) categoryService.insert(param));
@@ -110,7 +110,7 @@ public class CategoryController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody IdNameVO param,
+	public ResponseEntity<ResultDto> update(@RequestBody IdNameDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) categoryService.update(param));
@@ -118,7 +118,7 @@ public class CategoryController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
-	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) categoryService.delete(param));

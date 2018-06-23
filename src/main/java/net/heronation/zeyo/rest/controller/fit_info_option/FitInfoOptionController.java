@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionResourceAssembler;
 import net.heronation.zeyo.rest.service.fit_info_option.FitInfoOptionService;
@@ -45,7 +45,7 @@ public class FitInfoOptionController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/select_options")
 	@ResponseBody
-	public ResponseEntity<ResultVO> select_options(@RequestParam(name = "fitinfo", defaultValue = "") String fitinfo) {
+	public ResponseEntity<ResultDto> select_options(@RequestParam(name = "fitinfo", defaultValue = "") String fitinfo) {
 		if (fitinfo.equals("")) {
 			return return_fail("fitinfo.empty");
 		}

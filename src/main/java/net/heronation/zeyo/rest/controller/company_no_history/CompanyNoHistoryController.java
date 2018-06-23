@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryResourceAssembler;
@@ -57,7 +57,7 @@ public class CompanyNoHistoryController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "name", required = false) String name,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "name", required = false) String name,
 
 			@RequestParam(value = "cn1", required = false) String cn1,
 			@RequestParam(value = "cn2", required = false) String cn2,
@@ -90,7 +90,7 @@ public class CompanyNoHistoryController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/my_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> my_list(@RequestParam(value = "member_id", required = false) String member_id,
+	public ResponseEntity<ResultDto> my_list(@RequestParam(value = "member_id", required = false) String member_id,
 			Pageable pageable) {
 		
 		Map<String,Object> param = new HashMap<String,Object>();

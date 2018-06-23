@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.Predicate;
 
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
 
 public interface SizeOptionService {
@@ -21,5 +21,5 @@ public interface SizeOptionService {
 
 	String update(SizeOptionDto param);
 
-	String delete(List<LIdVO> param);
+	String delete(List<LIdDto> param);
 }

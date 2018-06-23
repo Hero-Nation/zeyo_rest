@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
@@ -52,7 +52,7 @@ public class Cafe24ApiController extends BaseController {
  
 	@RequestMapping(method = RequestMethod.GET, value = "/cafe24_product_sync")
 	@ResponseBody
-	public ResponseEntity<ResultVO> cafe24_sync_produc(@AuthenticationPrincipal OAuth2Authentication auth,
+	public ResponseEntity<ResultDto> cafe24_sync_produc(@AuthenticationPrincipal OAuth2Authentication auth,
 			@RequestParam(value = "shopmall_id", required = false) long shopmall_id) {
 		log.debug("/integrate/cafe24/produc/sync");
 		

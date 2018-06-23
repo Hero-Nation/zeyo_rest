@@ -3,7 +3,7 @@ package net.heronation.zeyo.rest.repository.fit_info;
 import java.util.List;
 
 import lombok.Data;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.NameDto;
 
 @Data
 public class FitInfoDto {
@@ -13,7 +13,7 @@ public class FitInfoDto {
 
 	private String metaDesc; 
 
-	private List<NameVO> options;
+	private List<NameDto> options;
 	
 	public FitInfo convertToEntity() {
 		FitInfo R = new FitInfo();

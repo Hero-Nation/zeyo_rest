@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.item.Item;
@@ -64,12 +64,12 @@ public class ItemController extends BaseController {
 	protected void initBinder(WebDataBinder binder) {
 	//	binder.addValidators(new ItemBuildValidator());
 	}
-
+ 
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(
+	public ResponseEntity<ResultDto> list(
  
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "company", required = false) String company,
@@ -114,7 +114,7 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> clinet_list(
+	public ResponseEntity<ResultDto> clinet_list(
 
 			@RequestParam(value = "name", required = false) String name,  
 			@RequestParam(value = "size_link", required = false) String size_link,
@@ -163,9 +163,9 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_link")
 	@ResponseBody
-	public ResponseEntity<ResultVO> toggle_link(
+	public ResponseEntity<ResultDto> toggle_link(
 
-			@RequestBody List<ToggleVO> param,
+			@RequestBody List<ToggleDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		
@@ -190,9 +190,9 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
-	public ResponseEntity<ResultVO> delete(
+	public ResponseEntity<ResultDto> delete(
 
-			@RequestBody List<ToggleVO> param,
+			@RequestBody List<ToggleDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		// 유저 정보 가지고 오기
@@ -215,7 +215,7 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/shopmall_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> shopmall_list(
+	public ResponseEntity<ResultDto> shopmall_list(
 			@RequestParam(value = "id", required = false, defaultValue = "0") Long item_id, Pageable pageable) {
 
 		if (item_id == 0) {
@@ -229,8 +229,8 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_size_table")
 	@ResponseBody
-	public ResponseEntity<ResultVO> toggle_size_table(
-			@RequestBody List<ToggleVO> param) {
+	public ResponseEntity<ResultDto> toggle_size_table(
+			@RequestBody List<ToggleDto> param) {
 
 		if (param == null|| param.size() == 0) {
 			return return_fail("target.empty");
@@ -251,8 +251,8 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/download_excel")
 	@ResponseBody
-	public ResponseEntity<ResultVO> download_excel(
-			@RequestBody List<ToggleVO> param,
+	public ResponseEntity<ResultDto> download_excel(
+			@RequestBody List<ToggleDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
 
  
@@ -274,7 +274,7 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.POST, value = "/build")
 	@ResponseBody
-	public ResponseEntity<ResultVO> build(@RequestBody @Valid ItemBuildDto itemBuildDto, BindingResult bindingResult,
+	public ResponseEntity<ResultDto> build(@RequestBody @Valid ItemBuildDto itemBuildDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/items/build");
 		if(auth == null) {
@@ -302,7 +302,7 @@ public class ItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/modify")
 	@ResponseBody
-	public ResponseEntity<ResultVO> modify(@RequestBody @Valid ItemModifyDto itemModifyDto, BindingResult bindingResult,
+	public ResponseEntity<ResultDto> modify(@RequestBody @Valid ItemModifyDto itemModifyDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/items/modify");
 		if(auth == null) {

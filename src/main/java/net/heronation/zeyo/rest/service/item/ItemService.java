@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemDto;
@@ -19,11 +19,11 @@ public interface ItemService {
 
 	String change_connect(ItemDto param,Long seq);
 
-	String delete(List<ToggleVO> param,Long seq);
+	String delete(List<ToggleDto> param,Long seq);
 
 	Map<String, Object> shopmall_list(Long item_id, Pageable pageable);
 
-	String toggle_size_table( List<ToggleVO> param);
+	String toggle_size_table( List<ToggleDto> param);
 
 	Item build(ItemBuildDto itemBuildDto, Long member_id);
 
@@ -32,7 +32,7 @@ public interface ItemService {
 	
 	Map<String, Object> getStat();
 
-	String toggle_link(List<ToggleVO> param, Long seq);
+	String toggle_link(List<ToggleDto> param, Long seq);
 	
-	String arrayExcel(List<ToggleVO> param, Pageable pageable) throws IOException;
+	String arrayExcel(List<ToggleDto> param, Pageable pageable) throws IOException;
 }

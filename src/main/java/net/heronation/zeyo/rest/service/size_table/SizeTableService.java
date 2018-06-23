@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 
 public interface SizeTableService {
@@ -13,9 +13,9 @@ public interface SizeTableService {
 
 	Map<String, Object> client_search(Map<String, Object> where, Pageable page);
 
-	String delete(List<ToggleVO> param, Long seq);
+	String delete(List<ToggleDto> param, Long seq);
 
-	String batch_build(List<ToggleVO> param, Long seq);
+	String batch_build(List<ToggleDto> param, Long seq);
 
 	Map<String, Object> preview(Long seq);
 

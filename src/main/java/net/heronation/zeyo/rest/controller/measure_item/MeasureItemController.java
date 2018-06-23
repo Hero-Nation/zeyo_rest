@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemDto;
@@ -55,7 +55,7 @@ public class MeasureItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(
+	public ResponseEntity<ResultDto> list(
 			@RequestParam(value = "name",required=false) String name,
 			@RequestParam(value = "start",required=false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  DateTime start,
 			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
@@ -82,7 +82,7 @@ public class MeasureItemController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/detail_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> detail_list(@RequestParam(value = "id", required = false) String id,
+	public ResponseEntity<ResultDto> detail_list(@RequestParam(value = "id", required = false) String id,
 
 			Pageable pageable) {
 		if(id == null) {
@@ -100,7 +100,7 @@ public class MeasureItemController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody MeasureItemDto param,
+	public ResponseEntity<ResultDto> insert(@RequestBody MeasureItemDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success(measure_itemService.insert(param));

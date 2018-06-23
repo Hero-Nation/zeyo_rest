@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
 import net.heronation.zeyo.rest.controller.item.ItemBuildDtoDeserializer;
 import net.heronation.zeyo.rest.controller.item.ItemModifyDtoDeserializer;
 import net.heronation.zeyo.rest.repository.brand.Brand;
@@ -22,6 +23,7 @@ import net.heronation.zeyo.rest.repository.item_ironing_map.ItemIroningMap;
 import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
+import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.madein.Madein;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
@@ -37,8 +39,6 @@ public class ItemModifyDto {
 	private Long item_id;
 	
 	private Brand brand;
-
-	private List<Shopmall> shopmalls = new ArrayList<Shopmall>();
 
 	private Category category;
 
@@ -66,6 +66,7 @@ public class ItemModifyDto {
 
 	private Warranty warranty;
 
+	private List<ItemShopmallMap> shopmalls = new ArrayList<ItemShopmallMap>();
 	private List<ItemMaterialMap> materials = new ArrayList<ItemMaterialMap>();
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();

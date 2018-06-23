@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.service.common.CommonService;
 
 @RepositoryRestController
@@ -19,7 +19,7 @@ public class StatisticController extends BaseController {
 	private CommonService commonService;
 
 	@RequestMapping(path = "/dash_board_statistic", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> dash_board_statistic() {
+	public ResponseEntity<ResultDto> dash_board_statistic() {
 		log.debug("/statistic/dash_board_statistic");
 
 		return return_success(commonService.dash_board_statistic());

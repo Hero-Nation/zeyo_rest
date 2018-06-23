@@ -3,53 +3,53 @@ package net.heronation.zeyo.rest.common.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 
 public class BaseController {
 
-	protected ResponseEntity<ResultVO> return_fail(Object Result) {
-		ResultVO R = new ResultVO();
+	protected ResponseEntity<ResultDto> return_fail(Object Result) {
+		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.FAIL);
 		R.setR(Result);
-		return new ResponseEntity<ResultVO>(R, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<ResultDto>(R, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
  
 	
-	protected ResponseEntity<ResultVO> return_fail(String Result) {
-		ResultVO R = new ResultVO();
+	protected ResponseEntity<ResultDto> return_fail(String Result) {
+		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.FAIL);
 		R.setR(Result);
-		return new ResponseEntity<ResultVO>(R, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<ResultDto>(R, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	protected ResponseEntity<ResultVO> return_fail() {
-		ResultVO R = new ResultVO();
+	protected ResponseEntity<ResultDto> return_fail() {
+		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.FAIL);
-		return new ResponseEntity<ResultVO>(R, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<ResultDto>(R, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
-	protected ResponseEntity<ResultVO> return_success(String Result) {
-		ResultVO R = new ResultVO();
+	protected ResponseEntity<ResultDto> return_success(String Result) {
+		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.SUCCESS);
 		R.setR(Result);
-		return new ResponseEntity<ResultVO>(R, HttpStatus.OK);
+		return new ResponseEntity<ResultDto>(R, HttpStatus.OK);
 	}
 	
  
 	
-	protected ResponseEntity<ResultVO> return_success(Object object) {
-		ResultVO R = new ResultVO();
+	protected ResponseEntity<ResultDto> return_success(Object object) {
+		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.SUCCESS);
 		R.setR(object);
-		return new ResponseEntity<ResultVO>(R, HttpStatus.OK);
+		return new ResponseEntity<ResultDto>(R, HttpStatus.OK);
 	}
 
-	protected ResponseEntity<ResultVO> return_success() {
-		ResultVO R = new ResultVO();
+	protected ResponseEntity<ResultDto> return_success() {
+		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.SUCCESS);
-		return new ResponseEntity<ResultVO>(R, HttpStatus.OK);
+		return new ResponseEntity<ResultDto>(R, HttpStatus.OK);
 	}
 	
 	

@@ -22,7 +22,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
@@ -357,10 +357,10 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 
 	@Override
 	@Transactional
-	public String delete(List<LIdVO> param) {
+	public String delete(List<LIdDto> param) {
 		// TODO Auto-generated method stub
 		
-		for(LIdVO v :param) {
+		for(LIdDto v :param) {
 			SizeOption a = size_optionRepository.findOne(v.getId());
 			a.setUseYn("N");	
 		}

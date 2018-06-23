@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
@@ -57,7 +57,7 @@ public class SizeTableController extends BaseController {
  	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(
+	public ResponseEntity<ResultDto> list(
 			
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "company", required = false) String company,
@@ -99,7 +99,7 @@ public class SizeTableController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> clientlist(
+	public ResponseEntity<ResultDto> clientlist(
 			
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "category", required = false) String category,
@@ -149,9 +149,9 @@ public class SizeTableController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
-	public ResponseEntity<ResultVO> delete(
+	public ResponseEntity<ResultDto> delete(
 
-			@RequestBody List<ToggleVO> param,
+			@RequestBody List<ToggleDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		// 유저 정보 가지고 오기
@@ -174,9 +174,9 @@ public class SizeTableController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/batch_build")
 	@ResponseBody
-	public ResponseEntity<ResultVO> batch_build(
+	public ResponseEntity<ResultDto> batch_build(
 
-			@RequestBody List<ToggleVO> param,
+			@RequestBody List<ToggleDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		// 유저 정보 가지고 오기
@@ -200,7 +200,7 @@ public class SizeTableController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/preview")
 	@ResponseBody
-	public ResponseEntity<ResultVO> preview(
+	public ResponseEntity<ResultDto> preview(
 			@RequestParam(value = "id", required = false) String id,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
@@ -225,7 +225,7 @@ public class SizeTableController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/modify")
 	@ResponseBody
-	public ResponseEntity<ResultVO> modify(
+	public ResponseEntity<ResultDto> modify(
 			@RequestBody SizeTableDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
@@ -249,7 +249,7 @@ public class SizeTableController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/create")
 	@ResponseBody
-	public ResponseEntity<ResultVO> create(
+	public ResponseEntity<ResultDto> create(
 			@RequestBody SizeTableDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 

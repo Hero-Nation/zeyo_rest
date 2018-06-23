@@ -21,9 +21,9 @@ import org.springframework.web.client.RestTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
@@ -243,7 +243,7 @@ public class BrandServiceImpl implements BrandService {
 		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
-
+ 
 		return R;
 
 	}
@@ -386,12 +386,12 @@ public class BrandServiceImpl implements BrandService {
 		
 		StringBuffer group_query = new StringBuffer();
 		
-		group_query.append(" GROUP BY i.id ");
+		group_query.append(" GROUP BY s.id ");
 		
 		
 		
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY i.");
+		sort_query.append("  ORDER BY s.");
 		Sort sort = page.getSort();
 		String sep = "";
 		for (Sort.Order order : sort) {
@@ -483,7 +483,7 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Brand insert(NameVO param, Long member_seq) { 
+	public Brand insert(NameDto param, Long member_seq) { 
 		log.debug("insert");
 
 		Member m = memberRepository.getOne(member_seq);
@@ -498,12 +498,12 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete( List<LIdVO> param, Long member_seq) {
+	public Map<String, Object> delete( List<LIdDto> param, Long member_seq) {
 		log.debug("delete");
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		
-		for(LIdVO id : param) {
+		for(LIdDto id : param) {
 
 			Brand target = brandRepository.findOne(id.getId());
 			Member user = memberRepository.findOne(member_seq);
@@ -542,7 +542,7 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> update_name(IdNameVO param, Long member_seq ) {
+	public Map<String, Object> update_name(IdNameDto param, Long member_seq ) {
 		log.debug("update_name");
 
 		Map<String, Object> R = new HashMap<String, Object>();

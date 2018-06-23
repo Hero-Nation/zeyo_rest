@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 
 @Controller
 @Slf4j
@@ -58,7 +58,7 @@ public class FileUploadController extends BaseController {
 	}
 	
 	@PostMapping("/temp/upload")
-	public ResponseEntity<ResultVO> tempUpload(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<ResultDto> tempUpload(@RequestParam("file") MultipartFile file) {
 
 		if (file.isEmpty()) {
 			return return_fail("file.empty");

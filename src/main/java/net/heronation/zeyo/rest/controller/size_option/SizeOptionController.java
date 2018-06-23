@@ -24,8 +24,8 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
@@ -57,7 +57,7 @@ public class SizeOptionController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(
+	public ResponseEntity<ResultDto> list(
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "cate", required = false) String category,
 			@RequestParam(value = "sub_cate", required = false) String sub_category,
@@ -91,7 +91,7 @@ public class SizeOptionController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/single")
 	@ResponseBody
-	public ResponseEntity<ResultVO> single(
+	public ResponseEntity<ResultDto> single(
 			@RequestParam(value = "id", required = false) String id ) {
  
 		BooleanBuilder builder = new BooleanBuilder();
@@ -114,7 +114,7 @@ public class SizeOptionController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/category_count")
 	@ResponseBody
-	public ResponseEntity<ResultVO> category_count() {
+	public ResponseEntity<ResultDto> category_count() {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -129,7 +129,7 @@ public class SizeOptionController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody SizeOptionDto param,
+	public ResponseEntity<ResultDto> insert(@RequestBody SizeOptionDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) size_optionService.insert(param));
@@ -137,7 +137,7 @@ public class SizeOptionController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody SizeOptionDto param,
+	public ResponseEntity<ResultDto> update(@RequestBody SizeOptionDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) size_optionService.update(param));
@@ -145,7 +145,7 @@ public class SizeOptionController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
-	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) size_optionService.delete(param));

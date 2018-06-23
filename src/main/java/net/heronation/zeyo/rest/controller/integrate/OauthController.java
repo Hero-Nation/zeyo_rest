@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
@@ -39,7 +39,7 @@ public class OauthController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/cafe24/callback")
 	@ResponseBody
-	public ResponseEntity<ResultVO> cafe24_callback(@RequestParam(value = "code", required = false) String code,
+	public ResponseEntity<ResultDto> cafe24_callback(@RequestParam(value = "code", required = false) String code,
 			@RequestParam(value = "state", required = false) String state,
 			@RequestParam(value = "error", required = false) String error) {
 		log.debug("/cafe24/callback");
@@ -63,7 +63,7 @@ public class OauthController extends BaseController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/cafe24/refresh_access_token")
 	@ResponseBody
-	public ResponseEntity<ResultVO> refresh_access_token(@RequestParam(value = "id", required = false) Long id) {
+	public ResponseEntity<ResultDto> refresh_access_token(@RequestParam(value = "id", required = false) Long id) {
 		log.debug("/cafe24/refresh_access_token");
 		log.debug(id+" " );
 		String R = cafe24Service.get_access_token_by_refresh_token(id);
@@ -78,7 +78,7 @@ public class OauthController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/kakao/callback")
 	@ResponseBody
-	public ResponseEntity<ResultVO> kakao_callback(@RequestParam(value = "code", required = false) String code) {
+	public ResponseEntity<ResultDto> kakao_callback(@RequestParam(value = "code", required = false) String code) {
 		log.debug("/kakao/callback");
 		log.debug(code);
 		return return_success(code);
@@ -86,7 +86,7 @@ public class OauthController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/naver/callback")
 	@ResponseBody
-	public ResponseEntity<ResultVO> naver_callback(@RequestParam(value = "code", required = false) String code) {
+	public ResponseEntity<ResultDto> naver_callback(@RequestParam(value = "code", required = false) String code) {
 		log.debug("/naver/callback");
 		log.debug(code);
 		return return_success(code);

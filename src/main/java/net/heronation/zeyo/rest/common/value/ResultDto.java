@@ -1,6 +1,6 @@
 package net.heronation.zeyo.rest.common.value;
 
-public class ResultVO {
+public class ResultDto {
 
 	private String msg;
 	private Object R; 

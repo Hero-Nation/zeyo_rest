@@ -30,7 +30,7 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
@@ -58,7 +58,7 @@ public class MemberController extends BaseController {
 
 	private final RepositoryEntityLinks entityLinks;
 
-	@Autowired
+	@Autowired 
 	private MemberRegisterValidator memberRegisterDtoValidator;
 
 	@InitBinder("memberRegisterDto")
@@ -74,7 +74,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/registry", method = RequestMethod.POST)
-	public ResponseEntity<ResultVO> registry(@Valid @RequestBody MemberRegisterDto memberRegisterDto,
+	public ResponseEntity<ResultDto> registry(@Valid @RequestBody MemberRegisterDto memberRegisterDto,
 			BindingResult bindingResult) {
 		log.debug("/api/members/registry");
 
@@ -90,7 +90,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/confirm_otp", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> confirm_otp(@RequestParam(name = "email", defaultValue = "") String email,
+	public ResponseEntity<ResultDto> confirm_otp(@RequestParam(name = "email", defaultValue = "") String email,
 			@RequestParam(name = "otp", defaultValue = "") String otp) {
 		log.debug("/api/members/confirm_otp");
 
@@ -120,7 +120,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/send_register_mail", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> send_register_mail(@RequestParam(name = "email", defaultValue = "") String email) {
+	public ResponseEntity<ResultDto> send_register_mail(@RequestParam(name = "email", defaultValue = "") String email) {
 		log.debug("/api/members/send_register_mail");
 
 		if (email.equals("")) {
@@ -139,7 +139,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/send_confirm_email", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> send_confirm_email(@RequestParam(name = "email", defaultValue = "") String email) {
+	public ResponseEntity<ResultDto> send_confirm_email(@RequestParam(name = "email", defaultValue = "") String email) {
 		log.debug("/api/members/send_confirm_email");
 
 		if (email.equals("")) {
@@ -158,7 +158,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/find_id_by_email", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> find_id_by_email(@RequestParam(name = "name", defaultValue = "") String name,
+	public ResponseEntity<ResultDto> find_id_by_email(@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "email", defaultValue = "") String email) {
 		log.debug("/api/members/find_id_by_email");
 
@@ -182,7 +182,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/find_id_by_email_confirm", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> find_id_by_email_confirm(
+	public ResponseEntity<ResultDto> find_id_by_email_confirm(
 			@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "email", defaultValue = "") String email,
 			@RequestParam(name = "otp", defaultValue = "") String otp
@@ -212,7 +212,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/find_id_by_phone", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> find_id_by_phone(@RequestParam(name = "name", defaultValue = "") String name,
+	public ResponseEntity<ResultDto> find_id_by_phone(@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "phone", defaultValue = "") String phone) {
 		log.debug("/api/members/find_id_by_phone");
 
@@ -234,7 +234,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/find_id_by_phone_confirm", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> find_id_by_phone_confirm(
+	public ResponseEntity<ResultDto> find_id_by_phone_confirm(
 			@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "phone", defaultValue = "") String phone,
 			@RequestParam(name = "otp", defaultValue = "") String otp) {
@@ -260,7 +260,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/findByMemberId", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> findByMemberId(
+	public ResponseEntity<ResultDto> findByMemberId(
 			@RequestParam(name = "member_id", defaultValue = "") String member_id) {
 		log.debug("/api/members/find_id_by_email");
 
@@ -280,7 +280,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/find_password", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> find_password(@RequestParam(name = "member_id", defaultValue = "") String member_id,
+	public ResponseEntity<ResultDto> find_password(@RequestParam(name = "member_id", defaultValue = "") String member_id,
 			@RequestParam(name = "member_name", defaultValue = "") String member_name,
 			@RequestParam(name = "member_email", defaultValue = "") String member_email) {
 		log.debug("/api/members/find_password");
@@ -308,7 +308,7 @@ public class MemberController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(path = "my_info", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> my_info(@AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultDto> my_info(@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/my_info");
 
 		// 유저 정보 가지고 오기
@@ -331,7 +331,7 @@ public class MemberController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(path = "user_info", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> user_info(@RequestParam(value = "member_id", required = false) String member_id) {
+	public ResponseEntity<ResultDto> user_info(@RequestParam(value = "member_id", required = false) String member_id) {
 		log.debug("/api/members/user_info");
 
 		Long id = Long.valueOf(String.valueOf(member_id));
@@ -347,7 +347,7 @@ public class MemberController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(path = "toggle_email_noti", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> toggle_email_noti(
+	public ResponseEntity<ResultDto> toggle_email_noti(
 
 			@RequestBody MemberDto param,
 
@@ -375,7 +375,7 @@ public class MemberController extends BaseController {
 
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "user_biz_info", method = RequestMethod.GET)
-	public ResponseEntity<ResultVO> user_biz_info(
+	public ResponseEntity<ResultDto> user_biz_info(
 			@RequestParam(value = "member_id", required = false) String member_id) {
 		log.debug("/api/members/user_biz_info");
 
@@ -393,7 +393,7 @@ public class MemberController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/my_brand")
 	@ResponseBody
-	public ResponseEntity<ResultVO> my_brand(@RequestParam(value = "member_id", required = false) String member_id,
+	public ResponseEntity<ResultDto> my_brand(@RequestParam(value = "member_id", required = false) String member_id,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -410,7 +410,7 @@ public class MemberController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/my_shopmall")
 	@ResponseBody
-	public ResponseEntity<ResultVO> my_shopmall(@RequestParam(value = "member_id", required = false) String member_id,
+	public ResponseEntity<ResultDto> my_shopmall(@RequestParam(value = "member_id", required = false) String member_id,
 			Pageable pageable) {
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -427,22 +427,20 @@ public class MemberController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/my_item")
 	@ResponseBody
-	public ResponseEntity<ResultVO> my_item(@RequestParam(value = "member_id", required = false) String member_id,
+	public ResponseEntity<ResultDto> my_item(@RequestParam(value = "member_id", required = false) String member_id,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-		Long id = Long.valueOf(String.valueOf(member_id));
-		QItem target = QItem.item;
-		builder.and(target.member.id.eq(id));
-		builder.and(target.useYn.eq("Y"));
+ 
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("member_id", member_id); 
 
-		return return_success(memberService.my_item(builder.getValue(), pageable));
+		return return_success(memberService.my_item(param, pageable));
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "identity", required = false) String identity,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "identity", required = false) String identity,
 
 			@RequestParam(value = "phone1", required = false) String phone1,
 			@RequestParam(value = "phone2", required = false) String phone2,
@@ -475,7 +473,7 @@ public class MemberController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/search_company_history")
 	@ResponseBody
-	public ResponseEntity<ResultVO> search_company_history(
+	public ResponseEntity<ResultDto> search_company_history(
 
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "cn1", required = false) String cn1,
@@ -510,7 +508,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_phone", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_phone(@RequestBody MemberDto param,
+	public ResponseEntity<ResultDto> update_phone(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_phone");
 
@@ -531,7 +529,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_email", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_email(@RequestBody EmailUpdateVO param,
+	public ResponseEntity<ResultDto> update_email(@RequestBody EmailUpdateVO param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_email");
 
@@ -561,7 +559,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_password", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_password(@RequestBody PasswordUpdateVO param,
+	public ResponseEntity<ResultDto> update_password(@RequestBody PasswordUpdateVO param,
 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_password");
@@ -592,7 +590,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_cp_no", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_cp_no(@RequestBody MemberDto param,
+	public ResponseEntity<ResultDto> update_cp_no(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_cp_no");
 
@@ -613,7 +611,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_mng_name", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_mng_name(
+	public ResponseEntity<ResultDto> update_mng_name(
 
 			@RequestBody MemberDto param, @AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_mng_name");
@@ -636,7 +634,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_mng_phone", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> update_mng_phone(@RequestBody MemberDto param,
+	public ResponseEntity<ResultDto> update_mng_phone(@RequestBody MemberDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_mng_phone");
 		if (auth == null) {
@@ -660,7 +658,7 @@ public class MemberController extends BaseController {
 	
 	
 	@RequestMapping(path = "/admin_update", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultVO> admin_update(@RequestBody AdminUpdateDto param,
+	public ResponseEntity<ResultDto> admin_update(@RequestBody AdminUpdateDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) { 
 		log.debug("/api/members/admin_update");
 		if (auth == null) {

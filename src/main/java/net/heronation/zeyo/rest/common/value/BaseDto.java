@@ -3,7 +3,7 @@ package net.heronation.zeyo.rest.common.value;
 
 import java.io.Serializable;
 
-public class BaseVO implements Serializable {
+public class BaseDto implements Serializable {
 	 
     private static final long serialVersionUID = 1L;
 
@@ -16,10 +16,10 @@ public class BaseVO implements Serializable {
     
  
  
-    public BaseVO() {
+    public BaseDto() {
     }
 
-    public BaseVO(boolean isSuccess) {
+    public BaseDto(boolean isSuccess) {
  
     }
  

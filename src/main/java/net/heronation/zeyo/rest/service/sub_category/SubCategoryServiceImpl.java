@@ -17,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
@@ -119,7 +120,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		String name = (String) param.get("name");
 		if (name != null) {
-			where_query.append("       AND sc.name = '%" + name + "%'");
+			where_query.append("       AND sc.n ame = '%" + name + "%'");
 		}
 
 		String start = (String) param.get("start");
@@ -305,17 +306,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 		sc.setCategory(c);
 		sc = sub_categoryRepository.save(sc);
 
-		List<LIdVO> milist = param.getMeasureItem();
+		List<LIdMapIdDto> milist = param.getMeasureItem();
 
-		for (LIdVO vo : milist) {
-			
-			if(vo.getId() == 0) {
+		for (LIdMapIdDto vo : milist) {
+
+			if (vo.getId() == 0) {
 				continue;
 			}
-			
+
 			SubCategoryMeasureMap temp_scmm = new SubCategoryMeasureMap();
 
-			
 			MeasureItem this_item = miRepository.findOne(vo.getId());
 			temp_scmm.setSubCategory(sc);
 			temp_scmm.setMeasureItem(this_item);
@@ -324,13 +324,13 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			scmmRepository.save(temp_scmm);
 		}
 
-		List<LIdVO> filist = param.getFitinfos();
-		for (LIdVO vo : filist) {
-			
-			if(vo.getId() == 0) {
+		List<LIdMapIdDto> filist = param.getFitinfos();
+		for (LIdMapIdDto vo : filist) {
+
+			if (vo.getId() == 0) {
 				continue;
 			}
-			
+
 			SubCategoryFitInfoMap temp_scfi = new SubCategoryFitInfoMap();
 
 			FitInfo this_item = fiRepository.findOne(vo.getId());
@@ -361,24 +361,31 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		QSubCategoryMeasureMap qscmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
 
-		List<LIdVO> use_selected_measure_item = param.getMeasureItem();
+		List<LIdMapIdDto> use_selected_measure_item = param.getMeasureItem();
 
-		Iterable<SubCategoryMeasureMap> db_measure_item_list = scmmRepository.findAll(qscmm.subCategory.id.eq(param.getId()).and(qscmm.useYn.eq("Y")));
+		Iterable<SubCategoryMeasureMap> db_measure_item_list = scmmRepository
+				.findAll(qscmm.subCategory.id.eq(param.getId()));
 
-		for (LIdVO vo : use_selected_measure_item) {
+		for (LIdMapIdDto vo : use_selected_measure_item) {
 
 			boolean is_this_option_added = true;
 
 			for (SubCategoryMeasureMap db_scmm : db_measure_item_list) {
+			 
 
-				if (db_scmm.getMeasureItem().getId() == vo.getId()) {
-					is_this_option_added = false;
+				if (db_scmm.getId() == vo.getMap_id()) {
+					if(db_scmm.getUseYn().equals("Y")) {
+						is_this_option_added = false;	
+					}else {
+						is_this_option_added = false;
+						db_scmm.setUseYn("Y");
+					}
+					
 				}
 
 			}
 
 			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
-				
 
 				MeasureItem new_mi = miRepository.findOne(vo.getId());
 
@@ -386,20 +393,26 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 				new_map.setMeasureItem(new_mi);
 				new_map.setSubCategory(sc);
 				new_map.setUseYn("Y");
-				
+
 				scmmRepository.save(new_map);
 			}
 
 		}
-		
-		
+
 		for (SubCategoryMeasureMap db_scmm : db_measure_item_list) {
 
 			boolean did_user_delete_this_option = true;
 
-			for (LIdVO vo : use_selected_measure_item) {
-				if (db_scmm.getMeasureItem().getId() == vo.getId()) {
-					did_user_delete_this_option = false;
+			for (LIdMapIdDto vo : use_selected_measure_item) {
+			 
+				if (db_scmm.getId() == vo.getMap_id()) {
+					
+					if(db_scmm.getUseYn().equals("Y")) {
+						did_user_delete_this_option = false;	
+					}else {
+						did_user_delete_this_option = false;
+						db_scmm.setUseYn("N");
+					} 
 				}
 
 			}
@@ -407,26 +420,34 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			if (did_user_delete_this_option) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
 				db_scmm.setUseYn("N");
-				scmmRepository.save(db_scmm);
+//				scmmRepository.save(db_scmm);
 			}
 
 		}
 
 		QSubCategoryFitInfoMap qscfim = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
 
-		Iterable<SubCategoryFitInfoMap> db_scfi_list = scfimRepository.findAll(qscfim.subCategory.id.eq(param.getId()).and(qscfim.useYn.eq("Y")));
+		Iterable<SubCategoryFitInfoMap> db_scfi_list = scfimRepository
+				.findAll(qscfim.subCategory.id.eq(param.getId()));
 
-		List<LIdVO> user_selected_fitinfo_list = param.getFitinfos();
+		List<LIdMapIdDto> user_selected_fitinfo_list = param.getFitinfos();
 
-
-		for (LIdVO vo : user_selected_fitinfo_list) {
+		for (LIdMapIdDto vo : user_selected_fitinfo_list) {
 
 			boolean is_this_option_added = true;
 
 			for (SubCategoryFitInfoMap scfi : db_scfi_list) {
-
-				if (scfi.getFitInfo().getId() == vo.getId()) {
-					is_this_option_added = false;
+ 
+				if (scfi.getId() == vo.getMap_id()) { 
+					
+					if(scfi.getUseYn().equals("Y")) {
+						is_this_option_added = false;	
+					}else {
+						is_this_option_added = false;
+						scfi.setUseYn("Y");
+					}
+					
+					
 				}
 
 			}
@@ -439,20 +460,28 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 				new_map.setFitInfo(new_fi);
 				new_map.setSubCategory(sc);
 				new_map.setUseYn("Y");
-				
+
 				scfimRepository.save(new_map);
 			}
 
 		}
-		
-		
+
 		for (SubCategoryFitInfoMap scfi : db_scfi_list) {
 
 			boolean did_user_delete_this_option = true;
 
-			for (LIdVO vo : user_selected_fitinfo_list) {
-				if (scfi.getFitInfo().getId() == vo.getId()) {
-					did_user_delete_this_option = false;
+			for (LIdMapIdDto vo : user_selected_fitinfo_list) {
+	 
+				if (scfi.getId() == vo.getMap_id()) { 
+					
+					
+					if(scfi.getUseYn().equals("Y")) {
+						did_user_delete_this_option = false;	
+					}else {
+						did_user_delete_this_option = false;
+						scfi.setUseYn("N");
+					} 
+					
 				}
 
 			}
@@ -460,7 +489,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			if (did_user_delete_this_option) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
 				scfi.setUseYn("N");
-				scfimRepository.save(scfi);
+//				scfimRepository.save(scfi);
 			}
 
 		}
@@ -468,8 +497,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	}
 
 	@Override
-	public String delete(List<LIdVO> param) {
-		for (LIdVO v : param) {
+	public String delete(List<LIdDto> param) {
+		for (LIdDto v : param) {
 			SubCategory a = sub_categoryRepository.findOne(v.getId());
 			a.setUseYn("N");
 		}
@@ -487,8 +516,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		SubCategory scr = sub_categoryRepository.findOne(id);
 
-		Iterable<SubCategoryFitInfoMap> scfimr = scfimRepository.findAll(scfi.subCategory.id.eq(id).and(scfi.useYn.eq("Y")));
-		Iterable<SubCategoryMeasureMap> scmmr = scmmRepository.findAll(scmm.subCategory.id.eq(id).and(scmm.useYn.eq("Y")));
+		Iterable<SubCategoryFitInfoMap> scfimr = scfimRepository
+				.findAll(scfi.subCategory.id.eq(id).and(scfi.useYn.eq("Y")));
+		Iterable<SubCategoryMeasureMap> scmmr = scmmRepository
+				.findAll(scmm.subCategory.id.eq(id).and(scmm.useYn.eq("Y")));
 
 		R.put("sub_category", scr);
 		R.put("fit_infos", scfimr);

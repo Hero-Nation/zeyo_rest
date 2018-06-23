@@ -19,9 +19,9 @@ import org.springframework.web.client.RestTemplate;
 import com.querydsl.core.types.Predicate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
@@ -335,7 +335,7 @@ public class MadeinServiceImpl implements MadeinService {
 	// 어드민 
 	@Override
 	@Transactional
-	public String insert(NameVO param) {
+	public String insert(NameDto param) {
 		// TODO Auto-generated method stub
 		
 		Kindof direct_input = kindofRepository.findOne(1L);
@@ -353,7 +353,7 @@ public class MadeinServiceImpl implements MadeinService {
 
 	@Override
 	@Transactional
-	public String update(IdNameVO param) {
+	public String update(IdNameDto param) {
 		// TODO Auto-generated method stub
 		
 		Madein a = madeinRepository.findOne(param.getId());
@@ -364,8 +364,8 @@ public class MadeinServiceImpl implements MadeinService {
 
 	@Override
 	@Transactional
-	public String delete(List<LIdVO> param) {
-		for(LIdVO v :param) {
+	public String delete(List<LIdDto> param) {
+		for(LIdDto v :param) {
 			Madein a = madeinRepository.findOne(v.getId());
 			a.setUseYn("N");	
 		}

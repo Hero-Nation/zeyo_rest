@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.Predicate;
 
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 
 public interface MadeinService {
 
@@ -17,10 +17,10 @@ public interface MadeinService {
 
 	Map<String, Object> use_list(Predicate where, Pageable page);
 
-	String insert(NameVO param);
+	String insert(NameDto param);
 
-	String update(IdNameVO param);
+	String update(IdNameDto param);
 
-	String delete(List<LIdVO> param);
+	String delete(List<LIdDto> param);
 
 }

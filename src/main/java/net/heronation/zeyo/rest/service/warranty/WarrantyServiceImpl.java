@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameVO;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
+import net.heronation.zeyo.rest.common.value.IdNameDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
@@ -227,7 +227,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 	
 	@Override
 	@Transactional
-	public String update(IdNameVO param) {
+	public String update(IdNameDto param) {
 		// TODO Auto-generated method stub
 		
 		Warranty a = warrantyRepository.findOne(param.getId());
@@ -238,9 +238,9 @@ public class WarrantyServiceImpl implements WarrantyService {
 
 	@Override
 	@Transactional
-	public String delete(List<LIdVO> param) {
+	public String delete(List<LIdDto> param) {
 		
-		for(LIdVO n : param) {
+		for(LIdDto n : param) {
 			Warranty a = warrantyRepository.findOne(n.getId());
 			a.setUseYn("N");
 		}

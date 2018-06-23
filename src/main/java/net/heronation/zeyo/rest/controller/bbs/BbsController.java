@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;
@@ -68,14 +68,14 @@ public class BbsController extends BaseController {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ResponseEntity<ResultVO> handleResourceNotFoundException() {
+	public ResponseEntity<ResultDto> handleResourceNotFoundException() {
 		 return return_fail();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<ResultVO> list(@RequestParam(value = "title", required = false) String title,
+	public ResponseEntity<ResultDto> list(@RequestParam(value = "title", required = false) String title,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
@@ -99,7 +99,7 @@ public class BbsController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
 	@ResponseBody
-	public ResponseEntity<ResultVO> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultDto> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
 
 		if(auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -141,7 +141,7 @@ public class BbsController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/query")
 	@ResponseBody
-	public ResponseEntity<ResultVO> query(@RequestBody @Valid BbsClientInsertDto new_post, BindingResult result,
+	public ResponseEntity<ResultDto> query(@RequestBody @Valid BbsClientInsertDto new_post, BindingResult result,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		if(auth == null) {

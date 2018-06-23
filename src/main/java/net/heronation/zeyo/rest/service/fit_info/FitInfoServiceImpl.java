@@ -28,9 +28,9 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.NameVO;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
@@ -247,8 +247,8 @@ public class FitInfoServiceImpl implements FitInfoService {
 		fi.setCreateDt(new DateTime());
 		fi= fit_infoRepository.save(fi);
 		
-		List<NameVO> op = param.getOptions();
-		for(NameVO n : op) {
+		List<NameDto> op = param.getOptions();
+		for(NameDto n : op) {
 			FitInfoOption fio = new FitInfoOption();
 			fio.setFitInfo(fi);
 			fio.setName(n.getName());
@@ -271,12 +271,12 @@ public class FitInfoServiceImpl implements FitInfoService {
 		QFitInfoOption fio_table = QFitInfoOption.fitInfoOption;
 		// 자식 옵션을 가지고 온다. 
 		Iterable<FitInfoOption> db_options = fitInfoOptionRepository.findAll(fio_table.fitInfo.id.eq(param.getId()));
-		List<ToggleVO> param_options = param.getOptions();
+		List<ToggleDto> param_options = param.getOptions();
 		
 		// 삭제 처리.. 어떻게 할것인가..
 		for(FitInfoOption db_c : db_options) {
 			boolean shouldBeDeleted = true;
-			for(ToggleVO param_c : param_options) {
+			for(ToggleDto param_c : param_options) {
 				
 				if(db_c.getId() == param_c.getId()) {
 					shouldBeDeleted = false;
@@ -286,13 +286,13 @@ public class FitInfoServiceImpl implements FitInfoService {
 			
 			if(shouldBeDeleted) { 
 				db_c.setUseYn("N");
-				fitInfoOptionRepository.save(db_c);
+				//fitInfoOptionRepository.save(db_c);
 			}
 			
 		}
 		
 
-		for(ToggleVO param_c : param_options) {
+		for(ToggleDto param_c : param_options) {
 			
 			if(param_c.getId() == 0) { // 0 이면 신규 입력
 				FitInfoOption fio = new FitInfoOption();
@@ -315,9 +315,9 @@ public class FitInfoServiceImpl implements FitInfoService {
 	}
 
 	@Override
-	public String delete(List<LIdVO> param) {
+	public String delete(List<LIdDto> param) {
 		
-		for(LIdVO n : param) {
+		for(LIdDto n : param) {
 			FitInfo a = fit_infoRepository.findOne(n.getId());
 			a.setUseYn("N");
 			

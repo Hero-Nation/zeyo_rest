@@ -29,8 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdVO;
-import net.heronation.zeyo.rest.common.value.ResultVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
@@ -111,7 +111,7 @@ public class SubCategoryController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/sublist")
 	@ResponseBody
-	public ResponseEntity<ResultVO> sublist(@RequestParam(value = "cate", required = false) String cate,
+	public ResponseEntity<ResultDto> sublist(@RequestParam(value = "cate", required = false) String cate,
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
@@ -139,7 +139,7 @@ public class SubCategoryController extends BaseController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/distinct_name")
 	@ResponseBody
-	public ResponseEntity<ResultVO> distinct_name(@RequestParam(name = "cate", defaultValue = "") String cate) {
+	public ResponseEntity<ResultDto> distinct_name(@RequestParam(name = "cate", defaultValue = "") String cate) {
 		if (cate.equals("")) { 
 			return return_fail("cate.empty");
 		}
@@ -151,7 +151,7 @@ public class SubCategoryController extends BaseController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/single_info")
 	@ResponseBody
-	public ResponseEntity<ResultVO> single_info(@RequestParam(value = "id", required = false) Long id) {
+	public ResponseEntity<ResultDto> single_info(@RequestParam(value = "id", required = false) Long id) {
 		if (id == null || id == 0) { 
 			return return_fail("id.empty");
 		}
@@ -161,14 +161,14 @@ public class SubCategoryController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultVO> insert(@RequestBody SubCategoryDto param,
+	public ResponseEntity<ResultDto> insert(@RequestBody SubCategoryDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) sub_categoryService.insert(param));
 	}
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
-	public ResponseEntity<ResultVO> update(@RequestBody SubCategoryDto param,
+	public ResponseEntity<ResultDto> update(@RequestBody SubCategoryDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) sub_categoryService.update(param));
@@ -176,7 +176,7 @@ public class SubCategoryController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
-	public ResponseEntity<ResultVO> delete(@RequestBody List<LIdVO> param,
+	public ResponseEntity<ResultDto> delete(@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) sub_categoryService.delete(param));

@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.ToggleVO;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
@@ -491,9 +491,9 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 	@Override
 	@Transactional
-	public String delete(List<ToggleVO> param, Long seq) {
+	public String delete(List<ToggleDto> param, Long seq) {
 	 
-		for(ToggleVO tv : param) {
+		for(ToggleDto tv : param) {
 			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
@@ -508,8 +508,8 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 	@Override
 	@Transactional
-	public String batch_build(List<ToggleVO> param, Long seq) { 
-		for(ToggleVO tv : param) {
+	public String batch_build(List<ToggleDto> param, Long seq) { 
+		for(ToggleDto tv : param) {
 			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
@@ -702,14 +702,18 @@ public class SizeTableServiceImpl implements SizeTableService {
 		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
 		
 		Iterable<ItemShopmallMap> rism = itemShopmallMapRepository.findAll(ism.item.id.eq(item_id).and(ism.useYn.eq("Y"))) ;
-		
-		List<Shopmall> slist = new ArrayList<Shopmall>();
-		
-		for(ItemShopmallMap item_ism : rism) {
-			slist.add(item_ism.getShopmall());
+ 
+		// 중요한 정보는 지우기
+		for(ItemShopmallMap ism_item :rism) {
+			if(ism_item.getShopmall() != null) {
+				ism_item.getShopmall().setAccessToken("");
+				ism_item.getShopmall().setOauthCode("");
+				ism_item.getShopmall().setOauthID("");
+				ism_item.getShopmall().setRefreshToken("");
+			}
 		}
 		
-		R.put("shopmall", slist);
+		R.put("shopmall", rism);
 		
 		
 		return  R;

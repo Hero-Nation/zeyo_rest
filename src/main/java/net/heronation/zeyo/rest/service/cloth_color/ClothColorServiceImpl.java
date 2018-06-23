@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
@@ -233,10 +233,10 @@ public class ClothColorServiceImpl implements ClothColorService {
 
 	@Override
 	@Transactional
-	public String delete(List<LIdVO> param) {
+	public String delete(List<LIdDto> param) {
 		// TODO Auto-generated method stub
 
-		for (LIdVO v : param) {
+		for (LIdDto v : param) {
 			ClothColor a = cloth_colorRepository.findOne(v.getId());
 			a.setUseYn("N");
 		}

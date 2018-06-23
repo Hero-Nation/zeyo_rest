@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.Predicate;
 
-import net.heronation.zeyo.rest.common.value.LIdVO;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
 
@@ -21,5 +21,5 @@ public interface FitInfoService {
 	Page<Map<String,Object>> fitInfoOptions_search(Predicate where, Pageable page); 
 	String insert(FitInfoDto param);
 	String update(FitInfoUpdateDto param);
-	String delete(List<LIdVO> param);
+	String delete(List<LIdDto> param);
 }
