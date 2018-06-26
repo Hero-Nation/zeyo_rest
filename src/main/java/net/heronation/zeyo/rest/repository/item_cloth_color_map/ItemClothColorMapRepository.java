@@ -45,4 +45,9 @@ public interface ItemClothColorMapRepository extends JpaRepository<ItemClothColo
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	<S extends ItemClothColorMap> List<S> save(Iterable<S> arg0);
+ 	
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ItemClothColorMap findOne(Long arg0);
 }

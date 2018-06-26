@@ -43,4 +43,7 @@ public interface ItemMaterialMapRepository extends JpaRepository<ItemMaterialMap
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	<S extends ItemMaterialMap> List<S> save(Iterable<S> arg0);
+ 	
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ItemMaterialMap findOne(Long arg0);
 }

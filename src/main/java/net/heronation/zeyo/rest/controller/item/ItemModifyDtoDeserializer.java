@@ -258,13 +258,26 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 		// 관리자 1 , 직접입력 2
 		if (warranty_kindof == 2) {
 
+			
+			
 			String warranty_input_value = warranty_node.get("inputValue").textValue();
 
-			warranty = new Warranty();
-			warranty.setCreateDt(new DateTime());
-			warranty.setKindof(kindof_direct_input);
-			warranty.setScope(warranty_input_value);
-			warranty.setUseYn("Y");
+			List<Warranty> db_warranty_list = warrantyRepository.findByName(warranty_input_value);
+			
+			if(db_warranty_list.size() > 0) { 
+				warranty = db_warranty_list.get(0);
+				 
+				warranty.setScope(warranty_input_value); 
+			}else {
+				warranty = new Warranty();
+				warranty.setCreateDt(new DateTime());
+				warranty.setKindof(kindof_direct_input);
+				warranty.setScope(warranty_input_value);
+				warranty.setId(0L);
+				warranty.setUseYn("Y");
+			}
+			
+			
 		} else {
 
 			Long warranty_id = warranty_node.get("id").asLong();
@@ -279,8 +292,11 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 		Iterator<JsonNode> shopmalls_iterator = node.get("shopmalls").elements();
 
 		while (shopmalls_iterator.hasNext()) {
-			Long shopmall_index = shopmalls_iterator.next().get("id").asLong();
-			Long shopmall_map_index = shopmalls_iterator.next().get("map_id").asLong();
+			
+			JsonNode this_shopmall_map = shopmalls_iterator.next();
+			
+			Long shopmall_index = this_shopmall_map.get("id").asLong();
+			Long shopmall_map_index = this_shopmall_map.get("map_id").asLong();
 
 			Shopmall this_shopmall = shopmallRepository.findOne(shopmall_index);
 
@@ -362,6 +378,8 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 				direct_input_color.setCreateDt(new DateTime());
 				direct_input_color.setKindof(kindof_direct_input);
 				direct_input_color.setUseYn("Y");
+				direct_input_color.setId(0L);
+				
 				new_clothColor_mapp.setClothColor(direct_input_color);
 				new_clothColor_mapp.setOptionValue("DIRECT");
 
@@ -419,6 +437,7 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 				direct_input_size_option.setUseYn("Y");
 				direct_input_size_option.setCategory(category);
 				direct_input_size_option.setSubCategory(subCategory);
+				direct_input_size_option.setId(0L);
 
 				new_sizeoptoins_mapp.setSizeOption(direct_input_size_option);
 				new_sizeoptoins_mapp.setOptionValue("DIRECT");
@@ -559,6 +578,10 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 		} else {
 			itemIroningMap = itemIroningMapRepository.findOne(itemIroning_map_id);
+			
+			if(itemIroningMap == null)
+				itemIroningMap = new ItemIroningMap();
+				itemIroningMap.setId(0L);
 		}
 
 		String ironingYn = itemIroning_node.get("useYn").textValue();
@@ -588,7 +611,7 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 		JsonNode itemDrymethod_node = node.get("drymethod");
 
-		Long itemDrymethod_map_id = itemIroning_node.get("map_id").asLong();
+		Long itemDrymethod_map_id = itemDrymethod_node.get("map_id").asLong();
 
 		ItemDrymethodMap itemDrymethodMap = new ItemDrymethodMap();
 
@@ -655,13 +678,19 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 		while (mi_so_value_iterator.hasNext()) {
 
+			
 			JsonNode mi_so_value_node = mi_so_value_iterator.next();
+			
 			Long map_id = mi_so_value_node.get("map_id").asLong();
 			
 			
+			
+			 
 			JsonNode sub_category_measure_map_sub_node = mi_so_value_node.get("sub_category_measure_map");
 
 			Long scmm_id = sub_category_measure_map_sub_node.get("id").asLong();
+			
+			
 
 			SubCategoryMeasureMap this_scmm = subCategoryMeasureMapRepository.findOne(scmm_id);
 
@@ -690,6 +719,7 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 				this_issv.setSizeOption(this_so);
 				this_issv.setSubCategoryMeasureMap(this_scmm);
 				this_issv.setUseYn("Y");
+				this_issv.setId(0L);
 				itemScmmSoValues.add(this_issv);
 			}else {
 				ItemScmmSoValue this_issv = itemScmmSoValueRepository.findOne(map_id);

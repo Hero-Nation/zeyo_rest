@@ -410,7 +410,7 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -445,38 +445,7 @@ public class BrandServiceImpl implements BrandService {
 		R.put("size", return_list.size());
 
 		return R;
-
-		// Map<String, Object> R = new HashMap<String, Object>();
-		//
-		// QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
-		// QItem qi = QItem.item;
-		// QBrand qb = QBrand.brand;
-		// QShopmall qs = QShopmall.shopmall;
-		//
-		// JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
-		//
-		// QueryResults<Tuple> db_result = query.select(qism.shopmall.name,
-		// qism.item.countDistinct()).from(qism)
-		// .innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
-		// .on(qism.shopmall.useYn.eq("Y"))
-		// // .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
-		// // .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
-		// .where(qism.item.brand.id.eq(brand_id).and(qism.useYn.eq("Y"))).groupBy(qism.shopmall)
-		// .offset((page.getPageNumber() - 1) *
-		// page.getPageSize()).limit(page.getPageSize()).fetchResults();
-		//
-		// List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		//
-		// for (Tuple row : db_result.getResults()) {
-		// Map<String, Object> item = new HashMap<String, Object>();
-		//
-		// item.put("shopmall", row.get(qism.shopmall.name));
-		// item.put("item_count", row.get(qism.item.countDistinct()));
-		//
-		// list.add(item);
-		// }
-		//
-		// return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
+ 
 	}
 
 
@@ -747,12 +716,12 @@ public class BrandServiceImpl implements BrandService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from ( ");
 
 		StringBuffer select_query = new StringBuffer();  
 		select_query.append("SELECT ");
 		select_query.append("    b.name, ");
-		select_query.append("    COUNT(i.member_id) AS company_use_count, ");
+		select_query.append("    COUNT(distinct m.id) AS company_use_count, ");
 		select_query.append("    b.create_dt ");
 
 
@@ -762,7 +731,9 @@ public class BrandServiceImpl implements BrandService {
 		where_query.append("    brand b ");
 		where_query.append("        LEFT JOIN ");
 		where_query.append("    item i ON i.brand_id = b.id AND b.use_yn = 'Y' ");
-		where_query.append(" GROUP BY b.id");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    member m ON i.member_id = m.id AND m.use_yn = 'Y' ");
+		where_query.append(" GROUP BY b.id ");
 		
 		
 		StringBuffer sort_query = new StringBuffer();
@@ -785,7 +756,7 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ") .toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -820,38 +791,7 @@ public class BrandServiceImpl implements BrandService {
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 		return R;
-
-		// Map<String, Object> R = new HashMap<String, Object>();
-		//
-		// QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
-		// QItem qi = QItem.item;
-		// QBrand qb = QBrand.brand;
-		// QShopmall qs = QShopmall.shopmall;
-		//
-		// JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
-		//
-		// QueryResults<Tuple> db_result = query.select(qism.shopmall.name,
-		// qism.item.countDistinct()).from(qism)
-		// .innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
-		// .on(qism.shopmall.useYn.eq("Y"))
-		// // .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
-		// // .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
-		// .where(qism.item.brand.id.eq(brand_id).and(qism.useYn.eq("Y"))).groupBy(qism.shopmall)
-		// .offset((page.getPageNumber() - 1) *
-		// page.getPageSize()).limit(page.getPageSize()).fetchResults();
-		//
-		// List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		//
-		// for (Tuple row : db_result.getResults()) {
-		// Map<String, Object> item = new HashMap<String, Object>();
-		//
-		// item.put("shopmall", row.get(qism.shopmall.name));
-		// item.put("item_count", row.get(qism.item.countDistinct()));
-		//
-		// list.add(item);
-		// }
-		//
-		// return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
+ 
 	}
 
 

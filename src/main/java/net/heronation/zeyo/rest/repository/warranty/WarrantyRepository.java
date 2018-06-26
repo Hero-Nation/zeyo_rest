@@ -33,6 +33,7 @@ public interface WarrantyRepository extends JpaRepository<Warranty, Long> , Quer
 	
 	@RestResource(path = "findByScope", rel = "findByScope",exported = true)
 	@Query("select m  from Warranty m where m.scope = ?1 and  m.useYn = 'Y'")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	List<Warranty> findByName(@Param("scope") String ktype);
 	
 	

@@ -71,6 +71,7 @@ import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepo
 import net.heronation.zeyo.rest.repository.item_material_map.QItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.QItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -90,6 +91,7 @@ import net.heronation.zeyo.rest.repository.size_table.QSizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
+import net.heronation.zeyo.rest.repository.warranty.Warranty;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 
 @Slf4j
@@ -285,6 +287,7 @@ public class ItemServiceImpl implements ItemService {
 		sort_query.append("  ORDER BY i.");
 		Sort sort = page.getSort();
 		String sep = "";
+		
 		for (Sort.Order order : sort) {
 			sort_query.append(sep);
 			sort_query.append(order.getProperty());
@@ -938,37 +941,7 @@ public class ItemServiceImpl implements ItemService {
 		Member user = memberRepository.findOne(member_id);
 		Item old_item = itemRepository.findOne(ibd.getItem_id());
 
-		old_item.setCode(ibd.getCode());
-		old_item.setCreateDt(new DateTime());
-		old_item.setBleachYn(ibd.getBleachYn());
-		old_item.setDrycleaningYn(ibd.getDrycleaningYn());
-		old_item.setDrymethodYn(ibd.getDrymethodYn());
-		old_item.setIroningYn(ibd.getIroningYn());
-		old_item.setLaundryYn(ibd.getLaundryYn());
 
-		old_item.setImage(ibd.getImage());
-		old_item.setImageMode(ibd.getImageMode());
-		old_item.setMadeinBuilder(ibd.getMadeinBuilder());
-		old_item.setMadeinDate(ibd.getMadeinDate());
-		old_item.setName(ibd.getName());
-		old_item.setPrice(ibd.getPrice());
-		old_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
-		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode()); 
-
-//		if (ibd.getBrand() != null)
-//			brandRepository.save(ibd.getBrand());
-//
-//		categoryRepository.save(ibd.getCategory());
-//		madeinRepository.save(ibd.getMadein());
-//		subCategoryRepository.save(ibd.getSubCategory());
-//		warrantyRepository.save(ibd.getWarranty());
-
-		old_item.setBrand(ibd.getBrand());
-		old_item.setCategory(ibd.getCategory());
-		old_item.setMadein(ibd.getMadein());
-		old_item.setMember(user);
-		old_item.setSubCategory(ibd.getSubCategory());
-		old_item.setWarranty(ibd.getWarranty());
 //		old_item.setLinkYn("N");
 //		old_item.setUseYn("Y");
 
@@ -979,26 +952,34 @@ public class ItemServiceImpl implements ItemService {
 		if (ibd.getSizeTableYn().equals("Y")) {
 			old_item.setSizeTableYn("Y");
 
-			// 사이즈 테이블 생성
+			if(old_item.getSizeTable() != null) {
+				
+				SizeTable old_st = old_item.getSizeTable();
+				old_st.setUseYn("Y");
+				
+			}else {
 
-			SizeTable new_st = new SizeTable();
-			// 정보입력
+				// 사이즈 테이블 생성
+				
+				SizeTable new_st = new SizeTable();
+				new_st.setCreateDt(new DateTime());
+				new_st.setUseYn("Y");
+				new_st.setItem(old_item);
+				new_st.setVisibleBasicYn("Y");
+				new_st.setVisibleCodeYn("Y");
+				new_st.setVisibleColorYn("Y");
+				new_st.setVisibleFitInfoYn("Y");
+				new_st.setVisibleItemImageYn("Y");
+				new_st.setVisibleLaundryInfoYn("Y");
+				new_st.setVisibleMeasureHowAYn("Y");
+				new_st.setVisibleMeasureHowBYn("Y");
+				new_st.setVisibleMeasureTableYn("Y");
+				new_st.setVisibleNameYn("Y");
 
-			new_st.setCreateDt(new DateTime());
-			new_st.setUseYn("Y");
-			new_st.setItem(old_item);
-			new_st.setVisibleBasicYn("Y");
-			new_st.setVisibleCodeYn("Y");
-			new_st.setVisibleColorYn("Y");
-			new_st.setVisibleFitInfoYn("Y");
-			new_st.setVisibleItemImageYn("Y");
-			new_st.setVisibleLaundryInfoYn("Y");
-			new_st.setVisibleMeasureHowAYn("Y");
-			new_st.setVisibleMeasureHowBYn("Y");
-			new_st.setVisibleMeasureTableYn("Y");
-			new_st.setVisibleNameYn("Y");
+				sizeTableRepository.save(new_st);
+			}
+			
 
-			sizeTableRepository.save(new_st);
 		} else {
 
 			old_item.setSizeTableYn("N");
@@ -1175,9 +1156,14 @@ public class ItemServiceImpl implements ItemService {
 				db_ItemIroning.setUseYn("Y");
 				
 			}else {
+				
+				
 				ItemIroningMap user_ItemIroning = ibd.getItemIroningMap();
+		 
+				
 				user_ItemIroning.setItem(old_item);
 				itemIroningMapRepository.save(user_ItemIroning);
+				
 			}
 			 
 		}else{
@@ -1247,10 +1233,15 @@ public class ItemServiceImpl implements ItemService {
 		
 		/// 동적 select box 처리 
 		
+		log.debug("modify 7 Warranty ________________________________________________________");
 		
+		Warranty warranty = ibd.getWarranty();
+		if(warranty.getId() == 0L) {
+			warranty = warrantyRepository.save(warranty);
+			
+		}
+		old_item.setWarranty(warranty);
 		
-		
-
 		// shopmall 목록 정리 
 		
 		
@@ -1284,7 +1275,7 @@ public class ItemServiceImpl implements ItemService {
 			
 			if (is_shopmall_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
-					Shopmall new_sm = shopmallRepository.findOne(sm.getId());
+					Shopmall new_sm = shopmallRepository.findOne(sm.getShopmall().getId());
 
 					ItemShopmallMap new_ism = new ItemShopmallMap();
 					new_ism.setShopmall(new_sm);
@@ -1344,11 +1335,8 @@ public class ItemServiceImpl implements ItemService {
 			boolean is_this_option_added = true;
 			
 			for(ItemClothColorMap db_data : db_color_list) {  
-				
-				if (db_data.getClothColor() == null)
-					continue;
 
-				if (db_data.getClothColor().getId() == user_data.getClothColor().getId()) {
+				if (db_data.getId() == user_data.getId()) {
 					db_data.setOptionValue(user_data.getOptionValue());
 					if(db_data.getUseYn().equals("Y")) {
 						is_this_option_added = false;	
@@ -1362,6 +1350,16 @@ public class ItemServiceImpl implements ItemService {
 			
 			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
+				if(user_data.getClothColor().getId() == 0L) {
+					
+					ClothColor direct_input = clothColorRepository.save(user_data.getClothColor());
+					ItemClothColorMap new_iccm = new ItemClothColorMap();
+					new_iccm.setClothColor(direct_input);
+					new_iccm.setItem(old_item);
+					new_iccm.setUseYn("Y");
+
+					itemClothColorMapRepository.save(new_iccm);	
+				}else {
 					ClothColor cc = clothColorRepository.findOne(user_data.getClothColor().getId());
 
 					ItemClothColorMap new_iccm = new ItemClothColorMap();
@@ -1369,7 +1367,11 @@ public class ItemServiceImpl implements ItemService {
 					new_iccm.setItem(old_item);
 					new_iccm.setUseYn("Y");
 
-					itemClothColorMapRepository.save(new_iccm);					
+					itemClothColorMapRepository.save(new_iccm);	
+				}
+				
+				
+				
 				
 			}
  
@@ -1382,10 +1384,8 @@ public class ItemServiceImpl implements ItemService {
 			
 			
 			for(ItemClothColorMap user_data : user_item_color_map_list) {
-				if (db_data.getClothColor() == null)
-					continue;
-
-				if (db_data.getClothColor().getId() == user_data.getClothColor().getId()) {
+		
+				if (db_data.getId() == user_data.getId()) {
 					
 					db_data.setOptionValue(user_data.getOptionValue());
 					
@@ -1424,11 +1424,9 @@ public class ItemServiceImpl implements ItemService {
 			boolean is_this_option_added = true;
 			
 			for(ItemFitInfoOptionMap db_data : db_FitInfo_list) {   
-				
-				if (db_data.getFitInfoOption() == null)
-					continue;
+				 
 
-				if (db_data.getFitInfoOption().getId() == user_data.getFitInfoOption().getId()) {
+				if (db_data.getId() == user_data.getId()) {
 					
 					if(db_data.getUseYn().equals("Y")) {
 						is_this_option_added = false;	
@@ -1464,7 +1462,7 @@ public class ItemServiceImpl implements ItemService {
 				if (db_data.getFitInfoOption() == null)
 					continue;
 
-				if (db_data.getFitInfoOption().getId() == user_data.getFitInfoOption().getId()) {
+				if (db_data.getId() == user_data.getId()) {
 					
 					did_user_delete_this_option = false;
 					
@@ -1499,11 +1497,9 @@ public class ItemServiceImpl implements ItemService {
 			boolean is_this_option_added = true;
 			
 			for(ItemSizeOptionMap db_data : db_isom_list) {    
-				
-				if (db_data.getSizeOption() == null)
-					continue;
+				 
 
-				if (db_data.getSizeOption().getId() == user_data.getSizeOption().getId()) {
+				if (db_data.getId() == user_data.getId()) {
 					db_data.setOptionValue(user_data.getOptionValue());
 					
 					is_this_option_added = false;	
@@ -1519,6 +1515,18 @@ public class ItemServiceImpl implements ItemService {
 			
 			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
+				if(user_data.getSizeOption().getId() == 0L) {
+					
+					SizeOption so = sizeOptionRepository.save(user_data.getSizeOption());
+
+					ItemSizeOptionMap new_isom = new ItemSizeOptionMap();
+					new_isom.setSizeOption(so);
+					new_isom.setItem(old_item);
+					new_isom.setUseYn("Y");
+
+					itemSizeOptionMapRepository.save(new_isom);
+					
+				}else {
 					SizeOption so = sizeOptionRepository.findOne(user_data.getSizeOption().getId());
 
 					ItemSizeOptionMap new_isom = new ItemSizeOptionMap();
@@ -1527,6 +1535,9 @@ public class ItemServiceImpl implements ItemService {
 					new_isom.setUseYn("Y");
 
 					itemSizeOptionMapRepository.save(new_isom);					
+				}
+				
+					
 				
 			}
  
@@ -1537,11 +1548,9 @@ public class ItemServiceImpl implements ItemService {
 			boolean did_user_delete_this_option = true;
 			
 			
-			for(ItemSizeOptionMap user_data : user_isom_list) {
-				if (db_data.getSizeOption() == null)
-					continue;
+			for(ItemSizeOptionMap user_data : user_isom_list) { 
 
-				if (db_data.getSizeOption().getId() == user_data.getSizeOption().getId()) {
+				if (db_data.getId() == user_data.getId()) {
 					
 					db_data.setOptionValue(user_data.getOptionValue());
 					
@@ -1581,11 +1590,9 @@ public class ItemServiceImpl implements ItemService {
 			boolean is_this_option_added = true;
 			
 			for(ItemMaterialMap db_data : db_imm_list) {      
-				
-				if (db_data.getMaterial() == null)
-					continue;
+				 
 
-				if (db_data.getMaterial().getId() == user_data.getMaterial().getId()) {
+				if (db_data.getId() == user_data.getId()) {
 					
 					is_this_option_added = false;	
 					
@@ -1624,11 +1631,8 @@ public class ItemServiceImpl implements ItemService {
 			boolean did_user_delete_this_option = true;
 			
 			
-			for(ItemMaterialMap user_data : user_imm_list) {
-				if (db_data.getMaterial() == null)
-					continue;
-
-				if (db_data.getMaterial().getId() == user_data.getMaterial().getId()) {
+			for(ItemMaterialMap user_data : user_imm_list) { 
+				if (db_data.getId() == user_data.getId()) {
 					
 					db_data.setContain(user_data.getContain());
 					db_data.setUseLocatoin(user_data.getUseLocatoin());
@@ -1648,6 +1652,130 @@ public class ItemServiceImpl implements ItemService {
 			}
  
 		}
+		
+		
+		log.debug("modify 13 사이즈 수치 입력");
+		
+		
+		List<ItemScmmSoValue> user_miso_value = ibd.getItemScmmSoValues(); 
+		QItemScmmSoValue qissv = QItemScmmSoValue.itemScmmSoValue;
+		Iterable<ItemScmmSoValue> db_miso_list_iter = itemScmmSoValueRepository.findAll(qissv.item.id.eq(ibd.getItem_id()));
+		List<ItemScmmSoValue> db_miso_list = IteratorUtils.toList(db_miso_list_iter.iterator()); 
+		
+		
+		
+		for(ItemScmmSoValue user_data : user_miso_value) { 
+			boolean is_this_option_added = true;
+			
+			for(ItemScmmSoValue db_data : db_miso_list) {      
+				 
+
+				if (db_data.getId() == user_data.getId()) {
+					
+					is_this_option_added = false;	
+					
+					db_data.setInputValue((user_data.getInputValue()));
+					db_data.setItem(old_item);
+					db_data.setSizeOption(user_data.getSizeOption());
+					db_data.setSubCategoryMeasureMap(user_data.getSubCategoryMeasureMap());
+					db_data.setUseYn("Y");
+					
+					
+					if(db_data.getUseYn().equals("Y")) {
+						
+					}else {
+						db_data.setUseYn("Y");
+					}
+				}
+			}
+			
+			
+			if (is_this_option_added) { // 다시 선택한 값이 아니면 새로 추가 한다.
+ 
+
+					ItemScmmSoValue new_issv = new ItemScmmSoValue();
+					new_issv.setInputValue((user_data.getInputValue()));
+					new_issv.setItem(old_item);
+					
+					if(user_data.getSizeOption().getId() == 0L) {
+						
+						
+						SizeOption new_so = sizeOptionRepository.save(user_data.getSizeOption());
+						
+						new_issv.setSizeOption(new_so);
+						
+					}else {
+						new_issv.setSizeOption(user_data.getSizeOption());
+					}
+					
+					
+					
+					
+					
+					
+					
+					new_issv.setSubCategoryMeasureMap(user_data.getSubCategoryMeasureMap());
+					new_issv.setUseYn("Y");
+
+					itemScmmSoValueRepository.save(new_issv);					
+				
+			}
+ 
+		}
+		
+		for(ItemScmmSoValue db_data : db_miso_list) {   
+		 
+			
+			boolean did_user_delete_this_option = true;
+			
+			
+			for(ItemScmmSoValue user_data : user_miso_value) { 
+				if (db_data.getId() == user_data.getId()) {
+					
+					db_data.setInputValue((user_data.getInputValue()));
+					db_data.setItem(old_item);
+					db_data.setSizeOption(user_data.getSizeOption());
+					db_data.setSubCategoryMeasureMap(user_data.getSubCategoryMeasureMap());
+					 
+					did_user_delete_this_option = false;	
+					if(db_data.getUseYn().equals("Y")) {
+						
+					}else {
+						db_data.setUseYn("N");
+					}
+				}
+			}
+			
+			
+			if (did_user_delete_this_option) { // 유저가 삭제한 값이면 삭제한다. 
+				db_data.setUseYn("N");
+			}
+ 
+		}
+		
+		
+		
+		
+		old_item.setCode(ibd.getCode()); 
+		old_item.setBleachYn(ibd.getBleachYn());
+		old_item.setDrycleaningYn(ibd.getDrycleaningYn());
+		old_item.setDrymethodYn(ibd.getDrymethodYn());
+		old_item.setIroningYn(ibd.getIroningYn());
+		old_item.setLaundryYn(ibd.getLaundryYn());
+		old_item.setImage(ibd.getImage());
+		old_item.setImageMode(ibd.getImageMode());
+		old_item.setMadeinBuilder(ibd.getMadeinBuilder());
+		old_item.setMadeinDate(ibd.getMadeinDate());
+		old_item.setName(ibd.getName());
+		old_item.setPrice(ibd.getPrice());
+		old_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
+		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode()); 
+		old_item.setMadein(ibd.getMadein()); 
+		old_item.setBrand(ibd.getBrand());
+		old_item.setCategory(ibd.getCategory());
+		old_item.setSubCategory(ibd.getSubCategory());
+ 
+		
  
 
 		return old_item;

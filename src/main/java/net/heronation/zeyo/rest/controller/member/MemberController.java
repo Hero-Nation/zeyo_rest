@@ -150,6 +150,7 @@ public class MemberController extends BaseController {
 			try {
 				return return_success(memberService.send_confirm_email(email));
 			} catch (Exception e) {
+				e.printStackTrace();
 				return return_fail("email.send.exception");
 			}
 
@@ -508,7 +509,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_phone", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultDto> update_phone(@RequestBody MemberDto param,
+	public ResponseEntity<ResultDto> update_phone(@RequestBody PasswordUpdateDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_phone");
 
@@ -582,7 +583,7 @@ public class MemberController extends BaseController {
 			if (update_result.equals(CommonConstants.SUCCESS)) {
 				return return_success(update_result);
 			} else {
-				return return_success(update_result);
+				return return_fail(update_result);
 			}
 
 		}
@@ -590,7 +591,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_cp_no", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultDto> update_cp_no(@RequestBody MemberDto param,
+	public ResponseEntity<ResultDto> update_cp_no(@RequestBody CpNoUpdateDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_cp_no");
 
@@ -613,7 +614,7 @@ public class MemberController extends BaseController {
 	@RequestMapping(path = "/update_mng_name", method = RequestMethod.PATCH)
 	public ResponseEntity<ResultDto> update_mng_name(
 
-			@RequestBody MemberDto param, @AuthenticationPrincipal OAuth2Authentication auth) {
+			@RequestBody MngNameUpdateDto param, @AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_mng_name");
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -634,7 +635,7 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/update_mng_phone", method = RequestMethod.PATCH)
-	public ResponseEntity<ResultDto> update_mng_phone(@RequestBody MemberDto param,
+	public ResponseEntity<ResultDto> update_mng_phone(@RequestBody MngPhoneUpdateDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/update_mng_phone");
 		if (auth == null) {

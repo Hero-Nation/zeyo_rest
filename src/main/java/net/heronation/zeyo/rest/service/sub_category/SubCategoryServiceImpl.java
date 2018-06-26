@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.service.sub_category;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +11,9 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.Category;
@@ -66,6 +71,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Autowired
 	EntityManager entityManager;
 
+	
+	@Value(value = "${zeyo.path.upload.temp}")
+	private String path_temp_upload;
+	
+	@Value(value = "${zeyo.path.subcategory.item.image}")
+	private String path_subcategory_item_image;
+	
+	@Value(value = "${zeyo.path.subcategory.cloth.image}")
+	private String path_subcategory_cloth_image;
+	
 	// @Override
 	// public Page<SubCategory> search(Predicate where, Pageable page) {
 	//
@@ -299,11 +314,50 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 	@Override
 	@Transactional
-	public String insert(SubCategoryDto param) {
+	public String insert(SubCategoryDto param) throws CommonException {
+		
 		log.debug(param.toString());
 		Category c = categoryRepository.findOne(param.getCategory());
 		SubCategory sc = param.convertToEntity();
 		sc.setCategory(c);
+		
+		if (param.getClothImage() != null && param.getClothImage().size() > 0) {
+ 
+			
+			File source= new File(path_temp_upload.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
+			File dest= new File(path_subcategory_cloth_image.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
+			
+			 try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("cloth.image.upload.failed");
+			}
+			 
+			 sc.setClothImage(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())); 
+		}
+		
+		
+		if (param.getItemImage() != null && param.getItemImage().size() > 0) {
+			
+
+			File source= new File(path_temp_upload.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name()));
+			File dest= new File(path_subcategory_item_image.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())));
+			
+			 try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("item.image.upload.failed");
+			}
+			 
+			 sc.setItemImage(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())); 
+			
+			
+		}
+
 		sc = sub_categoryRepository.save(sc);
 
 		List<LIdMapIdDto> milist = param.getMeasureItem();
@@ -347,15 +401,73 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 	@Override
 	@Transactional
-	public String update(SubCategoryDto param) {
+	public String update(SubCategoryDto param) throws CommonException {
 		log.debug(param.toString());
+		 
+		
 		SubCategory sc = sub_categoryRepository.findOne(param.getId());
 		sc.setBleachYn(param.getBleachYn());
-		sc.setClothImage(param.getClothImage());
+		
+		if (param.getClothImage() != null && param.getClothImage().size() > 0) {
+			  
+			if(sc.getClothImage() != null) {
+				File old_image = new File(path_subcategory_cloth_image.concat(File.separator).concat(sc.getClothImage()));
+				
+				if(old_image.exists())
+					old_image.delete();				
+			}
+			
+
+			
+			File source= new File(path_temp_upload.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
+			File dest= new File(path_subcategory_cloth_image.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
+			
+			 try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("cloth.image.upload.failed");
+			}
+			 
+			 sc.setClothImage(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())); 
+		}
+			
+		
 		sc.setDrycleaningYn(param.getDrycleaningYn());
 		sc.setDrymethodYn(param.getDrymethodYn());
 		sc.setIroningYn(param.getIroningYn());
-		sc.setItemImage(param.getItemImage());
+		
+		if (param.getItemImage() != null && param.getItemImage().size() > 0) {
+			
+			
+			
+			if(sc.getItemImage() != null) {
+			
+				File old_image = new File(path_subcategory_item_image.concat(File.separator).concat(sc.getItemImage()));
+				
+				if(old_image.exists())
+					old_image.delete();
+			}
+
+			
+			File source= new File(path_temp_upload.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name()));
+			File dest= new File(path_subcategory_item_image.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())));
+			
+			 try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("item.image.upload.failed");
+			}
+			 
+			 sc.setItemImage(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())); 
+			
+			
+		}
+			 
+		
 		sc.setLaundryYn(param.getLaundryYn());
 		sc.setName(param.getName());
 
@@ -494,6 +606,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		}
 		return CommonConstants.SUCCESS;
+	}
+
+	private Exception CommonException(String string) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

@@ -171,8 +171,8 @@ public class Item {
 	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 
 	@JsonBackReference
-	@OneToMany(mappedBy = "item")
-	private List<SizeTable> sizeTables = new ArrayList<SizeTable>();
+	@OneToOne(mappedBy = "item")
+	private SizeTable sizeTable;
 
 	@Override
 	public String toString() {

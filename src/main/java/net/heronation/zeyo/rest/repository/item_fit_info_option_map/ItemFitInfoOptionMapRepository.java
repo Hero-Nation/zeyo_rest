@@ -39,4 +39,8 @@ public interface ItemFitInfoOptionMapRepository extends JpaRepository<ItemFitInf
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	<S extends ItemFitInfoOptionMap> List<S> save(Iterable<S> arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ItemFitInfoOptionMap findOne(Long arg0);
 }

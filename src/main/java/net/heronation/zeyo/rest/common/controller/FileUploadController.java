@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,39 +24,9 @@ import net.heronation.zeyo.rest.common.value.ResultDto;
 @Slf4j
 @RequestMapping("/commons")
 public class FileUploadController extends BaseController {
-
-	// Save the uploaded file to this folder
-	private static String UPLOADED_FOLDER = "D:"+File.separator+"TEST_SERVER_ROOT"+File.separator+"zeyo_image"+File.separator+"temp";
-
-	@GetMapping("/uploadform")
-	public String index() {
-		return "upload";
-	}
-
-	@PostMapping("/upload")
-	public String singleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-
-		if (file.isEmpty()) {
-			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
-			return "redirect:uploadStatus";
-		}
-
-		try {
-
-			// Get the file and save it somewhere 
-			byte[] bytes = file.getBytes();
-			Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
-			Files.write(path, bytes);
-
-			redirectAttributes.addFlashAttribute("message",
-					"You successfully uploaded '" + file.getOriginalFilename() + "'");
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return "redirect:/common/uploadStatus";
-	}
+ 
+	@Value(value = "${zeyo.path.upload.temp}")
+	private String path_temp_upload;
 	
 	@PostMapping("/temp/upload")
 	public ResponseEntity<ResultDto> tempUpload(@RequestParam("file") MultipartFile file) {
@@ -71,10 +42,10 @@ public class FileUploadController extends BaseController {
 
 			// Get the file and save it somewhere
 			log.debug(temp_file_name);
-			log.debug(UPLOADED_FOLDER.concat(File.separator).concat(temp_file_name));
+			log.debug(path_temp_upload.concat(File.separator).concat(temp_file_name));
 			
 			byte[] bytes = file.getBytes();
-			Path path = Paths.get(UPLOADED_FOLDER.concat(File.separator).concat(temp_file_name));
+			Path path = Paths.get(path_temp_upload.concat(File.separator).concat(temp_file_name));
 			Files.write(path, bytes);
  
 			
@@ -90,9 +61,5 @@ public class FileUploadController extends BaseController {
 
 		return return_success(temp_file_name);
 	}
-
-	@GetMapping("/uploadStatus")
-	public String uploadStatus() {
-		return "uploadStatus";
-	}
+ 
 }

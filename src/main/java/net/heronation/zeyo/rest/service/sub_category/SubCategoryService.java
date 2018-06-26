@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryDto;
 
@@ -16,9 +17,9 @@ public interface SubCategoryService {
 	
 	Map<String, Object> single_info(Long id);
 
-	String insert(SubCategoryDto param);
+	String insert(SubCategoryDto param) throws CommonException;
 
-	String update(SubCategoryDto param);
+	String update(SubCategoryDto param) throws CommonException;
 
 	String delete(List<LIdDto> param);
 

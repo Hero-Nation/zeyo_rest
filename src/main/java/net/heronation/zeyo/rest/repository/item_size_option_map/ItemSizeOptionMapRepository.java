@@ -44,4 +44,7 @@ public interface ItemSizeOptionMapRepository extends JpaRepository<ItemSizeOptio
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	<S extends ItemSizeOptionMap> List<S> save(Iterable<S> arg0);
+ 	
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ItemSizeOptionMap findOne(Long arg0);
 }

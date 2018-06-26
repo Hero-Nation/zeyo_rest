@@ -39,6 +39,9 @@ import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.AccessTokenByOauthCode;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Product;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Products;
+import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateDto;
+import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateRequestDto;
+import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateResponseDto;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Variant;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.VariantOption;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Variants;
@@ -234,14 +237,101 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 
 			try {
 
-				AccessTokenByOauthCode result = restTemplate.postForObject(
-						String.format(oauth_code_url, this_shopmall.getStoreId()), request,
+				log.debug(String.format(oauth_code_url, this_shopmall.getStoreId()));
+				
+				AccessTokenByOauthCode result = restTemplate.postForObject(String.format(oauth_code_url, this_shopmall.getStoreId()), request,
 						AccessTokenByOauthCode.class);
 
 				this_shopmall.setAccessToken(result.getAccess_token());
 				this_shopmall.setRefreshToken(result.getRefresh_token());
 				this_shopmall.setStoreId(result.getMall_id());
 				this_shopmall.setOauthCode(auth_code);
+				
+				log.debug(result.toString());
+				
+
+				
+				// app script 등록
+				
+//				curl -X POST \
+//				  'https://{mallid}.cafe24api.com/api/v2/admin/scripttags' \
+//				  -H 'Authorization: Bearer {access_token}' \
+//				  -H 'Content-Type: application/json' \
+//				  -d '{
+//				    "shop_no": 1,
+//				    "request": {
+//				        "src": "https:\/\/js-aplenty.com\/bar.js",
+//				        "display_location": [
+//				            "PRODUCT_LIST",
+//				            "PRODUCT_DETAIL"
+//				        ],
+//				        "skin_no": [
+//				            3,
+//				            4
+//				        ]
+//				    }
+//				}'
+//				
+				
+				
+				HttpHeaders create_headers = new HttpHeaders();
+				create_headers.set("Authorization", "Bearer ".concat(result.getAccess_token()));
+				create_headers.setContentType(MediaType.APPLICATION_JSON);
+				
+				
+//				Map<String,  Object> create_request_body = new HashMap<String,  Object>();
+//				create_request_body.put("src", "https://www.zeyo.co.kr/app/js/cafe24_app.js"); 
+//				create_request_body.put("display_location", Arrays.asList("PRODUCT_DETAIL")); 
+//				create_request_body.put("skin_no", Arrays.asList(8)); 
+//				
+//				Map<String, Object> create_body = new HashMap<String, Object>();
+//				create_body.put("shop_no", 1); 
+//				create_body.put("request", create_request_body); 
+
+				ScriptCreateDto create_body = new ScriptCreateDto();
+				create_body.setShop_no(1);
+				
+				ScriptCreateRequestDto script_create_req=  new ScriptCreateRequestDto();
+				script_create_req.setDisplay_location(new String[]{"PRODUCT_DETAIL"});
+				script_create_req.setSkin_no(new int[]{8});
+				script_create_req.setSrc("https://www.zeyo.co.kr/app/js/cafe24_app.js");
+				
+				
+				create_body.setRequest(script_create_req);
+				
+				HttpEntity<ScriptCreateDto> create_request = new HttpEntity<>(create_body, create_headers);
+				
+				
+				ScriptCreateResponseDto create_Script_response = restTemplate.postForObject(
+						String.format("https://%s.cafe24api.com/api/v2/admin/scripttags", this_shopmall.getStoreId()), create_request,
+						ScriptCreateResponseDto.class);
+				
+				log.debug(create_Script_response.toString());
+				
+			//	{	
+//			    "scripttag": {
+//			        "shop_no": 1,
+//			        "script_no": "1527128695613925",
+//			        "client_id": "AMj8UZhBC9zsyTlFGI6PzC",
+//			        "src": "https:\\\/\\\/js-aplenty.com\\\/bar.js",
+//			        "display_location": [
+//			            "PRODUCT_LIST",
+//			            "PRODUCT_DETAIL"
+//			        ],
+//			        "skin_no": [
+//			            3,
+//			            4
+//			        ],
+//			        "created_date": "2017-03-15T13:27:53+09:00",
+//			        "updated_date": "2017-03-15T13:27:53+09:00"
+//			    }
+//			}
+//				
+				
+				
+				
+				
+				
 				return CommonConstants.SUCCESS;
 			} catch (HttpClientErrorException e) {
 				

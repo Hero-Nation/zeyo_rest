@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.Format;
@@ -51,12 +53,6 @@ public class SubCategoryController extends BaseController {
 	private SubCategoryResourceAssembler assembler;
 
 	private final RepositoryEntityLinks entityLinks;
-
-	@Value(value = "${zeyo.item.image.path}")
-	private String upload_item_path;
-	
-	@Value(value = "${zeyo.cloth.image.path}")
-	private String upload_cloth_path;
 	
 
 	@Autowired
@@ -152,6 +148,7 @@ public class SubCategoryController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/single_info")
 	@ResponseBody
 	public ResponseEntity<ResultDto> single_info(@RequestParam(value = "id", required = false) Long id) {
+		
 		if (id == null || id == 0) { 
 			return return_fail("id.empty");
 		}
@@ -164,14 +161,29 @@ public class SubCategoryController extends BaseController {
 	public ResponseEntity<ResultDto> insert(@RequestBody SubCategoryDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
-		return return_success((Object) sub_categoryService.insert(param));
+	 
+		try { 
+			return return_success((Object) sub_categoryService.insert(param));
+		} catch (CommonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
+		}
+		
 	}
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
 	public ResponseEntity<ResultDto> update(@RequestBody SubCategoryDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-
-		return return_success((Object) sub_categoryService.update(param));
+ 
+		
+		try { 
+			return return_success((Object) sub_categoryService.update(param));
+		} catch (CommonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
+		}
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")

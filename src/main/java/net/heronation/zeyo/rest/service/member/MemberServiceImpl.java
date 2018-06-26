@@ -33,7 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
+import net.heronation.zeyo.rest.controller.member.CpNoUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
+import net.heronation.zeyo.rest.controller.member.PasswordUpdateDto;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
@@ -377,7 +379,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public Member update_phone(MemberDto param, Long member_seq) {
+	public Member update_phone(PasswordUpdateDto param, Long member_seq) {
 		// TODO Auto-generated method stub
 
 		Member user = memberRepository.findOne(member_seq);
@@ -413,7 +415,9 @@ public class MemberServiceImpl implements MemberService {
 
 		Member user = memberRepository.findOne(member_seq);
 
-		if (user.getPassword().equals(passwordEncoder.encode(old_pw))) {
+		
+		
+		if (passwordEncoder.matches(old_pw, user.getPassword())) {
 			user.setPassword(passwordEncoder.encode(new_pw));
 			return CommonConstants.SUCCESS;
 		} else {
@@ -424,7 +428,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public CompanyNoHistory update_cp_no(MemberDto param, Long member_seq) {
+	public CompanyNoHistory update_cp_no(CpNoUpdateDto param, Long member_seq) {
 
 		List<CompanyNoHistory> list = companyNoHistoryRepository.findByMemberId(member_seq);
 		Member user = memberRepository.findOne(member_seq);
@@ -481,11 +485,11 @@ public class MemberServiceImpl implements MemberService {
 			// db_v.set
 		} else {
 			
-			EmailValidation a = new EmailValidation();
-			a.setEmail(email);
-			a.setCreateDt(new DateTime());
-			a.setOtp(ri);			
-			emailValidationRepository.save(a);
+			db_v = new EmailValidation();
+			db_v.setEmail(email);
+			db_v.setCreateDt(new DateTime());
+			db_v.setOtp(ri);			
+			emailValidationRepository.save(db_v);
 		}
 
 

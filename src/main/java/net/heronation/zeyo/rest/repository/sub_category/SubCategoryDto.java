@@ -11,15 +11,11 @@ import net.heronation.zeyo.rest.common.value.LIdDto;
 
 @Data
 public class SubCategoryDto {
-	 
+
 	private Long id;
-	private Long category; 
+	private Long category;
 
 	private String name;
-
-	private String itemImage;
-
-	private String clothImage;
 
 	private String laundryYn;
 
@@ -31,29 +27,30 @@ public class SubCategoryDto {
 
 	private String bleachYn;
 
- 
 	private List<LIdMapIdDto> measureItem;
-	
-	private List<LIdMapIdDto> fitinfos;
-	
-	private List<FileDto> files;
 
-	
+	private List<LIdMapIdDto> fitinfos;
+
+	private List<FileDto> itemImage;
+
+	private List<FileDto> clothImage;
+
 	public SubCategory convertToEntity() {
-		 
-		
+
 		SubCategory sc = new SubCategory();
-		sc.setBleachYn(bleachYn); 
-		sc.setClothImage(clothImage);
+		sc.setBleachYn(bleachYn);
+		if (clothImage != null && clothImage.size() > 0)
+			sc.setClothImage(clothImage.get(0).getReal_name());
 		sc.setCreateDt(new DateTime());
 		sc.setDrycleaningYn(drycleaningYn);
 		sc.setDrymethodYn(drymethodYn);
 		sc.setIroningYn(ironingYn);
-		sc.setItemImage(itemImage);
+		if (itemImage != null && itemImage.size() > 0)
+			sc.setItemImage(itemImage.get(0).getReal_name());
 		sc.setLaundryYn(laundryYn);
 		sc.setName(name);
 		sc.setUseYn("Y");
-		
+
 		return sc;
 	}
 }

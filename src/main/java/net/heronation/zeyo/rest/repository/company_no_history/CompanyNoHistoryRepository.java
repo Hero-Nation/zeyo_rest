@@ -32,6 +32,7 @@ public interface CompanyNoHistoryRepository
 	
 	
 	@RestResource( rel = "findByMemberId", path = "findByMemberId")
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	List<CompanyNoHistory> findByMemberId(@Param("memberId") long memberId);
 	
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true)
@@ -42,4 +43,5 @@ public interface CompanyNoHistoryRepository
  	@Override 
  	@PreAuthorize("permitAll()")
  	<S extends CompanyNoHistory> S save(S arg0);
+ 	
 }

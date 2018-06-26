@@ -36,5 +36,9 @@ public interface SubCategoryMeasureMapRepository extends JpaRepository<SubCatego
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@Query("select mm from SubCategoryMeasureMap scmm left join scmm.measureItem mm where  scmm.subCategory.id = ?1 and  mm.useYn = 'Y' and  scmm.useYn = 'Y' ")
 	List<MeasureItem> select_by_sub_cate(@Param("scid") Long scid);
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	SubCategoryMeasureMap findOne(Long arg0);
 
 }

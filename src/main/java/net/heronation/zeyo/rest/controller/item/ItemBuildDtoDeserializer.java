@@ -151,7 +151,8 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 		Iterator<JsonNode> shopmalls_iterator = node.get("shopmalls").elements();
 
 		while (shopmalls_iterator.hasNext()) {
-			Long shopmall_index = shopmalls_iterator.next().asLong();
+			JsonNode this_shopmall_map = shopmalls_iterator.next(); 
+			Long shopmall_index = this_shopmall_map.get("id").asLong();
 			Shopmall item = shopmallRepository.findOne(shopmall_index);
 			shopmalls.add(item);
 		}
