@@ -10,6 +10,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
+
 @RepositoryRestResource(collectionResourceRel = "members", path = "members")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslPredicateExecutor<Member> {
@@ -40,5 +42,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslP
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	Member findOne(Long arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("permitAll()")
+ 	Member findOne(Predicate arg0);
  	
 }

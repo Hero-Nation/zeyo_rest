@@ -57,6 +57,8 @@ public class Bbs {
 	private String bbsContent;
 
 	private String replyContent;
+	
+	private String attach_file;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;

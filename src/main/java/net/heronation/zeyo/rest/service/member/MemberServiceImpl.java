@@ -766,7 +766,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public String find_id_by_email(String name, String email) {
+	public String find_id_by_email(String name, String email) throws CommonException {
 
 		QMember m = QMember.member;
 		QEmailValidation target = QEmailValidation.emailValidation;
@@ -793,7 +793,18 @@ public class MemberServiceImpl implements MemberService {
 				db_ev.setOtp(ri);
 			}
 
-			// 이메일을 발송한다.
+			try {
+				SimpleMailMessage message = new SimpleMailMessage();
+				message.setFrom("help@heronation.net");
+				message.setTo(email);
+				message.setSubject("히어로네이션 임시 비밀번호 안내 메일");
+				message.setText("임시비밀번호는 "+ri+"입니다.");
+				emailSender.send(message);
+			}catch(Exception e) {
+				CommonException exp = new CommonException("SENDING EMAIL ERROR");
+
+				throw exp;
+			}
 
 		}
 

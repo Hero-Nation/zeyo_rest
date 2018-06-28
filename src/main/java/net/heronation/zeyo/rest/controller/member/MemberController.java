@@ -30,6 +30,7 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
@@ -171,12 +172,22 @@ public class MemberController extends BaseController {
 			return return_fail("email.pattern.wrong");
 		} else {
 
-			String r = memberService.find_id_by_email(name, email);
-			if (r.equals("member.not.exist")) {
-				return return_fail(r);
-			} else {
-				return return_success(r);
+			String r;
+			try {
+				r = memberService.find_id_by_email(name, email);
+				
+				if (r.equals("member.not.exist")) {
+					return return_fail(r);
+				} else {
+					return return_success(r);
+				}
+				
+			} catch (CommonException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return return_fail("sending.email.error");
 			}
+
 
 		}
 
@@ -281,7 +292,8 @@ public class MemberController extends BaseController {
 	}
 
 	@RequestMapping(path = "/find_password", method = RequestMethod.GET)
-	public ResponseEntity<ResultDto> find_password(@RequestParam(name = "member_id", defaultValue = "") String member_id,
+	public ResponseEntity<ResultDto> find_password(
+			@RequestParam(name = "member_id", defaultValue = "") String member_id,
 			@RequestParam(name = "member_name", defaultValue = "") String member_name,
 			@RequestParam(name = "member_email", defaultValue = "") String member_email) {
 		log.debug("/api/members/find_password");

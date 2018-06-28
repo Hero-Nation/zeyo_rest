@@ -1,6 +1,10 @@
 package net.heronation.zeyo.rest.service.bbs;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +13,9 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.controller.bbs.UpdateStatusDto;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;
 import net.heronation.zeyo.rest.repository.bbs.BbsRepository;
@@ -45,6 +54,12 @@ public class BbsServiceImpl implements BbsService {
 	@Autowired
 	EntityManager entityManager;
 
+	@Value(value = "${zeyo.path.upload.temp}")
+	private String path_temp_upload;
+
+	@Value(value = "${zeyo.path.bbs.image}")
+	private String path_bbs_upload;
+
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
@@ -61,7 +76,6 @@ public class BbsServiceImpl implements BbsService {
 		select_query.append("    m.name			as member_name, ");
 		select_query.append("    b.create_dt	as createDt, ");
 		select_query.append("    b.status 		as status");
- 
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");
@@ -171,9 +185,7 @@ public class BbsServiceImpl implements BbsService {
 		// return new PageImpl<Bbs>(R.getResults(), page, R.getTotal());
 
 	}
-	
-	
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> client_search(Map<String, Object> param, Pageable page) {
@@ -189,7 +201,10 @@ public class BbsServiceImpl implements BbsService {
 		select_query.append("    b.title		as title, ");
 		select_query.append("    m.name			as member_name, ");
 		select_query.append("    b.create_dt	as createDt, ");
-		select_query.append("    b.status 		as status");
+		select_query.append("    b.status 		as status ,");
+		select_query.append("    b.reply_content 		as reply_content ,");
+		select_query.append("    b.attach_file 		as attach_file,");
+		select_query.append("    b.bbs_content 		as bbs_content");
 
 		// item.kindof
 		// item.id
@@ -207,10 +222,9 @@ public class BbsServiceImpl implements BbsService {
 		where_query.append("    member m ON b.member_id = m.id AND m.use_yn = 'Y' ");
 		where_query.append(" WHERE ");
 		where_query.append("    b.use_yn = 'Y'");
-	
-		Long member_id = (Long) param.get("member_id");
-		where_query.append("  and  b.member_id = "+member_id);
 
+		Long member_id = (Long) param.get("member_id");
+		where_query.append("  and  b.member_id = " + member_id);
 
 		where_query.append(" GROUP BY b.id");
 
@@ -241,22 +255,8 @@ public class BbsServiceImpl implements BbsService {
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
-		// item.kindof
-		// item.id
-		// item.title
-		// item.member.name
-		// item.createDt
-		// item.status
-
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
-
-			// select_query.append(" b.id as id, ");
-			// select_query.append(" k.kvalue as kindof, ");
-			// select_query.append(" b.title as title, ");
-			// select_query.append(" m.name as member_name, ");
-			// select_query.append(" b.create_dt as createDt, ");
-			// select_query.append(" b.status as status");
 
 			search_R.put("id", row[0]);
 			search_R.put("kindof", row[1]);
@@ -264,6 +264,9 @@ public class BbsServiceImpl implements BbsService {
 			search_R.put("member_name", row[3]);
 			search_R.put("createDt", row[4]);
 			search_R.put("status", row[5]);
+			search_R.put("reply_content", row[6]);
+			search_R.put("file", row[7]);
+			search_R.put("bbs_content", row[8]);
 
 			return_list.add(search_R);
 		}
@@ -281,32 +284,43 @@ public class BbsServiceImpl implements BbsService {
 
 		return R;
 
-		// JPAQuery<Bbs> query = new JPAQuery<Bbs>(entityManager);
-		//
-		// QBbs target = QBbs.bbs;
-		//
-		// QueryResults<Bbs> R = query.from(target)
-		// .where(where)
-		// //.orderBy(target.id.desc())
-		// .offset((page.getPageNumber() - 1)* page.getPageSize())
-		// .limit(page.getPageSize())
-		// .fetchResults();
-		//
-		// return new PageImpl<Bbs>(R.getResults(), page, R.getTotal());
-
 	}
 
 	@Override
 	@Transactional
-	public Bbs client_insert(BbsClientInsertDto new_bbs, Long member_id) {
+	public Bbs client_insert(BbsClientInsertDto new_bbs, Long member_id) throws CommonException {
 
 		Member client = memberRepository.getOne(member_id);
-		Kindof kind = kindofRepository.getOne((long) 4);
+		Kindof kind = kindofRepository.findOne(4L);
 
 		Bbs new_post = new_bbs.getNewBbs();
 		new_post.setMember(client);
 		new_post.setKindof(kind);
+
+		if (new_bbs.getAttachFile() != null && new_bbs.getAttachFile().length > 0) {
+			new_post.setAttach_file(new_bbs.getAttachFile()[0].getTemp_name().concat("_")
+					.concat(new_bbs.getAttachFile()[0].getReal_name()));
+		}
+
 		bbsRepository.save(new_post);
+
+		if (new_bbs.getAttachFile() != null && new_bbs.getAttachFile().length > 0) {
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(new_bbs.getAttachFile()[0].getTemp_name()));
+			File dest = new File(path_bbs_upload.concat(File.separator).concat(new_bbs.getAttachFile()[0].getTemp_name()
+					.concat("_").concat(new_bbs.getAttachFile()[0].getReal_name())));
+
+			try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("item.image.upload.failed");
+			}
+		}
 
 		return new_post;
 	}
@@ -451,5 +465,21 @@ public class BbsServiceImpl implements BbsService {
 		R.put("kindof_4", kindof_4);
 
 		return R;
+	}
+
+	@Override
+	@Transactional
+	public String update_status(UpdateStatusDto param) {
+		// TODO Auto-generated method stub
+
+		Bbs post = bbsRepository.findOne(param.getId());
+		if (param.getStatus().equals("C")) {
+			post.setReplyContent(param.getReply_content());
+		} else {
+
+		}
+		post.setStatus(param.getStatus());
+
+		return CommonConstants.OK;
 	}
 }

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
@@ -238,7 +239,13 @@ public class SizeTableController extends BaseController {
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
  
 		
-		return return_success((Object) size_tableService.modify(param));
+		try {
+			return return_success((Object) size_tableService.modify(param));
+		} catch (CommonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
+		}
 	}
 	
 	
@@ -247,7 +254,7 @@ public class SizeTableController extends BaseController {
 	
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
-	@RequestMapping(method = RequestMethod.PATCH, value = "/create")
+	@RequestMapping(method = RequestMethod.POST, value = "/create")
 	@ResponseBody
 	public ResponseEntity<ResultDto> create(
 			@RequestBody SizeTableDto param,
@@ -262,7 +269,35 @@ public class SizeTableController extends BaseController {
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
  
 		
-		return return_success((Object) size_tableService.create(param));
+		try {
+			return return_success((Object) size_tableService.create(param));
+		} catch (CommonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
+		}
 	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.GET, value = "/single_info")
+	@ResponseBody
+	public ResponseEntity<ResultDto> single_info(
+			@RequestParam(value = "id", required = false) long id,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+ 
+		
+		return return_success((Object) size_tableService.single_infos(id));
+	}
+	
+	
 	
 }

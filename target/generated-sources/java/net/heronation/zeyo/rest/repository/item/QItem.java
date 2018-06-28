@@ -80,11 +80,13 @@ public class QItem extends EntityPathBase<Item> {
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
+    public final StringPath shopProductId = createString("shopProductId");
+
     public final StringPath sizeMeasureImage = createString("sizeMeasureImage");
 
     public final StringPath sizeMeasureMode = createString("sizeMeasureMode");
 
-    public final ListPath<net.heronation.zeyo.rest.repository.size_table.SizeTable, net.heronation.zeyo.rest.repository.size_table.QSizeTable> sizeTables = this.<net.heronation.zeyo.rest.repository.size_table.SizeTable, net.heronation.zeyo.rest.repository.size_table.QSizeTable>createList("sizeTables", net.heronation.zeyo.rest.repository.size_table.SizeTable.class, net.heronation.zeyo.rest.repository.size_table.QSizeTable.class, PathInits.DIRECT2);
+    public final net.heronation.zeyo.rest.repository.size_table.QSizeTable sizeTable;
 
     public final StringPath sizeTableYn = createString("sizeTableYn");
 
@@ -121,6 +123,7 @@ public class QItem extends EntityPathBase<Item> {
         this.itemLaundryMap = inits.isInitialized("itemLaundryMap") ? new net.heronation.zeyo.rest.repository.item_laundry_map.QItemLaundryMap(forProperty("itemLaundryMap"), inits.get("itemLaundryMap")) : null;
         this.madein = inits.isInitialized("madein") ? new net.heronation.zeyo.rest.repository.madein.QMadein(forProperty("madein"), inits.get("madein")) : null;
         this.member = inits.isInitialized("member") ? new net.heronation.zeyo.rest.repository.member.QMember(forProperty("member"), inits.get("member")) : null;
+        this.sizeTable = inits.isInitialized("sizeTable") ? new net.heronation.zeyo.rest.repository.size_table.QSizeTable(forProperty("sizeTable"), inits.get("sizeTable")) : null;
         this.subCategory = inits.isInitialized("subCategory") ? new net.heronation.zeyo.rest.repository.sub_category.QSubCategory(forProperty("subCategory"), inits.get("subCategory")) : null;
         this.warranty = inits.isInitialized("warranty") ? new net.heronation.zeyo.rest.repository.warranty.QWarranty(forProperty("warranty"), inits.get("warranty")) : null;
     }

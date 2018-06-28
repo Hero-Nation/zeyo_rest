@@ -84,6 +84,5 @@ public class ItemModifyDto {
 	private ItemBleachMap itemBleachMap;
 
 	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
-
-	private String sizeTableYn;
+ 
 }

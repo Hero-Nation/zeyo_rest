@@ -26,4 +26,8 @@ public interface BbsRepository extends JpaRepository<Bbs, Long> , QueryDslPredic
 	@RestResource(path = "", rel = "",exported = false)
 	Page<Bbs> findAll(Pageable arg0);
 
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	<S extends Bbs> S save(S arg0);
 }

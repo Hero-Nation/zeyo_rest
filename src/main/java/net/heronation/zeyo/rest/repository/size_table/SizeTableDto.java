@@ -9,14 +9,10 @@ import net.heronation.zeyo.rest.repository.item.ItemRepository;
 
 @Data
 public class SizeTableDto {
-	
-	@Autowired
-	ItemRepository itemRepo;
+	 
 
 	private Long id;
-
-	private Item item;
-	
+  
 	private Long item_id;
 
 	private String visibleNameYn;
@@ -42,14 +38,14 @@ public class SizeTableDto {
 	private DateTime createDt;
 
 	private String useYn;
-	 
+	
+	private String file;
+	
 	
 	public SizeTable convertToEntity() {
 		SizeTable st = new SizeTable();
 		
-		if(id != null) st.setId(id);
-		if(item != null) st.setItem(item);
-		if(item_id != null) st.setItem(itemRepo.findOne(item_id));
+		if(id != null) st.setId(id);  
 		if(visibleNameYn != null) st.setVisibleNameYn(visibleNameYn);
 		if(visibleCodeYn != null) st.setVisibleCodeYn(visibleCodeYn);
 		if(visibleBasicYn != null) st.setVisibleBasicYn(visibleBasicYn);
@@ -64,6 +60,7 @@ public class SizeTableDto {
 		if(createDt == null) st.setCreateDt(new DateTime());
 		if(useYn != null) st.setUseYn(useYn);
 		if(useYn == null) st.setUseYn("Y"); 
+		if(file !=null) st.setTable_image(file.concat(".png"));
 		
 		return st;
 	}

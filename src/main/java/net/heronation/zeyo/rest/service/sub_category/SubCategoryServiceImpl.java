@@ -3,6 +3,8 @@ package net.heronation.zeyo.rest.service.sub_category;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,16 +73,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Autowired
 	EntityManager entityManager;
 
-	
 	@Value(value = "${zeyo.path.upload.temp}")
 	private String path_temp_upload;
-	
+
 	@Value(value = "${zeyo.path.subcategory.item.image}")
 	private String path_subcategory_item_image;
-	
-	@Value(value = "${zeyo.path.subcategory.cloth.image}")
-	private String path_subcategory_cloth_image;
-	
+
+	@Value(value = "${zeyo.path.subcategory.sizemeasure.image}")
+	private String path_subcategory_sizemeasure_image;
+
 	// @Override
 	// public Page<SubCategory> search(Predicate where, Pageable page) {
 	//
@@ -315,47 +316,55 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Override
 	@Transactional
 	public String insert(SubCategoryDto param) throws CommonException {
-		
+
 		log.debug(param.toString());
 		Category c = categoryRepository.findOne(param.getCategory());
 		SubCategory sc = param.convertToEntity();
 		sc.setCategory(c);
-		
+
 		if (param.getClothImage() != null && param.getClothImage().size() > 0) {
- 
-			
-			File source= new File(path_temp_upload.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
-			File dest= new File(path_subcategory_cloth_image.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
-			
-			 try {
+
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
+			File dest = new File(path_subcategory_sizemeasure_image.concat(File.separator).concat(param.getClothImage().get(0)
+					.getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
+
+			try {
 				FileUtils.copyFile(source, dest);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new CommonException("cloth.image.upload.failed");
 			}
-			 
-			 sc.setClothImage(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())); 
-		}
-		
-		
-		if (param.getItemImage() != null && param.getItemImage().size() > 0) {
-			
 
-			File source= new File(path_temp_upload.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name()));
-			File dest= new File(path_subcategory_item_image.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())));
-			
-			 try {
+			sc.setClothImage(param.getClothImage().get(0).getTemp_name().concat("_")
+					.concat(param.getClothImage().get(0).getReal_name()));
+		}
+
+		if (param.getItemImage() != null && param.getItemImage().size() > 0) {
+
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name()));
+			File dest = new File(path_subcategory_item_image.concat(File.separator).concat(param.getItemImage().get(0)
+					.getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())));
+
+			try {
 				FileUtils.copyFile(source, dest);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new CommonException("item.image.upload.failed");
 			}
-			 
-			 sc.setItemImage(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())); 
-			
-			
+
+			sc.setItemImage(param.getItemImage().get(0).getTemp_name().concat("_")
+					.concat(param.getItemImage().get(0).getReal_name()));
+
 		}
 
 		sc = sub_categoryRepository.save(sc);
@@ -403,71 +412,77 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Transactional
 	public String update(SubCategoryDto param) throws CommonException {
 		log.debug(param.toString());
-		 
-		
+
 		SubCategory sc = sub_categoryRepository.findOne(param.getId());
 		sc.setBleachYn(param.getBleachYn());
-		
-		if (param.getClothImage() != null && param.getClothImage().size() > 0) {
-			  
-			if(sc.getClothImage() != null) {
-				File old_image = new File(path_subcategory_cloth_image.concat(File.separator).concat(sc.getClothImage()));
-				
-				if(old_image.exists())
-					old_image.delete();				
-			}
-			
 
-			
-			File source= new File(path_temp_upload.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
-			File dest= new File(path_subcategory_cloth_image.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
-			
-			 try {
+ 
+
+		if (param.getClothImage() != null && param.getClothImage().size() > 0) {
+
+			if (sc.getClothImage() != null) {
+				File old_image = new File(
+						path_subcategory_sizemeasure_image.concat(File.separator).concat(sc.getClothImage()));
+
+				if (old_image.exists())
+					old_image.delete();
+			}
+
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
+			File dest = new File(path_subcategory_sizemeasure_image.concat(File.separator).concat(param.getClothImage().get(0)
+					.getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
+
+			try {
 				FileUtils.copyFile(source, dest);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new CommonException("cloth.image.upload.failed");
 			}
-			 
-			 sc.setClothImage(param.getClothImage().get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())); 
+
+			sc.setClothImage(param.getClothImage().get(0).getTemp_name().concat("_")
+					.concat(param.getClothImage().get(0).getReal_name()));
 		}
-			
-		
+
 		sc.setDrycleaningYn(param.getDrycleaningYn());
 		sc.setDrymethodYn(param.getDrymethodYn());
 		sc.setIroningYn(param.getIroningYn());
-		
+
 		if (param.getItemImage() != null && param.getItemImage().size() > 0) {
-			
-			
-			
-			if(sc.getItemImage() != null) {
-			
+
+			if (sc.getItemImage() != null) {
+
 				File old_image = new File(path_subcategory_item_image.concat(File.separator).concat(sc.getItemImage()));
-				
-				if(old_image.exists())
+
+				if (old_image.exists())
 					old_image.delete();
 			}
 
-			
-			File source= new File(path_temp_upload.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name()));
-			File dest= new File(path_subcategory_item_image.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())));
-			
-			 try {
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(param.getItemImage().get(0).getTemp_name()));
+			File dest = new File(path_subcategory_item_image.concat(File.separator).concat(param.getItemImage().get(0)
+					.getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())));
+
+			try {
 				FileUtils.copyFile(source, dest);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new CommonException("item.image.upload.failed");
 			}
-			 
-			 sc.setItemImage(param.getItemImage().get(0).getTemp_name().concat("_").concat(param.getItemImage().get(0).getReal_name())); 
-			
-			
+
+			sc.setItemImage(param.getItemImage().get(0).getTemp_name().concat("_")
+					.concat(param.getItemImage().get(0).getReal_name()));
+
 		}
-			 
-		
+
 		sc.setLaundryYn(param.getLaundryYn());
 		sc.setName(param.getName());
 
@@ -483,16 +498,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			boolean is_this_option_added = true;
 
 			for (SubCategoryMeasureMap db_scmm : db_measure_item_list) {
-			 
 
 				if (db_scmm.getId() == vo.getMap_id()) {
-					if(db_scmm.getUseYn().equals("Y")) {
-						is_this_option_added = false;	
-					}else {
+					if (db_scmm.getUseYn().equals("Y")) {
+						is_this_option_added = false;
+					} else {
 						is_this_option_added = false;
 						db_scmm.setUseYn("Y");
 					}
-					
+
 				}
 
 			}
@@ -516,15 +530,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			boolean did_user_delete_this_option = true;
 
 			for (LIdMapIdDto vo : use_selected_measure_item) {
-			 
+
 				if (db_scmm.getId() == vo.getMap_id()) {
-					
-					if(db_scmm.getUseYn().equals("Y")) {
-						did_user_delete_this_option = false;	
-					}else {
+
+					if (db_scmm.getUseYn().equals("Y")) {
+						did_user_delete_this_option = false;
+					} else {
 						did_user_delete_this_option = false;
 						db_scmm.setUseYn("N");
-					} 
+					}
 				}
 
 			}
@@ -532,15 +546,14 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			if (did_user_delete_this_option) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
 				db_scmm.setUseYn("N");
-//				scmmRepository.save(db_scmm);
+				// scmmRepository.save(db_scmm);
 			}
 
 		}
 
 		QSubCategoryFitInfoMap qscfim = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
 
-		Iterable<SubCategoryFitInfoMap> db_scfi_list = scfimRepository
-				.findAll(qscfim.subCategory.id.eq(param.getId()));
+		Iterable<SubCategoryFitInfoMap> db_scfi_list = scfimRepository.findAll(qscfim.subCategory.id.eq(param.getId()));
 
 		List<LIdMapIdDto> user_selected_fitinfo_list = param.getFitinfos();
 
@@ -549,17 +562,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			boolean is_this_option_added = true;
 
 			for (SubCategoryFitInfoMap scfi : db_scfi_list) {
- 
-				if (scfi.getId() == vo.getMap_id()) { 
-					
-					if(scfi.getUseYn().equals("Y")) {
-						is_this_option_added = false;	
-					}else {
+
+				if (scfi.getId() == vo.getMap_id()) {
+
+					if (scfi.getUseYn().equals("Y")) {
+						is_this_option_added = false;
+					} else {
 						is_this_option_added = false;
 						scfi.setUseYn("Y");
 					}
-					
-					
+
 				}
 
 			}
@@ -583,17 +595,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			boolean did_user_delete_this_option = true;
 
 			for (LIdMapIdDto vo : user_selected_fitinfo_list) {
-	 
-				if (scfi.getId() == vo.getMap_id()) { 
-					
-					
-					if(scfi.getUseYn().equals("Y")) {
-						did_user_delete_this_option = false;	
-					}else {
+
+				if (scfi.getId() == vo.getMap_id()) {
+
+					if (scfi.getUseYn().equals("Y")) {
+						did_user_delete_this_option = false;
+					} else {
 						did_user_delete_this_option = false;
 						scfi.setUseYn("N");
-					} 
-					
+					}
+
 				}
 
 			}
@@ -601,7 +612,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			if (did_user_delete_this_option) { // 다시 선택한 값이 아니면 새로 추가 한다.
 
 				scfi.setUseYn("N");
-//				scfimRepository.save(scfi);
+				// scfimRepository.save(scfi);
 			}
 
 		}

@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
@@ -38,6 +40,7 @@ import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.ItemResourceAssembler;
+import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 import net.heronation.zeyo.rest.service.item.ItemService;
 
 @Slf4j
@@ -248,11 +251,64 @@ public class ItemController extends BaseController {
 
 	}
 	
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update_item_image")
+	@ResponseBody
+	public ResponseEntity<ResultDto> update_item_image(
+			@RequestBody ItemImageUploadDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		String member_id = String.valueOf(user.get("member_id"));
+ 
+		
+		try {
+			return return_success((Object) itemService.update_item_image(param,member_id));
+		} catch (CommonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
+		}
+	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update_size_measure_image")
+	@ResponseBody
+	public ResponseEntity<ResultDto> update_size_measure_image(
+			@RequestBody ItemSizeMeasureImageUploadDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		String member_id = String.valueOf(user.get("member_id"));
+ 
+		
+		try {
+			return return_success((Object) itemService.update_size_measure_image(param,member_id));
+		} catch (CommonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
+		}
+	}
+	
+	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.PATCH, value = "/download_excel")
 	@ResponseBody
 	public ResponseEntity<ResultDto> download_excel(
-			@RequestBody List<ToggleDto> param,
+			@RequestBody List<LIdDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
 
  

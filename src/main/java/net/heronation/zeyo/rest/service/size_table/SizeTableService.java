@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 
 public interface SizeTableService {
@@ -19,10 +21,12 @@ public interface SizeTableService {
 
 	Map<String, Object> preview(Long seq);
 
-	String modify(SizeTableDto param);
+	String modify(SizeTableDto param) throws CommonException;
 	
-	String create(SizeTableDto param);
+	String create(SizeTableDto param) throws CommonException;
 	
+	String update_item_image(SizeTableDto param);
 	
+	SizeTable single_infos(long id);
 
 }

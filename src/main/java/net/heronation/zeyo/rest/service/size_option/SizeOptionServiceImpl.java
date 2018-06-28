@@ -105,7 +105,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		where_query.append("    item_size_option_map isom ON isom.size_option_id = so.id ");
 		where_query.append("        AND isom.use_yn = 'Y' ");
 		where_query.append("WHERE ");
-		where_query.append("    so.use_yn = 'Y' ");
+		where_query.append("    so.use_yn = 'Y' and so.kindof_id != 8 ");
 
 		String name = (String) param.get("name");
 		if (name != null) {

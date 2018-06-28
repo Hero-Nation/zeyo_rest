@@ -6,6 +6,8 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
+
 @RepositoryRestResource(collectionResourceRel = "size_tables", path = "size_tables")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface SizeTableRepository extends JpaRepository<SizeTable, Long>, QueryDslPredicateExecutor<SizeTable> {
@@ -21,5 +23,15 @@ public interface SizeTableRepository extends JpaRepository<SizeTable, Long>, Que
 	// @Override
 	// @RestResource(path = "", rel = "", exported = false)
 	// Page<CompanyNoHistory> findAll(Pageable arg0);
+	
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	SizeTable findOne(Long arg0);
+	
+	
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	SizeTable findOne(Predicate arg0);
 }

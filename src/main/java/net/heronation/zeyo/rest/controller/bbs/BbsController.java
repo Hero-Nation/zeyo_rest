@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
@@ -45,7 +46,6 @@ import net.heronation.zeyo.rest.service.bbs.BbsService;
 @RequestMapping("/bbss")
 public class BbsController extends BaseController {
 
-	
 	@Autowired
 	private BbsService bbsService;
 
@@ -63,13 +63,13 @@ public class BbsController extends BaseController {
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) {
-		binder.addValidators(new BbsClientValidator());
+//		binder.addValidators(new BbsClientValidator());
 	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseEntity<ResultDto> handleResourceNotFoundException() {
-		 return return_fail();
+		return return_fail();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
@@ -80,16 +80,16 @@ public class BbsController extends BaseController {
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			Pageable pageable) {
 
-		Map<String,Object> param = new HashMap<String,Object>();
-		param.put("title", title); 
-		if(start == null) {
-			param.put("start", start);	
-		}else {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("title", title);
+		if (start == null) {
+			param.put("start", start);
+		} else {
 			param.put("start", start.toString(Format.ISO_DATETIME));
 		}
-		if(end == null) {
-			param.put("end", end);	
-		}else {
+		if (end == null) {
+			param.put("end", end);
+		} else {
 			param.put("end", end.toString(Format.ISO_DATETIME));
 		}
 
@@ -99,55 +99,58 @@ public class BbsController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
 	@ResponseBody
-	public ResponseEntity<ResultDto> client_list(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+	public ResponseEntity<ResultDto> client_list(Pageable pageable,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
 
-		if(auth == null) {
+		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
-		
+
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		Map<String,Object> param = new HashMap<String,Object>(); 
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("member_id", seq);
-		
+
 		return return_success((Object) bbsService.client_search(param, pageable));
 	}
-	
-//	@PreAuthorize("hasRole('ROLE_ADMIN')")
-//	@RequestMapping(method = RequestMethod.GET, value = "/get_stats")
-//	@ResponseBody
-//	public ResponseEntity<ResultVO> get_stats(Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
-//
-//		if(auth == null) {
-//			return return_fail(CommonConstants.NO_TOKEN);
-//		}
-//		
-//		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
-//				.getDecodedDetails();
-//		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
-//
-//		BooleanBuilder builder = new BooleanBuilder();
-//
-//		QBbs target = QBbs.bbs;
-//
-//		builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
-//
-//		return return_success((Object) bbsService.search(builder.getValue(), pageable));
-//	}
-	
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+
+	// @PreAuthorize("hasRole('ROLE_ADMIN')")
+	// @RequestMapping(method = RequestMethod.GET, value = "/get_stats")
+	// @ResponseBody
+	// public ResponseEntity<ResultVO> get_stats(Pageable pageable,
+	// @AuthenticationPrincipal OAuth2Authentication auth) {
+	//
+	// if(auth == null) {
+	// return return_fail(CommonConstants.NO_TOKEN);
+	// }
+	//
+	// Map<String, Object> user = (Map<String, Object>)
+	// ((OAuth2AuthenticationDetails) auth.getDetails())
+	// .getDecodedDetails();
+	// Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+	//
+	// BooleanBuilder builder = new BooleanBuilder();
+	//
+	// QBbs target = QBbs.bbs;
+	//
+	// builder.and(target.member.id.eq(seq).and(target.useYn.eq("Y")));
+	//
+	// return return_success((Object) bbsService.search(builder.getValue(),
+	// pageable));
+	// }
+
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.POST, value = "/query")
 	@ResponseBody
 	public ResponseEntity<ResultDto> query(@RequestBody @Valid BbsClientInsertDto new_post, BindingResult result,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
-		if(auth == null) {
+		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
-		
+
 		if (result.hasErrors()) {
 			return return_fail(result.getFieldError());
 		} else {
@@ -155,7 +158,37 @@ public class BbsController extends BaseController {
 					.getDecodedDetails();
 			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-			return return_success((Object) bbsService.client_insert(new_post, seq));
+			try {
+				return return_success((Object) bbsService.client_insert(new_post, seq));
+			} catch (CommonException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return return_fail(e);
+			}
+		}
+
+	}
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update_status")
+	@ResponseBody
+	public ResponseEntity<ResultDto> update_status(@RequestBody UpdateStatusDto new_post,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		try {
+			return return_success((Object) bbsService.update_status(new_post));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return return_fail(e);
 		}
 
 	}

@@ -20,7 +20,7 @@ import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 public interface MemberService {
 	Member registry(MemberRegisterDto param);
 
-	String find_id_by_email(String name, String email);
+	String find_id_by_email(String name, String email) throws CommonException;
 
 	String find_id_by_email_confirm(String name, String email, String otp);
 

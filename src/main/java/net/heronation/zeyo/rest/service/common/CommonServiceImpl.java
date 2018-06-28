@@ -861,6 +861,9 @@ public class CommonServiceImpl implements CommonService {
 		q = entityManager.createNativeQuery(query.toString()); 
 		List<BigInteger> brand_increase_rate_r = q.getResultList();
 		BigInteger brand_increase_rate = brand_increase_rate_r.get(0); 
+		
+		
+		
 		if(brand_increase_rate == null) {
 			brand_increase_rate = BigInteger.valueOf(0L); 
 		}

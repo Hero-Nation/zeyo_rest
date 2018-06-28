@@ -73,6 +73,8 @@ public class SizeTable {
 
 	private String useYn;
 	
+	private String table_image;
+	
 	@Override
 	public String toString() {
 		return "SizeTable ]";

@@ -38,4 +38,5 @@ public interface KindofRepository extends JpaRepository<Kindof, Long> , QueryDsl
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	Kindof findOne(Long arg0);
  	
+ 	
 }

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8" />
+	<title> ZEYO </title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<link rel="stylesheet" type="text/css" href="common/css/common.css" />
+	<link rel="stylesheet" type="text/css" href="common/css/jquery.ui.lastest.css" />
+
+	<script type="text/javascript" src="common/js/jquery.lastest.js"></script>
+	<script type="text/javascript" src="common/js/jquery.ui.lastest.js"></script>
+	<script type="text/javascript" src="common/js/publisher.js"></script>
+	<script type="text/javascript" src="common/js/jquery.customSelect.js"></script>
+
+	<script type="text/javascript">
+		//<![CDATA[
+		$(window).load(function(){
+			openLay('layerArea');
+
+			$("body").on("click", ".bodyCheck button", function(){
+				$(this).addClass("check");
+				$(".bodyCheck button").not($(this)).removeClass("check");
+			});
+		});
+		//]]>
+	</script>
+</head>
+<body>
+
+<!--[s] Layer -->
+<div class="layerArea">
+	<div class="layerWrap">
+		<h1 class="popuplogo"><img src="images/common/popup-logo.png" alt="" /></h1>
+		
+
+		<div class="contLy">
+			<a href="javascript:void(0);" class="closeLy"><img src="images/common/popup-close.png" alt="팝업 닫기"></a>
+			
+			<div class="writeSizeForm">
+				<div class="thumb"><img src="images/@temp-thumb.png" alt="" /></div>
+				<div class="sizeForm">
+					<p class="title">봄신상 박스 롱티셔츠/후드티/맨투맨/임부복</p>
+					<p class="price">17,000 원</p>
+
+					<div class="size">
+						<div>
+							<span class="rdo_inline"><input type="radio" id="radio1" name="sel"><label for="radio1">상품으로 비교</label></span>
+							<span class="rdo_inline"><input type="radio" id="radio2" name="sel"><label for="radio2">기본 정보로 비교</label></span>
+							<span class="btn"><button type="button">상세정보 입력</button></span>
+						</div>
+						<div class="mt10">
+							<span class="tit">키</span>
+							<div class="inputbox">
+								<input type="text" />
+								<span>cm</span>
+							</div>
+
+							<span class="tit ml50">체중</span>
+							<div class="inputbox">
+								<input type="text" />
+								<span>kg</span>
+							</div>
+						</div>
+
+						<div class="mt10">
+							회원님의 가슴둘레 측정치는 약  <span class="result">97.2 cm</span>(972mm) 입니다.
+						</div>
+					</div>
+					<div class="btn-refresh"><button type="button">초기화</button></div>
+				</div>
+			</div>
+
+			<div class="sizeBody type02">
+				<p class="text">정확한 사이즈 추천을 위해 본인의 체형을 선택 해 주세요. </p>
+
+				<div class="bodyCheck">
+					<button type="button" class="check">
+						<img src="images/body-01.png" alt="" />
+						<span>마른체형</span>
+					</button>
+					<button type="button">
+						<img src="images/body-02.png" alt="" />
+						<span>보통체형</span>
+					</button>
+					<button type="button">
+						<img src="images/body-03.png" alt="" />
+						<span>근육형</span>
+					</button>
+					<button type="button">
+						<img src="images/body-04.png" alt="" />
+						<span>비만형</span>
+					</button>
+				</div>
+
+				<div class="btn"><button type="button">사이즈 추천 보기</button></div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<!--[e] Layer -->
+</body>
+</html>

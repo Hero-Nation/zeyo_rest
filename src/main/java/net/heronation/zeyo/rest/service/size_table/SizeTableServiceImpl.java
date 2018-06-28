@@ -1,6 +1,10 @@
 package net.heronation.zeyo.rest.service.size_table;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +13,10 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -18,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
@@ -86,7 +93,11 @@ public class SizeTableServiceImpl implements SizeTableService {
 	@Autowired
 	private FitInfoOptionRepository fitInfoOptionRepository;
 
-	
+	@Value(value = "${zeyo.path.upload.temp}")
+	private String path_temp_upload;
+
+	@Value(value = "${zeyo.path.sizetable.image}")
+	private String path_sizetable_upload;
 	
 	@Autowired
 	EntityManager entityManager;
@@ -121,7 +132,8 @@ public class SizeTableServiceImpl implements SizeTableService {
 		select_query.append("    FROM ");
 		select_query.append("        company_no_history ");
 		select_query.append(
-				"    GROUP BY member_id) pcnh ON cnh.id = pcnh.id where cnh.member_id = m.id ) as company_name   ");
+				"    GROUP BY member_id) pcnh ON cnh.id = pcnh.id where cnh.member_id = m.id ) as company_name  , ");
+		select_query.append("    st.table_image			as table_image  ");
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append("FROM ");
@@ -140,6 +152,9 @@ public class SizeTableServiceImpl implements SizeTableService {
 		where_query.append("        LEFT JOIN ");
 		where_query.append("    sub_category sc ON i.sub_category_id = sc.id ");
 		where_query.append("        AND sc.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    size_table st ON i.id = st.item_id ");
+		where_query.append("        AND st.use_yn = 'Y' ");
 		where_query.append("WHERE ");
 		where_query.append("    i.use_yn = 'Y'");
 
@@ -251,6 +266,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 			search_R.put("item_create_dt", row[5]);
 			search_R.put("item_size_table_yn", row[6]);
 			search_R.put("company_name", row[7]);
+			search_R.put("table_image", row[8]);
 
 			return_list.add(search_R);
 		}
@@ -342,7 +358,8 @@ public class SizeTableServiceImpl implements SizeTableService {
 		select_query.append("    i.image				as item_image, ");
 		select_query.append("    i.size_measure_image	as size_measure_image, ");
 		select_query.append("    st.create_dt			as size_table_create_dt, ");
-		select_query.append("    st.id 					as size_table_id ");
+		select_query.append("    st.id 					as size_table_id, ");
+		select_query.append("    st.table_image 					as size_table ");
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");
@@ -471,6 +488,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 			search_R.put("size_measure_image", row[6]);
 			search_R.put("size_table_create_dt", row[7]);
 			search_R.put("size_table_id", row[8]);
+			search_R.put("table_image", row[9]);
 
 			return_list.add(search_R);
 		}
@@ -501,7 +519,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 			QSizeTable st = QSizeTable.sizeTable;
 			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()));
-			this_st.setUseYn(tv.getValue());			
+			this_st.setUseYn("N");			
 		}
 		return "Y";
 	}
@@ -721,20 +739,105 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 	@Override
 	@Transactional
-	public String modify(SizeTableDto param) {
+	public String modify(SizeTableDto param) throws CommonException{
 		// TODO Auto-generated method stub
 		SizeTable update_entity = param.convertToEntity();
-		size_tableRepository.save(update_entity);
+		SizeTable old_st = size_tableRepository.findOne(update_entity.getId());
+		
+		old_st.setVisibleBasicYn(update_entity.getVisibleBasicYn());
+		old_st.setVisibleCodeYn(update_entity.getVisibleCodeYn());
+		old_st.setVisibleColorYn(update_entity.getVisibleColorYn());
+		old_st.setVisibleFitInfoYn(update_entity.getVisibleFitInfoYn());
+		old_st.setVisibleItemImageYn(update_entity.getVisibleBasicYn());
+		old_st.setVisibleLaundryInfoYn(update_entity.getVisibleLaundryInfoYn());
+		old_st.setVisibleMeasureHowAYn(update_entity.getVisibleMeasureHowAYn());
+		old_st.setVisibleMeasureHowBYn(update_entity.getVisibleMeasureHowBYn());
+		old_st.setVisibleMeasureTableYn(update_entity.getVisibleMeasureTableYn());
+		old_st.setVisibleNameYn(update_entity.getVisibleNameYn());
+	
+		// 수정할때는 항사 ㅇ테이블 이미지가 올라온다.
+		// 과거 이미지를 항상 지워줘야 한다.
+		
+		if(old_st.getTable_image() != null) {
+			File old_file = new File(path_sizetable_upload.concat(File.separator).concat(old_st.getTable_image()));
+			
+			if(old_file.exists())
+				old_file.delete();
+		}
+		
+		old_st.setTable_image(update_entity.getTable_image());
+		
+		
+		
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+		File source = new File(path_temp_upload
+				.concat(File.separator).concat(dtf.format(now))
+				.concat(File.separator).concat(param.getFile()));
+		File dest = new File(path_sizetable_upload.concat(File.separator).concat(update_entity.getTable_image()));
+
+		try {
+			FileUtils.copyFile(source, dest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new CommonException("image.upload.failed");
+		}
+		
+		
 		return "Y";
 	}
 	
 	@Override
 	@Transactional
-	public String create(SizeTableDto param) {
+	public String create(SizeTableDto param) throws CommonException {
 		// TODO Auto-generated method stub
-		SizeTable update_entity = param.convertToEntity();
-		size_tableRepository.save(update_entity);
+		SizeTable create_entity = param.convertToEntity();
+		
+		
+		Item this_item  = itemRepository.findOne(param.getItem_id());
+		
+		create_entity.setItem(this_item);
+		size_tableRepository.save(create_entity);
+		
+		this_item.setSizeTableYn("Y");
+		
+		
+		
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+		File source = new File(path_temp_upload
+				.concat(File.separator).concat(dtf.format(now))
+				.concat(File.separator).concat(param.getFile()));
+		File dest = new File(path_sizetable_upload.concat(File.separator).concat(param.getFile().concat(".png")));
+
+		try {
+			FileUtils.copyFile(source, dest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new CommonException("image.upload.failed");
+		}
+		
+		
 		return "Y";
+	}
+
+	@Override
+	public String update_item_image(SizeTableDto param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SizeTable single_infos(long id) {
+		// TODO Auto-generated method stub
+		SizeTable a =  size_tableRepository.findOne(id);
+		a.setItem(null);
+		
+		return a;
 	}
 	
 	

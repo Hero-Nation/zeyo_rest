@@ -6,7 +6,11 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.controller.item.ItemImageUploadDto;
+import net.heronation.zeyo.rest.controller.item.ItemSizeMeasureImageUploadDto;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemDto;
@@ -34,5 +38,12 @@ public interface ItemService {
 
 	String toggle_link(List<ToggleDto> param, Long seq);
 	
-	String arrayExcel(List<ToggleDto> param, Pageable pageable) throws IOException;
+	String arrayExcel(List<LIdDto> param, Pageable pageable) throws IOException;
+	
+	
+	
+	String update_item_image(ItemImageUploadDto param,String member_id)  throws CommonException; 
+
+	String update_size_measure_image(ItemSizeMeasureImageUploadDto param,String member_id) throws CommonException;
+	
 }

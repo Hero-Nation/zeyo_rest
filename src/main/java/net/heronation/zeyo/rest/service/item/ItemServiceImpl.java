@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -31,8 +34,13 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.FileDto;
+import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.controller.item.ItemImageUploadDto;
+import net.heronation.zeyo.rest.controller.item.ItemSizeMeasureImageUploadDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColor;
@@ -98,7 +106,21 @@ import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 @Service
 @Transactional
 public class ItemServiceImpl implements ItemService {
+	
+	@Value(value = "${zeyo.path.subcategory.item.image}")
+	private String path_subcategory_item_image;
 
+	@Value(value = "${zeyo.path.subcategory.sizemeasure.image}")
+	private String path_subcategory_sizemeasure_image;
+	
+	@Value(value = "${zeyo.path.upload.temp}")
+	private String path_temp_upload;
+
+	@Value(value = "${zeyo.path.client.image}")
+	private String path_subcategory_client_image;
+	
+	
+	
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -595,37 +617,16 @@ public class ItemServiceImpl implements ItemService {
 		new_item.setLinkYn("N");
 		new_item.setUseYn("Y");
 
+		// 사이즈 테이블은 무조건 N으로 설정한다.
+		// 화면에서 생성을 누르고 사이즈표가 입력이 되면 그때 Y로 해준다. 
+		new_item.setSizeTableYn("N");
+		
+		
 		new_item = itemRepository.save(new_item);
 
-		// 사이즈 테이블 처리
-		if (ibd.getSizeTableYn().equals("Y")) {
-			new_item.setSizeTableYn("Y");
 
-			// 사이즈 테이블 생성
-
-			SizeTable new_st = new SizeTable();
-			// 정보입력
-
-			new_st.setCreateDt(new DateTime());
-			new_st.setUseYn("Y");
-			new_st.setItem(new_item);
-			new_st.setVisibleBasicYn("Y");
-			new_st.setVisibleCodeYn("Y");
-			new_st.setVisibleColorYn("Y");
-			new_st.setVisibleFitInfoYn("Y");
-			new_st.setVisibleItemImageYn("Y");
-			new_st.setVisibleLaundryInfoYn("Y");
-			new_st.setVisibleMeasureHowAYn("Y");
-			new_st.setVisibleMeasureHowBYn("Y");
-			new_st.setVisibleMeasureTableYn("Y");
-			new_st.setVisibleNameYn("Y");
-
-			sizeTableRepository.save(new_st);
-		} else {
-
-			new_item.setSizeTableYn("N");
-		}
-
+		
+		
 		List<Shopmall> isms = ibd.getShopmalls();
 		if (isms.size() != 0) {
 
@@ -757,18 +758,20 @@ public class ItemServiceImpl implements ItemService {
 		select_query.append("    i.create_dt			as item_create_dt, ");
 		select_query.append("    i.link_yn				as item_link_yn, ");
 		select_query.append("    i.size_table_yn		as item_size_table_yn, ");
-		select_query.append("    st.id					as size_table_id ");
+		select_query.append("    st.id					as size_table_id, ");
+		select_query.append("    st.table_image					as table_image ");
 
+		
 		StringBuffer where_query = new StringBuffer();
 
 		where_query.append("FROM ");
 		where_query.append("    item i ");
 		where_query.append("        LEFT JOIN ");
-		where_query.append("    category c ON i.category_id = c.id ");
+		where_query.append("    category c ON i.category_id = c.id  and c.use_yn = 'Y' ");
 		where_query.append("        LEFT JOIN ");
-		where_query.append("    sub_category sc ON i.sub_category_id = sc.id ");
+		where_query.append("    sub_category sc ON i.sub_category_id = sc.id and sc.use_yn = 'Y' ");
 		where_query.append("        LEFT JOIN ");
-		where_query.append("    size_table st ON i.id = st.item_id ");
+		where_query.append("    size_table st ON i.id = st.item_id  and st.use_yn = 'Y'  ");
 		where_query.append("WHERE ");
 		where_query.append("    i.use_yn = 'Y' ");
 		// where_query.append(" AND c.use_yn = 'Y' ");
@@ -884,7 +887,10 @@ public class ItemServiceImpl implements ItemService {
 			search_R.put("item_link_yn", row[7]);
 			search_R.put("item_size_table_yn", row[8]);
 			search_R.put("size_table_id", row[9]);
+			search_R.put("table_image", row[10]);
 
+			
+			
 			return_list.add(search_R);
 		}
 
@@ -949,41 +955,41 @@ public class ItemServiceImpl implements ItemService {
 
 		log.debug("modify 2 size_table ________________________________________________________"); 
 		// 사이즈 테이블 처리
-		if (ibd.getSizeTableYn().equals("Y")) {
-			old_item.setSizeTableYn("Y");
-
-			if(old_item.getSizeTable() != null) {
-				
-				SizeTable old_st = old_item.getSizeTable();
-				old_st.setUseYn("Y");
-				
-			}else {
-
-				// 사이즈 테이블 생성
-				
-				SizeTable new_st = new SizeTable();
-				new_st.setCreateDt(new DateTime());
-				new_st.setUseYn("Y");
-				new_st.setItem(old_item);
-				new_st.setVisibleBasicYn("Y");
-				new_st.setVisibleCodeYn("Y");
-				new_st.setVisibleColorYn("Y");
-				new_st.setVisibleFitInfoYn("Y");
-				new_st.setVisibleItemImageYn("Y");
-				new_st.setVisibleLaundryInfoYn("Y");
-				new_st.setVisibleMeasureHowAYn("Y");
-				new_st.setVisibleMeasureHowBYn("Y");
-				new_st.setVisibleMeasureTableYn("Y");
-				new_st.setVisibleNameYn("Y");
-
-				sizeTableRepository.save(new_st);
-			}
-			
-
-		} else {
-
-			old_item.setSizeTableYn("N");
-		}
+//		if (ibd.getSizeTableYn().equals("Y")) {
+//			old_item.setSizeTableYn("Y");
+//
+//			if(old_item.getSizeTable() != null) {
+//				
+//				SizeTable old_st = old_item.getSizeTable();
+//				old_st.setUseYn("Y");
+//				
+//			}else {
+//
+//				// 사이즈 테이블 생성
+//				
+//				SizeTable new_st = new SizeTable();
+//				new_st.setCreateDt(new DateTime());
+//				new_st.setUseYn("Y");
+//				new_st.setItem(old_item);
+//				new_st.setVisibleBasicYn("Y");
+//				new_st.setVisibleCodeYn("Y");
+//				new_st.setVisibleColorYn("Y");
+//				new_st.setVisibleFitInfoYn("Y");
+//				new_st.setVisibleItemImageYn("Y");
+//				new_st.setVisibleLaundryInfoYn("Y");
+//				new_st.setVisibleMeasureHowAYn("Y");
+//				new_st.setVisibleMeasureHowBYn("Y");
+//				new_st.setVisibleMeasureTableYn("Y");
+//				new_st.setVisibleNameYn("Y");
+//
+//				sizeTableRepository.save(new_st);
+//			}
+//			
+//
+//		} else {
+//
+//			old_item.setSizeTableYn("N");
+//		}
 
  
  
@@ -1787,7 +1793,7 @@ public class ItemServiceImpl implements ItemService {
 		return null;
 	}
 
-	public String arrayExcel(List<ToggleDto> param, Pageable pageable) throws IOException {
+	public String arrayExcel(List<LIdDto> param, Pageable pageable) throws IOException {
 
 		String today = DateTime.now().toString("yyyy-MM-dd");
 		String temp_path = "D:\\TEST_SERVER_ROOT\\temp\\".concat(today).concat("\\");
@@ -1799,7 +1805,7 @@ public class ItemServiceImpl implements ItemService {
 
 		BooleanBuilder builder = new BooleanBuilder();
 
-		for (ToggleDto tv : param) {
+		for (LIdDto tv : param) {
 			builder.or(i.id.eq(tv.getId()));
 		}
 
@@ -1942,6 +1948,94 @@ public class ItemServiceImpl implements ItemService {
 
 		return "/temp/".concat(today).concat("/").concat(excel_path);
 
+	}
+
+	@Override
+	@Transactional
+	public String update_item_image(ItemImageUploadDto param,String member_id) throws CommonException {
+		Item i = itemRepository.findOne(param.getItem_id());
+		
+		if(i.getImage() != null) {
+			File old_file = new File(path_subcategory_client_image.concat(File.separator).concat(member_id).concat(File.separator).concat("item").concat(File.separator).concat(i.getImage()));
+			
+			if(old_file.exists())
+				old_file.delete();
+		}
+		
+		 
+		
+		
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+		
+		FileDto[] images = param.getImage();
+		
+		
+		for(FileDto df : images) {
+			File source = new File(path_temp_upload
+					.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(df.getTemp_name()));
+			File dest = new File(path_subcategory_client_image.concat(File.separator).concat(member_id).concat(File.separator).concat("item").concat(File.separator).concat(df.getReal_name()));
+
+			try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("image.upload.failed");
+			}
+			i.setImageMode("C");
+			i.setImage(df.getReal_name());
+		}
+		
+		
+
+		return CommonConstants.OK;
+	}
+	
+	@Override
+	@Transactional
+	public String update_size_measure_image(ItemSizeMeasureImageUploadDto param,String member_id)  throws CommonException{
+		Item i = itemRepository.findOne(param.getItem_id());
+		
+		
+		if(i.getSizeMeasureImage() != null) {
+			File old_file = new File(path_subcategory_client_image.concat(File.separator).concat(member_id).concat(File.separator).concat("size_measure").concat(File.separator).concat(i.getImage()));
+			
+			if(old_file.exists())
+				old_file.delete();
+		}
+		 
+		
+		
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+		
+		FileDto[] images = param.getSizeMeasureImage();
+		
+		
+		for(FileDto df : images) {
+			File source = new File(path_temp_upload
+					.concat(File.separator).concat(dtf.format(now))
+					.concat(File.separator).concat(df.getTemp_name()));
+			File dest = new File(path_subcategory_client_image.concat(File.separator).concat(member_id).concat(File.separator).concat("size_measure").concat(File.separator).concat(df.getReal_name()));
+
+			try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("image.upload.failed");
+			}
+			i.setSizeMeasureMode("C");
+			i.setSizeMeasureImage(df.getReal_name());
+		}
+		
+		
+
+		return CommonConstants.OK;
 	}
 
 }

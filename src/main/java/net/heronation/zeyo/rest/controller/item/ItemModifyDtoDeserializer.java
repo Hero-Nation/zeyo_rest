@@ -733,15 +733,13 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 
 			
-		}
-
-		String sizeTableYn = node.get("sizeTableYn").textValue();
+		} 
 
 		return new ItemModifyDto(item_id, brand, category, subCategory, imageMode, image, sizeMeasureMode,
 				sizeMeasureImage, name, code, price, madeinBuilder, madein, madeinDate, warranty, shopmalls, materials,
 				itemSizeOptionMaps, itemClothColorMaps, itemScmmSoValues, laundryYn, itemLaundryMap, drycleaningYn,
 				itemDrycleaningMap, ironingYn, itemIroningMap, drymethodYn, itemDrymethodMap, bleachYn, itemBleachMap,
-				itemFitInfoOptionMaps, sizeTableYn);
+				itemFitInfoOptionMaps);
 
 	}
 
