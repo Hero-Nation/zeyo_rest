@@ -337,6 +337,7 @@ public class MemberServiceImpl implements MemberService {
 		search_R.put("member_email_noti_yn", R.get(m.email_noti_yn));
 		search_R.put("member_manager", R.get(m.manager));
 		search_R.put("member_managerPhone", R.get(m.managerPhone));
+		search_R.put("member_id", R.get(m.memberId));
 
 		search_R.put("company_id", R.get(cnh.id));
 		search_R.put("company_name", R.get(cnh.name));
@@ -500,7 +501,7 @@ public class MemberServiceImpl implements MemberService {
 		message.setFrom("help@heronation.net");
 		message.setTo(db_v.getEmail());
 		message.setSubject("히어로네이션 이메일 변경 인증 메일입니다.");
-		message.setText("인증 번호는 "+ri+" 입니다.");
+		message.setText("인증 번호는 '"+ri+"' 입니다.");
 		emailSender.send(message);
 		
 		return CommonConstants.COMPLETE;
@@ -529,69 +530,173 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Page<Map<String, Object>> my_brand(Predicate where, Pageable page) {
-		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
+	@Transactional(readOnly=true)
+	public Map<String, Object> my_brand(Map<String, Object> param, Pageable page) {
+		
+		
+		
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) ");
+		  
+		StringBuffer select_query = new StringBuffer();
+		select_query.append(" SELECT b.name as brand_name, ");
+		select_query.append("       s.name as shopmall_name , ");
+		select_query.append("       Count(DISTINCT i.id) AS item_count ");
 
-		QMember m = QMember.member;
-		QItem i = QItem.item;
-		QBrand b = QBrand.brand;
-		QShopmall s = QShopmall.shopmall;
-		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
 
-		QueryResults<Tuple> R = query.select(
+		String member_id = (String) param.get("member_id");
+		
+		StringBuffer where_query = new StringBuffer();
+		where_query.append(" FROM   item_shopmall_map ism ");
+		where_query.append("       LEFT JOIN item i ");
+		where_query.append("              ON ism.item_id = i.id ");
+		where_query.append("                 AND i.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN shopmall s ");
+		where_query.append("              ON ism.shopmall_id = s.id ");
+		where_query.append("                 AND s.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN brand b ");
+		where_query.append("              ON i.brand_id = b.id ");
+		where_query.append("                 AND b.use_yn = 'Y' ");
+		where_query.append(" WHERE  ism.use_yn = 'Y' ");
+		where_query.append("   AND  i.member_id =  "+member_id);
+		where_query.append(" GROUP  BY b.id, ");
+		where_query.append("          s.id");
+ 
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY i.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
 
-				b.name, ism.shopmall.name, i.id.countDistinct()
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
 
-		).from(i).leftJoin(i.brand, b).on(b.useYn.eq("Y")).leftJoin(i.itemShopmallMaps, ism).on(ism.useYn.eq("Y"))
-				.where(where).groupBy(ism.shopmall.id).fetchResults();
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String, Object>> count_list = count_q.getResultList();
 
-		List<Tuple> search_list = R.getResults();
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
-		for (Tuple row : search_list) {
-			Map<String, Object> search_R = new HashMap<String, Object>();
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>(); 
 
-			search_R.put("brand_name", row.get(b.name));
-			search_R.put("shopmall_name", row.get(ism.shopmall.name));
-			search_R.put("item_count", row.get(i.id.countDistinct()));
+			search_R.put("brand_name", row[0]);
+			search_R.put("shopmall_name", row[1]);
+			search_R.put("item_count", row[2]); 
 
 			return_list.add(search_R);
 		}
 
-		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+ 
 	}
 
 	@Override
-	public Page<Map<String, Object>> my_shopmall(Predicate where, Pageable page) {
-		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
+	@Transactional(readOnly=true)
+	public Map<String, Object> my_shopmall(Map<String, Object> param, Pageable page) {
+		
+		StringBuffer count_query = new StringBuffer();
+		count_query.append("SELECT ");
+		count_query.append("    count(*) ");
+		  
+		StringBuffer select_query = new StringBuffer();
+		select_query.append(" SELECT b.name as brand_name, ");
+		select_query.append("       s.name as shopmall_name , ");
+		select_query.append("       Count(DISTINCT i.id) AS item_count ");
 
-		QMember m = QMember.member;
-		QItem i = QItem.item;
-		QBrand b = QBrand.brand;
-		QShopmall s = QShopmall.shopmall;
-		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
 
-		QueryResults<Tuple> R = query.select(
+		String member_id = (String) param.get("member_id");
+		
+		StringBuffer where_query = new StringBuffer();
+		where_query.append(" FROM   item_shopmall_map ism ");
+		where_query.append("       LEFT JOIN item i ");
+		where_query.append("              ON ism.item_id = i.id ");
+		where_query.append("                 AND i.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN shopmall s ");
+		where_query.append("              ON ism.shopmall_id = s.id ");
+		where_query.append("                 AND s.use_yn = 'Y' ");
+		where_query.append("       LEFT JOIN brand b ");
+		where_query.append("              ON i.brand_id = b.id ");
+		where_query.append("                 AND b.use_yn = 'Y' ");
+		where_query.append(" WHERE  ism.use_yn = 'Y' ");
+		where_query.append("   AND  i.member_id =  "+member_id);
+		where_query.append(" GROUP  BY s.id, ");
+		where_query.append("          b.id");
+ 
+		StringBuffer sort_query = new StringBuffer();
+		sort_query.append("  ORDER BY i.");
+		Sort sort = page.getSort();
+		String sep = "";
+		for (Sort.Order order : sort) {
+			sort_query.append(sep);
+			sort_query.append(order.getProperty());
+			sort_query.append(" ");
+			sort_query.append(order.getDirection());
+			sep = ", ";
+		}
 
-				s.name, b.name, i.id.countDistinct()
+		StringBuffer page_query = new StringBuffer();
+		page_query.append("  limit ");
+		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
+		page_query.append(" , ");
+		page_query.append(page.getPageSize());
 
-		).from(ism).innerJoin(ism.shopmall, s).innerJoin(ism.item, i).innerJoin(ism.item.brand, b)
-				.where(s.useYn.eq("Y").and(i.useYn.eq("Y")).and(b.useYn.eq("Y")).and(where)).groupBy(b.id)
-				.fetchResults();
+		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		List<Map<String, Object>> count_list = count_q.getResultList();
 
-		List<Tuple> search_list = R.getResults();
+		Query q = entityManager
+				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		List<Object[]> list = q.getResultList();
+
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
-		for (Tuple row : search_list) {
-			Map<String, Object> search_R = new HashMap<String, Object>();
+		for (Object[] row : list) {
+			Map<String, Object> search_R = new HashMap<String, Object>(); 
 
-			search_R.put("shopmall_name", row.get(s.name));
-			search_R.put("brand_name", row.get(b.name));
-			search_R.put("item_count", row.get(i.id.countDistinct()));
+			search_R.put("brand_name", row[0]);
+			search_R.put("shopmall_name", row[1]);
+			search_R.put("item_count", row[2]); 
 
 			return_list.add(search_R);
 		}
-		return new PageImpl<Map<String, Object>>(return_list, page, R.getTotal());
+
+		int totalPages = (count_list.size() / page.getPageSize());
+		if (count_list.size() % page.getPageSize() > 0)
+			totalPages = totalPages + 1;
+
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("content", return_list);
+		R.put("totalPages", totalPages);
+		R.put("totalElements", count_list.size());
+		R.put("number", page.getPageNumber());
+		R.put("size", return_list.size());
+
+		return R;
+ 
 	}
 
 	@Override
@@ -798,7 +903,7 @@ public class MemberServiceImpl implements MemberService {
 				message.setFrom("help@heronation.net");
 				message.setTo(email);
 				message.setSubject("히어로네이션 임시 비밀번호 안내 메일");
-				message.setText("임시비밀번호는 "+ri+"입니다.");
+				message.setText("임시비밀번호는 '"+ri+"' 입니다.");
 				emailSender.send(message);
 			}catch(Exception e) {
 				CommonException exp = new CommonException("SENDING EMAIL ERROR");
@@ -927,7 +1032,7 @@ public class MemberServiceImpl implements MemberService {
 			message.setFrom("help@heronation.net");
 			message.setTo(db_v.getEmail());
 			message.setSubject("히어로네이션 임시 비밀번호");
-			message.setText("임시비밀번호는 "+ri+"입니다.");
+			message.setText("임시비밀번호는 '"+ri+"' 입니다.");
 			emailSender.send(message);
 
 			return "new.password.sended";
@@ -982,7 +1087,7 @@ public class MemberServiceImpl implements MemberService {
 			message.setFrom("help@heronation.net");
 			message.setTo(email);
 			message.setSubject("히어로네이션 회원 가입 이메일 확인");
-			message.setText("임시비밀번호는 "+ri+"입니다.");
+			message.setText("인증번호는 '"+ri+"' 입니다.");
 			emailSender.send(message);
 		}catch(Exception e) {
 			CommonException exp = new CommonException("SENDING EMAIL ERROR");

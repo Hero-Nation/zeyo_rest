@@ -60,7 +60,7 @@
 					mi[item.mi_id] = item;
 
 					iv[item.so_id + "_" + item.mi_id] = item.input_value;
-					iv_inch[item.so_id + "_" + item.mi_id] = item.input_value * centi_to_inch;
+					iv_inch[item.so_id + "_" + item.mi_id] = (item.input_value * centi_to_inch).toFixed(1);;
 					
 					if(item.mi_name == "가슴둘레") chest_mi_id = item.mi_id;
 					
@@ -116,9 +116,20 @@
 			$(".in_unit_class").hide();
 			$(".cm_unit_class").show();	
 			
-			$("#value_height").val(now_height / centi_to_inch);
-			$("#value_chest").val(now_chest / centi_to_inch);
-			$("#value_waist").val(now_waist / centi_to_inch);
+			
+			var c_height = now_height / centi_to_inch;
+			var c_chest = now_chest / centi_to_inch;
+			var c_waist = now_waist / centi_to_inch;
+			
+			c_height = c_height.toFixed(1);
+			c_chest = c_chest.toFixed(1);
+			c_waist = c_waist.toFixed(1);
+			
+			
+			
+			$("#value_height").val(c_height);
+			$("#value_chest").val(c_chest);
+			$("#value_waist").val(c_waist);
 
 			
 			if(input_mode == "SIMPLE"){
@@ -135,9 +146,19 @@
 			$(".in_unit_class").show();
 			$(".cm_unit_class").hide();
 			
-			$("#value_height").val(now_height * centi_to_inch);
-			$("#value_chest").val(now_chest * centi_to_inch);
-			$("#value_waist").val(now_waist * centi_to_inch);
+			var c_height = now_height * centi_to_inch;
+			var c_chest = now_chest * centi_to_inch;
+			var c_waist = now_waist * centi_to_inch;
+			
+			c_height = c_height.toFixed(1);
+			c_chest = c_chest.toFixed(1);
+			c_waist = c_waist.toFixed(1);
+			
+			
+			
+			$("#value_height").val(c_height);
+			$("#value_chest").val(c_chest);
+			$("#value_waist").val(c_waist);
 			
 			
 			
@@ -253,6 +274,9 @@
 		var X  = $("#value_height").val();
 		var Y  = $("#value_weight").val();
 		
+		X = Number(X);
+		Y = Number(Y); 
+		
 		if(X == ""){
 			alert("키를 입력하세요");
 			return;
@@ -269,16 +293,15 @@
 				alert("사이즈에 대한 가슴둘레 값이 존재하지 않습니다.");
 				return;
 			}
-			
 
-			
 			if (in_unit_display) {
 				X = X / centi_to_inch;
 				Y = Y / centi_to_inch; 
-			}
-			
+			} 
 			
 			var Z = (((((((X * (X + Y)) / Y) + X) * (X / Y)) + ((((X * (X + ((X - 100) * 0.9))) / ((X - 100) * 0.9)) + X) * (X / ((X - 100) * 0.9))) + ((((X * (X + ((X * X * 22) / 10000))) / ((X * X * 22) / 10000)) + X) * (X / ((X * X * 22) / 10000)))) / 3) * (Y / X)) + ((X * X * 22) / 10000);
+			
+ 			
 			
 			if(body_type == "A"){
 				Z = Z-(Z*0.05);
@@ -289,46 +312,58 @@
 			}else if(body_type == "D"){
 				Z = Z+(Z*0.075);
 			}
+					
+			
+			var user_cm_Z = Z / 10 ;
+			var user_in_Z = (Z / 10 ) * centi_to_inch;
+			
+			user_cm_Z = user_cm_Z.toFixed(1);
+			user_in_Z = user_in_Z.toFixed(1);
+			
+			var cloth_chest_value = iv[selected_so_id+"_"+chest_mi_id];
+			var cloth_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
+			
+			var R =  cloth_chest_value - user_cm_Z;
+			var R_in = cloth_chest_value_in - user_in_Z;
+			
+			R = R.toFixed(1);
+			R_in = R_in.toFixed(1);
 			
 			
-			var cm_Z = Z;
-			var in_Z = Z * centi_to_inch;
-			
-			var this_chest_value = iv[selected_so_id+"_"+chest_mi_id];
-			var this_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
-			
-			var R =  cm_Z - this_chest_value;
-			var R_in = in_Z - this_chest_value_in;
-			
-			if(R < 0 ){ 
-				$("#result_cm").removeClass("blue");
-				$("#result_cm").addClass("red");
-				$("#result_cm").html(R+" cm 작습니다.");
-				
-			}else{ 
-				
+			if(R > 0 ){ 
 				$("#result_cm").removeClass("red");
 				$("#result_cm").addClass("blue");
 				$("#result_cm").html(R+" cm 큽니다");
+
+				
+			}else{ 
+				
+				$("#result_cm").removeClass("blue");
+				$("#result_cm").addClass("red");
+				$("#result_cm").html(Math.abs(R)+" cm 작습니다.");
 			}
 			
 			
 			if(R_in > 0 ){ 
-				$("#result_in").removeClass("red");
-				$("#result_in").addClass("blue"); 
-				$("#result_in").html(R+" in 작습니다.");
-			}else{ 
+				
 				$("#result_in").removeClass("blue");
 				$("#result_in").addClass("red");
-				$("#result_in").html(R+" in 큽니다");
+				$("#result_in").html(R_in+" in 큽니다");
+				
+				
+				
+			}else{ 
+				$("#result_in").removeClass("red");
+				$("#result_in").addClass("blue"); 
+				$("#result_in").html(Math.abs(R_in)+" in 작습니다.");
 			}
 			
  
 			
 			
 			
-			$("#simple_result_in").html(in_Z+ " in");
-			$("#simple_result_cm").html(cm_Z+ " cm");
+			$("#simple_result_in").html(user_in_Z+ " in");
+			$("#simple_result_cm").html(user_cm_Z+ " cm");
 			 
 		}else{
 			
@@ -348,9 +383,9 @@
 			
 			if(in_unit_display){
 				
-				var this_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
+				var cloth_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
 				
-				var R_in = V_chest - this_chest_value_in;
+				var R_in = V_chest - cloth_chest_value_in;
 				
 				
 				if(R_in < 0 ){ 					
@@ -367,10 +402,10 @@
 				 
 			}else{
 				
-				var this_chest_value = iv[selected_so_id+"_"+chest_mi_id];
+				var cloth_chest_value = iv[selected_so_id+"_"+chest_mi_id];
 				
 				
-				var R =  this_chest_value - V_chest;
+				var R =  cloth_chest_value - V_chest;
 				
 				
 				if(R < 0 ){
@@ -474,7 +509,9 @@
 							<div class="mt10">
 								<span class="tit">키</span>
 								<div class="inputbox">
-									<input type="text" id="value_height" /> <span class="in_unit_class"  style="display: none">in</span><span class="cm_unit_class" >cm</span>
+									<input type="text" id="value_height" /> <span
+										class="in_unit_class" style="display: none">in</span><span
+										class="cm_unit_class">cm</span>
 								</div>
 
 								<span class="tit ml30">체중</span>
@@ -486,21 +523,29 @@
 							<div class="mt10" id="detail_insert_block" style="display: none;">
 								<span class="tit">가슴둘레</span>
 								<div class="inputbox">
-									<input type="text" id="value_chest" /> 
-									<span class="in_unit_class"  style="display: none">in</span><span class="cm_unit_class" >cm</span>
+									<input type="text" id="value_chest" /> <span
+										class="in_unit_class" style="display: none">in</span><span
+										class="cm_unit_class">cm</span>
 								</div>
 
 								<span class="tit ml30">허리둘레</span>
 								<div class="inputbox">
 									<input type="text" id="value_waist" /> <span
-										class="in_unit_class" style="display: none">in</span><span class="cm_unit_class" >cm</span>
+										class="in_unit_class" style="display: none">in</span><span
+										class="cm_unit_class">cm</span>
 								</div>
 							</div>
-							<div class="mt10 in_unit_class" id="simple_result_block_in"  style="display: none">
-								<span >회원님의 가슴둘레 측정치는 약 <span id="simple_result_in"></span> 입니다.</span>
+							<div class="mt10 in_unit_class" id="simple_result_block_in"
+								style="display: none">
+								<span>회원님의 가슴둘레 측정치는 약 <span id="simple_result_in"></span>
+									입니다.
+								</span>
 							</div>
-							<div class="mt10 cm_unit_class" id="simple_result_block_cm"  style="display: none" >
-								<span >회원님의 가슴둘레 측정치는 약 <span id="simple_result_cm"></span> 입니다.</span>
+							<div class="mt10 cm_unit_class" id="simple_result_block_cm"
+								style="display: none">
+								<span>회원님의 가슴둘레 측정치는 약 <span id="simple_result_cm"></span>
+									입니다.
+								</span>
 							</div>
 							<div class="btn2">
 								<button type="button" onclick="f_toggle_unit();">
@@ -509,7 +554,8 @@
 							</div>
 						</div>
 						<div class="btn-refresh">
-						<button type="button" onclick="f_get_result();">결과보기</button>	<button type="button" onclick="f_init();">초기화</button>
+							<button type="button" onclick="f_get_result();">결과보기</button>
+							<button type="button" onclick="f_init();">초기화</button>
 						</div>
 
 					</div>
@@ -547,11 +593,14 @@
 						<button type="button" onclick="f_compare();">사이즈옵션 선택하기</button>
 					</div>
 				</div>
-				<div class="sizeCloth" id="size_cloth_block" style="display: none;">
-					<p class="text" id="result_after_block"  style="display: none;">
-						구매하시려는 옷은 회원님의 가슴둘레보다 <span class="result blue in_unit_class" id="result_in"  style="display: none"></span><span class="result blue cm_unit_class" id="result_cm"></span>
+				<div class="sizeCloth" id="size_cloth_block" style="display: none;padding-top=30px;">
+					<p class="text" id="result_after_block" style="display: none;">
+						구매하시려는 옷은 회원님의 가슴둘레보다 <span class="result blue in_unit_class"
+							id="result_in" style="display: none"></span><span
+							class="result blue cm_unit_class" id="result_cm"></span>
 					</p>
-					<p class="text" id="result_before_block">구매하시려는 옷의 사이즈를 선택 해 주세요.</p>
+					<p class="text" id="result_before_block">구매하시려는 옷의 사이즈를 선택 해
+						주세요.</p>
 
 
 					<div class="sizebutton" id="size_option_block"></div>
@@ -562,7 +611,8 @@
 							alt="" />
 					</div>
 
-					<div class="tar mt10 in_unit_class" style="display: none" >단위 : in</div>
+					<div class="tar mt10 in_unit_class" style="display: none">단위
+						: in</div>
 					<div class="tar mt10 cm_unit_class">단위 : cm</div>
 					<div class="sizetable" id="size_table_block">
 						<table>

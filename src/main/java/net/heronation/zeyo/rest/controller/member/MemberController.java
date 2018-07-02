@@ -409,15 +409,10 @@ public class MemberController extends BaseController {
 	public ResponseEntity<ResultDto> my_brand(@RequestParam(value = "member_id", required = false) String member_id,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-		Long id = Long.valueOf(String.valueOf(member_id));
-		QBrand target = QBrand.brand;
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("member_id", member_id); 
 
-		builder.and(target.member.id.eq(id));
-
-		builder.and(target.member.useYn.eq("Y"));
-
-		return return_success(memberService.my_brand(builder.getValue(), pageable));
+		return return_success(memberService.my_brand(param, pageable));
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")
@@ -426,15 +421,10 @@ public class MemberController extends BaseController {
 	public ResponseEntity<ResultDto> my_shopmall(@RequestParam(value = "member_id", required = false) String member_id,
 			Pageable pageable) {
 
-		BooleanBuilder builder = new BooleanBuilder();
-		Long id = Long.valueOf(String.valueOf(member_id));
-		QBrand target = QBrand.brand;
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("member_id", member_id); 
 
-		builder.and(target.member.id.eq(id));
-
-		builder.and(target.useYn.eq("Y"));
-
-		return return_success(memberService.my_shopmall(builder.getValue(), pageable));
+		return return_success(memberService.my_shopmall(param, pageable));
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")

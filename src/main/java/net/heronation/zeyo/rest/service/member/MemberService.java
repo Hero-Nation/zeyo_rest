@@ -40,9 +40,9 @@ public interface MemberService {
 
 	Map<String, Long> getUserBizInfo(Predicate where);
 
-	Page<Map<String, Object>> my_brand(Predicate where, Pageable page);
+	Map<String, Object> my_brand(Map<String, Object> where, Pageable page);
 
-	Page<Map<String, Object>> my_shopmall(Predicate where, Pageable page);
+	Map<String, Object> my_shopmall(Map<String, Object> where, Pageable page);
 
 	Map<String, Object> my_item(Map<String, Object> where, Pageable page);
 

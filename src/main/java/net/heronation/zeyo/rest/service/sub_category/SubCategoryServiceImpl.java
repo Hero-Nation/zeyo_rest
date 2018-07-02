@@ -128,7 +128,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM   sub_category sc ");
-		where_query.append(" WHERE  1 = 1");
+		where_query.append(" WHERE  sc.use_yn = 'Y' ");
 
 		String cate = (String) param.get("cate");
 		if (cate != null) {
@@ -635,7 +635,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	}
 
 	@Override
+	@Transactional
 	public String delete(List<LIdDto> param) {
+		
 		for (LIdDto v : param) {
 			SubCategory a = sub_categoryRepository.findOne(v.getId());
 			a.setUseYn("N");

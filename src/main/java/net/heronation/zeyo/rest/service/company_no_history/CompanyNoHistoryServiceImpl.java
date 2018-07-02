@@ -81,17 +81,17 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 
 		String cn1 = (String) param.get("cn1");
 		if (cn1 != null) {
-			where_query.append("        AND   bt.company_no like '" + cn1 + ",%' ");
+			where_query.append("        AND   bt.company_no like '" + cn1 + "%' ");
 		}
 
 		String cn2 = (String) param.get("cn2");
 		if (cn2 != null) {
-			where_query.append("        AND   bt.company_no like '," + cn2 + ",%' ");
+			where_query.append("        AND   bt.company_no like '%" + cn2 + "%' ");
 		}
 
 		String cn3 = (String) param.get("cn3");
 		if (cn3 != null) {
-			where_query.append("        AND   bt.company_no like '%," + cn3 + "' ");
+			where_query.append("        AND   bt.company_no like '%" + cn3 + "' ");
 		}
 
 		String start = (String)param.get("start");
