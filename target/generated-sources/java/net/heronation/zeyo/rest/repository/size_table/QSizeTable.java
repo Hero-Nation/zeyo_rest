@@ -30,6 +30,8 @@ public class QSizeTable extends EntityPathBase<SizeTable> {
 
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = createDateTime("lastModifiedDate", java.time.LocalDateTime.class);
 
+    public final StringPath table_image = createString("table_image");
+
     public final StringPath useYn = createString("useYn");
 
     public final NumberPath<Long> version = createNumber("version", Long.class);

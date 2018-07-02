@@ -37,7 +37,7 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QueryDslPredi
 	<S extends Item> S save(S arg0);
 	
 	@Override
-	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@PreAuthorize("permitAll()")
 	Item findOne(Long arg0);
 
 	

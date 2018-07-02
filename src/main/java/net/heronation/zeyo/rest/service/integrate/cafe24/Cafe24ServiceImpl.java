@@ -409,10 +409,6 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 
 		// 처음호출할때는 무조건 page 0 , last_id null 이다.
 		
-		
-
-		
-		
 		if (last_id == null) { 
 			
 			StringBuffer query = new StringBuffer(); 
@@ -505,7 +501,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 					
 					
 					
-					Item i = p.getAsItem();
+					Item i = p.convertToEntity(); 
 
 					Member m = memberRepository.findOne(member_id);
 					i.setMember(m);

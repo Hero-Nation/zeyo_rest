@@ -36,4 +36,8 @@ public interface ItemBleachMapRepository extends JpaRepository<ItemBleachMap, Lo
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	<S extends ItemBleachMap> S save(S arg0);
+ 	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ItemBleachMap findOne(Long arg0);
 }

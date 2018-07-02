@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.util.CommandLine;
 import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.material.MateriaApiDto;
@@ -172,7 +173,9 @@ public class MaterialServiceImpl implements MaterialService {
 				throw new CommonException("material.image.upload.failed");
 			}
 		}
-		
+
+		// 검수용
+		CommandLine.Sync_file();
 		
 		return CommonConstants.OK;
 	}
@@ -204,7 +207,9 @@ public class MaterialServiceImpl implements MaterialService {
 		
 		a.setMetaDesc(param.getMetaDesc());
 		a.setName(param.getName());
-		
+
+		// 검수용
+		CommandLine.Sync_file();
 		return CommonConstants.OK;
 	}
 

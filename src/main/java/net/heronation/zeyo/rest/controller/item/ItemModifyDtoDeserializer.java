@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.value.FileDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.category.Category;
@@ -206,12 +207,43 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 		String imageMode = node.get("imageMode").textValue();
 
-		String image = node.get("image").textValue();
+		Iterator<JsonNode> image_iterator = node.get("image").elements();
+		List<FileDto> image = new ArrayList<FileDto>();
+		
+		while(image_iterator.hasNext()) {
+			JsonNode image_data = image_iterator.next();
+			String real_name = image_data.get("real_name").textValue();
+			String temp_name = image_data.get("temp_name").textValue();
+			
+			FileDto fd = new FileDto();
+			fd.setReal_name(real_name);
+			fd.setTemp_name(temp_name);
+			
+			image.add(fd);
+			
+		}
 
 		String sizeMeasureMode = node.get("sizeMeasureMode").textValue();
+ 
+		Iterator<JsonNode> sizeMeasureImage_iterator = node.get("sizeMeasureImage").elements();
+		
+		
+		List<FileDto> sizeMeasureImage = new ArrayList<FileDto>();
+		
+		while(sizeMeasureImage_iterator.hasNext()) {
+			JsonNode sizeMeasureImage_data = sizeMeasureImage_iterator.next();
+			String real_name = sizeMeasureImage_data.get("real_name").textValue();
+			String temp_name = sizeMeasureImage_data.get("temp_name").textValue();
+			
+			FileDto fd = new FileDto();
+			fd.setReal_name(real_name);
+			fd.setTemp_name(temp_name);
+			
+			sizeMeasureImage.add(fd); 
+		}
 
-		String sizeMeasureImage = node.get("sizeMeasureImage").textValue();
-
+		
+		
 		String name = node.get("name").textValue();
 
 		String code = node.get("code").textValue();
@@ -266,8 +298,6 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 			
 			if(db_warranty_list.size() > 0) { 
 				warranty = db_warranty_list.get(0);
-				 
-				warranty.setScope(warranty_input_value); 
 			}else {
 				warranty = new Warranty();
 				warranty.setCreateDt(new DateTime());
@@ -653,6 +683,8 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 		} else {
 			itemBleachMap = itemBleachMapRepository.findOne(bleach_map_id);
+			
+			if(itemBleachMap == null) itemBleachMap = new ItemBleachMap();
 		}
 
 		String bleachYn = itemBleach_node.get("useYn").textValue();

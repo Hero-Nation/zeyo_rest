@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.util.CommandLine;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
@@ -784,7 +785,9 @@ public class SizeTableServiceImpl implements SizeTableService {
 			e.printStackTrace();
 			throw new CommonException("image.upload.failed");
 		}
-		
+
+		// 검수용
+		CommandLine.Sync_file();
 		
 		return "Y";
 	}
@@ -821,7 +824,9 @@ public class SizeTableServiceImpl implements SizeTableService {
 			throw new CommonException("image.upload.failed");
 		}
 		
-		
+
+		// 검수용
+		CommandLine.Sync_file();
 		return "Y";
 	}
 

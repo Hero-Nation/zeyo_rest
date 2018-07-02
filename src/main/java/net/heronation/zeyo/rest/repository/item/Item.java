@@ -84,6 +84,8 @@ public class Item {
 
 	private String image;
 
+	private String shop_image;
+	
 	private String sizeMeasureMode;
 
 	private String sizeMeasureImage;
@@ -111,6 +113,8 @@ public class Item {
 	@JoinColumn(name = "WARRANTY_ID")
 	private Warranty warranty;
 
+
+	
 	private String laundryYn;
 
 	private String drycleaningYn;

@@ -25,6 +25,10 @@ public interface ItemLaundryMapRepository extends JpaRepository<ItemLaundryMap, 
 	}
 
  	
+ 	@Override
+ 	@PreAuthorize("hasRole('ROLE_CLIENT')")
+ 	ItemLaundryMap findOne(Long arg0);
+ 	
 	@Override
 	@RestResource(path = "", rel = "",exported = false)
 	Page<ItemLaundryMap> findAll(Pageable arg0);

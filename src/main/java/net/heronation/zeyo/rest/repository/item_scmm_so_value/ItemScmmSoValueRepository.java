@@ -23,4 +23,5 @@ public interface ItemScmmSoValueRepository
 	// @RestResource(path = "", rel = "", exported = false)
 	// Page<CompanyNoHistory> findAll(Pageable arg0);
 
+	
 }

@@ -31,7 +31,7 @@ public interface ItemService {
 
 	Item build(ItemBuildDto itemBuildDto, Long member_id);
 
-	Item modify(ItemModifyDto itemBuildDto, Long member_id);
+	Item modify(ItemModifyDto itemBuildDto, Long member_id) throws CommonException;
 
 	
 	Map<String, Object> getStat();

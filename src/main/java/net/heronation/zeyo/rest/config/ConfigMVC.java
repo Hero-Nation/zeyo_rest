@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
@@ -134,6 +135,7 @@ public class ConfigMVC implements WebMvcConfigurer {
 	}
 
 	@Bean
+	@Primary
 	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 		converter.setObjectMapper(objectMapper());

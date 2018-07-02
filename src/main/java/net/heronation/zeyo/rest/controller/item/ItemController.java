@@ -375,9 +375,17 @@ public class ItemController extends BaseController {
 
 			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-			Item new_item = itemService.modify(itemModifyDto, seq);
+			Item new_item;
+			try {
+				new_item = itemService.modify(itemModifyDto, seq);
+				return return_success(CommonConstants.OK);
+			} catch (CommonException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return return_success(CommonConstants.FAIL);
+			}
 
-			return return_success(new_item);
+		
 		}
 
 	}

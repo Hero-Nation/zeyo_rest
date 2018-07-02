@@ -196,8 +196,7 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 				if(madein_kindof == 2) {
 					
 					String madein_input_value = madein_node.get("inputValue").textValue();
-					
-					
+		
 					madein = new Madein();
 					madein.setCreateDt(new DateTime());
 					madein.setKindof(kindof_direct_input);
@@ -230,12 +229,20 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 					
 					String warranty_input_value = warranty_node.get("inputValue").textValue();
 					
+					List<Warranty> this_warrantys =  warrantyRepository.findByName(warranty_input_value);
 					
-					warranty = new Warranty();
-					warranty.setCreateDt(new DateTime());
-					warranty.setKindof(kindof_direct_input);
-					warranty.setScope(warranty_input_value);
-					warranty.setUseYn("Y");
+					if(this_warrantys.size() >0) {
+						warranty = this_warrantys.get(0);
+					}else {
+						warranty = new Warranty();
+						warranty.setCreateDt(new DateTime());
+						warranty.setKindof(kindof_direct_input);
+						warranty.setScope(warranty_input_value);
+						warranty.setUseYn("Y");
+					}
+					
+					
+
 				}else {
 				
 					

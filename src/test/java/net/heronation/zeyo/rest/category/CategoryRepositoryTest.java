@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,17 +18,27 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.repository.category.*;
+import net.heronation.zeyo.rest.repository.consumer.Consumer;
+import net.heronation.zeyo.rest.repository.consumer.ConsumerRepository;
+import net.heronation.zeyo.rest.repository.consumer.QConsumer;
+import net.heronation.zeyo.rest.repository.item.Item;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.QSubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.QSubCategoryMeasureMap;
+import net.heronation.zeyo.rest.service.integrate.common.IntegrateCommonService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,74 +47,35 @@ public class CategoryRepositoryTest {
 
 	@Autowired
 	EntityManager entityManager;
-	
+
 	@Autowired
 	CategoryRepository repository;
 
+	@Autowired
+	ConsumerRepository consumerRepository;
+	@Autowired
+	private MappingJackson2HttpMessageConverter jacksonConverter;
+	
+	@Autowired
+	private IntegrateCommonService integrateCommonService;
+	
 	@Test
 	@Ignore
 	public void initializesRepositoryWithSampleData() {
 
-		for (int a = 0; a < 100; a++) {
-			Category item = new Category();
-			item.setName("name_" + a);
- 
+		QConsumer qc = QConsumer.consumer;
 
-			item.setUseYn("useYn_" + a);
-			repository.save(item);
+		Consumer c = consumerRepository.findOne(qc.now_ip.eq("1gobvtb33s9gs8g7snaog9i13p")
+				.and(qc.lastAccessDt.after(DateTime.now().minusMinutes(30))).and(qc.useYn.eq("Y")));
+
+		if (c == null) {
+			log.debug("c is null");
+		} else {
+			log.debug(c.getLastAccessDt().toString());
+			log.debug(c.getLastAccessDt().toString());
 		}
-
 	}
 	
-	@Test
-	public void category_list() {
-		log.debug("category_list");
-		
-		
-		JPAQuery<Category> query = new JPAQuery<Category>(entityManager);
-		  
-		QCategory c = QCategory.category; 
-		QSubCategory sc = QSubCategory.subCategory; 
-		QSubCategoryFitInfoMap scfi = QSubCategoryFitInfoMap.subCategoryFitInfoMap;
-		QSubCategoryMeasureMap scmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
-		
-		QueryResults<Tuple> R = query.select(
-				 c.id
-				,c.name
-				,sc.id
-				,sc.name
-				,sc.itemImage
-				,sc.clothImage 
-				,sc.category.createDt
-				,scfi.id.countDistinct()
-				,scmm.id.countDistinct()
-				)
-				.from(c)
-				.leftJoin(c.subCategorys,sc).on(sc.useYn.eq("Y"))
-				.leftJoin(sc.subCategoryFitInfoMaps,scfi).on(scfi.useYn.eq("Y"))
-				.leftJoin(sc.subCategoryMeasureMaps,scmm).on(scmm.useYn.eq("Y"))
-				.groupBy(sc.id)
-				.where(sc.useYn.eq("Y")).fetchResults();
-				
+	
  
-		List<Tuple> search_list = R.getResults();
-		 
-		for(Tuple row : search_list) {
-			Map<String,Object> search_R = new HashMap<String,Object>();
-			
-			search_R.put("cate_id", row.get(c.id));
-			search_R.put("cate_name", row.get(c.name));
-			search_R.put("subcate_name", row.get(sc.name));
-			search_R.put("subcate_id", row.get(sc.id));
-			search_R.put("itemImage", row.get(sc.itemImage));
-			search_R.put("clothImage", row.get(sc.clothImage));
-			search_R.put("subCategoryFitInfoMaps_count", row.get(scfi.id.countDistinct())); 
-			search_R.put("subCategoryMeasureMaps_count", row.get(scmm.id.countDistinct()));
-			search_R.put("createDt", row.get(sc.category.createDt)); 
-			
-			log.debug(search_R.toString());
-		}
-		
-	}
-
 }

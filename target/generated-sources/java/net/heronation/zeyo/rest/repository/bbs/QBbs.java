@@ -22,6 +22,8 @@ public class QBbs extends EntityPathBase<Bbs> {
 
     public static final QBbs bbs = new QBbs("bbs");
 
+    public final StringPath attach_file = createString("attach_file");
+
     public final StringPath bbsContent = createString("bbsContent");
 
     public final DateTimePath<org.joda.time.DateTime> createDt = createDateTime("createDt", org.joda.time.DateTime.class);

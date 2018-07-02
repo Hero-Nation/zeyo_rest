@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.heronation.zeyo.rest.common.value.FileDto;
 import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
 import net.heronation.zeyo.rest.controller.item.ItemBuildDtoDeserializer;
 import net.heronation.zeyo.rest.controller.item.ItemModifyDtoDeserializer;
@@ -46,11 +47,11 @@ public class ItemModifyDto {
 
 	private String imageMode;
 
-	private String image;
+	private List<FileDto> image;
 
 	private String sizeMeasureMode;
 
-	private String sizeMeasureImage;
+	private List<FileDto> sizeMeasureImage;
 
 	private String name;
 

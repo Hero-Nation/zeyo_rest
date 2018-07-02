@@ -94,7 +94,7 @@ public class Product {
 	
 	
 	 
-	public Item getAsItem( ) {
+	public Item convertToEntity( ) {
 		
 //        {
 //            "shop_no": 1,
@@ -167,8 +167,8 @@ public class Product {
 //		i.setSubCategory(subCategory);
 		i.setCode(product_code);
 		i.setCreateDt(new DateTime());
-		i.setImage(detail_image);
-		i.setImageMode("C"); 
+		i.setShop_image(detail_image);
+		i.setImageMode("D"); 
 		i.setName(product_name);
 		i.setPrice(Integer.valueOf(price.split("[.]")[0]));
 		//i.setSizeMeasureImage(sizeMeasureImage);

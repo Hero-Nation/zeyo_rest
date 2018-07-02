@@ -34,6 +34,7 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.util.CommandLine;
 import net.heronation.zeyo.rest.common.value.FileDto;
 import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
@@ -941,7 +942,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public Item modify(ItemModifyDto ibd, Long member_id) {
+	public Item modify(ItemModifyDto ibd, Long member_id) throws CommonException {
 		log.debug("modify 1  ________________________________________________________ ");
 
 		Member user = memberRepository.findOne(member_id);
@@ -1000,12 +1001,10 @@ public class ItemServiceImpl implements ItemService {
 		QItemBleachMap qibm = QItemBleachMap.itemBleachMap;
 		
 		Iterable<ItemBleachMap> db_ibm_list_iter = itemBleachMapRepository.findAll(qibm.item.id.eq(ibd.getItem_id()));
-		
-		boolean db_exist = false; 
-		
-		List<ItemBleachMap> db_ibm_list = IteratorUtils.toList(db_ibm_list_iter.iterator());   
-		
+		boolean db_exist = false;  
+		List<ItemBleachMap> db_ibm_list = IteratorUtils.toList(db_ibm_list_iter.iterator());    
 		if(db_ibm_list.size() > 0) db_exist = true; 
+
 		
 		log.debug("modify 3 bleach "+ibd.getBleachYn()+ " db_exist "+db_exist);
 		
@@ -1768,22 +1767,102 @@ public class ItemServiceImpl implements ItemService {
 		old_item.setDrymethodYn(ibd.getDrymethodYn());
 		old_item.setIroningYn(ibd.getIroningYn());
 		old_item.setLaundryYn(ibd.getLaundryYn());
-		old_item.setImage(ibd.getImage());
-		old_item.setImageMode(ibd.getImageMode());
+ 
 		old_item.setMadeinBuilder(ibd.getMadeinBuilder());
 		old_item.setMadeinDate(ibd.getMadeinDate());
 		old_item.setName(ibd.getName());
 		old_item.setPrice(ibd.getPrice());
-		old_item.setSizeMeasureImage(ibd.getSizeMeasureImage());
-		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode()); 
+ 
 		old_item.setMadein(ibd.getMadein()); 
 		old_item.setBrand(ibd.getBrand());
 		old_item.setCategory(ibd.getCategory());
 		old_item.setSubCategory(ibd.getSubCategory());
  
 		
- 
+		
 
+		// 전에 유저가 업로드한 이미지가 있으면 지워준다. 
+		if(old_item.getImageMode().equals("C")) {
+		
+			if(old_item.getImage() != null) {
+				File old_file = new File(path_subcategory_client_image.concat(File.separator).concat(user.getMemberId()).concat(File.separator).concat("item").concat(File.separator).concat(old_item.getImage()));
+				
+				if(old_file.exists())
+					old_file.delete();
+			}
+			
+		}	
+		
+		
+		for(FileDto idt : ibd.getImage()) {
+			
+			// 한번만 돈다고 가정하고 만든다.
+			
+			String rn = idt.getReal_name();
+			String tn = idt.getTemp_name();
+			
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now)).concat(File.separator).concat(tn));
+			File dest = new File(path_subcategory_client_image.concat(File.separator).concat(user.getMemberId()).concat(File.separator).concat("item").concat(File.separator).concat(rn));
+
+			try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("item.image.upload.failed");
+			}
+	
+		
+			old_item.setImage(rn); 
+			
+			
+			
+		}
+		
+		old_item.setImageMode(ibd.getImageMode());
+
+		// 전에 유저가 업로드한 이미지가 있으면 지워준다. 
+		if(old_item.getSizeMeasureMode().equals("C")) {
+		
+			if(old_item.getImage() != null) {
+				File old_file = new File(path_subcategory_client_image.concat(File.separator).concat(user.getMemberId()).concat(File.separator).concat("item").concat(File.separator).concat(old_item.getSizeMeasureImage()));
+				
+				if(old_file.exists())
+					old_file.delete();
+			}
+			
+		}	
+		
+		
+		for(FileDto idt : ibd.getSizeMeasureImage()) {
+			String rn = idt.getReal_name();
+			String tn = idt.getTemp_name();
+			
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now)).concat(File.separator).concat(tn));
+			File dest = new File(path_subcategory_client_image.concat(File.separator).concat(user.getMemberId()).concat(File.separator).concat("size_measure").concat(File.separator).concat(rn));
+
+			try {
+				FileUtils.copyFile(source, dest);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new CommonException("item.image.upload.failed");
+			}
+			
+			
+			
+			old_item.setSizeMeasureImage(rn); 
+		}
+
+		old_item.setSizeMeasureMode(ibd.getSizeMeasureMode());
+		// 검수용
+		CommandLine.Sync_file();
 		return old_item;
 	}
 
@@ -1946,6 +2025,9 @@ public class ItemServiceImpl implements ItemService {
 		workbook.write(fileoutputstream);
 		fileoutputstream.close();
 
+		// 검수용
+		CommandLine.Sync_excel();
+		
 		return "/temp/".concat(today).concat("/").concat(excel_path);
 
 	}
@@ -1989,7 +2071,9 @@ public class ItemServiceImpl implements ItemService {
 			i.setImage(df.getReal_name());
 		}
 		
-		
+
+		// 검수용
+		CommandLine.Sync_file();
 
 		return CommonConstants.OK;
 	}
@@ -2033,7 +2117,9 @@ public class ItemServiceImpl implements ItemService {
 			i.setSizeMeasureImage(df.getReal_name());
 		}
 		
-		
+
+		// 검수용
+		CommandLine.Sync_file();
 
 		return CommonConstants.OK;
 	}
