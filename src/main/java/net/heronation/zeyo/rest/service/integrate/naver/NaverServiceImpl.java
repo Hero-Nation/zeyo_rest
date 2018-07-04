@@ -1,8 +1,6 @@
 package net.heronation.zeyo.rest.service.integrate.naver;
 
-import java.math.BigInteger;
 import java.net.URI;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.LoggingRequestInterceptor;
 import net.heronation.zeyo.rest.common.controller.CommonException;
-import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.AccessTokenByOauthCode;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Product;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Products;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateDto;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateRequestDto;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateResponseDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
@@ -56,14 +46,10 @@ import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
 import net.heronation.zeyo.rest.repository.material.MaterialRepository;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
-import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
-import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
-import net.heronation.zeyo.rest.service.integrate.kakao.KakaoService;
-import net.heronation.zeyo.rest.service.integrate.kakao.KakaoServiceImpl;
 
 @Slf4j
 @Service
@@ -134,7 +120,7 @@ public class NaverServiceImpl implements NaverService {
 	private String naver_client_secret;
 
 	@Override
-	public String update_oauth_code_and_get_access_token(String p_auth_code, String state, String user_ip) throws CommonException {
+	public String update_oauth_code_and_get_access_token(String p_auth_code, String state, String session_id) throws CommonException {
 		log.debug("update_oauth_code_and_get_access_token");
 
 		HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -227,7 +213,7 @@ public class NaverServiceImpl implements NaverService {
 					this_consumer.setOauthCode(p_auth_code);
 					this_consumer.setOauthId(state);
 					this_consumer.setLastAccessDt(new DateTime()); 
-					this_consumer.setNow_ip(user_ip);
+					this_consumer.setNow_ip(session_id);
 				}else {
 					Consumer this_consumer = new Consumer();
 					this_consumer.setAccessToken(result.getAccess_token());
@@ -239,7 +225,7 @@ public class NaverServiceImpl implements NaverService {
 					this_consumer.setOauthId(state);
 					this_consumer.setRefreshToken(result.getRefresh_token());
 					this_consumer.setUseYn("Y"); 
-					this_consumer.setNow_ip(user_ip);
+					this_consumer.setNow_ip(session_id);
 					
 					consumerRepository.save(this_consumer);
 				}

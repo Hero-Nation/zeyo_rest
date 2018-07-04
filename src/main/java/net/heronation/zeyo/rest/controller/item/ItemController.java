@@ -40,7 +40,6 @@ import net.heronation.zeyo.rest.repository.item.ItemBuildDto;
 import net.heronation.zeyo.rest.repository.item.ItemModifyDto;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item.ItemResourceAssembler;
-import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 import net.heronation.zeyo.rest.service.item.ItemService;
 
 @Slf4j
@@ -121,14 +120,30 @@ public class ItemController extends BaseController {
 
 			@RequestParam(value = "name", required = false) String name,  
 			@RequestParam(value = "size_link", required = false) String size_link,
-			@RequestParam(value = "cate", required = false) String category,
-			@RequestParam(value = "sub_cate", required = false) String sub_category,
+			@RequestParam(value = "size_table", required = false) String size_table,
+			@RequestParam(value = "category", required = false) String category,
+			@RequestParam(value = "sub_category", required = false) String sub_category,
 			@RequestParam(value = "start_price",  required = false) String start_price,
 			@RequestParam(value = "end_price",  required = false) String end_price,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			@AuthenticationPrincipal OAuth2Authentication auth,
 			Pageable pageable) {
+		
+		
+		
+ 
+//		size_table: N
+//		size_link: N
+//		category: 2
+//		name: ㅁㅁ
+//		sub_category: 8
+//		start_price: 1234
+//		end_price: 12341
+//		start: 2018-07-01T15:00:00.000Z
+//		end: 2018-07-04T14:59:59.999Z
+		
+		
 
 		if(auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -136,6 +151,7 @@ public class ItemController extends BaseController {
 		
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("name", name);  
+		param.put("size_table", size_table);
 		param.put("size_link", size_link);
 		param.put("category", category);
 		param.put("sub_category", sub_category);

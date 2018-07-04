@@ -1,9 +1,5 @@
 package net.heronation.zeyo.rest.fit_info_option; 
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.fit_info_option.*;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
+import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 
  
 @RunWith(SpringRunner.class)

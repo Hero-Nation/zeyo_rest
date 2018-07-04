@@ -6,10 +6,9 @@ import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
-import net.heronation.zeyo.rest.repository.brand.BrandDto;
 
 public interface BrandService {
 	Map<String, Object> search(Map<String, Object> where, Pageable page);
@@ -22,9 +21,9 @@ public interface BrandService {
 
 	Map<String, Object> update_name(IdNameDto param,Long member_seq);
 
-	Map<String, Object> delete( List<LIdDto> param, Long member_seq);
+	Map<String, Object> delete( List<String> param, Long member_seq);
 
-	Map<String, Object> toggle_link(BrandDto param,  Long member_seq );
+	Map<String, Object> toggle_link(List<ToggleDto> param,  Long member_seq );
 
 	Map<String, Object> detail(Long brand_id, Long member_seq, Pageable page);
 

@@ -1,21 +1,14 @@
 package net.heronation.zeyo.rest.company_no_history;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.util.Date;
-
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.company_no_history.*;
+import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
+import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 

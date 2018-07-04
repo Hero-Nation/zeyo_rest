@@ -46,8 +46,6 @@ import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
-import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
-import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24ServiceImpl;
 
 @Slf4j
 @Service

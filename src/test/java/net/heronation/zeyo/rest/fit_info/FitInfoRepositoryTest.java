@@ -1,14 +1,7 @@
 package net.heronation.zeyo.rest.fit_info;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.util.Date;
-
 import javax.persistence.EntityManager;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +15,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.fit_info.*;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
+import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
+import net.heronation.zeyo.rest.repository.fit_info.QFitInfo;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
 import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
 

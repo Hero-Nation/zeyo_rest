@@ -22,10 +22,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
-import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
@@ -169,7 +168,7 @@ public class BrandServiceImpl implements BrandService {
 		where_query.append(" GROUP BY  m.id , b.id , s.id ");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY m.");
+		sort_query.append("  ORDER BY b.");
 		Sort sort = page.getSort();
 		String sep = "";
 		for (Sort.Order order : sort) {
@@ -467,14 +466,14 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete( List<LIdDto> param, Long member_seq) {
+	public Map<String, Object> delete( List<String> param, Long member_seq) {
 		log.debug("delete");
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		
-		for(LIdDto id : param) {
+		for(String id : param) {
 
-			Brand target = brandRepository.findOne(id.getId());
+			Brand target = brandRepository.findOne(Long.valueOf(id));
 			Member user = memberRepository.findOne(member_seq);
 
 			if (target == null || target.getUseYn().equals("N")) {
@@ -486,7 +485,7 @@ public class BrandServiceImpl implements BrandService {
 
 				// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
-				BigInteger use_count = this.get_brand_use_count_of_member(id.getId());
+				BigInteger use_count = this.get_brand_use_count_of_member(Long.valueOf(id));
 
 				if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
@@ -550,42 +549,44 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> toggle_link(BrandDto param,   Long member_seq ) {
+	public Map<String, Object> toggle_link(List<ToggleDto> param,   Long member_seq ) {
 		log.debug("toggle_link "); 
 
 		Map<String, Object> R = new HashMap<String, Object>();
+		
+		for(ToggleDto brand_status : param) {
 
-		// 나의 브랜드의 상품의 연동정보를 일괄 변경시킨다.
+			Brand target = brandRepository.findOne(brand_status.getId());
+			Member user = memberRepository.findOne(member_seq);
 
-		Brand target = brandRepository.findOne(param.getId());
-		Member user = memberRepository.findOne(member_seq);
+			QBrand qb = QBrand.brand;
+			QMember qm = QMember.member;
+			QItem qi = QItem.item;
 
-		QBrand qb = QBrand.brand;
-		QMember qm = QMember.member;
-		QItem qi = QItem.item;
-
-		if (target == null || target.getUseYn().equals("N")) {
-			// brand is not exist
-			R.put("CODE", "A");
-
-		} else {
-			JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
-			if (param.getLink().equals("N")) {
-
-				queryFactory.update(qi)
-						.where(qi.member.id.eq(member_seq).and(qi.brand.id.eq(param.getId()).and(qi.useYn.eq("Y"))))
-						.set(qi.linkYn, "Y").execute();
+			if (target == null || target.getUseYn().equals("N")) {
+				// brand is not exist
+				R.put("CODE", "A");
 
 			} else {
-				queryFactory.update(qi)
-						.where(qi.member.id.eq(member_seq).and(qi.brand.id.eq(param.getId()).and(qi.useYn.eq("Y"))))
-						.set(qi.linkYn, "N").execute();
+				JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+				if (brand_status.getValue().equals("N")) {
+
+					queryFactory.update(qi)
+							.where(qi.member.id.eq(member_seq).and(qi.brand.id.eq(brand_status.getId()).and(qi.useYn.eq("Y"))))
+							.set(qi.linkYn, "Y").execute();
+
+				} else {
+					queryFactory.update(qi)
+							.where(qi.member.id.eq(member_seq).and(qi.brand.id.eq(brand_status.getId()).and(qi.useYn.eq("Y"))))
+							.set(qi.linkYn, "N").execute();
+				}
+
+				R.put("CODE", "OK");
+
 			}
-
-			R.put("CODE", "OK");
-
 		}
+
 
 		return R;
 	}

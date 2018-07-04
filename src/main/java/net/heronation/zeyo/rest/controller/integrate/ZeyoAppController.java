@@ -4,11 +4,10 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,6 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
 import net.heronation.zeyo.rest.service.integrate.common.IntegrateCommonService;
@@ -76,44 +74,40 @@ public class ZeyoAppController extends BaseController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/login")
-	public String login(Model m, HttpServletRequest request) {
-		m.addAttribute("state", generateState());
+	public String login(Model m, HttpSession session) {
+		m.addAttribute("state", session.getId());
 		return "zeyo_app/login";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/main")
 	public String main(Model m, @RequestParam(value = "shop_type", required = false) String shop_type,
 			@RequestParam(value = "shop_id", required = false) String shop_id,
-			@RequestParam(value = "product_id", required = false) String product_id, HttpServletRequest request) {
+			@RequestParam(value = "product_id", required = false) String product_id, HttpSession session) {
 
 		// 스프링의 session은 사용하지 않는다.
 
-		log.debug("shop_type");
-		log.debug(shop_type);
-		log.debug("shop_id");
-		log.debug(shop_id);
-		log.debug("product_id");
-		log.debug(product_id);
+		log.debug("main");
+		log.debug("session.getId()");
+		log.debug(session.getId());
+		
+		if (integrateCommonService.haveIpSession(session.getId(), shop_type, shop_id, product_id)) {
 
-		if (integrateCommonService.haveIpSession(request.getRemoteAddr(), shop_type, shop_id, product_id)) {
-
-			Map<String, Object> idr= integrateCommonService.get_zeyo_product_id(shop_type, shop_id, product_id);
+			Map<String, Object> idr = integrateCommonService.get_zeyo_product_id(shop_type, shop_id, product_id);
 			String id = String.valueOf(idr.get("id"));
 			String link_yn = String.valueOf(idr.get("link_yn"));
-			
+
 			if (id == null) {
 				return "redirect:https://www.zeyo.co.kr/zeyo_app/not_zeyo_product";
-				
+
 			} else {
-				
-				if(link_yn != null && link_yn.equals("Y")) {
+
+				if (link_yn != null && link_yn.equals("Y")) {
 					m.addAttribute("zeyo_pid", id);
-					return "zeyo_app/main";	
-				}else {
+					return "zeyo_app/main";
+				} else {
 					return "redirect:https://www.zeyo.co.kr/zeyo_app/not_link";
 				}
-				
-				
+
 			}
 
 		} else {
@@ -123,31 +117,32 @@ public class ZeyoAppController extends BaseController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/compare")
-	public String compare(Model m, HttpServletRequest request,
+	public String compare(Model m, HttpSession session,
 
 			@RequestParam(value = "zeyo_pid", required = true) Long zeyo_pid) {
+		
+		log.debug("compare");
+		log.debug("session.getId()");
+		log.debug(session.getId());
+		
 
-		if (integrateCommonService.haveIpSession(request.getRemoteAddr())) {
+		if (integrateCommonService.haveIpSession(session.getId())) {
 
 			Item i = integrateCommonService.get_zeyo_item(zeyo_pid);
 			Map<String, Object> issv_list = integrateCommonService.get_zeyo_size(zeyo_pid);
 
 			try {
-				
-				
-				
-				
+
 				m.addAttribute("item", objectMapper.writeValueAsString(i));
 				m.addAttribute("item_object", i);
 				m.addAttribute("seller", i.getMember().getMemberId());
-				m.addAttribute("sub_category",objectMapper.writeValueAsString( i.getSubCategory()));
-				m.addAttribute("sub_category_object",i.getSubCategory());
-				
+				m.addAttribute("sub_category", objectMapper.writeValueAsString(i.getSubCategory()));
+				m.addAttribute("sub_category_object", i.getSubCategory());
+
 				m.addAttribute("ItemScmmSoValue", objectMapper.writeValueAsString(issv_list));
 				m.addAttribute("ItemScmmSoValue_object", issv_list);
-				
-				
-			} catch (JsonProcessingException e) { 
+
+			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 				return "redirect:https://www.zeyo.co.kr/zeyo_app/error";
 			}
@@ -170,7 +165,7 @@ public class ZeyoAppController extends BaseController {
 
 		return "zeyo_app/not_zeyo_product";
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/not_link")
 	public String not_link(Model m) {
 

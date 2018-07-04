@@ -88,9 +88,24 @@ public class BbsServiceImpl implements BbsService {
 		where_query.append(" WHERE ");
 		where_query.append("    b.use_yn = 'Y'");
 
-		String title = (String) param.get("title");
-		if (title != null) {
-			where_query.append("        AND   b.scope like '%" + title + "%' ");
+		String keyword = (String) param.get("keyword");
+		
+		
+		
+		if (keyword != null && !keyword.equals("")) {
+			
+			String keywordType = (String) param.get("keywordType");
+		
+			if (keywordType != null || !keywordType.equals("title")) {
+				where_query.append("        AND   b.title like '%" + keyword + "%' ");
+			}
+			
+			
+		}
+		
+		String status = (String) param.get("status");
+		if (status != null) {
+			where_query.append("        AND   b.status = '" + status + "' ");
 		}
 
 		String start = (String) param.get("start");

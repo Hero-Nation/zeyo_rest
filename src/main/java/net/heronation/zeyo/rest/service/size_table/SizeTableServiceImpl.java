@@ -67,7 +67,6 @@ import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMa
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
 import net.heronation.zeyo.rest.repository.item_size_option_map.QItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
-import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.size_table.QSizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
@@ -519,7 +518,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 				continue;
 
 			QSizeTable st = QSizeTable.sizeTable;
-			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()));
+			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()).and(st.useYn.eq("Y")));
 			this_st.setUseYn("N");			
 		}
 		return "Y";

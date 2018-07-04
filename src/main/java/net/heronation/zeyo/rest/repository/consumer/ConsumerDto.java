@@ -1,13 +1,8 @@
 package net.heronation.zeyo.rest.repository.consumer;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.joda.time.DateTime;
 
 import lombok.Data;
-import lombok.Value;
 
 @Data
 public class ConsumerDto {

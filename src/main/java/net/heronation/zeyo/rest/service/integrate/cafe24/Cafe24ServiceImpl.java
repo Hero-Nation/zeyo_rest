@@ -1,6 +1,5 @@
 package net.heronation.zeyo.rest.service.integrate.cafe24;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -45,7 +43,6 @@ import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateResp
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Variant;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.VariantOption;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Variants;
-import net.heronation.zeyo.rest.oauth.OauthTest.MyResponseErrorHandler;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.category.Category;
@@ -60,7 +57,6 @@ import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;

@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.repository.member;
 
+import org.joda.time.DateTime;
+
 import lombok.Data; 
 
 @Data
@@ -28,7 +30,7 @@ public class MemberRegisterDto {
 		a.setPassword(password);
 		a.setPhone(phone);
 		a.setUseYn("Y");
-		
+		a.setCreateDt(new DateTime());
 		
 		return a;
 		

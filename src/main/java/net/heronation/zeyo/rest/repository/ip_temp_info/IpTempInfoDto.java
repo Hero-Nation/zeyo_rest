@@ -1,8 +1,5 @@
 package net.heronation.zeyo.rest.repository.ip_temp_info;
  
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import lombok.Value;
 
 

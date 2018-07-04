@@ -35,18 +35,16 @@ import net.heronation.zeyo.rest.repository.member.Member;
 @EntityListeners(AuditingEntityListener.class)
 
 public class CompanyNoHistory {
-	@JsonBackReference(value="companyNoHistoryssss_member")
+	@JsonBackReference(value = "companyNoHistoryssss_member")
 	@OneToMany(mappedBy = "companyNoHistory", fetch = FetchType.LAZY)
 	private List<Member> members = new ArrayList<Member>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "COMPANY_NO_HISTORY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	
-	
-	
-	@JsonManagedReference(value="companyNoHistory_member")
-	@ManyToOne(fetch = FetchType.EAGER )
+
+	@JsonManagedReference(value = "companyNoHistory_member")
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 	private String name;
@@ -57,10 +55,35 @@ public class CompanyNoHistory {
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime changeDt;
-	
+
 	@Override
 	public String toString() {
 		return "CompanyNoHistory ]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CompanyNoHistory other = (CompanyNoHistory) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
 
 }

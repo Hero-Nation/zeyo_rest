@@ -1,6 +1,5 @@
 package net.heronation.zeyo.rest.service.integrate.common;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,6 @@ import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +22,7 @@ import net.heronation.zeyo.rest.repository.ip_temp_info.IpTempInfoRepository;
 import net.heronation.zeyo.rest.repository.ip_temp_info.QIpTempInfo;
 import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
-import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
-import net.heronation.zeyo.rest.repository.item_scmm_so_value.QItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 
 @Slf4j

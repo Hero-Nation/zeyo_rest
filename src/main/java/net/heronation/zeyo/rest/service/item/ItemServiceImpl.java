@@ -37,7 +37,6 @@ import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.util.CommandLine;
 import net.heronation.zeyo.rest.common.value.FileDto;
 import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.item.ItemImageUploadDto;
@@ -250,25 +249,22 @@ public class ItemServiceImpl implements ItemService {
 		where_query.append("        AND sc.use_yn = 'Y' ");
 		where_query.append("WHERE ");
 		where_query.append("    i.use_yn = 'Y'");
-
-		// param.put("name", name);
-		// param.put("company", company);
-		// param.put("brand", brand);
-		// param.put("shopmall", shopmall);
-		// param.put("size_link", size_link);
-		// param.put("category", category);
-		// param.put("sub_category", sub_category);
-		// param.put("start_price", start_price);
-		// param.put("end_price", end_price);
+ 
+ 
 
 		String name = (String) param.get("name");
 		if (name != null) {
 			where_query.append("        AND   i.name like '%" + name + "%' ");
 		}
 
-		String company = (String) param.get("company");
-		if (company != null) {
-			where_query.append("        AND   m.id = " + company + " ");
+		String category = (String) param.get("category");
+		if (category != null) {
+			where_query.append("        AND   m.category_id = " + category + " ");
+		}
+		
+		String sub_category = (String) param.get("sub_category");
+		if (sub_category != null) {
+			where_query.append("        AND   m.sub_category_id = " + sub_category + " ");
 		}
 
 		String brand = (String) param.get("brand");
@@ -276,9 +272,9 @@ public class ItemServiceImpl implements ItemService {
 			where_query.append("        AND   b.id = " + brand + " ");
 		}
 
-		String shopmall = (String) param.get("shopmall");
-		if (shopmall != null) {
-			where_query.append("        AND   s.id = " + shopmall + " ");
+		String size_table = (String) param.get("size_table");
+		if (size_table != null && size_table.equals("P")) {
+			where_query.append("        AND   s.size_table_yn = 'Y' ");
 		}
 
 		String size_link = (String) param.get("size_link");
@@ -446,18 +442,15 @@ public class ItemServiceImpl implements ItemService {
 		StringBuffer where_query = new StringBuffer();
 		where_query.append("FROM ");
 		where_query.append("    item_shopmall_map ism ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    shopmall s ON ism.shopmall_id = s.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    item i ON ism.item_id = i.id ");
-		where_query.append("        INNER JOIN ");
-		where_query.append("    brand b ON i.brand_id = b.id ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    shopmall s ON ism.shopmall_id = s.id AND s.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    item i ON ism.item_id = i.id  AND i.use_yn = 'Y' ");
+		where_query.append("        LEFT JOIN ");
+		where_query.append("    brand b ON i.brand_id = b.id  AND b.use_yn = 'Y'  ");
 		where_query.append("WHERE ");
-		where_query.append("    ism.use_yn = 'Y' ");
-		where_query.append("        AND s.use_yn = 'Y' ");
-		where_query.append("        AND b.use_yn = 'Y' ");
-		where_query.append("        AND i.use_yn = 'Y' ");
-		where_query.append("        AND i.id = 5");
+		where_query.append("    ism.use_yn = 'Y' "); 
+		where_query.append("        AND i.id = "+item_id);
 
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY i.");
@@ -797,6 +790,15 @@ public class ItemServiceImpl implements ItemService {
 		String size_link = (String) param.get("size_link");
 		if (size_link != null && size_link.equals("Y")) {
 			where_query.append("        AND i.link_yn = 'Y' ");
+		}if (size_link != null && size_link.equals("N")) {
+			where_query.append("        AND i.link_yn = 'N' ");
+		}
+		
+		String size_table = (String) param.get("size_table");
+		if (size_table != null && size_table.equals("P")) {
+			where_query.append("        AND i.size_table_yn = 'Y' ");
+		}else if (size_table != null && size_table.equals("N")) {
+			where_query.append("        AND i.size_table_yn = 'N' ");
 		}
 
 		String category = (String) param.get("category");

@@ -10,8 +10,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.heronation.zeyo.rest.common.value.FileDto;
-import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
-import net.heronation.zeyo.rest.controller.item.ItemBuildDtoDeserializer;
 import net.heronation.zeyo.rest.controller.item.ItemModifyDtoDeserializer;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.category.Category;
@@ -27,7 +25,6 @@ import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
 import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
  

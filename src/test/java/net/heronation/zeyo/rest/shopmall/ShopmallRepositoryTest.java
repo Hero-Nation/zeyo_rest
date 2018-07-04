@@ -1,16 +1,11 @@
 package net.heronation.zeyo.rest.shopmall;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
 import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.brand.BrandRepositoryTest;
-import net.heronation.zeyo.rest.repository.shopmall.*;
+import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
+import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

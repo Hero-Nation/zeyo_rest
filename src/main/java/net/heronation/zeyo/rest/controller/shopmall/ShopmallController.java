@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.controller.shopmall;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallDto;
@@ -109,14 +111,15 @@ public class ShopmallController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultDto> delete(
 
-			@RequestBody ShopmallDto param,
+			@RequestBody List<String>  param,
 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		
-		if(param.getId() == null || param.getId().equals("")) {
-			return return_fail("id.empty");
+		if(param.size() == 0) {
+			return return_fail("id.empty");	
 		}
+		
 		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -124,7 +127,7 @@ public class ShopmallController extends BaseController {
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
-		Long seq = (Long) user.get("member_seq");
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
 		return return_success((Object) shopmallService.delete(param, seq));
 	}
@@ -155,7 +158,7 @@ public class ShopmallController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_link")
 	@ResponseBody
-	public ResponseEntity<ResultDto> toggle_link(@RequestBody ShopmallDto param,
+	public ResponseEntity<ResultDto> toggle_link(@RequestBody  List<ToggleDto>  param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -163,13 +166,11 @@ public class ShopmallController extends BaseController {
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
-		Long seq = (Long) user.get("member_seq");
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-		if (param.getId() == null || param.getId().equals("")) {
-			return return_fail("id.empty");
-		} else if (param.getLink() == null || param.getLink().equals("")) {
-			return return_fail("link.empty");
-		} else {
+		if (param.size() == 0) {
+			return return_fail("param.empty");
+		}  else {
 			return return_success((Object) shopmallService.toggle_link(param, seq));
 		}
 

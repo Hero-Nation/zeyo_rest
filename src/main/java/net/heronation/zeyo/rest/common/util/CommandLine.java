@@ -1,3 +1,4 @@
+
 package net.heronation.zeyo.rest.common.util;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ public class CommandLine {
 
 			Runtime rt = Runtime.getRuntime();
 
-			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\zeyo_image\\. c798c1742313:/home/zeyo/zeyo_image");
+			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\zeyo_image\\. e2480afd621e:/home/zeyo/zeyo_image");
 
 			InputStream stderr = proc.getErrorStream();
 
@@ -60,7 +61,7 @@ public class CommandLine {
 
 			Runtime rt = Runtime.getRuntime();
 
-			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\temp\\. c798c1742313:/home/zeyo/temp");
+			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\temp\\. e2480afd621e:/home/zeyo/temp");
 
 			InputStream stderr = proc.getErrorStream();
 

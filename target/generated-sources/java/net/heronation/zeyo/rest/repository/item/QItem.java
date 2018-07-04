@@ -80,6 +80,8 @@ public class QItem extends EntityPathBase<Item> {
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
+    public final StringPath shop_image = createString("shop_image");
+
     public final StringPath shopProductId = createString("shopProductId");
 
     public final StringPath sizeMeasureImage = createString("sizeMeasureImage");

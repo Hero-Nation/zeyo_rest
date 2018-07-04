@@ -1,8 +1,5 @@
 package net.heronation.zeyo.rest.brand;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,30 +9,27 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
- 
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.brand.*;
-import net.heronation.zeyo.rest.repository.category.QCategory;
+import net.heronation.zeyo.rest.repository.brand.Brand;
+import net.heronation.zeyo.rest.repository.brand.BrandRepository;
+import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.QMember;
 import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
-import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

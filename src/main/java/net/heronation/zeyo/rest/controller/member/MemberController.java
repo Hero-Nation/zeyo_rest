@@ -31,13 +31,11 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.FlagDto;
 import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
-import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberDto;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.member.MemberResourceAssembler;
@@ -362,7 +360,7 @@ public class MemberController extends BaseController {
 	@RequestMapping(path = "toggle_email_noti", method = RequestMethod.PATCH)
 	public ResponseEntity<ResultDto> toggle_email_noti(
 
-			@RequestBody MemberDto param,
+			@RequestBody FlagDto param,
 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("/api/members/toggle_email_noti");
@@ -391,16 +389,12 @@ public class MemberController extends BaseController {
 	public ResponseEntity<ResultDto> user_biz_info(
 			@RequestParam(value = "member_id", required = false) String member_id) {
 		log.debug("/api/members/user_biz_info");
+ 
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("member_id", member_id);
 
-		Long id = Long.valueOf(String.valueOf(member_id));
-
-		BooleanBuilder builder = new BooleanBuilder();
-
-		QMember target = QMember.member;
-
-		builder.and(target.id.eq(id));
-
-		return return_success(memberService.getUserBizInfo(builder.getValue()));
+		return return_success(memberService.getUserBizInfo(param));
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT') or hasRole('ROLE_ADMIN')")

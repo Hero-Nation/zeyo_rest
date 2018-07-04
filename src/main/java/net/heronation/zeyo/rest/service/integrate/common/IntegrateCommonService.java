@@ -1,11 +1,9 @@
 package net.heronation.zeyo.rest.service.integrate.common;
 
-import java.util.List;
 import java.util.Map;
 
 import net.heronation.zeyo.rest.repository.ip_temp_info.IpTempInfo;
 import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 
 public interface IntegrateCommonService {
 

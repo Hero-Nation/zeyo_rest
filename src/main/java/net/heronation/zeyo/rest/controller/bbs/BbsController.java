@@ -36,7 +36,6 @@ import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;
-import net.heronation.zeyo.rest.repository.bbs.BbsClientValidator;
 import net.heronation.zeyo.rest.repository.bbs.BbsRepository;
 import net.heronation.zeyo.rest.repository.bbs.BbsResourceAssembler;
 import net.heronation.zeyo.rest.service.bbs.BbsService;
@@ -75,13 +74,18 @@ public class BbsController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list")
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<ResultDto> list(@RequestParam(value = "title", required = false) String title,
+	public ResponseEntity<ResultDto> list(
+			@RequestParam(value = "keyword", required = false) String keyword,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
+			@RequestParam(value = "keywordType", required = false) String keywordType,
+			@RequestParam(value = "status", required = false) String status,
 			Pageable pageable) {
 
 		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("title", title);
+		param.put("keyword", keyword);
+		param.put("keywordType", keywordType);
+		param.put("status", status);
 		if (start == null) {
 			param.put("start", start);
 		} else {

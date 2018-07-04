@@ -24,12 +24,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
 import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.constants.Format;
-import net.heronation.zeyo.rest.repository.brand.BrandDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.BrandResourceAssembler;
 import net.heronation.zeyo.rest.service.brand.BrandService;
@@ -179,7 +178,7 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
 	public ResponseEntity<ResultDto> delete(
-			@RequestBody List<LIdDto> param,
+			@RequestBody List<String> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("delete");
 		
@@ -194,7 +193,7 @@ public class BrandController extends BaseController {
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 
-		Long seq = (Long) user.get("member_seq");
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
 		return return_success((Object) brandService.delete(param, seq));
 	}
@@ -203,29 +202,27 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.PATCH, value = "/toggle_link")
 	@ResponseBody
 	public ResponseEntity<ResultDto> toggle_link(
-			@RequestBody BrandDto param,
+			@RequestBody List<ToggleDto>  param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		log.debug("toggle_link");
 		
-		
-		if(param.getId() == null|| param.getId().equals("")) {
-			return return_fail("id.empty");	
-		}
-		
-		if(param.getLink() == null|| param.getLink().equals("")) {
-			return return_fail("link.empty");	
-		}
-			
-		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
+ 
+
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 				.getDecodedDetails();
 		Long seq = Long.valueOf(String.valueOf((int) user.get("member_seq")));
 
-		return return_success((Object) brandService.toggle_link(param,seq));
+		
+		if (param.size() == 0) {
+			return return_fail("param.empty");
+		}  else {
+			return return_success((Object) brandService.toggle_link(param, seq));
+		}
+		 
 	}
 
 	@PreAuthorize("hasRole('ROLE_CLIENT')")

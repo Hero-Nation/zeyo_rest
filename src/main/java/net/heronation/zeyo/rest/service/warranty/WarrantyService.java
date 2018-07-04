@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import net.heronation.zeyo.rest.common.value.IdNameDto;
 import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
 
 public interface WarrantyService {

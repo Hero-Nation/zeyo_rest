@@ -1,6 +1,6 @@
 package net.heronation.zeyo.rest.controller.integrate;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
@@ -19,8 +19,6 @@ import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.repository.ip_temp_info.IpTempInfo;
-import net.heronation.zeyo.rest.repository.ip_temp_info.IpTempInfoRepository;
-import net.heronation.zeyo.rest.repository.ip_temp_info.QIpTempInfo;
 import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
 import net.heronation.zeyo.rest.service.integrate.common.IntegrateCommonService;
 import net.heronation.zeyo.rest.service.integrate.naver.NaverService;
@@ -105,7 +103,7 @@ public class OauthController extends BaseController {
 			@RequestParam(value = "state", required = false) String state,
 			@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "error_description", required = false) String error_description ,
-			HttpServletRequest request
+			HttpSession session
 			) {
 		// 세션을 사용하지 않는다. 세션은 메모리에 부담을 너무 준다.. 그래서 데이터베이스를 사용한다. 
 		log.debug("/naver/callback");
@@ -117,7 +115,8 @@ public class OauthController extends BaseController {
 		log.debug(error);
 		log.debug("error_description");
 		log.debug(error_description);
-		
+		log.debug("session.getId()");
+		log.debug(session.getId());
 		
 //		      : /naver/callback
 //		      : code 
@@ -134,8 +133,8 @@ public class OauthController extends BaseController {
 			
 			try {
 				
-				naverService.update_oauth_code_and_get_access_token(code, state,request.getRemoteAddr());
-				IpTempInfo iti = integrateCommonService.getIpTempInfo(request.getRemoteAddr());
+				naverService.update_oauth_code_and_get_access_token(code, state,state);
+				IpTempInfo iti = integrateCommonService.getIpTempInfo(state);
 				
 				return "redirect:https://www.zeyo.co.kr/zeyo_app/main?shop_type=".concat(iti.getShopType()).concat("&shop_id=".concat(iti.getShopId()).concat("&product_id=".concat(iti.getProductId())));	
 				

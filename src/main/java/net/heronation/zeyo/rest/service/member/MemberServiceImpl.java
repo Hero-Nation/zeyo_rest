@@ -31,26 +31,22 @@ import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.FlagDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.CpNoUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
 import net.heronation.zeyo.rest.controller.member.PasswordUpdateDto;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidation;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidationRepository;
 import net.heronation.zeyo.rest.repository.email_validation.QEmailValidation;
-import net.heronation.zeyo.rest.repository.item.QItem;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
 import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberDto;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
 import net.heronation.zeyo.rest.repository.member.QMember;
-import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
 
 @Slf4j
 @Service
@@ -348,33 +344,45 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Map<String, Long> getUserBizInfo(Predicate where) {
-		JPAQuery<Member> query = new JPAQuery<Member>(entityManager);
+	public Map<String, Object>  getUserBizInfo(Map<String, Object> param) {
+ 
+		
+		String member_id = (String)param.get("member_id");
+ 
+		StringBuffer select_query = new StringBuffer(); 
+		select_query.append(" SELECT Count(DISTINCT i.id) AS item_count, ");
+		select_query.append("       Count(DISTINCT s.id) AS shopmall_count, ");
+		select_query.append("       Count(DISTINCT b.id) AS brand_count ");
+		select_query.append(" FROM   item_shopmall_map ism ");
+		select_query.append("       LEFT JOIN item i ");
+		select_query.append("              ON ism.item_id = i.id ");
+		select_query.append("                 AND i.use_yn = 'Y' ");
+		select_query.append("       LEFT JOIN shopmall s ");
+		select_query.append("              ON ism.shopmall_id = s.id ");
+		select_query.append("                 AND s.use_yn = 'Y' ");
+		select_query.append("       LEFT JOIN brand b ");
+		select_query.append("              ON i.brand_id = b.id ");
+		select_query.append("                 AND b.use_yn = 'Y' ");
+		select_query.append(" WHERE  i.use_yn = 'Y' ");
+		select_query.append("       AND i.member_id = "+member_id);
+ 
+ 
+		Query q = entityManager.createNativeQuery(select_query.toString());
+		List<Object[]> list = q.getResultList();
 
-		QMember target = QMember.member;
 
-		QItem item = QItem.item;
-		QBrand brand = QBrand.brand;
-		QShopmall shopmall = QShopmall.shopmall;
+		Map<String, Object> R = new HashMap<String, Object>();
+ 
+		for (Object[] row : list) { 
 
-		Tuple R = query.select(
-
-				item.id.countDistinct(), brand.id.countDistinct(), shopmall.id.countDistinct()
-
-		).from(target).leftJoin(target.items, item).on(item.useYn.eq("Y")).leftJoin(target.brands, brand)
-				.on(brand.useYn.eq("Y")).leftJoin(target.shopmalls, shopmall).on(shopmall.useYn.eq("Y")).where(where)
-				.fetchOne();
-
-		Long item_count = R.get(item.id.countDistinct());
-		Long brand_count = R.get(brand.id.countDistinct());
-		Long shopmall_count = R.get(shopmall.id.countDistinct());
-
-		Map<String, Long> returnValue = new HashMap<String, Long>();
-		returnValue.put("item_count", item_count);
-		returnValue.put("brand_count", brand_count);
-		returnValue.put("shopmall_count", shopmall_count);
-
-		return returnValue;
+			R.put("item_count", row[0]);
+			R.put("shopmall_count", row[1]);
+			R.put("brand_count", row[2]); 
+ 
+		}
+  
+ 
+		return R;
 
 	}
 
@@ -421,7 +429,9 @@ public class MemberServiceImpl implements MemberService {
 		if (passwordEncoder.matches(old_pw, user.getPassword())) {
 			user.setPassword(passwordEncoder.encode(new_pw));
 			return CommonConstants.SUCCESS;
-		} else {
+		} else if (old_pw.equals(new_pw)) {
+			return "old.new.same";
+		}else {
 			return "old.pw.not.equal";
 		}
 
@@ -1041,7 +1051,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> toggle_email_noti(Long member_seq, MemberDto param) {
+	public Map<String, Object> toggle_email_noti(Long member_seq, FlagDto param) {
 		// TODO Auto-generated method stub
 		Member user = memberRepository.findOne(member_seq);
 		user.setEmail_noti_yn(param.getFlag());

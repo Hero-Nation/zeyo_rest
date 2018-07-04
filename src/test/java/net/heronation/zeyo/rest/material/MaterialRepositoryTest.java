@@ -1,17 +1,11 @@
 package net.heronation.zeyo.rest.material;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.material.*;
-import net.heronation.zeyo.rest.warranty.WarrantyRepositoryTest;
+import net.heronation.zeyo.rest.repository.material.Material;
+import net.heronation.zeyo.rest.repository.material.MaterialRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

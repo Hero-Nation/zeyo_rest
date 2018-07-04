@@ -38,7 +38,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 @Table(name = "MEMBER")
 @TableGenerator(name = "MEMBER_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MEMBER_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
-
+ 
 public class Member {
 
 	@Id
@@ -114,9 +114,42 @@ public class Member {
 	private List<Bbs> bbss = new ArrayList<Bbs>();
 	
 	
+	
 	@Override
 	public String toString() {
 		return "Member ]";
 	}
 
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Member other = (Member) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+
+
+ 
 }

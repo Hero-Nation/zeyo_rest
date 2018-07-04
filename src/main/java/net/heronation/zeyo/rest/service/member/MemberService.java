@@ -8,13 +8,13 @@ import org.springframework.data.domain.Pageable;
 import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
+import net.heronation.zeyo.rest.common.value.FlagDto;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.CpNoUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
 import net.heronation.zeyo.rest.controller.member.PasswordUpdateDto;
 import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
 import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberDto;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 
 public interface MemberService {
@@ -36,9 +36,9 @@ public interface MemberService {
 
 	Map<String, Object> getUserInfo(Predicate where);
 
-	Map<String, Object> toggle_email_noti(Long member_seq,MemberDto param);
+	Map<String, Object> toggle_email_noti(Long member_seq,FlagDto param);
 
-	Map<String, Long> getUserBizInfo(Predicate where);
+	Map<String, Object> getUserBizInfo(Map<String, Object> param);
 
 	Map<String, Object> my_brand(Map<String, Object> where, Pageable page);
 

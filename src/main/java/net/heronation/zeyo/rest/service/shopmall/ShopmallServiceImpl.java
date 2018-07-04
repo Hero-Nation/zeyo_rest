@@ -23,6 +23,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -416,90 +417,97 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete(ShopmallDto param, Long member_seq) {
+	public Map<String, Object> delete( List<String> param, Long member_seq) {
 
+  
 		Map<String, Object> R = new HashMap<String, Object>();
+		
+		for(String id : param) {
 
-		Shopmall target = shopmallRepository.findOne(param.getId());
-		Member user = memberRepository.findOne(member_seq);
+			Shopmall target = shopmallRepository.findOne(Long.valueOf(id));
+			Member user = memberRepository.findOne(member_seq);
 
-		if (target == null || target.getUseYn().equals("N")) {
-			// brand is not exist
-			R.put("CODE", "A");
+			if (target == null || target.getUseYn().equals("N")) {
 
-		} else if (!target.getMember().equals(user)) {
-			// user is not owner
-			R.put("CODE", "B");
-		} else {
-
-			// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
-
-			BigInteger use_count = this.get_shopmall_use_count_of_member(param.getId());
-
-			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
-
-				target.setUseYn("N");
-				target.setDeleteDt(new DateTime());
-				R.put("CODE", "OK");
-
+			} else if (!target.getMember().equals(user)) {
+				
+				
 			} else {
-				// Brand count in use is more than 1.
-				R.put("CODE", "C");
-			}
 
+				// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
+
+				BigInteger use_count = this.get_shopmall_use_count_of_member(Long.valueOf(id));
+
+				if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
+
+					target.setUseYn("N");
+					target.setDeleteDt(new DateTime());
+
+					R.put("CODE", "OK");
+
+				} else {
+					// Brand count in use is more than 1.
+					R.put("CODE", "C");
+				}
+
+			}
+			
 		}
+
+
 
 		return R;
 	}
 
 	@Override
 	@Transactional
-	public Map<String, Object> toggle_link(ShopmallDto param, Long member_seq) {
+	public Map<String, Object> toggle_link(List<ToggleDto>  param, Long member_seq) {
 		log.debug("toggle_link ");
-		log.debug("shopmall_id " + param.getId());
-		log.debug("member_seq " + member_seq); 
-
+		
+		
 		Map<String, Object> R = new HashMap<String, Object>();
+		
+		for(ToggleDto shop_status : param) {
+			
+			Shopmall target = shopmallRepository.findOne(shop_status.getId());
+			Member user = memberRepository.findOne(member_seq);
 
-		// 나의 브랜드의 상품의 연동정보를 일괄 변경시킨다.
+			QBrand qb = QBrand.brand;
+			QMember qm = QMember.member;
+			QItem qi = QItem.item;
+			QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
 
-		Shopmall target = shopmallRepository.findOne(param.getId());
-		Member user = memberRepository.findOne(member_seq);
-
-		QBrand qb = QBrand.brand;
-		QMember qm = QMember.member;
-		QItem qi = QItem.item;
-		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
-
-		if (target == null || target.getUseYn().equals("N")) {
-			// brand is not exist
-			R.put("CODE", "A");
-
-		} else {
-			JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
-			if (param.getLink().equals("N")) {
-
-				queryFactory.update(qi)
-						.where(qi.id
-								.in(JPAExpressions.select(ism.item.id).from(ism)
-										.where(ism.shopmall.id.eq(param.getId()).and(ism.useYn.eq("Y"))))
-								.and(qi.member.id.eq(member_seq)).and(qi.useYn.eq("Y")))
-						.set(qi.linkYn, "Y").execute();
+			if (target == null || target.getUseYn().equals("N")) {
+				// brand is not exist
+				R.put("CODE", "A");
 
 			} else {
-				queryFactory.update(qi)
-						.where(qi.id
-								.in(JPAExpressions.select(ism.item.id).from(ism)
-										.where(ism.shopmall.id.eq(param.getId()).and(ism.useYn.eq("Y"))))
-								.and(qi.member.id.eq(member_seq)).and(qi.useYn.eq("Y")))
-						.set(qi.linkYn, "N").execute();
+				JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+				if (shop_status.getValue().equals("N")) {
+
+					queryFactory.update(qi)
+							.where(qi.id
+									.in(JPAExpressions.select(ism.item.id).from(ism)
+											.where(ism.shopmall.id.eq(shop_status.getId()).and(ism.useYn.eq("Y"))))
+									.and(qi.member.id.eq(member_seq)).and(qi.useYn.eq("Y")))
+							.set(qi.linkYn, "Y").execute();
+
+				} else {
+					queryFactory.update(qi)
+							.where(qi.id
+									.in(JPAExpressions.select(ism.item.id).from(ism)
+											.where(ism.shopmall.id.eq(shop_status.getId()).and(ism.useYn.eq("Y"))))
+									.and(qi.member.id.eq(member_seq)).and(qi.useYn.eq("Y")))
+							.set(qi.linkYn, "N").execute();
+				}
+
+				R.put("CODE", "OK");
+
 			}
-
-			R.put("CODE", "OK");
-
 		}
-
+		
+ 
 		return R;
 	}
 

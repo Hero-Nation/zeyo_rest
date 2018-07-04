@@ -5,8 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.heronation.zeyo</groupId>
-	<artifactId>rest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>target</artifactId>
+	<version>1</version>
 	<packaging>war</packaging>
 
 	<name>rest</name>

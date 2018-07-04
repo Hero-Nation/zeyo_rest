@@ -1,14 +1,9 @@
 package net.heronation.zeyo.rest.service.measure_item;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import lombok.Value;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
 import net.heronation.zeyo.rest.repository.measure_item.MeasureItemDto;
 
 public interface MeasureItemService {

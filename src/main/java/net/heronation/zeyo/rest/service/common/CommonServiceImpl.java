@@ -1,5 +1,6 @@
 package net.heronation.zeyo.rest.service.common;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
@@ -275,10 +276,10 @@ public class CommonServiceImpl implements CommonService {
 		query.append("            AND DATE(m.create_dt) = DATE(NOW())) today");
 		
 		q = entityManager.createNativeQuery(query.toString()); 
-		List<BigInteger> client_increase_rate_r = q.getResultList();
-		BigInteger client_increase_rate = client_increase_rate_r.get(0);
+		List<BigDecimal> client_increase_rate_r = q.getResultList();
+		BigDecimal client_increase_rate = client_increase_rate_r.get(0);
 		if(client_increase_rate == null) {
-			client_increase_rate = BigInteger.valueOf(0L); 
+			client_increase_rate = BigDecimal.ZERO;
 		}
 		
 		client_related.put("client_increase_rate", client_increase_rate);
@@ -370,11 +371,11 @@ public class CommonServiceImpl implements CommonService {
 		query.append("            AND DATE(i.create_dt) = DATE(NOW())) today");
 		
 		q = entityManager.createNativeQuery(query.toString()); 
-		List<BigInteger> item_increase_rate_r = q.getResultList();
-		BigInteger item_increase_rate = item_increase_rate_r.get(0); 
+		List<BigDecimal> item_increase_rate_r = q.getResultList();
+		BigDecimal item_increase_rate = item_increase_rate_r.get(0); 
 		
 		if(item_increase_rate == null) {
-			item_increase_rate = BigInteger.valueOf(0L); 
+			item_increase_rate = BigDecimal.ZERO; 
 		}
 		
 		item_related.put("item_increase_rate", item_increase_rate);
@@ -452,11 +453,11 @@ public class CommonServiceImpl implements CommonService {
 		query.append("            AND DATE(s.create_dt) = DATE(NOW())) today");
 		
 		q = entityManager.createNativeQuery(query.toString()); 
-		List<BigInteger> size_tableincrease_rate_r = q.getResultList();
-		BigInteger size_tableincrease_rate = size_tableincrease_rate_r.get(0); 
+		List<BigDecimal> size_tableincrease_rate_r = q.getResultList();
+		BigDecimal size_tableincrease_rate = size_tableincrease_rate_r.get(0); 
 		
 		if(size_tableincrease_rate == null) {
-			size_tableincrease_rate = BigInteger.valueOf(0L); 
+			size_tableincrease_rate = BigDecimal.ZERO;
 		}
 		
 		size_table_related.put("size_table_increase_rate", size_tableincrease_rate);
@@ -859,13 +860,13 @@ public class CommonServiceImpl implements CommonService {
 		query.append("            AND DATE(i.create_dt) = DATE(NOW())) today");
 		
 		q = entityManager.createNativeQuery(query.toString()); 
-		List<BigInteger> brand_increase_rate_r = q.getResultList();
-		BigInteger brand_increase_rate = brand_increase_rate_r.get(0); 
+		List<BigDecimal> brand_increase_rate_r = q.getResultList();
+		BigDecimal brand_increase_rate = brand_increase_rate_r.get(0); 
 		
 		
 		
 		if(brand_increase_rate == null) {
-			brand_increase_rate = BigInteger.valueOf(0L); 
+			brand_increase_rate = BigDecimal.ZERO;
 		}
 		brand_related.put("brand_increase_rate", brand_increase_rate);
 		
@@ -1043,10 +1044,10 @@ public class CommonServiceImpl implements CommonService {
 		query.append("            AND DATE(i.create_dt) = DATE(NOW())) today");
 		
 		q = entityManager.createNativeQuery(query.toString()); 
-		List<BigInteger> shopmall_increase_rate_r = q.getResultList();
-		BigInteger shopmall_increase_rate = shopmall_increase_rate_r.get(0); 
+		List<BigDecimal> shopmall_increase_rate_r = q.getResultList();
+		BigDecimal shopmall_increase_rate = shopmall_increase_rate_r.get(0); 
 		if(shopmall_increase_rate == null) {
-			shopmall_increase_rate = BigInteger.valueOf(0L); 
+			shopmall_increase_rate = BigDecimal.ZERO;
 		}
 		shopmall_related.put("shopmall_increase_rate", shopmall_increase_rate);
 		
