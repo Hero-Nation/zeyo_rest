@@ -169,7 +169,15 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(page.getPageSize());
 
 		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -207,14 +215,13 @@ public class ShopmallServiceImpl implements ShopmallService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
-
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
@@ -290,7 +297,15 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(page.getPageSize());
 
 		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
+		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -309,14 +324,15 @@ public class ShopmallServiceImpl implements ShopmallService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
@@ -750,7 +766,14 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(page.getPageSize());
 
 		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
-		List<Map<String, Object>> count_list = count_q.getResultList();
+		BigInteger count_list = BigInteger.ZERO;
+		
+		List<BigInteger> count_result = count_q.getResultList();
+		if (count_result.isEmpty()) {
+		    
+		} else {
+			count_list = count_result.get(0);
+		}
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -767,14 +790,14 @@ public class ShopmallServiceImpl implements ShopmallService {
 			return_list.add(search_R);
 		}
 
-		int totalPages = (count_list.size() / page.getPageSize());
-		if (count_list.size() % page.getPageSize() > 0)
+		int totalPages = (count_list.intValue() / page.getPageSize());
+		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
 		R.put("totalPages", totalPages);
-		R.put("totalElements", count_list.size());
+		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
 
