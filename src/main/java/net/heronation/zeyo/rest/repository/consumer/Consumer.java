@@ -34,7 +34,7 @@ public class Consumer {
 
 	private String corpId;
 
-	private String oauthId;
+	private String session;
 
 	private String oauthCode;
 
@@ -42,10 +42,7 @@ public class Consumer {
 
 	private String refreshToken;
 
-	private String now_ip;
-	private String now_shop_type;
-	private String now_shop_id;
-	private String now_product_id;
+ 
 	
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;

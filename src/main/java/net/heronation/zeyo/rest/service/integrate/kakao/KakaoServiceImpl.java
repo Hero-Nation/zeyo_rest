@@ -1,15 +1,22 @@
 package net.heronation.zeyo.rest.service.integrate.kakao;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -21,16 +28,19 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.LoggingRequestInterceptor;
+import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.AccessTokenByOauthCode;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateDto;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateRequestDto;
-import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.ScriptCreateResponseDto;
+import net.heronation.zeyo.rest.controller.integrate.kakao.dto.AccessTokenByOauthCode;
+import net.heronation.zeyo.rest.controller.integrate.kakao.dto.ProfileDto;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorRepository;
+import net.heronation.zeyo.rest.repository.consumer.Consumer;
+import net.heronation.zeyo.rest.repository.consumer.ConsumerRepository;
 import net.heronation.zeyo.rest.repository.item.ItemRepository;
 import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMapRepository;
 import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
@@ -45,7 +55,7 @@ import net.heronation.zeyo.rest.repository.shopmall.Shopmall;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;
 import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
-import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
+import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;  
 
 @Slf4j
 @Service
@@ -91,6 +101,13 @@ public class KakaoServiceImpl implements KakaoService {
 	
 	@Autowired
 	MaterialRepository materialRepository;
+	
+	
+	@Autowired
+	ConsumerRepository consumerRepository;
+	
+	
+	
 	
 	@Autowired
 	ItemClothColorMapRepository itemClothColorMapRepository;
@@ -156,156 +173,150 @@ public class KakaoServiceImpl implements KakaoService {
 	@Value(value = "${zeyo.config.index.default.import.material}")
 	private String index_default_import_material;
 	
+	
+	@Value(value = "${oauth.kakao.client.id}")
+	private String kakao_client_id;
+
+	@Value(value = "${oauth.kakao.client.secret}")
+	private String kakao_client_secret;
+	
+	
+	@Value(value = "${oauth.kakao.client.redirect.url}")
+	private String kakao_client_redirect_url;
+	
+	
+	
+	
+	
 	@Override
-	public String update_oauth_code_and_get_access_token(String auth_code, String oauth_id) {
+	public String update_oauth_code_and_get_access_token(String auth_code, String p_session) throws CommonException  {
 		log.debug("update_oauth_code_and_get_access_token");
-		QShopmall sm = QShopmall.shopmall;
 
-		Shopmall this_shopmall = shopmallRepository.findOne(sm.oauthID.eq(oauth_id));
-		log.debug(this_shopmall.toString());
+		HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+		BufferingClientHttpRequestFactory requestFactory = new BufferingClientHttpRequestFactory(httpRequestFactory);
+		// requestFactory.setOutputStreaming(false);
+
+		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+		converters.add(new MappingJackson2HttpMessageConverter());
+		converters.add(new FormHttpMessageConverter());
+		// converters.add(new StringHttpMessageConverter()); 
 		
-		if (this_shopmall == null) {
-			return "shopmall.data.null";
-		} else {
+		RestTemplate restTemplate = new RestTemplate(requestFactory);
+		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+		interceptors.add(new LoggingRequestInterceptor());
+		restTemplate.setInterceptors(interceptors);
+		restTemplate.setMessageConverters(converters);
 
+		MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
+		body.add("grant_type", "authorization_code");
+		body.add("client_id", kakao_client_id);
+		body.add("client_secret", kakao_client_secret); 
+		body.add("code", auth_code);
+		body.add("redirect_uri", kakao_client_redirect_url);
+
+		HttpHeaders headers = new HttpHeaders();
+		// headers.set("Authorization", header_credential);
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+		try {
+
+			AccessTokenByOauthCode result = restTemplate.postForObject(String.format("https://kauth.kakao.com/oauth/token", ""),
+					request, AccessTokenByOauthCode.class);
+
+			if(result != null) {
+				log.debug(result.toString());
+			}else {
+				log.debug((result == null) + "");	
+			}
 			
+			
+			// 프로필 정보 가지고 오기
+			HttpHeaders get_profile_headers = new HttpHeaders();
+			get_profile_headers.set("Authorization", String.format("Bearer %s",result.getAccess_token()));
+			get_profile_headers.setContentType(MediaType.APPLICATION_JSON);
 
-			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-			requestFactory.setOutputStreaming(false);
-
-			List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
-			converters.add(new MappingJackson2HttpMessageConverter());
-			converters.add(new FormHttpMessageConverter());
-			converters.add(new StringHttpMessageConverter());
-
-			RestTemplate restTemplate = new RestTemplate(requestFactory);
-			restTemplate.setMessageConverters(converters);
-
-			MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
-			body.add("grant_type", "authorization_code");
-			body.add("code", auth_code);
-			body.add("redirect_uri", redirect_url);
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("Authorization", header_credential);
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+			HttpEntity get_profile_entity = new HttpEntity(get_profile_headers);
 
 			try {
 
-				log.debug(String.format(oauth_code_url, this_shopmall.getStoreId()));
-				
-				AccessTokenByOauthCode result = restTemplate.postForObject(String.format(oauth_code_url, this_shopmall.getStoreId()), request,
-						AccessTokenByOauthCode.class);
+				URI uri = UriComponentsBuilder.newInstance().scheme("https")
+						.host("kapi.kakao.com").path("/v2/user/me")
+//						.queryParam("limit", 100)
+//						.queryParam("offset", 0)
+						.build()
+						.encode()
+						.toUri();
 
-				this_shopmall.setAccessToken(result.getAccess_token());
-				this_shopmall.setRefreshToken(result.getRefresh_token());
-				this_shopmall.setStoreId(result.getMall_id());
-				this_shopmall.setOauthCode(auth_code);
+				ResponseEntity<ProfileDto> response = restTemplate.exchange(uri, HttpMethod.GET, get_profile_entity, ProfileDto.class);
+				log.debug(response.getStatusCodeValue()+ " " );
+				ProfileDto profile = response.getBody();
+				log.debug(profile.toString());
+				 
 				
-				log.debug(result.toString());
 				
-
-				
-				// app script 등록
-				
-//				curl -X POST \
-//				  'https://{mallid}.cafe24api.com/api/v2/admin/scripttags' \
-//				  -H 'Authorization: Bearer {access_token}' \
-//				  -H 'Content-Type: application/json' \
-//				  -d '{
-//				    "shop_no": 1,
-//				    "request": {
-//				        "src": "https:\/\/js-aplenty.com\/bar.js",
-//				        "display_location": [
-//				            "PRODUCT_LIST",
-//				            "PRODUCT_DETAIL"
-//				        ],
-//				        "skin_no": [
-//				            3,
-//				            4
-//				        ]
+//				{
+//				    "id": 796464350,
+//				    "kakao_account": {
+//				        "has_email": true,
+//				        "is_email_valid": true,
+//				        "is_email_verified": true,
+//				        "email": "heronation@naver.com",
+//				        "has_age_range": false,
+//				        "has_birthday": false,
+//				        "has_gender": false
 //				    }
-//				}'
-//				
-				
-				
-				HttpHeaders create_headers = new HttpHeaders();
-				create_headers.set("Authorization", "Bearer ".concat(result.getAccess_token()));
-				create_headers.setContentType(MediaType.APPLICATION_JSON);
-				
-				
-//				Map<String,  Object> create_request_body = new HashMap<String,  Object>();
-//				create_request_body.put("src", "https://www.zeyo.co.kr/app/js/cafe24_app.js"); 
-//				create_request_body.put("display_location", Arrays.asList("PRODUCT_DETAIL")); 
-//				create_request_body.put("skin_no", Arrays.asList(8)); 
-//				
-//				Map<String, Object> create_body = new HashMap<String, Object>();
-//				create_body.put("shop_no", 1); 
-//				create_body.put("request", create_request_body); 
+//				}
 
-				ScriptCreateDto create_body = new ScriptCreateDto();
-				create_body.setShop_no(1);
 				
-				ScriptCreateRequestDto script_create_req=  new ScriptCreateRequestDto();
-				script_create_req.setDisplay_location(new String[]{"PRODUCT_DETAIL"});
-				script_create_req.setSkin_no(new int[]{8});
-				script_create_req.setSrc("https://www.zeyo.co.kr/app/js/cafe24_app.js");
+				List<Consumer> cl = consumerRepository.findByCorpId("kakao",profile.getId());
+				if(cl.size() > 0) {
+					Consumer this_consumer = cl.get(0);
+					this_consumer.setAccessToken(result.getAccess_token());
+					this_consumer.setRefreshToken(result.getRefresh_token());
+					this_consumer.setOauthCode(auth_code);
+					this_consumer.setSession(p_session);
+					this_consumer.setLastAccessDt(new DateTime());  
+				}else {
+					Consumer this_consumer = new Consumer();
+					this_consumer.setAccessToken(result.getAccess_token());
+					this_consumer.setCorpId(profile.getId());
+					this_consumer.setCorpType("kakao");
+					this_consumer.setCreateDt(new DateTime());
+					this_consumer.setLastAccessDt(new DateTime());
+					this_consumer.setOauthCode(auth_code);
+					this_consumer.setSession(p_session);
+					this_consumer.setRefreshToken(result.getRefresh_token());
+					this_consumer.setUseYn("Y");  
+					
+					consumerRepository.save(this_consumer);
+				}
 				
+				//return state;
 				
-				create_body.setRequest(script_create_req);
-				
-				HttpEntity<ScriptCreateDto> create_request = new HttpEntity<>(create_body, create_headers);
-				
-				
-				ScriptCreateResponseDto create_Script_response = restTemplate.postForObject(
-						String.format("https://%s.cafe24api.com/api/v2/admin/scripttags", this_shopmall.getStoreId()), create_request,
-						ScriptCreateResponseDto.class);
-				
-				log.debug(create_Script_response.toString());
-				
-			//	{	
-//			    "scripttag": {
-//			        "shop_no": 1,
-//			        "script_no": "1527128695613925",
-//			        "client_id": "AMj8UZhBC9zsyTlFGI6PzC",
-//			        "src": "https:\\\/\\\/js-aplenty.com\\\/bar.js",
-//			        "display_location": [
-//			            "PRODUCT_LIST",
-//			            "PRODUCT_DETAIL"
-//			        ],
-//			        "skin_no": [
-//			            3,
-//			            4
-//			        ],
-//			        "created_date": "2017-03-15T13:27:53+09:00",
-//			        "updated_date": "2017-03-15T13:27:53+09:00"
-//			    }
-//			}
-//				
-				
-				
-				
-				
-				
-				return CommonConstants.SUCCESS;
 			} catch (HttpClientErrorException e) {
-				
-				 log.debug(app_key);
-				 log.debug(app_secret);
-				 log.debug(header_credential);
-				 log.debug(redirect_url);
-				 log.debug(oauth_code_url);
-				
-				
 				e.printStackTrace();
 				log.error(e.getResponseBodyAsString());
-				return e.getResponseBodyAsString();
-
+				throw new CommonException(e.getResponseBodyAsString());
 			}
+				
+			} catch (HttpClientErrorException e) {
+				e.printStackTrace();
+				log.error(e.getResponseBodyAsString());
+				throw new CommonException(e.getResponseBodyAsString());
+			}
+	 
+		
+		
+		return "";
+		
+	}
 
-		}
+	@Override
+	public String get_access_token_by_refresh_token(Long shopmall_id) throws CommonException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

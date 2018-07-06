@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
@@ -33,6 +35,9 @@ public class IpTempInfo {
 
 	private String productId;
 
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime createDt;
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

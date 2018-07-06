@@ -109,6 +109,7 @@ public class SizeTableController extends BaseController {
 			@RequestParam(value = "start_price",  required = false) String start_price,
 			@RequestParam(value = "end_price", required = false) String end_price,
 			@RequestParam(value = "size_table", required = false) String size_table,
+			@RequestParam(value = "size_link", required = false) String size_link,
 			
 			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, Pageable pageable,
@@ -129,6 +130,7 @@ public class SizeTableController extends BaseController {
 		param.put("start_price", start_price); 
 		param.put("end_price", end_price);   
 		param.put("size_table", size_table);   
+		param.put("size_link", size_link);    
 		param.put("member_seq", seq);   
 		
 		

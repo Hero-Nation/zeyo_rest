@@ -153,6 +153,44 @@ public class ZeyoAppController extends BaseController {
 		}
 
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/compare_v2")
+	public String compare_v2(Model m, HttpSession session,
+
+			@RequestParam(value = "zeyo_pid", required = true) Long zeyo_pid) {
+		
+		log.debug("compare");
+		log.debug("session.getId()");
+		log.debug(session.getId());
+		
+
+		if (integrateCommonService.haveIpSession(session.getId())) {
+
+			Item i = integrateCommonService.get_zeyo_item(zeyo_pid);
+			Map<String, Object> issv_list = integrateCommonService.get_zeyo_size(zeyo_pid);
+
+			try {
+
+				m.addAttribute("item", objectMapper.writeValueAsString(i));
+				m.addAttribute("item_object", i);
+				m.addAttribute("seller", i.getMember().getMemberId());
+				m.addAttribute("sub_category", objectMapper.writeValueAsString(i.getSubCategory()));
+				m.addAttribute("sub_category_object", i.getSubCategory());
+
+				m.addAttribute("ItemScmmSoValue", objectMapper.writeValueAsString(issv_list));
+				m.addAttribute("ItemScmmSoValue_object", issv_list);
+
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				return "redirect:https://www.zeyo.co.kr/zeyo_app/error";
+			}
+
+			return "zeyo_app/compare_v2";
+		} else {
+			return "redirect:https://www.zeyo.co.kr/zeyo_app/login";
+		}
+
+	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/error")
 	public String error(Model m) {

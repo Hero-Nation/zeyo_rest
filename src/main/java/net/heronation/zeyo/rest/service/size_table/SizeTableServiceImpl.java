@@ -415,8 +415,17 @@ public class SizeTableServiceImpl implements SizeTableService {
 		//
 		//
 		String size_table = (String) param.get("size_table");
-		if (size_table != null && size_table.equals("Y")) {
+		if (size_table != null && size_table.equals("P")) {
 			where_query.append("        AND   i.size_table_yn = 'Y' ");
+		}else if (size_table != null && size_table.equals("N")) {
+			where_query.append("        AND   i.size_table_yn = 'N' ");
+		}
+		
+		String size_link = (String) param.get("size_link");
+		if (size_link != null && size_link.equals("Y")) {
+			where_query.append("        AND   i.link_yn = 'Y' ");
+		}else if (size_link != null && size_link.equals("N")) {
+			where_query.append("        AND   i.link_yn = 'N' ");
 		}
 
 		String start_price = (String) param.get("start_price");

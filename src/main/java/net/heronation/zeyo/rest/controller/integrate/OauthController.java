@@ -21,6 +21,7 @@ import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.repository.ip_temp_info.IpTempInfo;
 import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;
 import net.heronation.zeyo.rest.service.integrate.common.IntegrateCommonService;
+import net.heronation.zeyo.rest.service.integrate.kakao.KakaoService;
 import net.heronation.zeyo.rest.service.integrate.naver.NaverService;
 
 @Slf4j
@@ -30,6 +31,9 @@ public class OauthController extends BaseController {
 
 	@Autowired
 	private NaverService naverService;
+	
+	@Autowired
+	private KakaoService kakaoService;
 	
 	@Autowired
 	private Cafe24Service cafe24Service;
@@ -89,12 +93,41 @@ public class OauthController extends BaseController {
 		
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/kakao/callback")
-	@ResponseBody
-	public ResponseEntity<ResultDto> kakao_callback(@RequestParam(value = "code", required = false) String code) {
+	@RequestMapping(method = RequestMethod.GET, value = "/kakao/callback") 
+	public String kakao_callback(
+			@RequestParam(value = "code", required = false) String code,
+			@RequestParam(value = "state", required = false) String state,
+			@RequestParam(value = "error", required = false) String error
+			) {
 		log.debug("/kakao/callback");
+		log.debug("code ");
 		log.debug(code);
-		return return_success(code);
+		log.debug("state ");
+		log.debug(state);
+		log.debug("error ");
+		log.debug(error);
+		
+		
+		
+		
+		try {
+			
+			kakaoService.update_oauth_code_and_get_access_token(code, state);
+			IpTempInfo iti = integrateCommonService.getIpTempInfo(state);
+			
+			if(iti == null) {
+				return "redirect:https://www.zeyo.co.kr/zeyo_app/error";	
+			}else {
+				return "redirect:https://www.zeyo.co.kr/zeyo_app/main?shop_type=".concat(iti.getShopType()).concat("&shop_id=".concat(iti.getShopId()).concat("&product_id=".concat(iti.getProductId())));	
+			}
+			
+				
+			
+		} catch (CommonException e) {
+			e.printStackTrace();
+			return "redirect:https://www.zeyo.co.kr/zeyo_app/error";
+		}
+		 
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/naver/callback") 
@@ -102,8 +135,7 @@ public class OauthController extends BaseController {
 			@RequestParam(value = "code", required = false) String code,
 			@RequestParam(value = "state", required = false) String state,
 			@RequestParam(value = "error", required = false) String error,
-			@RequestParam(value = "error_description", required = false) String error_description ,
-			HttpSession session
+			@RequestParam(value = "error_description", required = false) String error_description 
 			) {
 		// 세션을 사용하지 않는다. 세션은 메모리에 부담을 너무 준다.. 그래서 데이터베이스를 사용한다. 
 		log.debug("/naver/callback");
@@ -114,9 +146,7 @@ public class OauthController extends BaseController {
 		log.debug("error ");
 		log.debug(error);
 		log.debug("error_description");
-		log.debug(error_description);
-		log.debug("session.getId()");
-		log.debug(session.getId());
+		log.debug(error_description); 
 		
 //		      : /naver/callback
 //		      : code 
@@ -136,7 +166,13 @@ public class OauthController extends BaseController {
 				naverService.update_oauth_code_and_get_access_token(code, state,state);
 				IpTempInfo iti = integrateCommonService.getIpTempInfo(state);
 				
-				return "redirect:https://www.zeyo.co.kr/zeyo_app/main?shop_type=".concat(iti.getShopType()).concat("&shop_id=".concat(iti.getShopId()).concat("&product_id=".concat(iti.getProductId())));	
+				if(iti == null) {
+					return "redirect:https://www.zeyo.co.kr/zeyo_app/error";	
+				}else {
+					return "redirect:https://www.zeyo.co.kr/zeyo_app/main?shop_type=".concat(iti.getShopType()).concat("&shop_id=".concat(iti.getShopId()).concat("&product_id=".concat(iti.getProductId())));	
+				}
+				
+					
 				
 			} catch (CommonException e) {
 				e.printStackTrace();

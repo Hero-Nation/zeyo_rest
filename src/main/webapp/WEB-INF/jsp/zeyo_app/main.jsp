@@ -39,7 +39,9 @@
 		
 
 		<div class="contLy">
+		<!-- 
 			<a href="javascript:void(0);" class="closeLy"><img src="https://www.zeyo.co.kr/static/zeyo_app/images/common/popup-close.png" alt="팝업 닫기"></a>
+		-->
 			
 			<p class="text_type01 mt40">
 				알려드립니다.<br /><br />

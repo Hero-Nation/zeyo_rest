@@ -56,7 +56,7 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 	public boolean haveIpSession(String user_ip, String shop_type, String shop_id, String product_id) {
 		QConsumer qc = QConsumer.consumer;
 
-		Consumer c = consumerRepository.findOne(qc.now_ip.eq(user_ip)
+		Consumer c = consumerRepository.findOne(qc.session.eq(user_ip)
 				.and(qc.lastAccessDt.after(DateTime.now().minusMinutes(30))).and(qc.useYn.eq("Y")));
 
 		if (c == null) {
@@ -71,7 +71,7 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 				imi.setProductId(product_id);
 				imi.setShopType(shop_type);
 				imi.setShopId(shop_id);
-
+				imi.setCreateDt(new DateTime());
 				ipTempInfoRepository.save(imi);
 			} else {
 				this_iti.setIp(user_ip);
@@ -84,12 +84,7 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 		} else {
 			// 세션이 살아있는 상황이라면..
 
-			if (shop_type == null)
-				c.setNow_shop_type(shop_type);
-			if (shop_id == null)
-				c.setNow_shop_id(shop_type);
-			if (product_id == null)
-				c.setNow_product_id(product_id);
+ 
 			c.setLastAccessDt(new DateTime());
 			return true;
 		}
@@ -101,7 +96,7 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 	public boolean haveIpSession(String user_ip) {
 		QConsumer qc = QConsumer.consumer;
 
-		Consumer c = consumerRepository.findOne(qc.now_ip.eq(user_ip)
+		Consumer c = consumerRepository.findOne(qc.session.eq(user_ip)
 				.and(qc.lastAccessDt.after(DateTime.now().minusMinutes(30))).and(qc.useYn.eq("Y")));
 
 		if (c == null) {

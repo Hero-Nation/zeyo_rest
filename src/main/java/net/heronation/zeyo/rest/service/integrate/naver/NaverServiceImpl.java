@@ -211,9 +211,8 @@ public class NaverServiceImpl implements NaverService {
 					this_consumer.setAccessToken(result.getAccess_token());
 					this_consumer.setRefreshToken(result.getRefresh_token());
 					this_consumer.setOauthCode(p_auth_code);
-					this_consumer.setOauthId(state);
-					this_consumer.setLastAccessDt(new DateTime()); 
-					this_consumer.setNow_ip(session_id);
+					this_consumer.setSession(state);
+					this_consumer.setLastAccessDt(new DateTime());  
 				}else {
 					Consumer this_consumer = new Consumer();
 					this_consumer.setAccessToken(result.getAccess_token());
@@ -222,10 +221,9 @@ public class NaverServiceImpl implements NaverService {
 					this_consumer.setCreateDt(new DateTime());
 					this_consumer.setLastAccessDt(new DateTime());
 					this_consumer.setOauthCode(p_auth_code);
-					this_consumer.setOauthId(state);
+					this_consumer.setSession(state);
 					this_consumer.setRefreshToken(result.getRefresh_token());
-					this_consumer.setUseYn("Y"); 
-					this_consumer.setNow_ip(session_id);
+					this_consumer.setUseYn("Y");  
 					
 					consumerRepository.save(this_consumer);
 				}
