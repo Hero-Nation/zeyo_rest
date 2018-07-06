@@ -24,6 +24,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.value.NameDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.QBrand;
 import net.heronation.zeyo.rest.repository.item.QItem;
 import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
@@ -57,7 +58,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from ( ");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
@@ -168,7 +169,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table   ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -234,7 +235,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from  ( ");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT s.id             AS shopmall_id, ");
@@ -250,7 +251,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		where_query.append("                 AND ism.use_yn = 'Y' ");
 		where_query.append("       LEFT JOIN item i ");
 		where_query.append("              ON ism.item_id = i.id ");
-		where_query.append("                 AND i.use_yn = 'Y' ");
+		where_query.append("                 AND i.use_yn = 'Y'   AND i.link_yn = 'Y'   ");
 		where_query.append(" WHERE  s.use_yn = 'Y' ");
 
 		String member_id = (String) param.get("member_id");
@@ -296,7 +297,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table       ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -417,9 +418,18 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
-				target.setName(param.getName());
+				
+				List<Brand> list = shopmallRepository.findByName(param.getName());
+				
+				if(list.size() > 0) {
+					R.put("CODE", "D");
+				}else {
+					target.setName(param.getName());
 
-				R.put("CODE", "OK");
+					R.put("CODE", "OK");
+				}
+				
+
 
 			} else {
 				// Brand count in use is more than 1.
@@ -433,14 +443,14 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete( List<String> param, Long member_seq) {
+	public Map<String, Object> delete( List<ToggleDto> param, Long member_seq) {
 
   
 		Map<String, Object> R = new HashMap<String, Object>();
 		
-		for(String id : param) {
+		for(ToggleDto id : param) {
 
-			Shopmall target = shopmallRepository.findOne(Long.valueOf(id));
+			Shopmall target = shopmallRepository.findOne(id.getId());
 			Member user = memberRepository.findOne(member_seq);
 
 			if (target == null || target.getUseYn().equals("N")) {
@@ -452,7 +462,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 				// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
-				BigInteger use_count = this.get_shopmall_use_count_of_member(Long.valueOf(id));
+				BigInteger use_count = this.get_shopmall_use_count_of_member(id.getId());
 
 				if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
@@ -721,7 +731,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from ( ");
 
 		StringBuffer select_query = new StringBuffer();   
 		select_query.append("SELECT ");
@@ -765,7 +775,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table    ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();

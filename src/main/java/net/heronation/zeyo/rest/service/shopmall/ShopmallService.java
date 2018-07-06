@@ -19,7 +19,7 @@ public interface ShopmallService {
 
 	Map<String, Object> update_name(ShopmallDto param, Long member_seq);
 
-	Map<String, Object> delete( List<String> param, Long member_seq);
+	Map<String, Object> delete( List<ToggleDto> param, Long member_seq);
 
 	Map<String, Object> toggle_link(List<ToggleDto>  param, Long member_seq);
 

@@ -178,7 +178,7 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
 	public ResponseEntity<ResultDto> delete(
-			@RequestBody List<String> param,
+			@RequestBody List<ToggleDto> param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("delete");
 		

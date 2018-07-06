@@ -165,7 +165,8 @@ public class BrandServiceImpl implements BrandService {
 			where_query.append("        AND b.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
-		where_query.append(" GROUP BY  m.id , b.id , s.id ");
+		StringBuffer group_query = new StringBuffer();
+		group_query.append(" GROUP BY  m.id , b.id , s.id ");
 
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY b.");
@@ -185,7 +186,7 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -197,7 +198,7 @@ public class BrandServiceImpl implements BrandService {
 		
 		
 		Query q = entityManager
-				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
@@ -255,29 +256,21 @@ public class BrandServiceImpl implements BrandService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from (");
 
 		StringBuffer select_query = new StringBuffer(); 
 		select_query.append("SELECT ");
 		select_query.append("    b.id, ");
 		select_query.append("    b.name, ");
 		select_query.append("    b.create_dt, ");
-		select_query.append("    IFNULL((SELECT ");
-		select_query.append("                    COUNT(*) AS use_count ");
-		select_query.append("                FROM ");
-		select_query.append("                    item si ");
-		select_query.append("                WHERE ");
-		select_query.append("                    si.use_yn = 'Y' AND si.link_yn = 'Y' ");
-		select_query.append("                        AND si.brand_id = b.id ");
-		select_query.append("                GROUP BY si.brand_id), ");
-		select_query.append("            0) AS link_count ");
+		select_query.append("       Count(i.link_yn) AS link_count ");
 
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");
 		where_query.append("    brand b ");
 		where_query.append("        LEFT JOIN ");
-		where_query.append("    item i ON b.id = i.brand_id AND i.use_yn = 'Y' ");
+		where_query.append("    item i ON b.id = i.brand_id AND i.use_yn = 'Y'  AND i.link_yn = 'Y'  ");
 		where_query.append(" WHERE ");
 		where_query.append("    b.use_yn = 'Y' ");
  
@@ -301,7 +294,8 @@ public class BrandServiceImpl implements BrandService {
 			where_query.append("        AND b.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
-		where_query.append(" GROUP BY b.id");
+		StringBuffer group_query = new StringBuffer();
+		group_query.append(" GROUP BY b.id"); 
 
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY b.");
@@ -322,7 +316,7 @@ public class BrandServiceImpl implements BrandService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -333,7 +327,7 @@ public class BrandServiceImpl implements BrandService {
 		}
 
 		Query q = entityManager
-				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
@@ -474,14 +468,14 @@ public class BrandServiceImpl implements BrandService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete( List<String> param, Long member_seq) {
+	public Map<String, Object> delete( List<ToggleDto> param, Long member_seq) {
 		log.debug("delete");
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		
-		for(String id : param) {
+		for(ToggleDto id : param) {
 
-			Brand target = brandRepository.findOne(Long.valueOf(id));
+			Brand target = brandRepository.findOne(id.getId());
 			Member user = memberRepository.findOne(member_seq);
 
 			if (target == null || target.getUseYn().equals("N")) {
@@ -493,7 +487,7 @@ public class BrandServiceImpl implements BrandService {
 
 				// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
 
-				BigInteger use_count = this.get_brand_use_count_of_member(Long.valueOf(id));
+				BigInteger use_count = this.get_brand_use_count_of_member(id.getId());
 
 				if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
@@ -541,9 +535,17 @@ public class BrandServiceImpl implements BrandService {
 
 			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
-				target.setName(param.getName());
-				brandRepository.save(target);
-				R.put("CODE", "OK");
+				
+				List<Brand> list = brandRepository.findByName(param.getName());
+				
+				if(list.size() > 0) {
+					R.put("CODE", "D");
+				}else {
+					target.setName(param.getName()); 
+					R.put("CODE", "OK");	
+				}
+				
+				
 
 			} else {
 				// Brand count in use is more than 1.

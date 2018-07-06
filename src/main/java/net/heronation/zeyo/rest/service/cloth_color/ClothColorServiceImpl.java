@@ -47,7 +47,7 @@ public class ClothColorServiceImpl implements ClothColorService {
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from (   ");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
@@ -108,7 +108,7 @@ public class ClothColorServiceImpl implements ClothColorService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table    ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();

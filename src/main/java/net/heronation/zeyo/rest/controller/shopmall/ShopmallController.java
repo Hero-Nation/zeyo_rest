@@ -111,7 +111,7 @@ public class ShopmallController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultDto> delete(
 
-			@RequestBody List<String>  param,
+			@RequestBody List<ToggleDto>  param,
 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		

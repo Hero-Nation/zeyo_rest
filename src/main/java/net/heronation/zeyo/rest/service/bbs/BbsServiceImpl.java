@@ -67,7 +67,7 @@ public class BbsServiceImpl implements BbsService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from (");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
@@ -138,7 +138,7 @@ public class BbsServiceImpl implements BbsService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table   ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -215,7 +215,7 @@ public class BbsServiceImpl implements BbsService {
 
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
-		count_query.append("    count(*) ");
+		count_query.append("    count(*) from ( ");
 
 		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
@@ -249,7 +249,8 @@ public class BbsServiceImpl implements BbsService {
 		Long member_id = (Long) param.get("member_id");
 		where_query.append("  and  b.member_id = " + member_id);
 
-		where_query.append(" GROUP BY b.id");
+		StringBuffer group_query = new StringBuffer();
+		group_query.append(" GROUP BY b.id");
 
 		StringBuffer sort_query = new StringBuffer();
 		sort_query.append("  ORDER BY b.");
@@ -269,7 +270,7 @@ public class BbsServiceImpl implements BbsService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(where_query).toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append("  ) count_table     ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 		
 		List<BigInteger> count_result = count_q.getResultList();
@@ -280,7 +281,7 @@ public class BbsServiceImpl implements BbsService {
 		}
 
 		Query q = entityManager
-				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
