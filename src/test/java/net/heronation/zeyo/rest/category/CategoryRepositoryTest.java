@@ -43,7 +43,7 @@ public class CategoryRepositoryTest {
 
 		QConsumer qc = QConsumer.consumer;
 
-		Consumer c = consumerRepository.findOne(qc.now_ip.eq("1gobvtb33s9gs8g7snaog9i13p")
+		Consumer c = consumerRepository.findOne(qc.session.eq("1gobvtb33s9gs8g7snaog9i13p")
 				.and(qc.lastAccessDt.after(DateTime.now().minusMinutes(30))).and(qc.useYn.eq("Y")));
 
 		if (c == null) {
