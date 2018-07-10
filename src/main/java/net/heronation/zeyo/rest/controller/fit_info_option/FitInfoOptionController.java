@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOptionResourceAssembler;
 import net.heronation.zeyo.rest.service.fit_info_option.FitInfoOptionService;

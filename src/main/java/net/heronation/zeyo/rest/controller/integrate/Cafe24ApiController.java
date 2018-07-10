@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.ResultDto;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.category.CategoryRepository;
 import net.heronation.zeyo.rest.repository.category.CategoryResourceAssembler;
 import net.heronation.zeyo.rest.service.integrate.cafe24.Cafe24Service;

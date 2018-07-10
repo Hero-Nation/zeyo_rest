@@ -20,10 +20,10 @@ import org.springframework.web.client.RestTemplate;
 import com.querydsl.core.types.Predicate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.NameDto;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.dto.NameDto;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.madein.Madein;

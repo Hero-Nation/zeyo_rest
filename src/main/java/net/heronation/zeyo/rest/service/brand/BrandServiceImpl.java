@@ -21,9 +21,9 @@ import org.springframework.web.client.RestTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.NameDto;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.NameDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.brand.BrandRepository;
 import net.heronation.zeyo.rest.repository.brand.QBrand;

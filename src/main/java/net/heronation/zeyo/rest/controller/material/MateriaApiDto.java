@@ -3,7 +3,7 @@ package net.heronation.zeyo.rest.controller.material;
 import org.joda.time.DateTime;
 
 import lombok.Data;
-import net.heronation.zeyo.rest.common.value.FileDto;
+import net.heronation.zeyo.rest.common.dto.FileDto;
 import net.heronation.zeyo.rest.repository.material.Material;
 
 @Data

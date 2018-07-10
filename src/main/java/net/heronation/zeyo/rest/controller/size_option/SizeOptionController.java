@@ -26,9 +26,9 @@ import com.querydsl.core.BooleanBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.ResultDto;
-import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.common.constants.Format;
 import net.heronation.zeyo.rest.repository.size_option.QSizeOption;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionDto;
 import net.heronation.zeyo.rest.repository.size_option.SizeOptionRepository;

@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.dto.NameDto;
 
 public interface CategoryService {
 	Map<String, Object> search(Map<String, Object> where, Pageable page);

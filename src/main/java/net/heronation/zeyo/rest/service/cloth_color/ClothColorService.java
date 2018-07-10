@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
 import net.heronation.zeyo.rest.repository.cloth_color.ClothColorDto;
 
 public interface ClothColorService {

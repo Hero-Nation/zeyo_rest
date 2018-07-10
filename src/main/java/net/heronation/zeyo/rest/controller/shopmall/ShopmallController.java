@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.NameDto;
-import net.heronation.zeyo.rest.common.value.ResultDto;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
-import net.heronation.zeyo.rest.constants.CommonConstants;
-import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.common.dto.NameDto;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.constants.Format;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallDto;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallRepository;
 import net.heronation.zeyo.rest.repository.shopmall.ShopmallResourceAssembler;

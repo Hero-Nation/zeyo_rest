@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.Predicate;
 
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.NameDto;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.dto.NameDto;
 
 public interface MadeinService {
 

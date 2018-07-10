@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.types.Predicate;
 
-import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoUpdateDto;
 

@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;

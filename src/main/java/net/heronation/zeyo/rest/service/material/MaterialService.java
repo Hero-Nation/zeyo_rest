@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
-import net.heronation.zeyo.rest.common.value.LIdDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
 import net.heronation.zeyo.rest.controller.material.MateriaApiDto;
 
 public interface MaterialService {

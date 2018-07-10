@@ -33,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.AccessTokenByOauthCode;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Product;
 import net.heronation.zeyo.rest.controller.integrate.cafe24.dto.Products;

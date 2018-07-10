@@ -1,4 +1,4 @@
-package net.heronation.zeyo.rest.constants;
+package net.heronation.zeyo.rest.common.constants;
 
 public class CommonConstants {
 

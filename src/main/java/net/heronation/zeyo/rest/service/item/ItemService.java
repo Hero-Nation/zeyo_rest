@@ -7,8 +7,8 @@ import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
 import net.heronation.zeyo.rest.controller.item.ItemImageUploadDto;
 import net.heronation.zeyo.rest.controller.item.ItemSizeMeasureImageUploadDto;
 import net.heronation.zeyo.rest.repository.item.Item;

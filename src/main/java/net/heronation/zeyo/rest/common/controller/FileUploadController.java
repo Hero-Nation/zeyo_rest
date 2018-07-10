@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.FileBase64Dto;
-import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.dto.FileBase64Dto;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
 
 @Controller
 @Slf4j

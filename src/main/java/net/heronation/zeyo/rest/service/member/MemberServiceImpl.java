@@ -31,9 +31,9 @@ import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
-import net.heronation.zeyo.rest.common.value.FlagDto;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.dto.FlagDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.CpNoUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;

@@ -3,8 +3,8 @@ package net.heronation.zeyo.rest.common.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import net.heronation.zeyo.rest.common.value.ResultDto;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 
 public class BaseController {
 

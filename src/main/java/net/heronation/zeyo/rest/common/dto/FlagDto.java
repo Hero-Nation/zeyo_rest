@@ -1,4 +1,4 @@
-package net.heronation.zeyo.rest.common.value;
+package net.heronation.zeyo.rest.common.dto;
 
 import lombok.Data;
 

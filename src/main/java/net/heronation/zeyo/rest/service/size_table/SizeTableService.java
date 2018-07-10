@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
 import net.heronation.zeyo.rest.repository.size_table.SizeTable;
 import net.heronation.zeyo.rest.repository.size_table.SizeTableDto;
 

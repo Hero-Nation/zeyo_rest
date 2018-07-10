@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
 
 @Slf4j 
 @RestControllerAdvice

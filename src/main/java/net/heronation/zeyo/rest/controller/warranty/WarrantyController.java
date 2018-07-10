@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.LIdDto;
-import net.heronation.zeyo.rest.common.value.ResultDto;
-import net.heronation.zeyo.rest.constants.Format;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.LIdDto;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.common.constants.Format;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
 import net.heronation.zeyo.rest.repository.warranty.WarrantyResourceAssembler;
 import net.heronation.zeyo.rest.service.warranty.WarrantyService; 

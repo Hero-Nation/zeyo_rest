@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import net.heronation.zeyo.rest.common.value.IdNameDto;
-import net.heronation.zeyo.rest.common.value.NameDto;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.common.dto.IdNameDto;
+import net.heronation.zeyo.rest.common.dto.NameDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 
 public interface BrandService {

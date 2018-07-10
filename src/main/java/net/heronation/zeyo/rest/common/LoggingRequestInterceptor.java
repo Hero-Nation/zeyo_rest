@@ -11,10 +11,12 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
 
-	final static Logger log = LoggerFactory.getLogger(LoggingRequestInterceptor.class);
-
+ 
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {

@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.util.CommandLine;
-import net.heronation.zeyo.rest.common.value.ToggleDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
 import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
 import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;

@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.util.CommandLine;
-import net.heronation.zeyo.rest.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.bbs.UpdateStatusDto;
 import net.heronation.zeyo.rest.repository.bbs.Bbs;
 import net.heronation.zeyo.rest.repository.bbs.BbsClientInsertDto;

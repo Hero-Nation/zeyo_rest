@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.heronation.zeyo.rest.common.value.FileDto;
+import net.heronation.zeyo.rest.common.dto.FileDto;
 import net.heronation.zeyo.rest.controller.item.ItemModifyDtoDeserializer;
 import net.heronation.zeyo.rest.repository.brand.Brand;
 import net.heronation.zeyo.rest.repository.category.Category;

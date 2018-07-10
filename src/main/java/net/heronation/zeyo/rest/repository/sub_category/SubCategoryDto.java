@@ -5,8 +5,8 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import lombok.Data;
-import net.heronation.zeyo.rest.common.value.FileDto;
-import net.heronation.zeyo.rest.common.value.LIdMapIdDto;
+import net.heronation.zeyo.rest.common.dto.FileDto;
+import net.heronation.zeyo.rest.common.dto.LIdMapIdDto;
 
 @Data
 public class SubCategoryDto {
