@@ -16,20 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
@@ -41,7 +32,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.FlagDto;
-import net.heronation.zeyo.rest.common.value.ResultDto;
 import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
@@ -54,7 +44,6 @@ import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidation;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidationRepository;
 import net.heronation.zeyo.rest.repository.email_validation.QEmailValidation;
-import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
@@ -70,7 +59,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberRepository memberRepository;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -79,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	EntityManager entityManager;
- 
+
 	@Autowired
 	private CompanyNoHistoryRepository companyNoHistoryRepository;
 
@@ -240,15 +229,18 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY m.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY m.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -257,16 +249,16 @@ public class MemberServiceImpl implements MemberService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table  ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append("  ) count_table  ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -346,7 +338,7 @@ public class MemberServiceImpl implements MemberService {
 
 		Map<String, Object> search_R = new HashMap<String, Object>();
 
-		//search_R.put("member_id", R.get(m.memberId));
+		// search_R.put("member_id", R.get(m.memberId));
 		search_R.put("member_name", R.get(m.name));
 		search_R.put("member_phone", R.get(m.phone));
 		search_R.put("member_email", R.get(m.email));
@@ -364,12 +356,11 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Map<String, Object>  getUserBizInfo(Map<String, Object> param) {
- 
-		
-		String member_id = (String)param.get("member_id");
- 
-		StringBuffer select_query = new StringBuffer(); 
+	public Map<String, Object> getUserBizInfo(Map<String, Object> param) {
+
+		String member_id = (String) param.get("member_id");
+
+		StringBuffer select_query = new StringBuffer();
 		select_query.append(" SELECT Count(DISTINCT i.id) AS item_count, ");
 		select_query.append("       Count(DISTINCT s.id) AS shopmall_count, ");
 		select_query.append("       Count(DISTINCT b.id) AS brand_count ");
@@ -384,24 +375,21 @@ public class MemberServiceImpl implements MemberService {
 		select_query.append("              ON i.brand_id = b.id ");
 		select_query.append("                 AND b.use_yn = 'Y' ");
 		select_query.append(" WHERE  i.use_yn = 'Y' ");
-		select_query.append("       AND i.member_id = "+member_id);
- 
- 
+		select_query.append("       AND i.member_id = " + member_id);
+
 		Query q = entityManager.createNativeQuery(select_query.toString());
 		List<Object[]> list = q.getResultList();
 
-
 		Map<String, Object> R = new HashMap<String, Object>();
- 
-		for (Object[] row : list) { 
+
+		for (Object[] row : list) {
 
 			R.put("item_count", row[0]);
 			R.put("shopmall_count", row[1]);
-			R.put("brand_count", row[2]); 
- 
+			R.put("brand_count", row[2]);
+
 		}
-  
- 
+
 		return R;
 
 	}
@@ -421,18 +409,18 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public String update_email(EmailUpdateVO param, Long member_seq) {
 		Member user = memberRepository.findOne(member_seq);
-		
+
 		QEmailValidation target = QEmailValidation.emailValidation;
 
 		EmailValidation db_v = emailValidationRepository.findOne(target.email.eq(param.getEmail()));
-		
+
 		if (param.getConfirm_no().trim().equals(db_v.getOtp().trim())) {
-			
+
 			user.setEmail(param.getEmail());
 			return CommonConstants.SUCCESS;
-			
+
 		} else {
-			
+
 			return CommonConstants.FAIL;
 		}
 
@@ -444,14 +432,12 @@ public class MemberServiceImpl implements MemberService {
 
 		Member user = memberRepository.findOne(member_seq);
 
-		
-		
 		if (passwordEncoder.matches(old_pw, user.getPassword())) {
 			user.setPassword(passwordEncoder.encode(new_pw));
 			return CommonConstants.SUCCESS;
 		} else if (old_pw.equals(new_pw)) {
 			return "old.new.same";
-		}else {
+		} else {
 			return "old.pw.not.equal";
 		}
 
@@ -465,7 +451,7 @@ public class MemberServiceImpl implements MemberService {
 		Member user = memberRepository.findOne(member_seq);
 
 		CompanyNoHistory last = list.get(list.size() - 1);
-		//last.setBeforeNo(param.getCp_no());
+		// last.setBeforeNo(param.getCp_no());
 
 		CompanyNoHistory new_record = new CompanyNoHistory();
 		new_record.setBeforeNo(last.getCompanyNo());
@@ -489,7 +475,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	
+
 	public Member update_mng_phone(String mng_phone, Long member_seq) {
 		Member user = memberRepository.findOne(member_seq);
 		user.setManagerPhone(mng_phone);
@@ -503,8 +489,7 @@ public class MemberServiceImpl implements MemberService {
 
 		// 이미 이메일이 존재하는지 여부 ..>>> 여러번 보낼수 있다고 가정
 
-		String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
-	 
+		String ri = String.format("%06d", RandomUtils.nextInt(0, 999999));
 
 		QEmailValidation target = QEmailValidation.emailValidation;
 
@@ -515,15 +500,13 @@ public class MemberServiceImpl implements MemberService {
 			db_v.setOtp(ri);
 			// db_v.set
 		} else {
-			
+
 			db_v = new EmailValidation();
 			db_v.setEmail(email);
 			db_v.setCreateDt(new DateTime());
-			db_v.setOtp(ri);			
+			db_v.setOtp(ri);
 			emailValidationRepository.save(db_v);
 		}
-
-
 
 		// 임시 패스워드 이메일 발송
 
@@ -531,9 +514,9 @@ public class MemberServiceImpl implements MemberService {
 		message.setFrom("help@heronation.net");
 		message.setTo(db_v.getEmail());
 		message.setSubject("히어로네이션 이메일 변경 인증 메일입니다.");
-		message.setText("인증 번호는 '"+ri+"' 입니다.");
+		message.setText("인증 번호는 '" + ri + "' 입니다.");
 		emailSender.send(message);
-		
+
 		return CommonConstants.COMPLETE;
 	}
 
@@ -560,23 +543,20 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> my_brand(Map<String, Object> param, Pageable page) {
-		
-		
-		
+
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) from ( ");
-		  
+
 		StringBuffer select_query = new StringBuffer();
 		select_query.append(" SELECT b.name as brand_name, ");
 		select_query.append("       s.name as shopmall_name , ");
 		select_query.append("       Count(DISTINCT i.id) AS item_count ");
 
-
 		String member_id = (String) param.get("member_id");
-		
+
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM   item_shopmall_map ism ");
 		where_query.append("       LEFT JOIN item i ");
@@ -589,20 +569,23 @@ public class MemberServiceImpl implements MemberService {
 		where_query.append("              ON i.brand_id = b.id ");
 		where_query.append("                 AND b.use_yn = 'Y' ");
 		where_query.append(" WHERE  ism.use_yn = 'Y' ");
-		where_query.append("   AND  i.member_id =  "+member_id);
+		where_query.append("   AND  i.member_id =  " + member_id);
 		where_query.append(" GROUP  BY b.id, ");
 		where_query.append("          s.id");
- 
+
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY i.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY i.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -611,16 +594,16 @@ public class MemberServiceImpl implements MemberService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table   ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table   ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -629,11 +612,11 @@ public class MemberServiceImpl implements MemberService {
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
 		for (Object[] row : list) {
-			Map<String, Object> search_R = new HashMap<String, Object>(); 
+			Map<String, Object> search_R = new HashMap<String, Object>();
 
 			search_R.put("brand_name", row[0]);
 			search_R.put("shopmall_name", row[1]);
-			search_R.put("item_count", row[2]); 
+			search_R.put("item_count", row[2]);
 
 			return_list.add(search_R);
 		}
@@ -641,7 +624,6 @@ public class MemberServiceImpl implements MemberService {
 		int totalPages = (count_list.intValue() / page.getPageSize());
 		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
-
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
@@ -651,25 +633,24 @@ public class MemberServiceImpl implements MemberService {
 		R.put("size", return_list.size());
 
 		return R;
- 
+
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> my_shopmall(Map<String, Object> param, Pageable page) {
-		
+
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) from ( ");
-		  
+
 		StringBuffer select_query = new StringBuffer();
 		select_query.append(" SELECT b.name as brand_name, ");
 		select_query.append("       s.name as shopmall_name , ");
 		select_query.append("       Count(DISTINCT i.id) AS item_count ");
 
-
 		String member_id = (String) param.get("member_id");
-		
+
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM   item_shopmall_map ism ");
 		where_query.append("       LEFT JOIN item i ");
@@ -682,20 +663,23 @@ public class MemberServiceImpl implements MemberService {
 		where_query.append("              ON i.brand_id = b.id ");
 		where_query.append("                 AND b.use_yn = 'Y' ");
 		where_query.append(" WHERE  ism.use_yn = 'Y' ");
-		where_query.append("   AND  i.member_id =  "+member_id);
+		where_query.append("   AND  i.member_id =  " + member_id);
 		where_query.append(" GROUP  BY s.id, ");
 		where_query.append("          b.id");
- 
+
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY i.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY i.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -704,16 +688,16 @@ public class MemberServiceImpl implements MemberService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table    ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table    ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -722,11 +706,11 @@ public class MemberServiceImpl implements MemberService {
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
 		for (Object[] row : list) {
-			Map<String, Object> search_R = new HashMap<String, Object>(); 
+			Map<String, Object> search_R = new HashMap<String, Object>();
 
 			search_R.put("brand_name", row[0]);
 			search_R.put("shopmall_name", row[1]);
-			search_R.put("item_count", row[2]); 
+			search_R.put("item_count", row[2]);
 
 			return_list.add(search_R);
 		}
@@ -743,11 +727,11 @@ public class MemberServiceImpl implements MemberService {
 		R.put("size", return_list.size());
 
 		return R;
- 
+
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> my_item(Map<String, Object> where, Pageable page) {
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -758,8 +742,7 @@ public class MemberServiceImpl implements MemberService {
 		select_query.append("       s.name AS shopmall_name, ");
 		select_query.append("       b.name AS brand_name ");
 
- 
-		StringBuffer where_query = new StringBuffer(); 
+		StringBuffer where_query = new StringBuffer();
 
 		where_query.append(" FROM   item i ");
 		where_query.append("       LEFT JOIN item_shopmall_map ism ");
@@ -775,19 +758,22 @@ public class MemberServiceImpl implements MemberService {
 
 		String member_id = (String) where.get("member_id");
 		if (member_id != null) {
-			where_query.append("   AND i.member_id = "+member_id); 
+			where_query.append("   AND i.member_id = " + member_id);
 		}
- 
+
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY i.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+
+			sort_query.append("  ORDER BY i.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -796,16 +782,16 @@ public class MemberServiceImpl implements MemberService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -816,18 +802,17 @@ public class MemberServiceImpl implements MemberService {
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
 
-//		      "shopmall_name" : "heronation cafe24",
-//		      "item_name" : "베이비파우더NT",
-//		      "brand_name" : "IMPORT_DEFAULT"
-			
-//			select_query.append("SELECT i.name AS item_name, ");
-//			select_query.append("       s.name AS shopmall_name, ");
-//			select_query.append("       b.name AS brand_name ");
-			
-			
+			// "shopmall_name" : "heronation cafe24",
+			// "item_name" : "베이비파우더NT",
+			// "brand_name" : "IMPORT_DEFAULT"
+
+			// select_query.append("SELECT i.name AS item_name, ");
+			// select_query.append(" s.name AS shopmall_name, ");
+			// select_query.append(" b.name AS brand_name ");
+
 			search_R.put("item_name", row[0]);
 			search_R.put("shopmall_name", row[1]);
-			search_R.put("brand_name", row[2]); 
+			search_R.put("brand_name", row[2]);
 
 			return_list.add(search_R);
 		}
@@ -842,7 +827,7 @@ public class MemberServiceImpl implements MemberService {
 		R.put("totalElements", count_list.intValue());
 		R.put("number", page.getPageNumber());
 		R.put("size", return_list.size());
- 
+
 		return R;
 	}
 
@@ -930,9 +915,9 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 
 			EmailValidation db_ev = emailValidationRepository.findOne(target.email.eq(email));
-			
-			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
-			
+
+			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999));
+
 			if (db_ev == null) {
 
 				db_ev = new EmailValidation();
@@ -950,9 +935,9 @@ public class MemberServiceImpl implements MemberService {
 				message.setFrom("help@heronation.net");
 				message.setTo(email);
 				message.setSubject("히어로네이션 임시 비밀번호 안내 메일");
-				message.setText("임시비밀번호는 '"+ri+"' 입니다.");
+				message.setText("임시비밀번호는 '" + ri + "' 입니다.");
 				emailSender.send(message);
-			}catch(Exception e) {
+			} catch (Exception e) {
 				CommonException exp = new CommonException("SENDING EMAIL ERROR");
 
 				throw exp;
@@ -1007,8 +992,8 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 
 			EmailValidation db_ev = emailValidationRepository.findOne(target.email.eq(phone));
-			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
-			
+			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999));
+
 			if (db_ev == null) {
 
 				db_ev = new EmailValidation();
@@ -1062,15 +1047,15 @@ public class MemberServiceImpl implements MemberService {
 	public String find_password(String member_id, String member_name, String member_email) {
 		QMember m = QMember.member;
 		QEmailValidation target = QEmailValidation.emailValidation;
- 
+
 		Member db_v = memberRepository
 				.findOne(m.memberId.eq(member_id).and(m.name.eq(member_name)).and(m.email.eq(member_email)));
 
 		if (db_v == null) {
 			return "member.not.exist";
 		} else {
-			
-			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
+
+			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999));
 			db_v.setPassword(passwordEncoder.encode(ri));
 
 			// 임시 패스워드 이메일 발송
@@ -1079,7 +1064,7 @@ public class MemberServiceImpl implements MemberService {
 			message.setFrom("help@heronation.net");
 			message.setTo(db_v.getEmail());
 			message.setSubject("히어로네이션 임시 비밀번호");
-			message.setText("임시비밀번호는 '"+ri+"' 입니다.");
+			message.setText("임시비밀번호는 '" + ri + "' 입니다.");
 			emailSender.send(message);
 
 			return "new.password.sended";
@@ -1107,8 +1092,7 @@ public class MemberServiceImpl implements MemberService {
 		// 이미 이메일이 존재하는지 여부 ..>>> 여러번 보낼수 있다고 가정
 
 		// 랜덤 문자열 생성 6자리
-		String ri = String.format("%06d", RandomUtils.nextInt(0, 999999)); 
-
+		String ri = String.format("%06d", RandomUtils.nextInt(0, 999999));
 
 		QEmailValidation target = QEmailValidation.emailValidation;
 
@@ -1120,12 +1104,12 @@ public class MemberServiceImpl implements MemberService {
 			db_v.setCreateDt(new DateTime());
 			// db_v.set
 		} else {
-			
+
 			EmailValidation a = new EmailValidation();
 			a.setEmail(email);
 			a.setCreateDt(new DateTime());
 			a.setOtp(ri);
-			
+
 			emailValidationRepository.save(a);
 		}
 
@@ -1134,16 +1118,13 @@ public class MemberServiceImpl implements MemberService {
 			message.setFrom("help@heronation.net");
 			message.setTo(email);
 			message.setSubject("히어로네이션 회원 가입 이메일 확인");
-			message.setText("인증번호는 '"+ri+"' 입니다.");
+			message.setText("인증번호는 '" + ri + "' 입니다.");
 			emailSender.send(message);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			CommonException exp = new CommonException("SENDING EMAIL ERROR");
 
 			throw exp;
 		}
-
-		
- 
 
 		return CommonConstants.COMPLETE;
 	}
@@ -1152,22 +1133,20 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public String admin_update(AdminUpdateDto param) throws CommonException {
 		String R = CommonConstants.OK;
-		
-		
+
 		Member db_val = memberRepository.findOne(param.getMember_id());
-		
+
 		db_val.setEmail(param.getMember_email());
 		db_val.setManager(param.getMember_manager());
 		db_val.setManagerPhone(param.getMember_manager_phone());
 		db_val.setPhone(param.getMember_phone());
-		
-		
+
 		CompanyNoHistory last = companyNoHistoryRepository.findOne(param.getCompany_id());
-		Member user = memberRepository.findOne(param.getMember_id()); 
-		
-		// 사업자 번호가 변경되면 이력을 넣어주고 변경시킨다. 
-		if(!last.getCompanyNo().equals(param.getCompany_companyNo())) { 
-			
+		Member user = memberRepository.findOne(param.getMember_id());
+
+		// 사업자 번호가 변경되면 이력을 넣어주고 변경시킨다.
+		if (!last.getCompanyNo().equals(param.getCompany_companyNo())) {
+
 			CompanyNoHistory new_cnh = new CompanyNoHistory();
 			new_cnh.setBeforeNo(last.getCompanyNo());
 			new_cnh.setChangeDt(new DateTime());
@@ -1176,17 +1155,16 @@ public class MemberServiceImpl implements MemberService {
 			new_cnh.setName(last.getName());
 			companyNoHistoryRepository.save(new_cnh);
 		}
-		
+
 		return R;
 	}
-	
-	
+
 	@Override
 	@Transactional
 	public String delete(List<ToggleDto> param, Long seq) {
 		for (ToggleDto tv : param) {
 
-			Member i = memberRepository.findOne(tv.getId()); 
+			Member i = memberRepository.findOne(tv.getId());
 			i.setUseYn("N");
 
 		}

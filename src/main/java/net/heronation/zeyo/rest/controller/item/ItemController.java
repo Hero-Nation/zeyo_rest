@@ -9,7 +9,9 @@ import javax.validation.Valid;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -84,9 +86,11 @@ public class ItemController extends BaseController {
 			@RequestParam(value = "end_price",   required = false) String end_price,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable) {
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 
-		 
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("name", name);
 		param.put("company", company);
@@ -128,9 +132,11 @@ public class ItemController extends BaseController {
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			@AuthenticationPrincipal OAuth2Authentication auth,
-			Pageable pageable) {
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 		
-		
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		
  
 //		size_table: N
@@ -142,12 +148,18 @@ public class ItemController extends BaseController {
 //		end_price: 12341
 //		start: 2018-07-01T15:00:00.000Z
 //		end: 2018-07-04T14:59:59.999Z
-		
-		
 
 		if(auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
-		} 
+		}
+		
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(), 
+					pageable.getPageSize(),
+				    Direction.DESC,
+				    sort.split(",")[0]);
+		}
+		
 		
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("name", name);  
@@ -235,8 +247,10 @@ public class ItemController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/shopmall_list")
 	@ResponseBody
 	public ResponseEntity<ResultDto> shopmall_list(
-			@RequestParam(value = "id", required = false, defaultValue = "0") Long item_id, Pageable pageable) {
-
+			@RequestParam(value = "id", required = false, defaultValue = "0") Long item_id, @RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		if (item_id == 0) {
 			return return_fail("id.empty");
 		} else {
@@ -325,9 +339,11 @@ public class ItemController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultDto> download_excel(
 			@RequestBody List<LIdDto> param,
-			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
+			@AuthenticationPrincipal OAuth2Authentication auth, @RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 
- 
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		if (param == null|| param.size() == 0) {
 			return return_fail("target.empty");
 		}else {

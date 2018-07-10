@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -65,8 +67,13 @@ public class BrandController extends BaseController {
 
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable) {
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 		log.debug("list");
+
+
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("name", name);
@@ -232,13 +239,16 @@ public class BrandController extends BaseController {
 			@RequestParam(value = "link", required = false) String link,
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable, @AuthenticationPrincipal OAuth2Authentication auth) {
 		
 		log.debug("brand_list");
 		
 		
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
 		}
 
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -269,11 +279,13 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/detail")
 	@ResponseBody
 	public ResponseEntity<ResultDto> detail(@RequestParam(value = "id", required = false) Long id,
-			@AuthenticationPrincipal OAuth2Authentication auth, Pageable pageable) {
+			@AuthenticationPrincipal OAuth2Authentication auth, @RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 		
 		log.debug("detail");
 		
-		
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
@@ -289,10 +301,12 @@ public class BrandController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/brand_company_use_list")
 	@ResponseBody
 	public ResponseEntity<ResultDto> brand_company_use_list(@AuthenticationPrincipal OAuth2Authentication auth,
-			Pageable pageable) {
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 		
 		log.debug("brand_company_use_list");
-		
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}

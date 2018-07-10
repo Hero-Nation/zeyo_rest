@@ -91,16 +91,21 @@ public class ClothColorServiceImpl implements ClothColorService {
 		where_query.append("GROUP BY  cc.id ");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY cc.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		
+		if(sort != null) {
+			sort_query.append("  ORDER BY cc.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");

@@ -74,7 +74,7 @@ import net.heronation.zeyo.rest.repository.size_table.SizeTableRepository;
 import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMapRepository;
 
 @Slf4j
-@Service 
+@Service
 public class SizeTableServiceImpl implements SizeTableService {
 
 	@Autowired
@@ -86,7 +86,6 @@ public class SizeTableServiceImpl implements SizeTableService {
 	@Autowired
 	private ItemRepository itemRepository;
 
-	
 	@Autowired
 	private FitInfoRepository fitInfoRepository;
 
@@ -98,12 +97,12 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 	@Value(value = "${zeyo.path.sizetable.image}")
 	private String path_sizetable_upload;
-	
+
 	@Autowired
 	EntityManager entityManager;
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
@@ -214,15 +213,18 @@ public class SizeTableServiceImpl implements SizeTableService {
 		}
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY i.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY i.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -231,12 +233,13 @@ public class SizeTableServiceImpl implements SizeTableService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table    ").toString()); 
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table    ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -342,7 +345,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> client_search(Map<String, Object> param, Pageable page) {
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -417,14 +420,14 @@ public class SizeTableServiceImpl implements SizeTableService {
 		String size_table = (String) param.get("size_table");
 		if (size_table != null && size_table.equals("P")) {
 			where_query.append("        AND   i.size_table_yn = 'Y' ");
-		}else if (size_table != null && size_table.equals("N")) {
+		} else if (size_table != null && size_table.equals("N")) {
 			where_query.append("        AND   i.size_table_yn = 'N' ");
 		}
-		
+
 		String size_link = (String) param.get("size_link");
 		if (size_link != null && size_link.equals("Y")) {
 			where_query.append("        AND   i.link_yn = 'Y' ");
-		}else if (size_link != null && size_link.equals("N")) {
+		} else if (size_link != null && size_link.equals("N")) {
 			where_query.append("        AND   i.link_yn = 'N' ");
 		}
 
@@ -466,12 +469,13 @@ public class SizeTableServiceImpl implements SizeTableService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("   ) count_table    ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append("   ) count_table    ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -526,8 +530,8 @@ public class SizeTableServiceImpl implements SizeTableService {
 	@Override
 	@Transactional
 	public String delete(List<ToggleDto> param, Long seq) {
-	 
-		for(ToggleDto tv : param) {
+
+		for (ToggleDto tv : param) {
 			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
@@ -535,15 +539,15 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 			QSizeTable st = QSizeTable.sizeTable;
 			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()).and(st.useYn.eq("Y")));
-			this_st.setUseYn("N");			
+			this_st.setUseYn("N");
 		}
 		return "Y";
 	}
 
 	@Override
 	@Transactional
-	public String batch_build(List<ToggleDto> param, Long seq) { 
-		for(ToggleDto tv : param) {
+	public String batch_build(List<ToggleDto> param, Long seq) {
+		for (ToggleDto tv : param) {
 			Item i = itemRepository.findOne(tv.getId());
 
 			if (!i.getMember().getId().equals(seq))
@@ -567,202 +571,197 @@ public class SizeTableServiceImpl implements SizeTableService {
 				this_st.setVisibleMeasureHowBYn("Y");
 				this_st.setVisibleMeasureTableYn("Y");
 				this_st.setVisibleNameYn("Y");
-				
+
 			} else {
 				if (tv.getValue().equals("N")) {
 					this_st.setUseYn("Y");
-				} 
+				}
 			}
- 
-		} 
 
-
+		}
 
 		return "Y";
 	}
 
 	@Autowired
 	private ItemBleachMapRepository itemBleachMapRepository;
-	
+
 	@Autowired
 	private ItemClothColorMapRepository itemClothColorMapRepository;
-	
+
 	@Autowired
 	private ItemDrycleaningMapRepository itemDrycleaningMapRepository;
-	
+
 	@Autowired
 	private ItemDrymethodMapRepository itemDrymethodMapRepository;
-	
+
 	@Autowired
 	private ItemFitInfoOptionMapRepository itemFitInfoOptionMapRepository;
-	
+
 	@Autowired
-	private ItemIroningMapRepository  itemIroningMapRepository;
-	
+	private ItemIroningMapRepository itemIroningMapRepository;
+
 	@Autowired
 	private ItemLaundryMapRepository itemLaundryMapRepository;
-	
+
 	@Autowired
 	private ItemMaterialMapRepository itemMaterialMapRepository;
-	
+
 	@Autowired
 	private ItemSizeOptionMapRepository itemSizeOptionMapRepository;
-	
-	
+
 	@Autowired
 	private ItemScmmSoValueRepository itemScmmSoValueRepository;
-	
-	
+
 	@Autowired
 	private ItemShopmallMapRepository itemShopmallMapRepository;
-	
-	
+
 	@Autowired
 	SubCategoryMeasureMapRepository subCategoryMeasureMapRepository;
-	
+
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> preview(Long item_id) {
 
-		Map<String, Object> R = new HashMap<String,Object>();
+		Map<String, Object> R = new HashMap<String, Object>();
 		Item i = itemRepository.findOne(item_id);
-		
+
 		R.put("item", i);
-		
+
 		QItemBleachMap ibm = QItemBleachMap.itemBleachMap;
-		
-		Iterable<ItemBleachMap> rimb = itemBleachMapRepository.findAll(ibm.item.id.eq(item_id).and(ibm.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemBleachMap> rimb = itemBleachMapRepository.findAll(ibm.item.id.eq(item_id).and(ibm.useYn.eq("Y")));
+
 		R.put("bleach", rimb);
-		
+
 		QItemClothColorMap iccm = QItemClothColorMap.itemClothColorMap;
-		
-		Iterable<ItemClothColorMap> riccm = itemClothColorMapRepository.findAll(iccm.item.id.eq(item_id).and(iccm.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemClothColorMap> riccm = itemClothColorMapRepository
+				.findAll(iccm.item.id.eq(item_id).and(iccm.useYn.eq("Y")));
+
 		R.put("cloth_color", riccm);
-		
+
 		QItemDrycleaningMap idcm = QItemDrycleaningMap.itemDrycleaningMap;
-		
-		Iterable<ItemDrycleaningMap> ridcm = itemDrycleaningMapRepository.findAll(idcm.item.id.eq(item_id).and(idcm.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemDrycleaningMap> ridcm = itemDrycleaningMapRepository
+				.findAll(idcm.item.id.eq(item_id).and(idcm.useYn.eq("Y")));
+
 		R.put("dry_cleaning", ridcm);
-		
+
 		QItemDrymethodMap idmm = QItemDrymethodMap.itemDrymethodMap;
-		
-		Iterable<ItemDrymethodMap> ridmm = itemDrymethodMapRepository.findAll(idmm.item.id.eq(item_id).and(idmm.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemDrymethodMap> ridmm = itemDrymethodMapRepository
+				.findAll(idmm.item.id.eq(item_id).and(idmm.useYn.eq("Y")));
+
 		R.put("dry_method", ridmm);
-		 
-		
-		
+
 		QItemFitInfoOptionMap ifop = QItemFitInfoOptionMap.itemFitInfoOptionMap;
-		
-		Iterable<ItemFitInfoOptionMap> rifop = itemFitInfoOptionMapRepository.findAll(ifop.item.id.eq(item_id).and(ifop.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemFitInfoOptionMap> rifop = itemFitInfoOptionMapRepository
+				.findAll(ifop.item.id.eq(item_id).and(ifop.useYn.eq("Y")));
+
 		R.put("user_select_fit_info_option", rifop);
-		
-		
+
 		List<Map<String, Object>> fit_infos = new ArrayList<Map<String, Object>>();
-		
-		for(ItemFitInfoOptionMap m : rifop) {
-			
+
+		for (ItemFitInfoOptionMap m : rifop) {
+
 			FitInfoOption this_option = m.getFitInfoOption();
 			FitInfo this_info = this_option.getFitInfo();
-			
-			if(this_info.getUseYn().equals("Y")) {
-				
-				Map<String, Object> fitinfo_db = new HashMap<String,Object>();
+
+			if (this_info.getUseYn().equals("Y")) {
+
+				Map<String, Object> fitinfo_db = new HashMap<String, Object>();
 				fitinfo_db.put("fit_info", this_info);
 				log.debug("-----------------------------");
 				log.debug(this_info.toString());
-				//List<FitInfoOption> fio = fitInfoOptionRepository.select_options(this_info);
+				// List<FitInfoOption> fio = fitInfoOptionRepository.select_options(this_info);
 				List<FitInfoOption> fio = fitInfoOptionRepository.findByFitInfoId(this_info.getId());
-				
-				for(FitInfoOption a : fio) {
+
+				for (FitInfoOption a : fio) {
 					log.debug(a.toString());
 				}
-				
-				
+
 				this_info.setFitInfoOptions(fio);
-				
+
 				fitinfo_db.put("fit_info_option", fio);
-				
-				fit_infos.add(fitinfo_db);	
+
+				fit_infos.add(fitinfo_db);
 			}
-			
-			
+
 		}
-		
+
 		R.put("fit_infos", fit_infos);
-		
-		
-		List<MeasureItem>  mm_list = subCategoryMeasureMapRepository.select_by_sub_cate(i.getSubCategory().getId());
-		
- 
+
+		List<MeasureItem> mm_list = subCategoryMeasureMapRepository.select_by_sub_cate(i.getSubCategory().getId());
+
 		R.put("measure_items", mm_list);
-		
-		
+
 		QItemIroningMap iim = QItemIroningMap.itemIroningMap;
-		
-		Iterable<ItemIroningMap> riim = itemIroningMapRepository.findAll(iim.item.id.eq(item_id).and(iim.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemIroningMap> riim = itemIroningMapRepository
+				.findAll(iim.item.id.eq(item_id).and(iim.useYn.eq("Y")));
+
 		R.put("ironing", riim);
-		
+
 		QItemLaundryMap ilm = QItemLaundryMap.itemLaundryMap;
-		
-		Iterable<ItemLaundryMap> rilm = itemLaundryMapRepository.findAll(ilm.item.id.eq(item_id).and(ilm.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemLaundryMap> rilm = itemLaundryMapRepository
+				.findAll(ilm.item.id.eq(item_id).and(ilm.useYn.eq("Y")));
+
 		R.put("laundry", rilm);
-		
+
 		QItemMaterialMap imm = QItemMaterialMap.itemMaterialMap;
-		
-		Iterable<ItemMaterialMap> rimm = itemMaterialMapRepository.findAll(imm.item.id.eq(item_id).and(imm.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemMaterialMap> rimm = itemMaterialMapRepository
+				.findAll(imm.item.id.eq(item_id).and(imm.useYn.eq("Y")));
+
 		R.put("material", rimm);
-		
+
 		QItemSizeOptionMap isom = QItemSizeOptionMap.itemSizeOptionMap;
-		
-		Iterable<ItemSizeOptionMap> risom = itemSizeOptionMapRepository.findAll(isom.item.id.eq(item_id).and(isom.useYn.eq("Y"))) ;
-		
+
+		Iterable<ItemSizeOptionMap> risom = itemSizeOptionMapRepository
+				.findAll(isom.item.id.eq(item_id).and(isom.useYn.eq("Y")));
+
 		R.put("size_option", risom);
-	
+
 		QItemScmmSoValue issv = QItemScmmSoValue.itemScmmSoValue;
-		
-		Iterable<ItemScmmSoValue> rissv = itemScmmSoValueRepository.findAll(issv.item.id.eq(item_id).and(issv.useYn.eq("Y"))) ;
-	
+
+		Iterable<ItemScmmSoValue> rissv = itemScmmSoValueRepository
+				.findAll(issv.item.id.eq(item_id).and(issv.useYn.eq("Y")));
+
 		R.put("sccm_so_value", rissv);
-		
-		
+
 		QItemShopmallMap ism = QItemShopmallMap.itemShopmallMap;
-		
-		Iterable<ItemShopmallMap> rism = itemShopmallMapRepository.findAll(ism.item.id.eq(item_id).and(ism.useYn.eq("Y"))) ;
- 
+
+		Iterable<ItemShopmallMap> rism = itemShopmallMapRepository
+				.findAll(ism.item.id.eq(item_id).and(ism.useYn.eq("Y")));
+
 		// 중요한 정보는 지우기
-		for(ItemShopmallMap ism_item :rism) {
-			if(ism_item.getShopmall() != null) {
+		for (ItemShopmallMap ism_item : rism) {
+			if (ism_item.getShopmall() != null) {
 				ism_item.getShopmall().setAccessToken("");
 				ism_item.getShopmall().setOauthCode("");
 				ism_item.getShopmall().setOauthID("");
 				ism_item.getShopmall().setRefreshToken("");
 			}
 		}
-		
+
 		R.put("shopmall", rism);
-		
-		
-		return  R;
+
+		return R;
 	}
 
 	@Override
 	@Transactional
-	public String modify(SizeTableDto param) throws CommonException{
+	public String modify(SizeTableDto param) throws CommonException {
 		// TODO Auto-generated method stub
 		SizeTable update_entity = param.convertToEntity();
-		
+
 		QSizeTable sz = QSizeTable.sizeTable;
-		log.debug(param.getId()+ " ");
+		log.debug(param.getId() + " ");
 		SizeTable old_st = size_tableRepository.findOne(param.getId());
-		
+
 		old_st.setVisibleBasicYn(update_entity.getVisibleBasicYn());
 		old_st.setVisibleCodeYn(update_entity.getVisibleCodeYn());
 		old_st.setVisibleColorYn(update_entity.getVisibleColorYn());
@@ -773,27 +772,24 @@ public class SizeTableServiceImpl implements SizeTableService {
 		old_st.setVisibleMeasureHowBYn(update_entity.getVisibleMeasureHowBYn());
 		old_st.setVisibleMeasureTableYn(update_entity.getVisibleMeasureTableYn());
 		old_st.setVisibleNameYn(update_entity.getVisibleNameYn());
-	
+
 		// 수정할때는 항사 ㅇ테이블 이미지가 올라온다.
 		// 과거 이미지를 항상 지워줘야 한다.
-		
-		if(old_st.getTable_image() != null) {
+
+		if (old_st.getTable_image() != null) {
 			File old_file = new File(path_sizetable_upload.concat(File.separator).concat(old_st.getTable_image()));
-			
-			if(old_file.exists())
+
+			if (old_file.exists())
 				old_file.delete();
 		}
-		
+
 		old_st.setTable_image(update_entity.getTable_image());
-		
-		
-		
+
 		LocalDateTime now = LocalDateTime.now();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-		File source = new File(path_temp_upload
-				.concat(File.separator).concat(dtf.format(now))
-				.concat(File.separator).concat(param.getFile()));
+		File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now)).concat(File.separator)
+				.concat(param.getFile()));
 		File dest = new File(path_sizetable_upload.concat(File.separator).concat(update_entity.getTable_image()));
 
 		try {
@@ -806,32 +802,28 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 		// 검수용
 		CommandLine.Sync_file();
-		
+
 		return "Y";
 	}
-	
+
 	@Override
 	@Transactional
 	public String create(SizeTableDto param) throws CommonException {
 		// TODO Auto-generated method stub
 		SizeTable create_entity = param.convertToEntity();
-		
-		
-		Item this_item  = itemRepository.findOne(param.getItem_id());
-		
+
+		Item this_item = itemRepository.findOne(param.getItem_id());
+
 		create_entity.setItem(this_item);
 		size_tableRepository.save(create_entity);
-		
+
 		this_item.setSizeTableYn("Y");
-		
-		
-		
+
 		LocalDateTime now = LocalDateTime.now();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-		File source = new File(path_temp_upload
-				.concat(File.separator).concat(dtf.format(now))
-				.concat(File.separator).concat(param.getFile()));
+		File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now)).concat(File.separator)
+				.concat(param.getFile()));
 		File dest = new File(path_sizetable_upload.concat(File.separator).concat(param.getFile().concat(".png")));
 
 		try {
@@ -841,7 +833,6 @@ public class SizeTableServiceImpl implements SizeTableService {
 			e.printStackTrace();
 			throw new CommonException("image.upload.failed");
 		}
-		
 
 		// 검수용
 		CommandLine.Sync_file();
@@ -857,16 +848,16 @@ public class SizeTableServiceImpl implements SizeTableService {
 	@Override
 	public SizeTable single_infos(long id) {
 		// TODO Auto-generated method stub
-		SizeTable a =  size_tableRepository.findOne(id);
+		SizeTable a = size_tableRepository.findOne(id);
 		a.setItem(null);
-		
+
 		return a;
 	}
 
 	@Override
 	public Map<String, Object> get_size_count(Map<String, Object> where) {
 
-		StringBuffer  varname1 = new StringBuffer();
+		StringBuffer varname1 = new StringBuffer();
 		varname1.append("SELECT Count(sz.id) AS count ");
 		varname1.append("FROM   size_table sz ");
 		varname1.append("       JOIN item i ");
@@ -874,16 +865,14 @@ public class SizeTableServiceImpl implements SizeTableService {
 		varname1.append("            AND i.use_yn = 'Y' ");
 		varname1.append("WHERE  sz.use_yn = 'Y'");
 
-		Query count_q = entityManager.createNativeQuery(varname1.toString()); 
- 
-		BigInteger count_list  = (BigInteger) count_q.getSingleResult();
+		Query count_q = entityManager.createNativeQuery(varname1.toString());
 
-		Map<String, Object> R = new HashMap<String, Object>(); 
+		BigInteger count_list = (BigInteger) count_q.getSingleResult();
+
+		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("size", count_list);
 
 		return R;
 	}
-	
-	
-	
+
 }

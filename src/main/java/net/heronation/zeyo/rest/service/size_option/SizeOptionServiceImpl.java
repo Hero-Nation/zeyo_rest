@@ -50,23 +50,21 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 
 	@Autowired
 	private SizeOptionRepository size_optionRepository;
-	
+
 	@Autowired
 	private CategoryRepository categroyRepository;
-	
+
 	@Autowired
 	private SubCategoryRepository subCategoryRepository;
-	
-	
+
 	@Autowired
 	private KindofRepository kindRepository;
-	
-	
+
 	@Autowired
 	EntityManager entityManager;
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
@@ -122,7 +120,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		if (sub_category != null) {
 			where_query.append("        AND   sc.id = " + sub_category + " ");
 		}
-		
+
 		String kindof = (String) param.get("kindof");
 		if (kindof != null) {
 			where_query.append("        AND   k.id = " + kindof + " ");
@@ -141,15 +139,18 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		where_query.append("GROUP BY so.id");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY so.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY so.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -158,12 +159,13 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table      ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append("  ) count_table      ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -200,7 +202,6 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		int totalPages = (count_list.intValue() / page.getPageSize());
 		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
-
 
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("content", return_list);
@@ -259,7 +260,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> category_count(Predicate where) {
 
 		Map<String, Object> RV = new HashMap<String, Object>();
@@ -280,7 +281,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> single(Predicate where) {
 
 		Map<String, Object> R = new HashMap<String, Object>();
@@ -326,11 +327,11 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	@Override
 	@Transactional
 	public String insert(SizeOptionDto param) {
-		
+
 		Category cate = categroyRepository.findOne(param.getCategory());
 		SubCategory subCate = subCategoryRepository.findOne(param.getSubCategory());
 		Kindof ko = kindRepository.findOne(param.getKindof());
-		
+
 		SizeOption insertvo = new SizeOption();
 		insertvo.setCategory(cate);
 		insertvo.setSubCategory(subCate);
@@ -338,8 +339,7 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 		insertvo.setKindof(ko);
 		insertvo.setName(param.getName());
 		insertvo.setUseYn("Y");
-		
-		
+
 		size_optionRepository.save(insertvo);
 		return CommonConstants.SUCCESS;
 	}
@@ -348,19 +348,18 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	@Transactional
 	public String update(SizeOptionDto param) {
 		SizeOption so = size_optionRepository.findOne(param.getId());
-		
+
 		Category cate = categroyRepository.findOne(param.getCategory());
 		SubCategory subCate = subCategoryRepository.findOne(param.getSubCategory());
 		Kindof ko = kindRepository.findOne(param.getKindof());
-		
+
 		so.setCategory(cate);
 		so.setSubCategory(subCate);
 		so.setCreateDt(so.getCreateDt());
 		so.setKindof(ko);
 		so.setName(param.getName());
 		so.setUseYn("Y");
-		
-		
+
 		return CommonConstants.SUCCESS;
 	}
 
@@ -368,13 +367,12 @@ public class SizeOptionServiceImpl implements SizeOptionService {
 	@Transactional
 	public String delete(List<LIdDto> param) {
 		// TODO Auto-generated method stub
-		
-		for(LIdDto v :param) {
+
+		for (LIdDto v : param) {
 			SizeOption a = size_optionRepository.findOne(v.getId());
-			a.setUseYn("N");	
+			a.setUseYn("N");
 		}
-		
-		
+
 		return CommonConstants.SUCCESS;
 	}
 

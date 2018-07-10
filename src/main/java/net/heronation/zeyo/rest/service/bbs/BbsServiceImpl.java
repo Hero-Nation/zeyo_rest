@@ -89,20 +89,17 @@ public class BbsServiceImpl implements BbsService {
 		where_query.append("    b.use_yn = 'Y'");
 
 		String keyword = (String) param.get("keyword");
-		
-		
-		
+
 		if (keyword != null && !keyword.equals("")) {
-			
+
 			String keywordType = (String) param.get("keywordType");
-		
+
 			if (keywordType != null || !keywordType.equals("title")) {
 				where_query.append("        AND   b.title like '%" + keyword + "%' ");
 			}
-			
-			
+
 		}
-		
+
 		String status = (String) param.get("status");
 		if (status != null) {
 			where_query.append("        AND   b.status = '" + status + "' ");
@@ -121,15 +118,19 @@ public class BbsServiceImpl implements BbsService {
 		where_query.append("GROUP BY b.id");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+
+		if (sort != null) {
+			sort_query.append("  ORDER BY b.");
+
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -138,12 +139,13 @@ public class BbsServiceImpl implements BbsService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table   ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table   ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -251,17 +253,20 @@ public class BbsServiceImpl implements BbsService {
 
 		StringBuffer group_query = new StringBuffer();
 		group_query.append(" GROUP BY b.id");
-
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+
+			sort_query.append("  ORDER BY b.");
+
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -270,18 +275,19 @@ public class BbsServiceImpl implements BbsService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(group_query).append("  ) count_table     ").toString());
+		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query)
+				.append(group_query).append("  ) count_table     ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
 
-		Query q = entityManager
-				.createNativeQuery(select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
+		Query q = entityManager.createNativeQuery(
+				select_query.append(where_query).append(group_query).append(sort_query).append(page_query).toString());
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
@@ -351,10 +357,10 @@ public class BbsServiceImpl implements BbsService {
 				e.printStackTrace();
 				throw new CommonException("item.image.upload.failed");
 			}
-			
+
 			// 검수용
 			CommandLine.Sync_file();
-			
+
 		}
 
 		return new_post;

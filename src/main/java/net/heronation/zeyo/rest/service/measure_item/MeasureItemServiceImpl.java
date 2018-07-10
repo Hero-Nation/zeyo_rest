@@ -73,16 +73,20 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 		// where_query.append("GROUP BY mi.id");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY mi.");
+		
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY mi.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}	
 		}
+		
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -169,16 +173,20 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 		group_query.append(" GROUP BY c.id ");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY c.");
+		
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY c.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}	
 		}
+		
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");

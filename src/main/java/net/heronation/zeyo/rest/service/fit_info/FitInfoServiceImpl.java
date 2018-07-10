@@ -51,16 +51,15 @@ public class FitInfoServiceImpl implements FitInfoService {
 
 	@Autowired
 	private FitInfoRepository fit_infoRepository;
-	
+
 	@Autowired
 	private FitInfoOptionRepository fitInfoOptionRepository;
-	
-	
+
 	@Autowired
 	EntityManager entityManager;
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
@@ -95,19 +94,23 @@ public class FitInfoServiceImpl implements FitInfoService {
 		if (end != null) {
 			where_query.append("        AND fi.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
- 
+
 		// where_query.append("GROUP BY mi.id");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY fi.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+
+		if (sort != null) {
+			sort_query.append("  ORDER BY fi.");
+
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -116,12 +119,13 @@ public class FitInfoServiceImpl implements FitInfoService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString()); 
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -204,7 +208,7 @@ public class FitInfoServiceImpl implements FitInfoService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Page<Map<String, Object>> fitInfoOptions_search(Predicate where, Pageable page) {
 
 		JPAQuery<FitInfoOption> query = new JPAQuery<FitInfoOption>(entityManager);
@@ -245,17 +249,17 @@ public class FitInfoServiceImpl implements FitInfoService {
 		FitInfo fi = param.convertToEntity();
 		fi.setUseYn("Y");
 		fi.setCreateDt(new DateTime());
-		fi= fit_infoRepository.save(fi);
-		
+		fi = fit_infoRepository.save(fi);
+
 		List<NameDto> op = param.getOptions();
-		for(NameDto n : op) {
+		for (NameDto n : op) {
 			FitInfoOption fio = new FitInfoOption();
 			fio.setFitInfo(fi);
 			fio.setName(n.getName());
 			fio.setUseYn("Y");
 			fitInfoOptionRepository.save(fio);
 		}
-		
+
 		return CommonConstants.SUCCESS;
 	}
 
@@ -263,77 +267,69 @@ public class FitInfoServiceImpl implements FitInfoService {
 	public String update(FitInfoUpdateDto param) {
 		log.debug("update");
 		log.debug(param.toString());
-		FitInfo fi = fit_infoRepository.findOne(param.getId()); 
-		
+		FitInfo fi = fit_infoRepository.findOne(param.getId());
+
 		fi.setName(param.getName());
 		fi.setMetaDesc(param.getMetaDesc());
-		
+
 		QFitInfoOption fio_table = QFitInfoOption.fitInfoOption;
-		// 자식 옵션을 가지고 온다. 
+		// 자식 옵션을 가지고 온다.
 		Iterable<FitInfoOption> db_options = fitInfoOptionRepository.findAll(fio_table.fitInfo.id.eq(param.getId()));
 		List<ToggleDto> param_options = param.getOptions();
-		
+
 		// 삭제 처리.. 어떻게 할것인가..
-		for(FitInfoOption db_c : db_options) {
+		for (FitInfoOption db_c : db_options) {
 			boolean shouldBeDeleted = true;
-			for(ToggleDto param_c : param_options) {
-				
-				if(db_c.getId() == param_c.getId()) {
+			for (ToggleDto param_c : param_options) {
+
+				if (db_c.getId() == param_c.getId()) {
 					shouldBeDeleted = false;
 				}
-				
-			}
-			
-			if(shouldBeDeleted) { 
-				db_c.setUseYn("N");
-				//fitInfoOptionRepository.save(db_c);
-			}
-			
-		}
-		
 
-		for(ToggleDto param_c : param_options) {
-			
-			if(param_c.getId() == 0) { // 0 이면 신규 입력
+			}
+
+			if (shouldBeDeleted) {
+				db_c.setUseYn("N");
+				// fitInfoOptionRepository.save(db_c);
+			}
+
+		}
+
+		for (ToggleDto param_c : param_options) {
+
+			if (param_c.getId() == 0) { // 0 이면 신규 입력
 				FitInfoOption fio = new FitInfoOption();
 				fio.setFitInfo(fi);
 				fio.setName(param_c.getValue());
 				fio.setUseYn("Y");
 				fitInfoOptionRepository.save(fio);
-			}else {
-				FitInfoOption fio  = fitInfoOptionRepository.findOne(param_c.getId());
-				fio.setName(param_c.getValue());	
+			} else {
+				FitInfoOption fio = fitInfoOptionRepository.findOne(param_c.getId());
+				fio.setName(param_c.getValue());
 			}
-			 
+
 		}
-		
-		
-		
-		
-		
+
 		return CommonConstants.SUCCESS;
 	}
 
 	@Override
 	public String delete(List<LIdDto> param) {
-		
-		for(LIdDto n : param) {
+
+		for (LIdDto n : param) {
 			FitInfo a = fit_infoRepository.findOne(n.getId());
 			a.setUseYn("N");
-			
+
 			QFitInfoOption fio = QFitInfoOption.fitInfoOption;
-			
-			
-			// 자식 옵션도 다 지운다. 
+
+			// 자식 옵션도 다 지운다.
 			Iterable<FitInfoOption> fiol = fitInfoOptionRepository.findAll(fio.fitInfo.id.eq(n.getId()));
-		
-			
-			for(FitInfoOption ifo : fiol) {
+
+			for (FitInfoOption ifo : fiol) {
 				ifo.setUseYn("N");
 			}
-			
+
 		}
-		
 
 		return CommonConstants.SUCCESS;
 	}
@@ -344,11 +340,10 @@ public class FitInfoServiceImpl implements FitInfoService {
 		count_query.append("SELECT ");
 		count_query.append("    count(*) from ( ");
 
-		StringBuffer select_query = new StringBuffer(); 
+		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT c.name as category_name, ");
 		select_query.append("       sc.name as sub_category_name, ");
 		select_query.append("       mi.create_dt as measure_item_create_dt ");
-
 
 		StringBuffer where_query = new StringBuffer();
 
@@ -366,21 +361,24 @@ public class FitInfoServiceImpl implements FitInfoService {
 
 		String id = (String) param.get("id");
 		if (id != null) {
-			where_query.append("        AND   mi.id = " + id );
+			where_query.append("        AND   mi.id = " + id);
 		}
- 
+
 		// where_query.append("GROUP BY mi.id");
 
-		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY mi.");
+		StringBuffer sort_query = new StringBuffer(); 
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY mi.");
+
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -389,12 +387,13 @@ public class FitInfoServiceImpl implements FitInfoService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString()); 
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -407,14 +406,13 @@ public class FitInfoServiceImpl implements FitInfoService {
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
 
-//            <td>{{item.cate_name | default}}</td>
-//            <td>{{item.sub_cate_name}}</td>
-//            <td>{{item.measure_create_dt
-			
-			
+			// <td>{{item.cate_name | default}}</td>
+			// <td>{{item.sub_cate_name}}</td>
+			// <td>{{item.measure_create_dt
+
 			search_R.put("cate_name", row[0]);
 			search_R.put("sub_cate_name", row[1]);
-			search_R.put("measure_create_dt", row[2]); 
+			search_R.put("measure_create_dt", row[2]);
 
 			return_list.add(search_R);
 		}

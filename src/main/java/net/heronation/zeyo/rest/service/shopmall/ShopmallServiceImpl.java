@@ -152,15 +152,18 @@ public class ShopmallServiceImpl implements ShopmallService {
 		where_query.append("GROUP BY m.id , s.id , b.id ");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY s.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY s.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -169,16 +172,16 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table   ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append("  ) count_table   ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -242,8 +245,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		select_query.append("       s.name           AS shopmall_name, ");
 		select_query.append("       s.create_dt      AS shopmall_create_dt, ");
 		select_query.append("       Count(i.link_yn) AS link_count ");
- 
-		
+
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM   shopmall s ");
 		where_query.append("       LEFT JOIN item_shopmall_map ism ");
@@ -277,18 +279,21 @@ public class ShopmallServiceImpl implements ShopmallService {
 		if (end != null) {
 			where_query.append("        AND s.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
-		
-		where_query.append(" GROUP  BY s.id ");  
+
+		where_query.append(" GROUP  BY s.id ");
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY s.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY s.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -297,16 +302,16 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table       ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table       ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -325,7 +330,6 @@ public class ShopmallServiceImpl implements ShopmallService {
 			return_list.add(search_R);
 		}
 
-
 		int totalPages = (count_list.intValue() / page.getPageSize());
 		if (count_list.intValue() % page.getPageSize() > 0)
 			totalPages = totalPages + 1;
@@ -343,7 +347,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 	@Override
 	@Transactional
 	public Shopmall insert(NameDto param, Long member_seq) {
-		SecureRandom random = new SecureRandom(); 
+		SecureRandom random = new SecureRandom();
 
 		Member m = memberRepository.getOne(member_seq);
 
@@ -377,23 +381,20 @@ public class ShopmallServiceImpl implements ShopmallService {
 		varname1.append("GROUP BY ism.shopmall_id , i.member_id");
 
 		Query count_q = entityManager.createNativeQuery(varname1.toString());
- 
-		
-		
+
 		List results = count_q.getResultList();
-		if(results.isEmpty()) {
+		if (results.isEmpty()) {
 			BigInteger use_count = BigInteger.ZERO;
 			return use_count;
-		}else {
+		} else {
 			BigInteger use_count = (BigInteger) count_q.getSingleResult();
 
 			if (use_count == null)
 				use_count = BigInteger.ZERO;
 
 			return use_count;
-		} 
-		
-		
+		}
+
 	}
 
 	@Override
@@ -418,18 +419,15 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
-				
 				List<Brand> list = shopmallRepository.findByName(param.getName());
-				
-				if(list.size() > 0) {
+
+				if (list.size() > 0) {
 					R.put("CODE", "D");
-				}else {
+				} else {
 					target.setName(param.getName());
 
 					R.put("CODE", "OK");
 				}
-				
-
 
 			} else {
 				// Brand count in use is more than 1.
@@ -443,12 +441,11 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> delete( List<ToggleDto> param, Long member_seq) {
+	public Map<String, Object> delete(List<ToggleDto> param, Long member_seq) {
 
-  
 		Map<String, Object> R = new HashMap<String, Object>();
-		
-		for(ToggleDto id : param) {
+
+		for (ToggleDto id : param) {
 
 			Shopmall target = shopmallRepository.findOne(id.getId());
 			Member user = memberRepository.findOne(member_seq);
@@ -456,8 +453,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 			if (target == null || target.getUseYn().equals("N")) {
 
 			} else if (!target.getMember().equals(user)) {
-				
-				
+
 			} else {
 
 				// 현재 브랜드가 다른 사업자에게 사용중인지를 체크 한다.
@@ -477,24 +473,21 @@ public class ShopmallServiceImpl implements ShopmallService {
 				}
 
 			}
-			
+
 		}
-
-
 
 		return R;
 	}
 
 	@Override
 	@Transactional
-	public Map<String, Object> toggle_link(List<ToggleDto>  param, Long member_seq) {
+	public Map<String, Object> toggle_link(List<ToggleDto> param, Long member_seq) {
 		log.debug("toggle_link ");
-		
-		
+
 		Map<String, Object> R = new HashMap<String, Object>();
-		
-		for(ToggleDto shop_status : param) {
-			
+
+		for (ToggleDto shop_status : param) {
+
 			Shopmall target = shopmallRepository.findOne(shop_status.getId());
 			Member user = memberRepository.findOne(member_seq);
 
@@ -532,24 +525,22 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 			}
 		}
-		
- 
+
 		return R;
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public  Map<String, Object> detail(Long shopmall_id, Long member_seq, Pageable page) {
-		
-		
+	public Map<String, Object> detail(Long shopmall_id, Long member_seq, Pageable page) {
+
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
 		count_query.append("    count(*) from (");
 
-		StringBuffer select_query = new StringBuffer();    
+		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT b.name, ");
 		select_query.append("       Count(i.id) ");
-		
+
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM   item i ");
 		where_query.append("       LEFT JOIN item_shopmall_map ism ");
@@ -559,23 +550,24 @@ public class ShopmallServiceImpl implements ShopmallService {
 		where_query.append("              ON i.brand_id = b.id ");
 		where_query.append("                 AND b.use_yn = 'Y' ");
 		where_query.append(" WHERE  i.use_yn = 'Y' ");
-		where_query.append("       AND ism.shopmall_id = "+shopmall_id);
-		where_query.append("       AND i.member_id = "+member_seq);
+		where_query.append("       AND ism.shopmall_id = " + shopmall_id);
+		where_query.append("       AND i.member_id = " + member_seq);
 		where_query.append(" GROUP  BY b.id");
-		
+
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY b.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
-		
-		
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -583,17 +575,17 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
- 
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table ").toString());
+
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
-		
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
@@ -602,9 +594,9 @@ public class ShopmallServiceImpl implements ShopmallService {
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();
 
 		for (Object[] row : list) {
-			Map<String, Object> search_R = new HashMap<String, Object>(); 
+			Map<String, Object> search_R = new HashMap<String, Object>();
 			search_R.put("brand", row[0]);
-			search_R.put("item_count", row[1]);  
+			search_R.put("item_count", row[1]);
 			return_list.add(search_R);
 		}
 
@@ -621,37 +613,38 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		return R;
 
-
-//		Map<String, Object> R = new HashMap<String, Object>();
-//
-//		QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
-//		QItem qi = QItem.item;
-//		QBrand qb = QBrand.brand;
-//		QShopmall qs = QShopmall.shopmall;
-//
-//		JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
-//
-//		QueryResults<Tuple> db_result = query.select(qism.item.brand.name, qism.item.countDistinct()).from(qism)
-//				.innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
-//				.on(qism.shopmall.useYn.eq("Y"))
-//				// .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
-//				// .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
-//				.where(qism.shopmall.id.eq(shopmall_id).and(qism.useYn.eq("Y")).and(qism.item.brand.useYn.eq("Y")))
-//				.groupBy(qism.item.brand).offset((page.getPageNumber() - 1) * page.getPageSize())
-//				.limit(page.getPageSize()).fetchResults();
-//
-//		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-//
-//		for (Tuple row : db_result.getResults()) {
-//			Map<String, Object> item = new HashMap<String, Object>();
-//
-//			item.put("brand", row.get(qism.item.brand.name));
-//			item.put("item_count", row.get(qism.item.countDistinct()));
-//
-//			list.add(item);
-//		}
-//
-//		return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
+		// Map<String, Object> R = new HashMap<String, Object>();
+		//
+		// QItemShopmallMap qism = QItemShopmallMap.itemShopmallMap;
+		// QItem qi = QItem.item;
+		// QBrand qb = QBrand.brand;
+		// QShopmall qs = QShopmall.shopmall;
+		//
+		// JPAQuery<Item> query = new JPAQuery<Item>(entityManager);
+		//
+		// QueryResults<Tuple> db_result = query.select(qism.item.brand.name,
+		// qism.item.countDistinct()).from(qism)
+		// .innerJoin(qism.item).on(qism.item.useYn.eq("Y")).innerJoin(qism.item.brand).innerJoin(qism.shopmall)
+		// .on(qism.shopmall.useYn.eq("Y"))
+		// // .innerJoin(qism.item.brand).on(qism.item.brand.useYn.eq("Y"))
+		// // .innerJoin(qism.shopmall).on(qism.shopmall.useYn.eq("Y"))
+		// .where(qism.shopmall.id.eq(shopmall_id).and(qism.useYn.eq("Y")).and(qism.item.brand.useYn.eq("Y")))
+		// .groupBy(qism.item.brand).offset((page.getPageNumber() - 1) *
+		// page.getPageSize())
+		// .limit(page.getPageSize()).fetchResults();
+		//
+		// List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		//
+		// for (Tuple row : db_result.getResults()) {
+		// Map<String, Object> item = new HashMap<String, Object>();
+		//
+		// item.put("brand", row.get(qism.item.brand.name));
+		// item.put("item_count", row.get(qism.item.countDistinct()));
+		//
+		// list.add(item);
+		// }
+		//
+		// return new PageImpl<Map<String, Object>>(list, page, db_result.getTotal());
 	}
 
 	@Override
@@ -722,9 +715,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 		return R;
 
 	}
-	
-	
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> shopmall_company_use_list(Pageable page) {
@@ -733,12 +724,11 @@ public class ShopmallServiceImpl implements ShopmallService {
 		count_query.append("SELECT ");
 		count_query.append("    count(*) from ( ");
 
-		StringBuffer select_query = new StringBuffer();   
+		StringBuffer select_query = new StringBuffer();
 		select_query.append("SELECT ");
 		select_query.append("    ct.shopmall, ");
 		select_query.append("    ct.create_dt, ");
 		select_query.append("    COUNT(ct.member) as company_count ");
-
 
 		StringBuffer where_query = new StringBuffer();
 		where_query.append(" FROM ");
@@ -754,20 +744,20 @@ public class ShopmallServiceImpl implements ShopmallService {
 		where_query.append("    GROUP BY s.id , i.member_id) ct ");
 		where_query.append("    group by ct.shopmall");
 
-		
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY ct.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY ct.");
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
-		
-		
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -775,12 +765,13 @@ public class ShopmallServiceImpl implements ShopmallService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append("  ) count_table    ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append("  ) count_table    ").toString());
 		BigInteger count_list = BigInteger.ZERO;
-		
+
 		List<BigInteger> count_result = count_q.getResultList();
 		if (count_result.isEmpty()) {
-		    
+
 		} else {
 			count_list = count_result.get(0);
 		}
@@ -793,9 +784,9 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
-			//search_R.put("shopmall_name", row[0]);
+			// search_R.put("shopmall_name", row[0]);
 			search_R.put("shopmall_name", row[0]);
-			search_R.put("shopmall_create_dt", row[1]); 
+			search_R.put("shopmall_create_dt", row[1]);
 			search_R.put("company_use_count", row[2]);
 			return_list.add(search_R);
 		}

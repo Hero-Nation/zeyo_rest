@@ -168,17 +168,23 @@ public class BrandServiceImpl implements BrandService {
 		StringBuffer group_query = new StringBuffer();
 		group_query.append(" GROUP BY  m.id , b.id , s.id ");
 
-		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
+		
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		StringBuffer sort_query = new StringBuffer();
+		if(sort != null) {
+			
+			sort_query.append("  ORDER BY b.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -298,17 +304,23 @@ public class BrandServiceImpl implements BrandService {
 		group_query.append(" GROUP BY b.id"); 
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
-		Sort sort = page.getSort();
-		String sep = "";
 		
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		Sort sort = page.getSort();
+		
+		if(sort != null) {
+			sort_query.append("  ORDER BY b.");
+
+			String sep = "";
+			
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -392,18 +404,21 @@ public class BrandServiceImpl implements BrandService {
 		
 		
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY s.");
+		
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if(sort != null) {
+			sort_query.append("  ORDER BY s.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
-		
-		
+		 
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -746,18 +761,24 @@ public class BrandServiceImpl implements BrandService {
 		where_query.append("    member m ON i.member_id = m.id AND m.use_yn = 'Y' ");
 		where_query.append(" GROUP BY b.id ");
 		
+		Sort sort = page.getSort();
 		
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY b.");
-		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		
+		if(sort != null) {
+			sort_query.append("  ORDER BY b.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+		
+
 		
 		
 

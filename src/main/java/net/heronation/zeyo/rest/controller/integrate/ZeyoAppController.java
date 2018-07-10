@@ -137,8 +137,7 @@ public class ZeyoAppController extends BaseController {
 				m.addAttribute("item_object", i);
 				m.addAttribute("seller", i.getMember().getMemberId());
 				m.addAttribute("sub_category", objectMapper.writeValueAsString(i.getSubCategory()));
-				m.addAttribute("sub_category_object", i.getSubCategory());
-
+				m.addAttribute("sub_category_object", i.getSubCategory()); 
 				m.addAttribute("ItemScmmSoValue", objectMapper.writeValueAsString(issv_list));
 				m.addAttribute("ItemScmmSoValue_object", issv_list);
 
@@ -175,8 +174,7 @@ public class ZeyoAppController extends BaseController {
 				m.addAttribute("item_object", i);
 				m.addAttribute("seller", i.getMember().getMemberId());
 				m.addAttribute("sub_category", objectMapper.writeValueAsString(i.getSubCategory()));
-				m.addAttribute("sub_category_object", i.getSubCategory());
-
+				m.addAttribute("sub_category_object", i.getSubCategory()); 
 				m.addAttribute("ItemScmmSoValue", objectMapper.writeValueAsString(issv_list));
 				m.addAttribute("ItemScmmSoValue_object", issv_list);
 

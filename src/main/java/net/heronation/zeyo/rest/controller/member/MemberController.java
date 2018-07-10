@@ -9,7 +9,9 @@ import javax.validation.Valid;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -403,8 +405,10 @@ public class MemberController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/my_brand")
 	@ResponseBody
 	public ResponseEntity<ResultDto> my_brand(@RequestParam(value = "member_id", required = false) String member_id,
-			Pageable pageable) {
-
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("member_id", member_id); 
 
@@ -415,8 +419,10 @@ public class MemberController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/my_shopmall")
 	@ResponseBody
 	public ResponseEntity<ResultDto> my_shopmall(@RequestParam(value = "member_id", required = false) String member_id,
-			Pageable pageable) {
-
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("member_id", member_id); 
 
@@ -427,8 +433,10 @@ public class MemberController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/my_item")
 	@ResponseBody
 	public ResponseEntity<ResultDto> my_item(@RequestParam(value = "member_id", required = false) String member_id,
-			Pageable pageable) {
-
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
  
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("member_id", member_id); 
@@ -452,8 +460,10 @@ public class MemberController extends BaseController {
 			@RequestParam(value = "cn2", required = false) String cn2,
 			@RequestParam(value = "cn3", required = false) String cn3,
 
-			Pageable pageable) {
-
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("identity", identity);
 		param.put("phone1", phone1);
@@ -481,8 +491,10 @@ public class MemberController extends BaseController {
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 
-			Pageable pageable) {
-
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		BooleanBuilder builder = new BooleanBuilder();
 
 		QCompanyNoHistory target = QCompanyNoHistory.companyNoHistory;

@@ -155,15 +155,19 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 		// group_query.append(" GROUP BY sc.id ");
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY sc.");
+
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if (sort != null) {
+			sort_query.append("  ORDER BY sc.");
+			String sep = "";
+
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
 
 		StringBuffer page_query = new StringBuffer();
@@ -330,8 +334,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
 					.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
-			File dest = new File(path_subcategory_sizemeasure_image.concat(File.separator).concat(param.getClothImage().get(0)
-					.getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
+			File dest = new File(path_subcategory_sizemeasure_image.concat(File.separator).concat(param.getClothImage()
+					.get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
 
 			try {
 				FileUtils.copyFile(source, dest);
@@ -419,8 +423,6 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 		SubCategory sc = sub_categoryRepository.findOne(param.getId());
 		sc.setBleachYn(param.getBleachYn());
 
- 
-
 		if (param.getClothImage() != null && param.getClothImage().size() > 0) {
 
 			if (sc.getClothImage() != null) {
@@ -436,8 +438,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
 			File source = new File(path_temp_upload.concat(File.separator).concat(dtf.format(now))
 					.concat(File.separator).concat(param.getClothImage().get(0).getTemp_name()));
-			File dest = new File(path_subcategory_sizemeasure_image.concat(File.separator).concat(param.getClothImage().get(0)
-					.getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
+			File dest = new File(path_subcategory_sizemeasure_image.concat(File.separator).concat(param.getClothImage()
+					.get(0).getTemp_name().concat("_").concat(param.getClothImage().get(0).getReal_name())));
 
 			try {
 				FileUtils.copyFile(source, dest);
@@ -619,13 +621,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 			}
 
 		}
-		
-		
 
 		// 검수용
 		CommandLine.Sync_file();
-		
-		
+
 		return CommonConstants.SUCCESS;
 	}
 
@@ -637,7 +636,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 	@Override
 	@Transactional
 	public String delete(List<LIdDto> param) {
-		
+
 		for (LIdDto v : param) {
 			SubCategory a = sub_categoryRepository.findOne(v.getId());
 			a.setUseYn("N");

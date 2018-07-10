@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -65,8 +67,12 @@ public class CategoryController extends BaseController {
 			@RequestParam(value = "measure",required=false) String measure, 
 			@RequestParam(value = "start",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end",required=false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
-			Pageable pageable) {
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
+		
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("name", name); 
 		param.put("cate", cate); 
@@ -92,8 +98,10 @@ public class CategoryController extends BaseController {
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<ResultDto> pure_list(
-			 Pageable pageable) {
-
+			 @RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
 		Map<String,Object> param = new HashMap<String,Object>();
 
 		return return_success(categoryService.pure_search(param, pageable));

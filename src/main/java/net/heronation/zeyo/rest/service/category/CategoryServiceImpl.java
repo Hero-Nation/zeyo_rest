@@ -131,17 +131,25 @@ public class CategoryServiceImpl implements CategoryService{
  
 		where_query.append("  GROUP BY c.id ,sc.id");
 		
-		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY c.");
+		
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		StringBuffer sort_query = new StringBuffer();
+		
+		
+		if(sort != null) {
+			sort_query.append("  ORDER BY c.");
+
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+		
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -304,23 +312,25 @@ public class CategoryServiceImpl implements CategoryService{
 		where_query.append("    category c "); 
 		where_query.append("WHERE ");
 		where_query.append("    c.use_yn = 'Y' ");
- 
- 
-
- 
+  
 		where_query.append("  GROUP BY c.id");
 		
-		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY c.");
+		
+		StringBuffer sort_query = new StringBuffer();	
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		if(sort != null) {
+			sort_query.append("  ORDER BY c.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}	
 		}
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");

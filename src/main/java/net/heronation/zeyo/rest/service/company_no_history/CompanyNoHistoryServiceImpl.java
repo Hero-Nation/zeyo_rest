@@ -106,18 +106,23 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
 		}
 		
 		 
-
-		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY m.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		StringBuffer sort_query = new StringBuffer();
+		
+		if(sort != null) {
+			sort_query.append("  ORDER BY m.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+		
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -208,18 +213,22 @@ public class CompanyNoHistoryServiceImpl implements CompanyNoHistoryService {
  
 		
 		 
-
-		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY ch.");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
-			sort_query.append(sep);
-			sort_query.append(order.getProperty());
-			sort_query.append(" ");
-			sort_query.append(order.getDirection());
-			sep = ", ";
+		StringBuffer sort_query = new StringBuffer();
+		
+		if(sort != null) {
+			sort_query.append("  ORDER BY ch.");
+			
+			String sep = "";
+			for (Sort.Order order : sort) {
+				sort_query.append(sep);
+				sort_query.append(order.getProperty());
+				sort_query.append(" ");
+				sort_query.append(order.getDirection());
+				sep = ", ";
+			}
 		}
+
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");

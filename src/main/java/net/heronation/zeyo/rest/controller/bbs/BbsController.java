@@ -7,7 +7,9 @@ import javax.validation.Valid;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
@@ -79,9 +81,15 @@ public class BbsController extends BaseController {
 			@RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			@RequestParam(value = "keywordType", required = false) String keywordType,
-			@RequestParam(value = "status", required = false) String status,
-			Pageable pageable) {
+			@RequestParam(value = "status", required = false) String status, 
+			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 
+		
+		
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
+		}
+		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("keyword", keyword);
 		param.put("keywordType", keywordType);
@@ -103,11 +111,17 @@ public class BbsController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client_list")
 	@ResponseBody
-	public ResponseEntity<ResultDto> client_list(Pageable pageable,
+	public ResponseEntity<ResultDto> client_list(@RequestParam(value = "sort",  required = false) String sort,Pageable pageable,
+			 
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		
+		
+		if(pageable.getSort() == null && sort != null) { 
+			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
 		}
 
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
@@ -123,7 +137,7 @@ public class BbsController extends BaseController {
 	// @PreAuthorize("hasRole('ROLE_ADMIN')")
 	// @RequestMapping(method = RequestMethod.GET, value = "/get_stats")
 	// @ResponseBody
-	// public ResponseEntity<ResultVO> get_stats(Pageable pageable,
+	// public ResponseEntity<ResultVO> get_stats(@RequestParam(value = "sort",  required = false) String sort,Pageable pageable,
 	// @AuthenticationPrincipal OAuth2Authentication auth) {
 	//
 	// if(auth == null) {
