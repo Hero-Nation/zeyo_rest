@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 
 import net.heronation.zeyo.rest.common.dto.IdNameDto;
 import net.heronation.zeyo.rest.common.dto.LIdDto;
-import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
+import net.heronation.zeyo.rest.controller.warranty.ScopeDto;
 
 public interface WarrantyService {
 	Map<String, Object> search(Map<String, Object> where, Pageable page);
 
-	String insert(ScopeVO param);
+	String insert(ScopeDto param);
 
 	String update(IdNameDto param);
 

@@ -1,6 +1,10 @@
 package net.heronation.zeyo.rest.service.item_scmm_so_value;
 
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValue;
 import net.heronation.zeyo.rest.repository.item_scmm_so_value.ItemScmmSoValueRepository;
 
 @Slf4j
@@ -24,4 +29,5 @@ public class ItemScmmSoValueServiceImpl implements ItemScmmSoValueService {
 	@Autowired
 	EntityManager entityManager;
 
+ 
 }

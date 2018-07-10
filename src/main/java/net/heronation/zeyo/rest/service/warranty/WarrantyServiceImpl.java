@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.dto.IdNameDto;
 import net.heronation.zeyo.rest.common.dto.LIdDto;
 import net.heronation.zeyo.rest.common.constants.CommonConstants;
-import net.heronation.zeyo.rest.controller.warranty.ScopeVO;
+import net.heronation.zeyo.rest.controller.warranty.ScopeDto;
 import net.heronation.zeyo.rest.repository.kindof.Kindof;
 import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
 import net.heronation.zeyo.rest.repository.warranty.Warranty;
@@ -210,7 +210,7 @@ public class WarrantyServiceImpl implements WarrantyService {
 
 	@Override
 	@Transactional
-	public String insert(ScopeVO param) {
+	public String insert(ScopeDto param) {
 		// TODO Auto-generated method stub
 
 		Kindof direct_input = kindofRepository.findOne(1L);

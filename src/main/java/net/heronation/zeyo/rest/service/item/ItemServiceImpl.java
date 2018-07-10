@@ -349,6 +349,7 @@ public class ItemServiceImpl implements ItemService {
 
 		Query q = entityManager
 				.createNativeQuery(select_query.append(where_query).append(sort_query).append(page_query).toString());
+		
 		List<Object[]> list = q.getResultList();
 
 		List<Map<String, Object>> return_list = new ArrayList<Map<String, Object>>();

@@ -84,7 +84,7 @@ public class WarrantyController extends BaseController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/insert")
-	public ResponseEntity<ResultDto> insert(@RequestBody ScopeVO param,
+	public ResponseEntity<ResultDto> insert(@RequestBody ScopeDto param,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success((Object) warrantyService.insert(param));

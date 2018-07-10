@@ -88,6 +88,7 @@ public class ItemController extends BaseController {
 			@RequestParam(value = "end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
 			@RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
 
+		// sort 값이 않들어오는 버그가 있음. 패치 
 		if(pageable.getSort() == null && sort != null) { 
 			pageable = new PageRequest(pageable.getPageNumber(),  pageable.getPageSize(), Direction.DESC, sort.split(",")[0]);
 		}
