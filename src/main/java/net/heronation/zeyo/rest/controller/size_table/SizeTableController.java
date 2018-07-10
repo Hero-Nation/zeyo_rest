@@ -96,6 +96,17 @@ public class SizeTableController extends BaseController {
 		
 		return return_success((Object) size_tableService.search(param, pageable));
 	}
+ 	
+ 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/get_size_count")
+	@ResponseBody
+	public ResponseEntity<ResultDto> get_size_count() {
+
+		Map<String,Object> param = new HashMap<String,Object>();
+ 
+		
+		return return_success((Object) size_tableService.get_size_count(param));
+	}
 	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RequestMapping(method = RequestMethod.GET, value = "/client/list")
@@ -104,7 +115,7 @@ public class SizeTableController extends BaseController {
 			
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "category", required = false) String category,
-			@RequestParam(value = "subcate", required = false) String subcate,
+			@RequestParam(value = "sub_category", required = false) String sub_category,
 		
 			@RequestParam(value = "start_price",  required = false) String start_price,
 			@RequestParam(value = "end_price", required = false) String end_price,
@@ -126,7 +137,7 @@ public class SizeTableController extends BaseController {
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("name", name);
 		param.put("category", category);
-		param.put("subcate", subcate); 
+		param.put("subcate", sub_category); 
 		param.put("start_price", start_price); 
 		param.put("end_price", end_price);   
 		param.put("size_table", size_table);   

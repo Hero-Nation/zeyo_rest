@@ -440,12 +440,12 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 		String start = (String) param.get("start");
 		if (start != null) {
-			where_query.append("        AND i.create_dt >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%s')");
+			where_query.append("        AND st.create_dt >= STR_TO_DATE('" + start + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
 		String end = (String) param.get("end");
 		if (end != null) {
-			where_query.append("        AND i.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
+			where_query.append("        AND st.create_dt <= STR_TO_DATE('" + end + "', '%Y-%m-%d %H:%i:%s')");
 		}
 
 		StringBuffer sort_query = new StringBuffer();
@@ -758,7 +758,10 @@ public class SizeTableServiceImpl implements SizeTableService {
 	public String modify(SizeTableDto param) throws CommonException{
 		// TODO Auto-generated method stub
 		SizeTable update_entity = param.convertToEntity();
-		SizeTable old_st = size_tableRepository.findOne(update_entity.getId());
+		
+		QSizeTable sz = QSizeTable.sizeTable;
+		log.debug(param.getId()+ " ");
+		SizeTable old_st = size_tableRepository.findOne(param.getId());
 		
 		old_st.setVisibleBasicYn(update_entity.getVisibleBasicYn());
 		old_st.setVisibleCodeYn(update_entity.getVisibleCodeYn());
@@ -858,6 +861,27 @@ public class SizeTableServiceImpl implements SizeTableService {
 		a.setItem(null);
 		
 		return a;
+	}
+
+	@Override
+	public Map<String, Object> get_size_count(Map<String, Object> where) {
+
+		StringBuffer  varname1 = new StringBuffer();
+		varname1.append("SELECT Count(sz.id) AS count ");
+		varname1.append("FROM   size_table sz ");
+		varname1.append("       JOIN item i ");
+		varname1.append("         ON sz.item_id = i.id ");
+		varname1.append("            AND i.use_yn = 'Y' ");
+		varname1.append("WHERE  sz.use_yn = 'Y'");
+
+		Query count_q = entityManager.createNativeQuery(varname1.toString()); 
+ 
+		BigInteger count_list  = (BigInteger) count_q.getSingleResult();
+
+		Map<String, Object> R = new HashMap<String, Object>(); 
+		R.put("size", count_list);
+
+		return R;
 	}
 	
 	

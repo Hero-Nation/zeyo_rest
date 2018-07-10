@@ -15,6 +15,8 @@ public interface SizeTableService {
 
 	Map<String, Object> client_search(Map<String, Object> where, Pageable page);
 
+	Map<String, Object> get_size_count(Map<String, Object> where);
+ 
 	String delete(List<ToggleDto> param, Long seq);
 
 	String batch_build(List<ToggleDto> param, Long seq);

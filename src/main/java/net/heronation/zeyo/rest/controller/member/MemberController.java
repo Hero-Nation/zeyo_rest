@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.controller.member;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.FlagDto;
 import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.member.Member;
@@ -652,6 +654,30 @@ public class MemberController extends BaseController {
 
 	}
 	
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	@ResponseBody
+	public ResponseEntity<ResultDto> delete(
+
+			@RequestBody List<ToggleDto> param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		// 유저 정보 가지고 오기
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+		
+		if (param == null|| param.size() == 0) {
+			return return_fail("target.empty");
+		}else {
+			return return_success(memberService.delete(param,  seq));
+		}
+
+	}
 	
 	
 	@RequestMapping(path = "/admin_update", method = RequestMethod.PATCH)

@@ -1,5 +1,6 @@
 package net.heronation.zeyo.rest.service.member;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import com.querydsl.core.types.Predicate;
 
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.FlagDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.CpNoUpdateDto;
 import net.heronation.zeyo.rest.controller.member.EmailUpdateVO;
@@ -66,6 +68,8 @@ public interface MemberService {
 	
 	String admin_update(AdminUpdateDto param)  throws CommonException;
 	
+	
+	String delete(List<ToggleDto> param,Long seq);
 
 	Member update_mng_name(String mng_name, Long member_seq);
 

@@ -44,9 +44,10 @@ public class SizeTable {
 	private Long id;
 
 	@JsonManagedReference
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
+	
 	private String visibleNameYn;
 
 	private String visibleCodeYn;

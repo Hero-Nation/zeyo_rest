@@ -667,7 +667,7 @@ public class BrandServiceImpl implements BrandService {
 
 		StringBuffer varname1 = new StringBuffer();
 		varname1.append("SELECT ");
-		varname1.append("    b.id AS brand, COUNT(i.member_id) ");
+		varname1.append("    COUNT(i.member_id) ");
 		varname1.append("FROM ");
 		varname1.append("    item i ");
 		varname1.append("        inner JOIN ");

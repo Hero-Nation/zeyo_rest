@@ -16,11 +16,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.querydsl.core.QueryResults;
@@ -32,6 +41,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.common.value.FlagDto;
+import net.heronation.zeyo.rest.common.value.ResultDto;
+import net.heronation.zeyo.rest.common.value.ToggleDto;
 import net.heronation.zeyo.rest.constants.CommonConstants;
 import net.heronation.zeyo.rest.controller.member.AdminUpdateDto;
 import net.heronation.zeyo.rest.controller.member.CpNoUpdateDto;
@@ -43,6 +54,7 @@ import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidation;
 import net.heronation.zeyo.rest.repository.email_validation.EmailValidationRepository;
 import net.heronation.zeyo.rest.repository.email_validation.QEmailValidation;
+import net.heronation.zeyo.rest.repository.item.Item;
 import net.heronation.zeyo.rest.repository.member.Member;
 import net.heronation.zeyo.rest.repository.member.MemberRegisterDto;
 import net.heronation.zeyo.rest.repository.member.MemberRepository;
@@ -189,17 +201,17 @@ public class MemberServiceImpl implements MemberService {
 
 		String phone1 = (String) param.get("phone1");
 		if (phone1 != null) {
-			where_query.append("        AND   m.phone like '" + phone1 + ",%' ");
+			where_query.append("        AND   m.phone like '" + phone1 + "%' ");
 		}
 
 		String phone2 = (String) param.get("phone2");
 		if (phone2 != null) {
-			where_query.append("        AND   m.phone like '," + phone2 + ",%' ");
+			where_query.append("        AND   m.phone like '%" + phone2 + "%' ");
 		}
 
 		String phone3 = (String) param.get("phone3");
 		if (phone3 != null) {
-			where_query.append("        AND   m.phone like '%," + phone3 + "' ");
+			where_query.append("        AND   m.phone like '%" + phone3 + "' ");
 		}
 
 		String email1 = (String) param.get("email1");
@@ -214,17 +226,17 @@ public class MemberServiceImpl implements MemberService {
 
 		String cn1 = (String) param.get("cn1");
 		if (cn1 != null) {
-			where_query.append("        AND bt.company_no like '" + cn1 + ",%' ");
+			where_query.append("        AND bt.company_no like '" + cn1 + "%' ");
 		}
 
 		String cn2 = (String) param.get("cn2");
 		if (cn2 != null) {
-			where_query.append("        AND   m.company_no like '%," + cn2 + ",%' ");
+			where_query.append("        AND   m.company_no like '%" + cn2 + "%' ");
 		}
 
 		String cn3 = (String) param.get("cn3");
 		if (cn3 != null) {
-			where_query.append("        AND  m.company_no like '%," + cn3 + "' ");
+			where_query.append("        AND  m.company_no like '%" + cn3 + "' ");
 		}
 
 		StringBuffer sort_query = new StringBuffer();
@@ -1166,6 +1178,20 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		return R;
+	}
+	
+	
+	@Override
+	@Transactional
+	public String delete(List<ToggleDto> param, Long seq) {
+		for (ToggleDto tv : param) {
+
+			Member i = memberRepository.findOne(tv.getId()); 
+			i.setUseYn("N");
+
+		}
+
+		return "Y";
 	}
 
 }

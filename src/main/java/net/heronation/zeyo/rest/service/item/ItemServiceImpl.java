@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -256,30 +257,43 @@ public class ItemServiceImpl implements ItemService {
 		if (name != null) {
 			where_query.append("        AND   i.name like '%" + name + "%' ");
 		}
-
+ 
 		String category = (String) param.get("category");
 		if (category != null) {
-			where_query.append("        AND   m.category_id = " + category + " ");
+			where_query.append("        AND   i.category_id = " + category + " ");
 		}
 		
 		String sub_category = (String) param.get("sub_category");
 		if (sub_category != null) {
-			where_query.append("        AND   m.sub_category_id = " + sub_category + " ");
+			where_query.append("        AND   i.sub_category_id = " + sub_category + " ");
 		}
 
 		String brand = (String) param.get("brand");
 		if (brand != null) {
-			where_query.append("        AND   b.id = " + brand + " ");
+			where_query.append("        AND   i.brand_id = " + brand + " ");
+		}
+		
+		String shopmall = (String) param.get("shopmall");
+		if (shopmall != null) {
+			where_query.append("        AND   s.id = " + shopmall + " ");
+		}
+		String company = (String) param.get("company");
+		if (company != null) {
+			where_query.append("        AND   i.member_id = " + company + " ");
 		}
 
 		String size_table = (String) param.get("size_table");
 		if (size_table != null && size_table.equals("P")) {
-			where_query.append("        AND   s.size_table_yn = 'Y' ");
+			where_query.append("        AND   i.size_table_yn = 'Y' ");
+		}else if (size_table != null && size_table.equals("N")) {
+			where_query.append("        AND   i.size_table_yn = 'N' ");
 		}
 
 		String size_link = (String) param.get("size_link");
 		if (size_link != null && size_link.equals("Y")) {
 			where_query.append("        AND   i.link_yn = 'Y' ");
+		}else if (size_link != null && size_link.equals("N")) {
+			where_query.append("        AND   i.link_yn = 'N' ");
 		}
 
 		String start_price = (String) param.get("start_price");
@@ -839,17 +853,25 @@ public class ItemServiceImpl implements ItemService {
 		}
 
 		StringBuffer sort_query = new StringBuffer();
-		sort_query.append("  ORDER BY i.");
+		sort_query.append("  ORDER BY  ");
 		Sort sort = page.getSort();
-		String sep = "";
-		for (Sort.Order order : sort) {
+		String sep = " ";
+		
+		
+		log.debug((sort == null)+"");
+		
+		for (Order order : sort) {
+			log.debug((order == null)+"");
 			sort_query.append(sep);
-			sort_query.append(order.getProperty());
+			sort_query.append(" i."+order.getProperty());
 			sort_query.append(" ");
 			sort_query.append(order.getDirection());
 			sep = ", ";
 		}
 
+		
+		log.debug(sort_query.toString());
+		
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
 		page_query.append((page.getPageNumber() - 1) * page.getPageSize());
