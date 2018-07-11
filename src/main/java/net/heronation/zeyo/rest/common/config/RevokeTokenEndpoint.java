@@ -1,4 +1,4 @@
-package net.heronation.zeyo.rest.config;
+package net.heronation.zeyo.rest.common.config;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

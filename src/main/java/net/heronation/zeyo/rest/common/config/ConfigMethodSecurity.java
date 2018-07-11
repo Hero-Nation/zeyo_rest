@@ -1,4 +1,4 @@
-package net.heronation.zeyo.rest.config;
+package net.heronation.zeyo.rest.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
