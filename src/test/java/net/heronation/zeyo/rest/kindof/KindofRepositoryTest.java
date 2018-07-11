@@ -1,12 +1,6 @@
 package net.heronation.zeyo.rest.kindof;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,9 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.brand.Brand;
-import net.heronation.zeyo.rest.repository.kindof.Kindof;
-import net.heronation.zeyo.rest.repository.kindof.KindofRepository;
+import net.heronation.zeyo.rest.kindof.repository.Kindof;
+import net.heronation.zeyo.rest.kindof.repository.KindofRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

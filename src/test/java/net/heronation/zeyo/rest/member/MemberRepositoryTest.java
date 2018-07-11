@@ -23,13 +23,13 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
-import net.heronation.zeyo.rest.repository.item.QItem;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
-import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberRepository;
-import net.heronation.zeyo.rest.repository.member.QMember;
-import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
+import net.heronation.zeyo.rest.brand.repository.QBrand;
+import net.heronation.zeyo.rest.item.repository.QItem;
+import net.heronation.zeyo.rest.item_shopmall_map.repository.QItemShopmallMap;
+import net.heronation.zeyo.rest.member.repository.Member;
+import net.heronation.zeyo.rest.member.repository.MemberRepository;
+import net.heronation.zeyo.rest.member.repository.QMember;
+import net.heronation.zeyo.rest.shopmall.repository.QShopmall;
 
 @Slf4j
 @RunWith(SpringRunner.class)

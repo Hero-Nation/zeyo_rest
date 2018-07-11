@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.measure_item.MeasureItem;
-import net.heronation.zeyo.rest.repository.measure_item.MeasureItemRepository;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

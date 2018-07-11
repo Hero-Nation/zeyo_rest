@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMap;
-import net.heronation.zeyo.rest.repository.item_laundry_map.ItemLaundryMapRepository;
+import net.heronation.zeyo.rest.item_laundry_map.repository.ItemLaundryMap;
+import net.heronation.zeyo.rest.item_laundry_map.repository.ItemLaundryMapRepository;
 
  
 @RunWith(SpringRunner.class)

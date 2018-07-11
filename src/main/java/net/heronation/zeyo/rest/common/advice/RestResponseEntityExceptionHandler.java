@@ -11,7 +11,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.dto.ResultDto;
 
-@Slf4j 
+@Slf4j
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 

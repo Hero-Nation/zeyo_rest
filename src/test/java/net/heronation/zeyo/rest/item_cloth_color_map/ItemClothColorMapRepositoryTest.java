@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMap;
-import net.heronation.zeyo.rest.repository.item_cloth_color_map.ItemClothColorMapRepository;
+import net.heronation.zeyo.rest.item_cloth_color_map.repository.ItemClothColorMap;
+import net.heronation.zeyo.rest.item_cloth_color_map.repository.ItemClothColorMapRepository;
 
  
 @RunWith(SpringRunner.class)

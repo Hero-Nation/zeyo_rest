@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.item.ItemRepository;
+import net.heronation.zeyo.rest.item.repository.ItemRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

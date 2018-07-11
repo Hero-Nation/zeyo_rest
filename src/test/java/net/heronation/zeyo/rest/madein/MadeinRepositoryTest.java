@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.madein.Madein;
-import net.heronation.zeyo.rest.repository.madein.MadeinRepository;
+import net.heronation.zeyo.rest.madein.repository.Madein;
+import net.heronation.zeyo.rest.madein.repository.MadeinRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMap;
-import net.heronation.zeyo.rest.repository.item_material_map.ItemMaterialMapRepository;
+import net.heronation.zeyo.rest.item_material_map.repository.ItemMaterialMap;
+import net.heronation.zeyo.rest.item_material_map.repository.ItemMaterialMapRepository;
 
  
 @RunWith(SpringRunner.class)

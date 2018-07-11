@@ -8,8 +8,8 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.item.Item;
-import net.heronation.zeyo.rest.repository.item.ItemRepository;
+import net.heronation.zeyo.rest.item.repository.Item;
+import net.heronation.zeyo.rest.item.repository.ItemRepository;
 
 @Slf4j
 @Component("AppSecurityEL")

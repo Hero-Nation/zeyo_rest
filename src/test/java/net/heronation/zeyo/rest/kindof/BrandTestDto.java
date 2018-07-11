@@ -1,6 +1,6 @@
 package net.heronation.zeyo.rest.kindof;
 
-import net.heronation.zeyo.rest.repository.member.Member;
+import net.heronation.zeyo.rest.member.repository.Member;
 
 public class BrandTestDto {
 	private Long id;

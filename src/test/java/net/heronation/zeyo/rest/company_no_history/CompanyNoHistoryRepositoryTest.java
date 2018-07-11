@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistory;
-import net.heronation.zeyo.rest.repository.company_no_history.CompanyNoHistoryRepository;
-import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberRepository;
+import net.heronation.zeyo.rest.company_no_history.repository.CompanyNoHistory;
+import net.heronation.zeyo.rest.company_no_history.repository.CompanyNoHistoryRepository;
+import net.heronation.zeyo.rest.member.repository.Member;
+import net.heronation.zeyo.rest.member.repository.MemberRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

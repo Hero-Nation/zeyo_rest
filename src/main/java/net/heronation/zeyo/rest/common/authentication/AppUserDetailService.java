@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.MemberRepository;
+import net.heronation.zeyo.rest.member.repository.Member;
+import net.heronation.zeyo.rest.member.repository.MemberRepository;
 
 @Slf4j
 @Service

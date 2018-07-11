@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMap;
-import net.heronation.zeyo.rest.repository.item_size_option_map.ItemSizeOptionMapRepository;
+import net.heronation.zeyo.rest.item_size_option_map.repository.ItemSizeOptionMap;
+import net.heronation.zeyo.rest.item_size_option_map.repository.ItemSizeOptionMapRepository;
 
  
 @RunWith(SpringRunner.class)

@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.bbs.Bbs;
-import net.heronation.zeyo.rest.repository.bbs.BbsRepository;
+import net.heronation.zeyo.rest.bbs.repository.Bbs;
+import net.heronation.zeyo.rest.bbs.repository.BbsRepository;
 
 @Slf4j
 @RunWith(SpringRunner.class)

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMap;
-import net.heronation.zeyo.rest.repository.item_bleach_map.ItemBleachMapRepository;
+import net.heronation.zeyo.rest.item_bleach_map.repository.ItemBleachMap;
+import net.heronation.zeyo.rest.item_bleach_map.repository.ItemBleachMapRepository;
 
  
 @RunWith(SpringRunner.class)

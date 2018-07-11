@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.dto.ResultDto;
-import net.heronation.zeyo.rest.service.common.CommonService;
+import net.heronation.zeyo.rest.common.service.CommonService;
 
 @RepositoryRestController
 @Slf4j

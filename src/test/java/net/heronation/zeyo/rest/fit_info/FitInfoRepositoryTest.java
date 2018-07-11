@@ -15,11 +15,11 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfo;
-import net.heronation.zeyo.rest.repository.fit_info.FitInfoRepository;
-import net.heronation.zeyo.rest.repository.fit_info.QFitInfo;
-import net.heronation.zeyo.rest.repository.fit_info_option.FitInfoOption;
-import net.heronation.zeyo.rest.repository.fit_info_option.QFitInfoOption;
+import net.heronation.zeyo.rest.fit_info.repository.FitInfo;
+import net.heronation.zeyo.rest.fit_info.repository.FitInfoRepository;
+import net.heronation.zeyo.rest.fit_info.repository.QFitInfo;
+import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
+import net.heronation.zeyo.rest.fit_info_option.repository.QFitInfoOption;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

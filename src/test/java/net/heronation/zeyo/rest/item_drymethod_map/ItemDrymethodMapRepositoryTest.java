@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMap;
-import net.heronation.zeyo.rest.repository.item_drymethod_map.ItemDrymethodMapRepository;
+import net.heronation.zeyo.rest.item_drymethod_map.repository.ItemDrymethodMap;
+import net.heronation.zeyo.rest.item_drymethod_map.repository.ItemDrymethodMapRepository;
 
  
 @RunWith(SpringRunner.class)

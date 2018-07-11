@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMap;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.ItemShopmallMapRepository;
+import net.heronation.zeyo.rest.item_shopmall_map.repository.ItemShopmallMap;
+import net.heronation.zeyo.rest.item_shopmall_map.repository.ItemShopmallMapRepository;
 
  
 @RunWith(SpringRunner.class)

@@ -20,13 +20,13 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.category.Category;
-import net.heronation.zeyo.rest.repository.category.QCategory;
-import net.heronation.zeyo.rest.repository.sub_category.QSubCategory;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategory;
-import net.heronation.zeyo.rest.repository.sub_category.SubCategoryRepository;
-import net.heronation.zeyo.rest.repository.sub_category_fit_info_map.QSubCategoryFitInfoMap;
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.QSubCategoryMeasureMap;
+import net.heronation.zeyo.rest.category.repository.Category;
+import net.heronation.zeyo.rest.category.repository.QCategory;
+import net.heronation.zeyo.rest.sub_category.repository.QSubCategory;
+import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
+import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
+import net.heronation.zeyo.rest.sub_category_fit_info_map.repository.QSubCategoryFitInfoMap;
+import net.heronation.zeyo.rest.sub_category_measure_map.repository.QSubCategoryMeasureMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

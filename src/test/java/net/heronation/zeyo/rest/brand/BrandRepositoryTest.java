@@ -21,15 +21,15 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.brand.Brand;
-import net.heronation.zeyo.rest.repository.brand.BrandRepository;
-import net.heronation.zeyo.rest.repository.brand.QBrand;
-import net.heronation.zeyo.rest.repository.company_no_history.QCompanyNoHistory;
-import net.heronation.zeyo.rest.repository.item.QItem;
-import net.heronation.zeyo.rest.repository.item_shopmall_map.QItemShopmallMap;
-import net.heronation.zeyo.rest.repository.member.Member;
-import net.heronation.zeyo.rest.repository.member.QMember;
-import net.heronation.zeyo.rest.repository.shopmall.QShopmall;
+import net.heronation.zeyo.rest.brand.repository.Brand;
+import net.heronation.zeyo.rest.brand.repository.BrandRepository;
+import net.heronation.zeyo.rest.brand.repository.QBrand;
+import net.heronation.zeyo.rest.company_no_history.repository.QCompanyNoHistory;
+import net.heronation.zeyo.rest.item.repository.QItem;
+import net.heronation.zeyo.rest.item_shopmall_map.repository.QItemShopmallMap;
+import net.heronation.zeyo.rest.member.repository.Member;
+import net.heronation.zeyo.rest.member.repository.QMember;
+import net.heronation.zeyo.rest.shopmall.repository.QShopmall;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

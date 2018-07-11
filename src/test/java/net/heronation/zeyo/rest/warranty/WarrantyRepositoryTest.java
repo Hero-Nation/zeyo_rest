@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.warranty.Warranty;
-import net.heronation.zeyo.rest.repository.warranty.WarrantyRepository;
+import net.heronation.zeyo.rest.warranty.repository.Warranty;
+import net.heronation.zeyo.rest.warranty.repository.WarrantyRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

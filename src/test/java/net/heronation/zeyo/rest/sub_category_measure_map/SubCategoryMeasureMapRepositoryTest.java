@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMap;
-import net.heronation.zeyo.rest.repository.sub_category_measure_map.SubCategoryMeasureMapRepository;
+import net.heronation.zeyo.rest.sub_category_measure_map.repository.SubCategoryMeasureMap;
+import net.heronation.zeyo.rest.sub_category_measure_map.repository.SubCategoryMeasureMapRepository;
 
  
 @RunWith(SpringRunner.class)

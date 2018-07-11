@@ -12,11 +12,11 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.repository.category.CategoryRepository;
-import net.heronation.zeyo.rest.repository.consumer.Consumer;
-import net.heronation.zeyo.rest.repository.consumer.ConsumerRepository;
-import net.heronation.zeyo.rest.repository.consumer.QConsumer;
-import net.heronation.zeyo.rest.service.integrate.common.IntegrateCommonService;
+import net.heronation.zeyo.rest.category.repository.CategoryRepository;
+import net.heronation.zeyo.rest.consumer.repository.Consumer;
+import net.heronation.zeyo.rest.consumer.repository.ConsumerRepository;
+import net.heronation.zeyo.rest.consumer.repository.QConsumer;
+import net.heronation.zeyo.rest.integrate.service.common.IntegrateCommonService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
