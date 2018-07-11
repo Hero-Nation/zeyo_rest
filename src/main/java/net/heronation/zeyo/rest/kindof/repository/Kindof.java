@@ -36,39 +36,31 @@ import net.heronation.zeyo.rest.warranty.repository.Warranty;
 
 public class Kindof {
 
-	@JsonBackReference(value="madein_kindof")
+	@JsonBackReference(value = "madein_kindof")
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Madein> madeins = new ArrayList<Madein>();
-	
-	
-	
-	@JsonBackReference(value="warranty_kindof")
+
+	@JsonBackReference(value = "warranty_kindof")
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Warranty> warrantys = new ArrayList<Warranty>();
-	
-	
-	
-	@JsonBackReference(value="sizeOption_kindof")
+
+	@JsonBackReference(value = "sizeOption_kindof")
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
-	
-	
-	@JsonBackReference(value="clothColor_kindof")
+
+	@JsonBackReference(value = "clothColor_kindof")
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<ClothColor> clothColors = new ArrayList<ClothColor>();
-	
-	
-	
-	@JsonBackReference(value="bbss_kindof")
+
+	@JsonBackReference(value = "bbss_kindof")
 	@JsonIgnore
 	@OneToMany(mappedBy = "kindof", fetch = FetchType.LAZY)
 	private List<Bbs> bbss = new ArrayList<Bbs>();
-	
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "KINDOF_ID_GENERATOR")
 	@Column(name = "ID")
@@ -79,13 +71,11 @@ public class Kindof {
 	private String kvalue;
 	@JsonIgnore
 	private String useYn;
-	
-	
+
 	@Override
 	public String toString() {
 		return "Kindof ]";
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -103,7 +93,6 @@ public class Kindof {
 			return false;
 		return true;
 	}
-
 
 	@Override
 	public int hashCode() {
