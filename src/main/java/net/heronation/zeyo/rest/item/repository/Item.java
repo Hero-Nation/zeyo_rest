@@ -133,22 +133,6 @@ public class Item {
 	private DateTime createDt;
 
 	private String useYn;
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
 	
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
@@ -169,9 +153,26 @@ public class Item {
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemBleachMap itemBleachMap;
+	
+	
+	@JsonBackReference
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
 
 	@JsonBackReference
-	@OneToMany(mappedBy = "item")
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+	private List<ItemMaterialMap> itemMaterialMaps = new ArrayList<ItemMaterialMap>();
+
+	@JsonBackReference
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
+
+	@JsonBackReference
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+	private List<ItemClothColorMap> itemClothColorMaps = new ArrayList<ItemClothColorMap>();
+
+	@JsonBackReference
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 
 	@JsonBackReference

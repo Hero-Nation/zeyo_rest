@@ -419,7 +419,7 @@ public class ShopmallServiceImpl implements ShopmallService {
 
 			if (use_count.equals(BigInteger.ONE) || use_count.equals(BigInteger.ZERO)) {
 
-				List<Brand> list = shopmallRepository.findByName(param.getName());
+				List<Shopmall> list = shopmallRepository.findByName(param.getName());
 
 				if (list.size() > 0) {
 					R.put("CODE", "D");

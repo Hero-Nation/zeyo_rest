@@ -30,6 +30,11 @@ public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslP
 	Page<Member> findAll(Pageable arg0);
 
 	
+	
+	@Override
+	@PreAuthorize("permitAll()")
+	Iterable<Member> findAll(Predicate predicate);
+	
  	@Override 
  	@PreAuthorize("permitAll()")
  	<S extends Member> S save(S arg0);
@@ -37,7 +42,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, QueryDslP
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")
  	Member getOne(Long arg0);
- 	
  	
  	@Override
  	@PreAuthorize("hasRole('ROLE_CLIENT')")

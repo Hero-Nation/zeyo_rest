@@ -26,6 +26,9 @@
 			window.location ="https://kauth.kakao.com/oauth/authorize?client_id=e6f2ee99262f3e782e4756845d7f36fe&redirect_uri=https://www.zeyo.co.kr/oauth/kakao/callback&response_type=code&state=${state}";
 		};
 		
+		var f_not_avaiable = function(){
+			alert("준비중입니다");
+		};
 		//]]>
 	</script>
 </head>
@@ -51,8 +54,8 @@
 			<div class="loginBtnArea">
 				<button type="button" class="kakao" onclick='f_login_kakao();'><span>카카오계정 로그인</span></button>
 				<button type="button" class="naver" onclick='f_login_naver();'><span>네이버계정 로그인</span></button>
-				<button type="button" class="facebook"><span>페이스북계정 로그인</span></button>
-				<button type="button" class="google"><span>구글계정 로그인</span></button>
+				<button type="button" class="facebook" onclick='f_not_avaiable();'><span>페이스북계정 로그인</span></button>
+				<button type="button" class="google" onclick='f_not_avaiable();'><span>구글계정 로그인</span></button>
 			</div>
 <!-- 
 			<div class="join"><a href="#none" >ZEYO 회원가입</a></div>

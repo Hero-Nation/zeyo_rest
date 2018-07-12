@@ -109,10 +109,10 @@ public class CategoryServiceImpl implements CategoryService{
 			where_query.append("        AND   sc.id = " + subcate + " "); 
 		}
 //		
-//		String measure = (String) param.get("measure");
-//		if (measure != null) {
-//			where_query.append("        AND   c.measure like '%" + measure + "%' "); 
-//		}
+		String measure = (String) param.get("measure");
+		if (measure != null) {
+			where_query.append("        AND   scmm.measure_item_id  = " + measure + " "); 
+		}
 
 
 	 

@@ -1,0 +1,252 @@
+/* All Style */
+	a:link, a:visited{text-decoration:none}
+	a:hover{text-decoration:none}
+	
+	html{overflow-y:auto;}
+	html,body{width:100%; min-height:100%;}
+	body,th,td,input,select,textarea{font-style:normal; font-weight:400; font-size:14px; line-height:18px; font-family: 'NotoSans', sans-serif; color:#444}
+	th,td{border-collapse:collapse; empty-cells:show; box-sizing: border-box;}
+	*{box-sizing: border-box;}
+
+/* TABLE */
+	.sizetable{margin-top:5px; border-top:1px solid #afaead; border-right:1px solid #afaead;}
+	.sizetable table{width:100%; border-spacing:0; }
+	.sizetable table th{padding:7px; height:33px; font-size:14px; text-align:center; color:#000; vertical-align: top; border-bottom:1px solid #afaead; border-left:1px solid #afaead; font-weight:bold;}
+	.sizetable table td{padding:7px; height:33px; text-align:center; vertical-align: top; border-bottom:1px solid #afaead; border-left:1px solid #afaead;}
+	.sizetable table td:first-child{text-align:left;}
+	.sizetable table tr:last-child td:not(:first-child){ font-weight:bold; font-size:16px} 
+
+/* Input, Textarea */
+	input{padding:12px; background-color: #fff; border:1px solid #c3c3c3; font-weight: normal; font-size:14px; height:30px; vertical-align: top; color:#252525; text-align:left;}
+	input:focus {outline: none;}
+	input.bdN{border:none;}
+	input.type02{height:45px; font-size:16px;}
+	input.bgGray{background-color:#f1f1f1;}
+
+	.datepicker{width:30px; height:30px; display:inline-block; vertical-align:top; border:none; padding:0; font-size:0; line-height:0;}
+
+/* checkbox */
+	input[type=checkbox] {width:0; height:0; -webkit-transform: scale(0, 0);}
+	input[type=checkbox] + label {background:url("../../images/common/chk_off.png") no-repeat 0 1px; display:inline-block; font-size:15px; line-height:19px;  color:#555; padding-left:25px;}
+	input[type=checkbox]:checked + label {background:url("../../images/common/chk_on.png") no-repeat 0 1px;}
+
+	.itemChk input[type=checkbox] {width:0; height:0; -webkit-transform: scale(0, 0);}
+	.itemChk input[type=checkbox] + label {background:url("../../images/common/chk2_off.png") no-repeat 0 1px; display:inline-block; font-size:15px; line-height:31px;  color:#555; padding-left:37px;}
+	.itemChk input[type=checkbox]:checked + label {background:url("../../images/common/chk2_on.png") no-repeat 0 1px;}
+	
+	.chk_inline {display:inline-block; vertical-align: top; margin-right:15px;}
+	.chk_block {display:block; margin:2px 0;}
+
+	.txtN input[type=checkbox] + label {padding-left:19px; min-width:19px; min-height:19px;}
+	.chk_inline.txtN {margin-right:0;}
+
+/* radio */
+	input[type=radio] {width:0; height:0; -webkit-transform: scale(0, 0);}
+	input[type=radio] + label {background:url("../../images/common/radio_off.png") no-repeat 0 center; display:inline-block; font-size:15px; line-height:22px;  color:#4d4d4d; padding-left:30px;}
+	input[type=radio]:checked + label {background:url("../../images/common/radio_on.png") no-repeat 0 center; font-weight:900}
+	
+	.radioWrap { padding:0 15px}
+	
+	.rdo_inline {display:inline-block; vertical-align: top;margin: 0 30px;}
+	.rdo_block {display:block; margin:2px 0;}
+	
+	.txtN input[type=radio] + label {padding-left:19px; min-width:19px; min-height:19px;}
+	.rdo_inline.txtN {margin-right:0;}
+
+/* Select DESIGN */
+	.selType01{display:inline-block; vertical-align: top; position:relative;}
+	.selType01>select{width:100% !important; height:100% !important;}
+	.selType01 .selType{width:100%; padding:0 12px; background-color: #fff; border:1px solid #c3c3c3; font-weight: normal; font-size:14px; line-height:28px; color:#252525; text-align:left;}
+	.selType01 .selType>.selTypeInner {width:100% !important; height:100%; background:url('../../images/common/selCustom_arr.png') no-repeat right center; padding-right:35px;}
+	.selType01.type02 .selType{line-height:43px; font-size:16px;}
+
+/* LAYER */
+	#layerBg{width:100%; height:100%; background-color: #000; position:fixed; left:0; top:0; z-index:10; opacity:0.7; }
+	.layerArea{width:960px; background-color: #fff; position:fixed; left:50%; top:50%; z-index:11; display:none; padding:35px 20px 20px; max-height:770px;}
+	.layerArea.type02{width:665px;}
+	.layerArea.type03{width:510px;}
+	.layerArea .popuplogo{position:absolute; top:13px; left:45px; display:inline-block; padding:0 5px; background-color:#fff;}
+	.layerArea .closeLy{position:absolute; top:20px; right:20px; display:inline-block; padding:0 5px; background-color:#fff;}
+	.layerArea .layerWrap{border:2px solid #e14743;}
+	.layerArea .contLy{position:relative; padding: 40px 40px 20px;}
+	.layerArea .contLy.minus{ padding:40px 40px 10px; }
+	
+	.writeSizeForm:after{clear:both; content:''; display:block;}
+	.writeSizeForm{position:relative; padding-left:235px; min-height:210px;}
+	.writeSizeForm .thumb{position:absolute; top:0; left:0; }
+	.writeSizeForm .sizeForm .title{ font-size: 16px;line-height: 1.1;color: #000;font-weight: 900; }
+	.writeSizeForm .sizeForm .price{font-size:14px; line-height:0.8; color:#9c9c9c; margin-top:5px; font-weight:600;}
+	.writeSizeForm .sizeForm .size{position:relative;max-height:150px; border:1px solid #e98270; margin-top:17px; padding:5px ; font-size:18px; line-height:32px;}
+	.writeSizeForm .sizeForm .size .btn{display:inline-block; vertical-align:top;}
+	.writeSizeForm .sizeForm .size .btn button{border:1px solid #e98270; background-color:#fff; color:#ed0923; height:32px;padding:0 10px; font-weight:600; width:110px}
+	.writeSizeForm .sizeForm .size .btn:hover button{border:1px solid #ed0923; background-color:#ed0923; color:#FFF;}
+	.writeSizeForm .sizeForm .size .tit{display:inline-block; font-size:16px; color:#4d4d4d; font-weight:600 }
+	.writeSizeForm .sizeForm .size .inputbox{display:inline-block; border-bottom:1px solid #e98270; padding:0 10px;height:32px;}
+	.writeSizeForm .sizeForm .size .inputbox input{display:inline-block; border:none; width:102px; text-align:center;}
+	.writeSizeForm .sizeForm .size .btn2{position:absolute; bottom:10px; right:10px; }
+	.writeSizeForm .sizeForm .size .btn2 button{border:1px solid #e98270; background-color:#fff; color:#e98270; width:95px; height:78px; font-size:15px;}
+
+	.writeSizeForm .sizeForm .size.type02,
+	.writeSizeForm .sizeForm .size.type01 { height:150px}
+	.writeSizeForm .sizeForm .size.type02 .tit{width:75px; text-align:right;}
+	.writeSizeForm .sizeForm .size.type02 .inputbox{width:133px; margin-left:10px;}
+	.writeSizeForm .sizeForm .size.type02 .inputbox input{width:80px}
+	
+/*type01 inputbox*/	
+	.writeSizeForm .sizeForm .size.type01 .inputWrap { height:32px; padding-left:40px;}
+	.writeSizeForm .sizeForm .size.type01 .inputWrap .inputbox{}
+		
+/*type02 serch box*/
+	.writeSizeForm .sizeForm .size.type02 .inputbox.schBx {
+    width: 440px;
+    margin-left: 45px;
+    text-align: center;
+	height:32px;}
+	.writeSizeForm .sizeForm .size.type02 .inputbox.schBx > input { width:100%}
+	.writeSizeForm .sizeForm .size.type02 .schbt {
+	margin-left:5px;	
+    width: 50px;
+    height: 32px;
+    border: 1px solid #e98270;
+    background-color: #FFF;
+    vertical-align: top;
+    color: #ed0923;}
+	.writeSizeForm .sizeForm .size.type02 .schbt:hover { background-color:#ed0923; color:#FFF;border: 1px solid #ed0923;}
+
+	
+	
+/* md text*/
+	.writeSizeForm .sizeForm .size.type02 .pinkWrap {
+    text-align: center;
+    width: 440px;
+	margin:3px 0 5px 50px;
+	height:22px}
+	.writeSizeForm .sizeForm .size.type02 .pinktx {
+    font-size: 14px;
+    color: #ed0923;
+    font-weight: bold;
+	vertical-align: top;
+	line-height: 25px;
+	}
+
+/*shopping list*/
+	.writeSizeForm .sizeForm .size.type02 .selectBx{ margin:2px 0 10px; }
+	.writeSizeForm .sizeForm .size.type02 select{background:url(../../images/arrow.png) no-repeat right;-webkit-appearance: none;
+	 color:#686868;}
+	.writeSizeForm .sizeForm .size.type02 .selectBx select[name="shplist"] {
+    display: inline-block;
+	width: 495px;
+    height: 32px;
+    margin-left: 45px;
+    text-align: center;
+    border: 1px solid #e98270;
+    padding: 0 10px; }
+	.writeSizeForm .sizeForm .size.type02 option{ color:#4d4d4d; }
+
+/*option box*/
+	.writeSizeForm .sizeForm .size.type02 .selectBx_3{ height:32px; text-align:center}
+	.writeSizeForm .sizeForm .size.type02 .selectBx_3 div{ display:inline-block; }
+	.writeSizeForm .sizeForm .size.type02 .selectBx_3 div select{ height:32px;border: 1px solid #e98270;}
+	.writeSizeForm .sizeForm .size.type02 .selectBx_3 .shop_opt select{ width:110px; margin-right:5px;}
+	.writeSizeForm .sizeForm .size.type02 .selectBx_3 .brand_opt select{width:110px; margin-right:6px;}
+	.writeSizeForm .sizeForm .size.type02 .selectBx_3 .prod_opt select{width:260px; margin-right:7px;}
+
+/*top-btn*/
+	button {outline:none}
+	.writeSizeForm .sizeForm .size .top_btnWrap{ position:absolute;top: -33px; right: -1px;/*border:1px solid #e98270; border-bottom:none;*/ }
+	.writeSizeForm .sizeForm .size .top_btnWrap button{padding: 0 0 0 20px;font-size:12px; border:none; font-weight:600;height:31px; color:#000}
+	.btn-bodych, .btn-refresh{ display:inline-block; }
+	.writeSizeForm .btn-bodych{text-align:right;margin-right: 10px;/* border-right:1px solid #e98270;*/}
+	.writeSizeForm .btn-bodych button{background:url("../../images/bodyImg_red.png") no-repeat left center;}
+	.writeSizeForm .btn-refresh{text-align:right;height:30px;}
+	.writeSizeForm .btn-refresh button{background:url("../../images/reset.png") no-repeat left center;}
+	
+	
+	.resultWrap{ padding:0 40px; text-align:left;}
+	.restxt{ font-size:16px; color:#4d4d4d;}
+	.result{font-size:26px; font-weight:bold;}
+	.result.red{color:#dd1932; font-size:22px }
+	.result.blue{color:#3384c6; font-size:22px}
+
+	.sizeCloth{position:relative; padding:0 80px;}
+	.sizeCloth .text{text-align:center; padding: 8px 10px 25px;}
+	.sizeCloth .text.restxtbox{padding: 8px 10px 23px; }
+	.sizeCloth .text .top_txt{color:#ed0923;font-size:16px; font-weight:600;}
+	.sizeCloth .clothimg{text-align:center;}
+	.sizeCloth .sizebutton{position:absolute; top:45px; left:80px;}
+	.sizeCloth .sizebutton button{display:block; border:1px solid #afaead; width:85px; height:30px; font-size:20px; color:#4d4d4d; text-align:center; background-color:#fff; margin-bottom:5px;}
+	.sizeCloth .sizebutton button.on{background-color:#ed0923; border:1px solid #ed0923; color:#fff;}
+	.sizebutton p { font-size: 20px;
+    margin: 0 0 5px;
+    color: #ed0923;
+    font-weight: 800;
+    text-align: center;}
+	
+	.sizeCloth .btn{margin-top:20px; text-align:center;}
+	.sizeCloth .btn.minus{margin-top:10px; }
+	.sizeCloth .btn button{display:inline-block; border:2px solid #e14743; width:200px; height:40px; font-size:14px; font-weight:bold; color:#e14743; text-align:center; background-color:#fff; }
+	.sizeCloth .btn button:hover { background-color: #ed0923; color:#FFF}
+/*size guide line*/
+	.sizeCloth .guide{ position:absolute; right:80px; top:10px; font-size:12px}
+	.sizeCloth .guide p span{width: 20px;display: inline-block; vertical-align: middle;margin-right:10px;}
+	.sizeCloth .guide .buy_pro span{border: 2px solid #38499c;}
+	.sizeCloth .guide .compare_pro span{border: 2px solid #ff1a77;}
+	
+/*size compare*/
+	.sizeCloth .clothimg { position:relative; height: 240px; top:0; }
+	.sizeCloth .big_tshirt {position:absolute; top:0; right:0; z-index:3; max-height:240px; width:100%}
+	.sizeCloth .big_tshirt svg{ width:35%; height:auto}
+	.sizeCloth .small_tshirt{ position:absolute; top:0; right:0; z-index:5; max-height:240px; width:100%}
+	.sizeCloth .small_tshirt svg{width:37%; height:auto;stroke-dasharray: 4}
+	
+	.sizeBody{position:relative; margin-top:5px; padding:0 80px;}
+	.sizeBody .text{text-align:center; font-size:16px; color:#030000; }
+	.sizeBody .btn{margin-top:20px; text-align:center;}
+	.sizeBody .btn button{display:inline-block; border:2px solid #e14743; width:200px; height:40px; font-size:14px; font-weight:bold; color:#e14743; text-align:center; background-color:#fff; }
+	.sizeBody.type02{padding:0;}
+
+	.bodyCheck{margin-top:20px;}
+	.bodyCheck:after{clear:both; content:'';display:block;}
+	.bodyCheck button{float:left; display:inline-block; vertical-align:top; border:1px solid #e3574d; background-color:#fff; padding:0; margin-left:10px; outline:none; cursor:pointer;}
+	.bodyCheck button:first-child{margin-left:0;}
+	.bodyCheck button img{border:8px solid #fff; border-bottom:none; font-size:0; line-height:0; display:block;}
+	.bodyCheck button span{display:block; padding:10px 0; font-size:20px; font-weight:bold; color:#030000; text-align:center;}
+
+	.bodyCheck button.check{border:1px solid #de1932;}
+	.bodyCheck button.check img{border:8px solid #de1932; border-bottom:none;}
+	.bodyCheck button.check span{background-color:#de1932; color:#fff; }
+
+	.text_type01{font-size:14px; text-align:center; line-height:18px; color:#4d4d4d;}
+	.text_type02{font-size:15px; text-align:center; line-height:18px; color:#030000; font-weight:bold;}
+
+	.msg_btn01,
+	.msg_btn02{text-align:center;}
+	.msg_btn01 button{display:inline-block; vertical-align:top; width:180px; height:40px; font-size:16px; color:#dd1932; border:1px solid #dd1932; text-align:center; font-weight:bold; background-color:#fff; margin:0 10px;}
+	.msg_btn02 button{display:inline-block; vertical-align:top; width:260px; height:40px; font-size:16px; color:#dd1932; border:1px solid #dd1932; text-align:center; font-weight:bold; background-color:#fff; }
+
+	.loginBtnArea{ margin-top:30px; text-align:center;}
+	.loginBtnArea button{display:inline-block; width:230px; height:40px; color:#fff; font-size:16px; color:#fff; padding-left:45px; border:none; margin-bottom:10px; }
+	.loginBtnArea button span{display:block; line-height:40px; text-align:left;padding-left:15px;}
+	.loginBtnArea button.kakao{background:#f4e226 url("../../images/ico_kakao.png") no-repeat 11px center;}
+	.loginBtnArea button.kakao span{border-left:1px solid #d3be31}
+	.loginBtnArea button.naver{background:#48b136 url("../../images/ico_naver.png") no-repeat 13px center;}
+	.loginBtnArea button.naver span{border-left:1px solid #70bc51}
+	.loginBtnArea button.facebook{background:#506aa3 url("../../images/ico_facebook.png") no-repeat 16px center;}
+	.loginBtnArea button.facebook span{border-left:1px solid #5c72a8}
+	.loginBtnArea button.google{background:#d04a39 url("../../images/ico_google.png") no-repeat 11px center;}
+	.loginBtnArea button.google span{border-left:1px solid #d6674e}
+
+	.join{text-align:right; margin-top:15px; }
+	.join a{display:inline-block; font-size:11px; color:#dd1932; border-bottom:1px solid #dd1932; }
+/*
+active
+:first-child
+text-indent:-99999px;
+!important
+display: table;
+display: table-row;
+display: table-cell;
+box-sizing: border-box;
+word-break:keep-all; word-wrap:break-word;
+border-radius:2px;
+*/

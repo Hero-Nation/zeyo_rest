@@ -908,34 +908,19 @@ public class MemberServiceImpl implements MemberService {
 		QMember m = QMember.member;
 		QEmailValidation target = QEmailValidation.emailValidation;
 
-		Member db_v = memberRepository.findOne(m.name.eq(name).and(m.email.eq(email)));
+		Iterable<Member> db_v =  memberRepository.findAll(m.name.eq(name).and(m.email.eq(email)));
 
-		if (db_v == null) {
+		if (!db_v.iterator().hasNext()) {
 			return "member.not.exist";
 		} else {
-
-			EmailValidation db_ev = emailValidationRepository.findOne(target.email.eq(email));
-
-			String ri = String.format("%06d", RandomUtils.nextInt(0, 999999));
-
-			if (db_ev == null) {
-
-				db_ev = new EmailValidation();
-				db_ev.setCreateDt(new DateTime());
-				db_ev.setEmail(email);
-				db_ev.setOtp(ri);
-				emailValidationRepository.save(db_ev);
-
-			} else {
-				db_ev.setOtp(ri);
-			}
-
+			Member this_member = db_v.iterator().next();
+			
 			try {
 				SimpleMailMessage message = new SimpleMailMessage();
 				message.setFrom("help@heronation.net");
 				message.setTo(email);
-				message.setSubject("히어로네이션 임시 비밀번호 안내 메일");
-				message.setText("임시비밀번호는 '" + ri + "' 입니다.");
+				message.setSubject("히어로네이션 아이디 찾기 안내 메일");
+				message.setText("현재 사용하시는 아이디는 '" + this_member.getMemberId() + "' 입니다.");
 				emailSender.send(message);
 			} catch (Exception e) {
 				CommonException exp = new CommonException("SENDING EMAIL ERROR");

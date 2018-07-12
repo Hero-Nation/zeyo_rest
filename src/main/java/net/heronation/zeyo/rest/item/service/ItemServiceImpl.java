@@ -1707,6 +1707,7 @@ public class ItemServiceImpl implements ItemService {
 		old_item.setIroningYn(ibd.getIroningYn());
 		old_item.setLaundryYn(ibd.getLaundryYn());
 
+		
 		old_item.setMadeinBuilder(ibd.getMadeinBuilder());
 		old_item.setMadeinDate(ibd.getMadeinDate());
 		old_item.setName(ibd.getName());

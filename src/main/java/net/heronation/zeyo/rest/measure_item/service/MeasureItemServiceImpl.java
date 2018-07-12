@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,12 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.brand.repository.Brand;
 import net.heronation.zeyo.rest.common.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
+import net.heronation.zeyo.rest.measure_item.controller.MeasureItemUpdateDto;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemDto;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
+import net.heronation.zeyo.rest.member.repository.Member;
 
 @Slf4j
-@Service 
+@Service
 public class MeasureItemServiceImpl implements MeasureItemService {
 
 	@Autowired
@@ -35,7 +41,7 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 	EntityManager entityManager;
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
@@ -73,7 +79,7 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 		// where_query.append("GROUP BY mi.id");
 
 		StringBuffer sort_query = new StringBuffer();
-		
+
 		Sort sort = page.getSort();
 		if (sort != null) {
 			sort_query.append("  ORDER BY mi.");
@@ -84,9 +90,8 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 				sort_query.append(" ");
 				sort_query.append(order.getDirection());
 				sep = ", ";
-			}	
+			}
 		}
-		
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -94,7 +99,8 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 		page_query.append(" , ");
 		page_query.append(page.getPageSize());
 
-		Query count_q = entityManager.createNativeQuery(count_query.append(select_query).append(where_query).append(" ) count_table  ").toString());
+		Query count_q = entityManager.createNativeQuery(
+				count_query.append(select_query).append(where_query).append(" ) count_table  ").toString());
 		BigInteger count_list = BigInteger.ZERO;
 
 		List<BigInteger> count_result = count_q.getResultList();
@@ -140,7 +146,7 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Map<String, Object> detail_list(Map<String, Object> param, Pageable page) {
 		StringBuffer count_query = new StringBuffer();
 		count_query.append("SELECT ");
@@ -173,7 +179,7 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 		group_query.append(" GROUP BY c.id ");
 
 		StringBuffer sort_query = new StringBuffer();
-		
+
 		Sort sort = page.getSort();
 		if (sort != null) {
 			sort_query.append("  ORDER BY c.");
@@ -184,9 +190,8 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 				sort_query.append(" ");
 				sort_query.append(order.getDirection());
 				sep = ", ";
-			}	
+			}
 		}
-		
 
 		StringBuffer page_query = new StringBuffer();
 		page_query.append("  limit ");
@@ -243,4 +248,34 @@ public class MeasureItemServiceImpl implements MeasureItemService {
 
 		return CommonConstants.SUCCESS;
 	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> delete(List<ToggleDto> param, Long member_seq) {
+		log.debug("delete");
+
+		Map<String, Object> R = new HashMap<String, Object>();
+
+		for (ToggleDto id : param) {
+
+			MeasureItem target = measure_itemRepository.findOne(id.getId());
+
+			target.setUseYn("N");
+
+		}
+
+		R.put("CODE", "OK");
+		return R;
+	}
+
+	@Override
+	@Transactional
+	public String update(MeasureItemUpdateDto param) {
+		MeasureItem target = measure_itemRepository.findOne(param.getId());
+		
+		target.setName(param.getName());
+		target.setMetaDesc(param.getMetaDesc());
+		return CommonConstants.OK;
+	}
+
 }

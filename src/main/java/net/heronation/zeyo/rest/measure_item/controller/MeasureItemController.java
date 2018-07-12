@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.measure_item.controller; 
  
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,9 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.common.constants.Format;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemDto;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemResourceAssembler;
@@ -111,6 +116,40 @@ public class MeasureItemController extends BaseController {
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 
 		return return_success(measure_itemService.insert(param));
+	}
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/update")
+	public ResponseEntity<ResultDto> update(@RequestBody MeasureItemUpdateDto param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+
+		return return_success(measure_itemService.update(param));
+	}
+
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	@ResponseBody
+	public ResponseEntity<ResultDto> delete(
+			@RequestBody List<ToggleDto> param,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("delete");
+		
+		
+		if(param.size() == 0) {
+			return return_fail("id.empty");	
+		}
+		
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		return return_success((Object) measure_itemService.delete(param, seq));
 	}
 	
 }
