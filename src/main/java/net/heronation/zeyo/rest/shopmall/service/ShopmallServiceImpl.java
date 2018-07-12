@@ -22,7 +22,6 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.brand.repository.Brand;
 import net.heronation.zeyo.rest.brand.repository.QBrand;
 import net.heronation.zeyo.rest.common.dto.NameDto;
 import net.heronation.zeyo.rest.common.dto.ToggleDto;

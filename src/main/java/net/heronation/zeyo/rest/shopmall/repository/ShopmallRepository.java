@@ -16,8 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.querydsl.core.types.Predicate;
 
-import net.heronation.zeyo.rest.brand.repository.Brand;
-
  
 @RepositoryRestResource(collectionResourceRel = "shopmalls", path = "shopmalls")
 @PreAuthorize("hasRole('ROLE_ADMIN')")

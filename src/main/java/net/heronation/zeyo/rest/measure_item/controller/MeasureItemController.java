@@ -29,7 +29,6 @@ import net.heronation.zeyo.rest.common.constants.Format;
 import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.dto.ResultDto;
 import net.heronation.zeyo.rest.common.dto.ToggleDto;
-import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemDto;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemResourceAssembler;
