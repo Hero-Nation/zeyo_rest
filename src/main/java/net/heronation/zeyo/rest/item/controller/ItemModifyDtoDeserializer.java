@@ -268,6 +268,9 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 			madein.setKindof(kindof_direct_input);
 			madein.setName(madein_input_value);
 			madein.setUseYn("Y");
+			
+			madein = madeinRepository.save(madein);
+			
 		} else {
 
 			Long madein_id = madein_node.get("id").asLong();
