@@ -70,6 +70,7 @@ public class SizeTableController extends BaseController {
 			@RequestParam(value = "start_price",  required = false) String start_price,
 			@RequestParam(value = "end_price", required = false) String end_price,
 			@RequestParam(value = "size_table", required = false) String size_table,
+			@RequestParam(value = "size_link", required = false) String size_link,
 			
 			@RequestParam(value = "start", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
 			@RequestParam(value = "end", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end, @RequestParam(value = "sort",  required = false) String sort,Pageable pageable) {
@@ -82,9 +83,13 @@ public class SizeTableController extends BaseController {
 		param.put("brand", brand);
 		param.put("shopmall", shopmall);  
 		param.put("start_price", start_price); 
-		param.put("end_price", end_price);   
+		param.put("end_price", end_price);
+		
+		// 현재 클라이언트에서 size_link 이름으로 값을 넘겨야 하는데 size_table 이름으로 값을 넘김.. 
+		
 		param.put("size_table", size_table);   
 		
+		param.put("size_link", size_link);   
 		
 		
 		if(start == null) {

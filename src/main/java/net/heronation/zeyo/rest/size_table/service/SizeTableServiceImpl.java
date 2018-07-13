@@ -187,9 +187,13 @@ public class SizeTableServiceImpl implements SizeTableService {
 			where_query.append("        AND   s.id = " + shopmall + " ");
 		}
 
-		String size_table = (String) param.get("size_table");
-		if (size_table != null && size_table.equals("Y")) {
+		
+		// 클라이언트에 이름을 잘못넘김.. 그냥 사용함... 원래는 size_table로 넘어와야 함 
+		String size_link = (String) param.get("size_link");
+		if (size_link != null && size_link.equals("Y")) {
 			where_query.append("        AND   i.size_table_yn = 'Y' ");
+		}else if (size_link != null && size_link.equals("N")) {
+			where_query.append("        AND   i.size_table_yn = 'N' ");
 		}
 
 		String start_price = (String) param.get("start_price");

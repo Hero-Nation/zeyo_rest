@@ -195,7 +195,7 @@ public class MemberServiceImpl implements MemberService {
 
 		String phone2 = (String) param.get("phone2");
 		if (phone2 != null) {
-			where_query.append("        AND   m.phone like '%" + phone2 + "%' ");
+			where_query.append("        AND   m.phone like '.%" + phone2 + "%.' ");
 		}
 
 		String phone3 = (String) param.get("phone3");

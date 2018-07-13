@@ -5,12 +5,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.heronation.zeyo</groupId>
-	<artifactId>target</artifactId>
 	<version>1.0</version>
 	<packaging>war</packaging>
 
 	<name>rest</name>
-	<description>Demo project for Spring Boot</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -320,4 +318,11 @@
 
 
 
+	<url>http://www.zeyo.co.kr/api</url>
+	<description>zeyo api backend project</description>
+	<organization>
+		<name>Hero Nation</name>
+		<url>http://heronation.net</url>
+	</organization>
+	<artifactId>rest</artifactId>
 </project>

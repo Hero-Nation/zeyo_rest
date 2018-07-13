@@ -89,7 +89,7 @@
 								.each(
 										so,
 										function(index, item) {
-											$("#size_option_block")
+											$(".sizebutton")
 													.append(
 															"<button id='btn_so_"
 																	+ item.so_id
@@ -356,11 +356,6 @@
 				</div>
 
 				<div class="sizebutton">
-					<p>SIZE</p>
-					<button type="button" class="on">95</button>
-					<button type="button">100</button>
-					<button type="button">105</button>
-					<button type="button">110</button>
 				</div>
 
 				<div class="clothimg mt5">
@@ -498,12 +493,7 @@
 				</div>
 
 
-				<div class="sizebutton">
-					<p>SIZE</p>
-					<button type="button">95</button>
-					<button type="button" class="on">100</button>
-					<button type="button">105</button>
-					<button type="button">110</button>
+				<div class="sizebutton"> 
 				</div>
 
 				<div class="clothimg mt20">
