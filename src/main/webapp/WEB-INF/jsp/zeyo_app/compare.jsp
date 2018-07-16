@@ -270,7 +270,8 @@
 	};
 	
 	
-	var f_get_result = function(){ 
+	var f_get_result = function(){
+		
 		$("#simple_result_block_in").hide();
 		$("#simple_result_block_cm").hide();
 
@@ -627,9 +628,9 @@
 				</div>
 				<div class="sizeCloth" id="size_cloth_block" style="display: none;padding-top=30px;">
 					<p class="text" id="result_after_block" style="display: none;">
-						구매하시려는 옷은 회원님의 가슴둘레보다 <span class="result blue in_unit_class"
-							id="result_in" style="display: none"></span><span
-							class="result blue cm_unit_class" id="result_cm"></span>
+						구매하시려는 옷은 회원님의 가슴둘레보다 
+						<span class="result blue in_unit_class" id="result_in" style="display: none"></span>
+						<span class="result blue cm_unit_class" id="result_cm"></span>
 					</p>
 					<p class="text" id="result_before_block">구매하시려는 옷의 사이즈를 선택 해
 						주세요.</p>

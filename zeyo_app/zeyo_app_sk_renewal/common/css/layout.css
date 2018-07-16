@@ -47,7 +47,7 @@
 	
 	.radioWrap { padding:0 15px}
 	
-	.rdo_inline {display:inline-block; vertical-align: top;margin: 0 30px;}
+	.rdo_inline {display:inline-block; vertical-align: top;margin: 0 0px;}
 	.rdo_block {display:block; margin:2px 0;}
 	
 	.txtN input[type=radio] + label {padding-left:19px; min-width:19px; min-height:19px;}
@@ -198,9 +198,9 @@
 	
 /*size compare*/
 	.sizeCloth .clothimg { position:relative; height: 240px; top:0; }
-	.sizeCloth .big_tshirt {position:absolute; top:0; right:0; z-index:3; max-height:240px; width:100%}
+	.sizeCloth .big_tshirt {position:absolute; top:0; right:0; z-index:3; max-height:240px; margin-right:40%}
 	.sizeCloth .big_tshirt svg{ width:220px; height:auto}
-	.sizeCloth .small_tshirt{ position:absolute; top:0; right:0; z-index:5; max-height:240px; width:100%}
+	.sizeCloth .small_tshirt{ position:absolute; top:0; right:0; z-index:5; max-height:240px; margin-right:29.5%}
 	.sizeCloth .small_tshirt svg{width:37%; height:auto;stroke-dasharray: 4}
 	
 	.sizeBody{position:relative; margin-top:5px; padding:0 80px;}

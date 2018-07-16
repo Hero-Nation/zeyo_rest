@@ -30,10 +30,10 @@
 	var sub_category = ${sub_category};
 
 	// 상수
-	
+
 	var CTS_COMPARE_MODE_BY_PRODUCT = "compare_by_product";
 	var CTS_COMPARE_MODE_BY_INFO = "compare_by_info";
-	
+
 	var compare_mode = CTS_COMPARE_MODE_BY_PRODUCT;
 	var so = {};
 	var mi = {};
@@ -42,92 +42,95 @@
 	var so_index = Object.keys(so);
 	var mi_index = Object.keys(mi);
 
+	// status
 	var in_unit_display = false;
 	var input_mode = "SIMPLE";
 	var centi_to_inch = 0.393701;
 	var body_type = "NOT";
 	var selected_so_id = "";
 	var chest_mi_id = 0;
-	
-	
-	
-	
+	var now_body_selecting = true;
 
-	$(window)
-			.load(
-					function() {
-						openLay('layerArea');
+	$(window).load(
+			function() {
+				openLay('layerArea'); 
+				
+				if(ItemScmmSoValue.size == 0){
+					alert("이 상품의 사이즈 치수정보가 존재하지 않습니다. 비교가 불가능합니다.");
+					return;
+				};
+				
+				
+				
+				$.each(ItemScmmSoValue.size, function(index, item) {
+					so[item.so_id] = item;
+					mi[item.mi_id] = item;
 
-						$("body").on(
-								"click",
-								".bodyCheck button",
-								function() {
-									$(this).addClass("check");
-									$(".bodyCheck button").not($(this))
-											.removeClass("check");
-								});
+					iv[item.so_id + "_" + item.mi_id] = item.input_value;
+					iv_inch[item.so_id + "_" + item.mi_id] = (item.input_value * centi_to_inch).toFixed(1);;
+					
+					if(item.mi_name == "가슴둘레") chest_mi_id = item.mi_id;
+					
+				});
+				
+				
+				$.each(so, function(index, item) {
+					 
+					$("#sizebutton_by_product").append('<button  id="btn_so_by_profuct_'+ item.so_id +'" onclick="f_size_option_click('+item.so_id+',1)">' + item.so_name+ '</button>');
+					$("#sizebutton_by_info").append('<button  id="btn_so_by_info_'+ item.so_id +'" onclick="f_size_option_click('+item.so_id+',2)">' + item.so_name+ '</button>');
+					
 
-						$
-								.each(
-										ItemScmmSoValue.size,
-										function(index, item) {
-											so[item.so_id] = item;
-											mi[item.mi_id] = item;
+					
+				});
+				
+				
+				
+				
+				
+				
+				$.each(so, function(index, item) {
+					
+					$('body').on('click', "#btn_so_by_profuct_"+ item.so_id + "", function(){f_size_option_click(item.so_id,1)});
+					$('body').on('click', "#btn_so_by_info_"+ item.so_id + "",  function(){f_size_option_click(item.so_id,2)});
+					
+				 
+				});
+				
+				
+				
+				$("#size_table_header_block").append("<th>상품명</th>");
+				$.each(mi, function(index, item) {
+					$("#size_table_header_block").append(
+							"<th>" + item.mi_name + "</th>");
+				});
 
-											iv[item.so_id + "_" + item.mi_id] = item.input_value;
-											iv_inch[item.so_id + "_"
-													+ item.mi_id] = (item.input_value * centi_to_inch)
-													.toFixed(1);
-											;
+				$("#size_table_body_block")
+						.append("<td>" + item.name + "</td>");
+				$.each(mi, function(index, item) {
+					$("#size_table_body_block").append("<td></td>");
+				});
 
-											if (item.mi_name == "가슴둘레")
-												chest_mi_id = item.mi_id;
 
-										});
-
-						$
-								.each(
-										so,
-										function(index, item) {
-											$(".sizebutton")
-													.append(
-															"<button id='btn_so_"
-																	+ item.so_id
-																	+ "' onclick='f_size_option_click(\""
-																	+ item.so_id
-																	+ "\")'>"
-																	+ item.so_name
-																	+ "</button>")
-										});
-
-						$("#size_table_header_block").append("<th>상품명</th>");
-						$.each(mi, function(index, item) {
-							$("#size_table_header_block").append(
-									"<th>" + item.mi_name + "</th>");
-						});
-
-						$("#size_table_body_block").append(
-								"<td>" + item.name + "</td>");
-						$.each(mi, function(index, item) {
-							$("#size_table_body_block").append("<td></td>");
-						});
-
-					});
+			});
 
 	var f_compare_by_product = function() {
-		
+
 		compare_mode = CTS_COMPARE_MODE_BY_PRODUCT;
-		
+
 		$("#form_panel_by_info").hide();
 		$("#form_panel_by_product").show();
 		$("#form_panel_by_product_radio_by_info").prop("checked", false);
 		$("#form_panel_by_product_radio_by_product").prop("checked", true);
 
+		if (!now_body_selecting) {
+			$("#main_panel_compare_by_product").show();
+			$("#main_panel_compare_by_info").hide();
+		}
+
 	};
 
 	var f_compare_by_info = function() {
-		
-		
+
 		compare_mode = CTS_COMPARE_MODE_BY_INFO;
 
 		$("#form_panel_by_info").show();
@@ -135,34 +138,421 @@
 		$("#form_panel_by_info_radio_by_product").prop("checked", false);
 		$("#form_panel_by_info_radio_by_info").prop("checked", true);
 
+		if (!now_body_selecting) {
+			$("#main_panel_compare_by_product").hide();
+			$("#main_panel_compare_by_info").show();
+		}
+
 	};
 
-	var f_show_panel_size_body = function() { 
+	var f_show_panel_size_body = function() {
 		$("#main_panel_size_body").show();
 		$("#main_panel_compare_by_product").hide();
-		$("#main_panel_compare_by_info").hide(); 
-		
-		
-		
+		$("#main_panel_compare_by_info").hide();
+
+		now_body_selecting = true;
+
 	};
-	
-	var f_form_init = function(){
+
+	var f_form_init = function() {
 		$("#form_panel_by_product_input_search").val("");
 		$("#form_panel_by_info_input_height").val("");
 		$("#form_panel_by_info_input_weight").val("");
 		$("#form_panel_by_info_input_chest").val("");
-		$("#form_panel_by_info_input_waist").val(""); 
+		$("#form_panel_by_info_input_waist").val("");
+		
+		$("#result_after_block").hide();
+	};
+
+	var f_select_body_type = function(p_body_type) {
+		body_type = p_body_type;
+		
+		$("#main_panel_size_body").hide();
+
+		if (compare_mode == CTS_COMPARE_MODE_BY_PRODUCT) {
+			$("#main_panel_compare_by_product").show();
+		} else {
+			$("#main_panel_compare_by_info").show();
+		}
+
+		now_body_selecting = false;
+
 	};
 	
-	var f_select_body_type = function(){
-		$("#main_panel_size_body").hide();
+	
+	var f_simple_input = function(){
+		$("#form_panel_by_info_detail_form").hide();
+		$("#form_panel_by_info_simple_result").hide();
+		$("#form_panel_by_info_btn_get_simple").show();
+		$("#form_panel_by_info_btn_get_detail").hide();
 		
-		if(compare_mode = CTS_COMPARE_MODE_BY_PRODUCT){
-			$("#main_panel_compare_by_product").show();	
+		
+		
+		$("#form_panel_by_info_btn_simple").hide();
+		$("#form_panel_by_info_btn_detail").show();
+		
+
+		$("#simple_result_block_in").hide();
+		$("#simple_result_block_cm").hide();
+		
+		input_mode = "SIMPLE";
+	};
+	
+	var f_detail_input = function(){
+		$("#form_panel_by_info_detail_form").show();
+		$("#form_panel_by_info_simple_result").hide();
+		$("#form_panel_by_info_btn_get_simple").hide();
+		$("#form_panel_by_info_btn_get_detail").show();
+		
+		
+		$("#form_panel_by_info_btn_simple").show();
+		$("#form_panel_by_info_btn_detail").hide();
+		
+		
+		$("#simple_result_block_in").hide();
+		$("#simple_result_block_cm").hide();
+		
+		
+		input_mode = "DETAIL";
+		
+	};
+	
+	var f_convert_unit = function(){
+		
+	};
+	
+	
+	var f_get_result = function(){
+ 
+		if(selected_so_id == ""){
+			alert("사이즈 옵션을 선택해주세요");
+			return;
+		}
+		
+		
+		var X  = $("#form_panel_by_info_input_height").val();
+		var Y  = $("#form_panel_by_info_input_weight").val();
+		
+		X = Number(X);
+		Y = Number(Y); 
+
+		
+		if(input_mode == "SIMPLE"){
+			
+			
+			if(body_type == "NOT"){
+				alert("신체 타입을 선택해주세요!");
+				return;
+			}
+			
+			
+			if(X == ""){
+				alert("키를 입력하세요");
+				return;
+			}
+			
+			if(Y  == ""){
+				alert("몸무게를 입력하세요");
+				return;
+			}
+			
+			
+			if(chest_mi_id == 0){
+				alert("사이즈에 대한 가슴둘레 값이 존재하지 않습니다.");
+				return;
+			}
+
+			if (in_unit_display) {
+				X = X / centi_to_inch;
+				Y = Y / centi_to_inch; 
+			} 
+			
+			var Z = (((((((X * (X + Y)) / Y) + X) * (X / Y)) + ((((X * (X + ((X - 100) * 0.9))) / ((X - 100) * 0.9)) + X) * (X / ((X - 100) * 0.9))) + ((((X * (X + ((X * X * 22) / 10000))) / ((X * X * 22) / 10000)) + X) * (X / ((X * X * 22) / 10000)))) / 3) * (Y / X)) + ((X * X * 22) / 10000);
+			
+ 			
+			
+			if(body_type == "A"){
+				Z = Z-(Z*0.05);
+			}else if(body_type == "B"){
+				
+			}else if(body_type == "C"){
+				Z = Z+(Z*0.035);
+			}else if(body_type == "D"){
+				Z = Z+(Z*0.075);
+			}
+					
+			
+			var user_cm_Z = Z / 10 ;
+			var user_in_Z = (Z / 10 ) * centi_to_inch;
+			
+			user_cm_Z = user_cm_Z.toFixed(1);
+			user_in_Z = user_in_Z.toFixed(1);
+			
+			var cloth_chest_value = iv[selected_so_id+"_"+chest_mi_id];
+			var cloth_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
+			
+			var R =  cloth_chest_value - user_cm_Z;
+			var R_in = cloth_chest_value_in - user_in_Z;
+			
+			R = R.toFixed(1);
+			R_in = R_in.toFixed(1);
+			
+ 
+			if(R > 0 ){ 
+				
+				$("#result_cm").removeClass("red");
+				$("#result_cm").addClass("blue");
+				$("#result_cm").html(R+" cm 큽니다");
+
+				
+			}else{ 
+				
+				$("#result_cm").removeClass("blue");
+				$("#result_cm").addClass("red");
+				$("#result_cm").html(Math.abs(R)+" cm 작습니다.");
+			}
+			
+			
+			if(R_in > 0 ){ 
+				
+				$("#result_in").removeClass("blue");
+				$("#result_in").addClass("red");
+				$("#result_in").html(R_in+" in 큽니다");
+				
+				
+				
+			}else{ 
+				$("#result_in").removeClass("red");
+				$("#result_in").addClass("blue"); 
+				$("#result_in").html(Math.abs(R_in)+" in 작습니다.");
+			}
+			
+ 
+			
+			
+			
+			$("#simple_result_in").html(user_in_Z+ " in");
+			$("#simple_result_cm").html(user_cm_Z+ " cm");
+			
+			
+			if(in_unit_display){
+				$("#simple_result_block_in").show();
+			}else{
+				$("#simple_result_block_cm").show();
+			}
+			 
 		}else{
-			$("#main_panel_compare_by_info").show(); 	
-		} 
+			
+			var V_chest  = $("#form_panel_by_info_input_chest").val();
+			var V_waist  = $("#form_panel_by_info_input_waist").val();
+			
+			if(V_chest == ""){
+				alert("가슴둘레를 입력하세요");
+				return;
+			}
+			
+			if(V_waist  == ""){
+				alert("허리둘레를 입력하세요");
+				return;
+			}
+			
+			
+			if(in_unit_display){
+				
+				var cloth_chest_value_in = Number(iv[selected_so_id+"_"+chest_mi_id]) * centi_to_inch;
+				
+				
+				var R_in = V_chest - cloth_chest_value_in;
+				R_in = Number(R_in).toFixed(1);
+				if(R_in < 0 ){ 					
+					$("#result_in").removeClass("red");
+					$("#result_in").addClass("blue"); 
+					$("#result_in").html(R_in+" in 큽니다");
+					
+				}else{  
+					$("#result_in").removeClass("blue");
+					$("#result_in").addClass("red");
+					$("#result_in").html(R_in+" in 작습니다.");
+				}
+				
+				 
+			}else{
+				
+				var cloth_chest_value = Number(iv[selected_so_id+"_"+chest_mi_id]);
+				cloth_chest_value = cloth_chest_value.toFixed(1);
+				
+				
+				var R =  cloth_chest_value - V_chest;
+				R = Number(R).toFixed(1);
+				
+				if(R < 0 ){
+					$("#result_cm").removeClass("blue");
+					$("#result_cm").addClass("red");
+					$("#result_cm").html(R+" cm 작습니다.");
+				
+
+					
+					
+				}else{ 
+					$("#result_cm").removeClass("red");
+					$("#result_cm").addClass("blue"); 
+					$("#result_cm").html(R+" cm 큽니다");
+				}
+				
+			} 
+			
+
+		}
 		
+
+		
+		if (in_unit_display) {
+			$(".in_unit_class").show();
+			$(".cm_unit_class").hide();  
+			
+		} else {
+
+			$(".in_unit_class").hide();
+			$(".cm_unit_class").show(); 
+		}
+		
+		$("#result_after_block").show();
+		
+		if(input_mode == "SIMPLE"){
+		}else{
+			$("#simple_result_block_in").hide();
+			$("#simple_result_block_cm").hide(); 
+
+		}
+	 
+	};
+	
+	var f_size_option_click = function(p_so_id,p_type) {
+		
+		if(p_so_id == 0){
+			so_index = Object.keys(so);
+			
+			if(so_index.length > 0){
+				f_size_option_click(so[so_index[0]].so_id);	 
+			}
+			
+			
+		}else{
+			
+			selected_so_id = p_so_id;
+			
+			$.each(so, function(index, item) {
+				$("#btn_so_by_profuct_" + item.so_id+"").removeClass("on");
+				$("#btn_so_by_info_" + item.so_id+"").removeClass("on");
+			});
+			
+			$("#btn_so_by_profuct_" + p_so_id+"").addClass("on");
+			$("#btn_so_by_info_" + p_so_id+"").addClass("on");
+			
+			
+			$("#size_table_header_block").empty();
+			$("#size_table_body_block").empty();
+
+			$("#size_table_header_block").append("<th>상품명</th>");
+			$.each(mi, function(index, item) {
+				$("#size_table_header_block").append(
+						"<th>" + item.mi_name + "</th>");
+			});
+
+			$("#size_table_body_block").append("<td>" + item.name + "</td>");
+			$.each(mi, function(index, item) {
+				
+				if(in_unit_display){
+					
+					$("#size_table_body_block").append(
+							"<td>" + iv_inch[p_so_id + "_" + item.mi_id] + "</td>");
+				}else{
+					
+					$("#size_table_body_block").append(
+							"<td>" + iv[p_so_id + "_" + item.mi_id] + "</td>");				
+				}
+
+			});
+			f_get_result();
+			 
+		}
+		
+
+	};
+	
+	
+	
+	var f_convert_unit = function() {
+		 
+		
+		var now_height = $("#form_panel_by_info_input_height").val();
+		var now_chest = $("#form_panel_by_info_input_chest").val();
+		var now_waist = $("#form_panel_by_info_input_waist").val();
+		
+		
+		if (in_unit_display) {
+			// 센치로 전환
+			in_unit_display = false;
+			$(".in_unit_class").hide();
+			$(".cm_unit_class").show();	
+			
+			
+			var c_height = now_height / centi_to_inch;
+			var c_chest = now_chest / centi_to_inch;
+			var c_waist = now_waist / centi_to_inch;
+			
+			c_height = c_height.toFixed(1);
+			c_chest = c_chest.toFixed(1);
+			c_waist = c_waist.toFixed(1);
+			
+			
+			
+			$("#form_panel_by_info_input_height").val(c_height);
+			$("#form_panel_by_info_input_chest").val(c_chest);
+			$("#form_panel_by_info_input_waist").val(c_waist);
+
+			
+			if(input_mode == "SIMPLE"){
+				
+			}else{
+				$("#simple_result_block_in").hide();
+				$("#simple_result_block_cm").hide();
+				
+			}
+			
+		} else {
+			in_unit_display = true;
+			// 인치로 전환 
+			$(".in_unit_class").show();
+			$(".cm_unit_class").hide();
+			
+			var c_height = now_height * centi_to_inch;
+			var c_chest = now_chest * centi_to_inch;
+			var c_waist = now_waist * centi_to_inch;
+			
+			c_height = c_height.toFixed(1);
+			c_chest = c_chest.toFixed(1);
+			c_waist = c_waist.toFixed(1);
+			
+			
+			
+			$("#form_panel_by_info_input_height").val(c_height);
+			$("#form_panel_by_info_input_chest").val(c_chest);
+			$("#form_panel_by_info_input_waist").val(c_waist);
+			
+			
+			
+			if(input_mode == "SIMPLE"){
+					
+			}else{
+				$("#simple_result_block_in").hide();
+				$("#simple_result_block_cm").hide();
+				
+			}
+			
+		}
+		
+		if(selected_so_id != "") f_size_option_click(selected_so_id);
 	};
 
 	//]]>
@@ -209,54 +599,63 @@
 						<p class="title">${item_object.name}</p>
 						<p class="price">${item_object.price}원</p>
 
-						<div class="size type01" id="form_panel_by_info" 	style="display: none;">
+						<div class="size type01" id="form_panel_by_info"
+							style="display: none;">
 
 							<div class="radioWrap">
-								<span class="rdo_inline"> 
-								<input type="radio" id="form_panel_by_info_radio_by_product" onclick="f_compare_by_product();" /> 
-								<label for="form_panel_by_info_radio_by_product">상품으로 비교</label>
+								<span class="rdo_inline">
+									<input type="radio" id="form_panel_by_info_radio_by_product" onclick="f_compare_by_product();" />
+									<label for="form_panel_by_info_radio_by_product">상품으로 비교</label>
 								</span> 
 								<span class="rdo_inline"> 
-									<input type="radio" id="form_panel_by_info_radio_by_info" checked="checked" onclick="f_compare_by_info();" /> 
-								<label for="form_panel_by_info_radio_by_info">기본 정보로 비교</label>
+									<input type="radio" id="form_panel_by_info_radio_by_info" checked="checked" onclick="f_compare_by_info();" />
+									<label for="form_panel_by_info_radio_by_info">기본 정보로 비교</label>
 								</span> 
-								<span class="btn ml40"><button type="button">상세정보 입력</button></span>
+								<span class="btn ml18" style="display: none;" id="form_panel_by_info_btn_simple">
+									<button type="button" onclick="f_simple_input()">추론입력</button>
+								</span>
+								<span class="btn ml18" id="form_panel_by_info_btn_detail">
+									<button type="button" onclick="f_detail_input()">상세입력</button>
+								</span>
+								<span class="btn ml18">
+									<button type="button" onclick="f_convert_unit()" >cm ↔ inch</button>
+								</span>
 							</div>
-							<div class="inputWrap mt10">
+							<div class="inputWrap mt10"  id="form_panel_by_info_simple_form">
 
 								<span class="tit ml5">키</span>
 								<div class="inputbox">
-									<input type="text" id="form_panel_by_info_input_height"/> <span class="ft14">cm</span>
+									<input type="text" id="form_panel_by_info_input_height" /> <span class="ft14 cm_unit_class">cm</span><span class="ft14 in_unit_class"  style="display: none">in</span>
 								</div>
 
 								<span class="tit ml50">체중</span>
 								<div class="inputbox">
-									<input type="text"  id="form_panel_by_info_input_weight" /> <span class="ft14">kg</span>
+									<input type="text" id="form_panel_by_info_input_weight" /> <span class="ft14">kg</span>
 								</div>
-								<span class="btn mt-1 ml32"><button type="button">결과보기</button></span>
+								<span class="btn mt-1 ml32"  id="form_panel_by_info_btn_get_simple"><button type="button" onclick="f_get_result()" >추론보기</button></span>
+								<span class="btn mt-1 ml32"  id="form_panel_by_info_btn_get_detail"   style="display: none;"><button type="button" onclick="f_get_result()" >결과보기</button></span>
 							</div>
 
-							<div class="mt10">
+							<div class="resultWrap mt15 in_unit_class" id="simple_result_block_in" style="display: none;" >
+								<span class="restxt">회원님의 가슴둘레 측정치는 약&nbsp;</span><span class="result" id="simple_result_in"></span><span class="restxt"> 입니다.</span>
+							</div>
+							<div class="resultWrap mt15 cm_unit_class" id="simple_result_block_cm" style="display: none;"  >
+								<span class="restxt">회원님의 가슴둘레 측정치는 약&nbsp;</span><span class="result" id="simple_result_cm"></span><span class="restxt"> 입니다.</span>
+							</div> 
+							
+							<div class="mt10" id="form_panel_by_info_detail_form"  style="display: none;">
 								<span class="tit ml5">가슴둘레</span>
 								<div class="inputbox">
-									<input type="text"  id="form_panel_by_info_input_chest"/> <span class="ft14">cm</span>
+									<input type="text" id="form_panel_by_info_input_chest" /> <span class="ft14 cm_unit_class">cm</span><span class="ft14 in_unit_class"  style="display: none">in</span>
 								</div>
 
 								<span class="tit ml20">허리둘레</span>
 								<div class="inputbox">
-									<input type="text"  id="form_panel_by_info_input_waist"/> <span class="ft14">cm</span>
+									<input type="text" id="form_panel_by_info_input_waist" /> <span class="ft14 cm_unit_class">cm</span><span class="ft14 in_unit_class"  style="display: none">in</span>
 								</div>
 
-								<span class="btn mt-5 ml30"><button type="button"
-										style="height: 45px">
-										단위변환<br />( cm > inch)
-									</button></span>
-								<!--<div class="btn2"><button type="button">단위변환<br />( cm > inch)</button></div>-->
-							</div>
-
-							<div class="resultWrap mt15">
-								<!--<span class="restxt">회원님의 가슴둘레 측정치는 약</span><span class="result">&nbsp;97.2 cm</span><span class="restxt">&nbsp;(972mm)&nbsp; 입니다.</span>-->
-							</div>
+								<span class="btn mt-5 ml30"></span> 
+							</div> 
 							<div class="top_btnWrap">
 								<div class="btn-bodych">
 									<button type="button" onclick="f_show_panel_size_body();"></button>
@@ -268,19 +667,21 @@
 						</div>
 						<div class="size type02" id="form_panel_by_product">
 							<div class="radioWrap">
-								<span class="rdo_inline">
-								<input type="radio" id="form_panel_by_product_radio_by_product" onclick="f_compare_by_product();" checked="checked" />
-								<label for="form_panel_by_product_radio_by_product">상품으로 비교</label>
-								</span>
-								<span class="rdo_inline"> 
-								<input type="radio" id="form_panel_by_product_radio_by_info" onclick="f_compare_by_info();" /> 
-								<label for="form_panel_by_product_radio_by_info">기본 정보로 비교</label>
+								<span class="rdo_inline"> <input type="radio"
+									id="form_panel_by_product_radio_by_product"
+									onclick="f_compare_by_product();" checked="checked" /> <label
+									for="form_panel_by_product_radio_by_product">상품으로 비교</label>
+								</span> <span class="rdo_inline"> <input type="radio"
+									id="form_panel_by_product_radio_by_info"
+									onclick="f_compare_by_info();" /> <label
+									for="form_panel_by_product_radio_by_info">기본 정보로 비교</label>
 								</span>
 								<!--<span class="btn"><button type="button">상세정보 입력</button></span>-->
 							</div>
 							<div class="mt5">
 								<div class="inputbox schBx">
-									<input type="text" placeholder="예) 나드랑" id="form_panel_by_product_input_search"/>
+									<input type="text" placeholder="예) 나드랑"
+										id="form_panel_by_product_input_search" />
 								</div>
 								<button class="schbt">검색</button>
 							</div>
@@ -310,22 +711,21 @@
 					</div>
 				</div>
 
-				<div class="sizeBody type02 mt20" 
-					id="main_panel_size_body">
+				<div class="sizeBody type02 mt20" id="main_panel_size_body">
 					<p class="text restxtbox">
 						<span class="top_txt">※정확한 사이즈 추천을 위해 본인의 체형을 선택 해 주세요.</span>
 					<div class="bodyCheck">
-						<button type="button" onclick="f_select_body_type('D');">
+						<button type="button" onclick="f_select_body_type('A');">
 							<img
 								src="https://www.zeyo.co.kr/static/zeyo_app/v2/images/body-01.png"
 								alt="" /> <span>마른체형</span>
 						</button>
-						<button type="button" onclick="f_select_body_type('D');">
+						<button type="button" onclick="f_select_body_type('B');">
 							<img
 								src="https://www.zeyo.co.kr/static/zeyo_app/v2/images/body-02.png"
 								alt="" /> <span>보통체형</span>
 						</button>
-						<button type="button" onclick="f_select_body_type('D');">
+						<button type="button" onclick="f_select_body_type('C');">
 							<img
 								src="https://www.zeyo.co.kr/static/zeyo_app/v2/images/body-03.png"
 								alt="" /> <span>근육형</span>
@@ -343,22 +743,23 @@
 					-->
 				</div>
 			</div>
-			<div class="sizeCloth" id="main_panel_compare_by_product"  style="display: none;">
+			<div class="sizeCloth" id="main_panel_compare_by_product"
+				style="display: none;">
 				<!--<p class="text">구매하시려는 옷은 회원님의 가슴둘레보다 <span class="result red">0.8 in</span> 작습니다.</p>-->
 				<div class="guide">
 					<p class="buy_pro">
 						<span></span>봄 신상 박스 롱 티셔츠..
 					</p>
 					<p class="compare_pro">
-						<span></span>비교하려는 상품명
+						<span></span>${item_object.name}
 					</p>
 
 				</div>
 
-				<div class="sizebutton">
-				</div>
+				
 
 				<div class="clothimg mt5">
+				<div id="sizebutton_by_product" class="sizebutton"><p>SIZE</p></div>
 					<div class="big_tshirt">
 						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
 							xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -428,17 +829,10 @@
 				<div class="sizetable">
 					<table>
 						<caption></caption>
-						<colgroup>
-							<col width="25%" />
-							<col width="12.5%" />
-							<col width="12.5%" />
-							<col width="12.5%" />
-							<col width="12.5%" />
-							<col width="12.5%" />
-							<col width="12.5%" />
+						<colgroup> 
 						</colgroup>
 						<thead>
-							<tr>
+							<tr >
 								<th>상품명</th>
 								<th>사이즈</th>
 								<th>어깨너비</th>
@@ -484,20 +878,20 @@
 					<button type="button" onclick="f_buy()">닫기</button>
 				</div>
 			</div>
-			<div class="sizeCloth" id="main_panel_compare_by_info"  style="display: none;">
+			<div class="sizeCloth" id="main_panel_compare_by_info"
+				style="display: none;">
 
 				<div class="guide">
 					<p class="buy_pro">
-						<span></span>봄 신상 박스 롱 티셔츠
+						<span></span>${item_object.name}
 					</p>
 				</div>
 
 
-				<div class="sizebutton"> 
-				</div>
+				
 
 				<div class="clothimg mt20">
-
+<div id="sizebutton_by_info" class="sizebutton"><p>SIZE</p></div>
 
 					<div class="big_tshirt">
 						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
@@ -528,47 +922,31 @@
 </svg>
 					</div>
 				</div>
-				<p class="text restxtbox">
-					<span class="restxt">구매하시려는 옷은 회원님의 가슴둘레보다&nbsp;</span><span
-						class="result blue">7.8 cm</span><span class="restxt">&nbsp;큽니다.</span>
+				<p class="text restxtbox" style="display: none;" id="result_after_block">
+					<span class="restxt">구매하시려는 옷은 회원님의 가슴둘레보다&nbsp;</span>
+						<span class="result blue in_unit_class" id="result_in" style="display: none"></span>
+						<span class="result blue cm_unit_class" id="result_cm"></span>
 				</p>
-				<div class="tar">단위 : cm</div>
+				<div class="tar cm_unit_class">단위 : cm</div>
+				<div class="tar in_unit_class" style="display: none">단위 : in</div>
 
 				<div class="sizetable">
 					<table>
 						<caption></caption>
-						<colgroup>
-							<col width="25%" />
-							<col width="15%" />
-							<col width="15%" />
-							<col width="15%" />
-							<col width="15%" />
-							<col width="15%" />
+						<colgroup> 
 						</colgroup>
 						<thead>
-							<tr>
-								<th>상품명</th>
-								<th>사이즈</th>
-								<th>어깨너비</th>
-								<th>가슴둘레</th>
-								<th>소매길이</th>
-								<th>총기장</th>
+							<tr  id="size_table_header_block"> 
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>봄신상 박스 롱티셔츠</td>
-								<td>100</td>
-								<td>39</td>
-								<td>105</td>
-								<td>62</td>
-								<td>75</td>
+							<tr  id="size_table_body_block"> 
 							</tr>
 						</tbody>
 					</table>
 				</div>
 				<div class="btn">
-					<button type="button">구매하기</button>
+					<button type="button" onclick="f_buy()">닫기</button>
 				</div>
 			</div>
 		</div>

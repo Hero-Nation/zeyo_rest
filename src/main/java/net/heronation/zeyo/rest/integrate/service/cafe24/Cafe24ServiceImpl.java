@@ -284,7 +284,7 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 
 					ScriptCreateRequestDto script_create_req = new ScriptCreateRequestDto();
 					script_create_req.setDisplay_location(new String[] { "PRODUCT_DETAIL" });
-					script_create_req.setSkin_no(new int[] { 8 });
+					//script_create_req.setSkin_no(new int[] { 8 });
 					script_create_req.setSrc("https://www.zeyo.co.kr/app/js/cafe24_app.js");
 
 					create_body.setRequest(script_create_req);
