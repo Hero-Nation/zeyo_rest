@@ -168,7 +168,7 @@ public class MaterialServiceImpl implements MaterialService {
 	public String insert(MateriaApiDto param) throws CommonException {
 		
 		
-		materialRepository.save(param.convertToEntity());
+		Material entity = param.convertToEntity();
 		
 		if(param.getFiles() != null && param.getFiles().length > 0) {
 			LocalDateTime now = LocalDateTime.now();
@@ -186,7 +186,16 @@ public class MaterialServiceImpl implements MaterialService {
 				e.printStackTrace();
 				throw new CommonException("material.image.upload.failed");
 			}
+			
+			
+			entity.setImage(param.getFiles()[0].getTemp_name().concat("_").concat(param.getFiles()[0].getReal_name()));	
+			
 		}
+		
+		
+		
+		
+		materialRepository.save(entity);
 
 		// 검수용
 		CommandLine.Sync_file();

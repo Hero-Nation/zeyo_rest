@@ -16,6 +16,12 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.category.repository.CategoryRepository;
+import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
+import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
+import net.heronation.zeyo.rest.item.repository.Item;
+import net.heronation.zeyo.rest.item.repository.ItemRepository;
+import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMap;
+import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMapRepository;
 
 @Slf4j
 @Service
@@ -1148,6 +1154,14 @@ public class CommonServiceImpl implements CommonService {
 		R.put("shopmall", shopmall_related);
 		
 		return R;
+	}
+	 
+
+	@Override
+	public void unit_test() {
+		// 입력완료
+	 
+		
 	}
 
 	 

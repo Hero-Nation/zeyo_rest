@@ -9,5 +9,5 @@ public class CommonConstants {
 	public static final String EQUAL = "EQUAL";
 	public static final String NOT_EQUAL = "NOT_EQUAL";
 	public static final String OK = "OK";
-
+	public static final String NOT_CONNECTED_MEMBER = "not.connected.member";
 }

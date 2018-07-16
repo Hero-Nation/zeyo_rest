@@ -73,6 +73,55 @@ public class ZeyoAppController extends BaseController {
 		return new BigInteger(130, random).toString(32);
 	}
 
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/cafe24/connect")
+	public String cafe24_connect(Model m, HttpSession session,
+			@RequestParam(value = "lang", required = false) String lang,
+			@RequestParam(value = "mall_id", required = false) String mall_id,
+			@RequestParam(value = "shop_no", required = false) String shop_no,
+			@RequestParam(value = "timestamp", required = false) String timestamp,
+			@RequestParam(value = "user_id", required = false) String user_id,
+			@RequestParam(value = "user_name", required = false) String user_name,
+			@RequestParam(value = "user_type", required = false) String user_type,
+			@RequestParam(value = "hmac", required = false) String hmac 
+			) {
+		
+//				lang=ko_KR
+//				mall_id=heronation
+//				shop_no=1
+//				timestamp=1531461070
+//				user_id=heronation
+//				user_name=대표+관리자
+//				user_type=P
+//				hmac=zwesiDOV58CbvKiUEO3PYAM9pIy8BR%2BS63jWmvXAMgk%3D
+		
+		
+		
+		log.debug("/cafe24/login");
+		log.debug("lang");
+		log.debug(lang);
+		log.debug("mall_id");
+		log.debug(mall_id);
+		log.debug("shop_no");
+		log.debug(shop_no);
+		log.debug("timestamp");
+		log.debug(timestamp);
+		log.debug("user_id");
+		log.debug(user_id);
+		log.debug("user_name");
+		log.debug(user_name);
+		log.debug("user_type");
+		log.debug(user_type);
+		log.debug("hmac");
+		log.debug(hmac); 
+		
+		Shopmall sm = cafe24Service.get_shopmall_by_shop_eng_id(user_id);
+		
+		m.addAttribute("state", sm.getOauthID());
+		m.addAttribute("shop_eng_id",user_id);
+		return "zeyo_app/cafe24/connect";
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/login")
 	public String login(Model m, HttpSession session) {
 		m.addAttribute("state", session.getId());

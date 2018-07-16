@@ -81,7 +81,7 @@ public class OauthController extends BaseController {
 	public ResponseEntity<ResultDto> refresh_access_token(@RequestParam(value = "id", required = false) Long id) {
 		log.debug("/cafe24/refresh_access_token");
 		log.debug(id+" " );
-		String R = cafe24Service.get_access_token_by_refresh_token(id);
+		String R = cafe24Service.update_access_token_by_refresh_token(id);
 		
 		if(!CommonConstants.SUCCESS.equals(R)) {
 			return return_fail(R);

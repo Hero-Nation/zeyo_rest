@@ -111,7 +111,8 @@ public class NaverServiceImpl implements NaverService {
 	@Autowired
 	EntityManager entityManager;
 	
-	
+	@Autowired
+	RestTemplate restTemplate;
 
 	@Value(value = "${oauth.naver.client.id}")
 	private String naver_client_id;
@@ -123,21 +124,7 @@ public class NaverServiceImpl implements NaverService {
 	public String update_oauth_code_and_get_access_token(String p_auth_code, String state, String session_id) throws CommonException {
 		log.debug("update_oauth_code_and_get_access_token");
 
-		HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-		BufferingClientHttpRequestFactory requestFactory = new BufferingClientHttpRequestFactory(httpRequestFactory);
-		// requestFactory.setOutputStreaming(false);
-
-		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
-		converters.add(new MappingJackson2HttpMessageConverter());
-		converters.add(new FormHttpMessageConverter());
-		// converters.add(new StringHttpMessageConverter()); 
-		
-		RestTemplate restTemplate = new RestTemplate(requestFactory);
-		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
-		interceptors.add(new LoggingRequestInterceptor());
-		restTemplate.setInterceptors(interceptors);
-		restTemplate.setMessageConverters(converters);
-
+ 
 		MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
 		body.add("grant_type", "authorization_code");
 		body.add("client_id", naver_client_id);

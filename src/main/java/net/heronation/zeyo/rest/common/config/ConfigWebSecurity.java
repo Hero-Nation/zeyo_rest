@@ -58,8 +58,12 @@ public class ConfigWebSecurity extends WebSecurityConfigurerAdapter {
 	protected void configure(final HttpSecurity http) throws Exception {
 
 		http
+		
 		.requiresChannel().anyRequest().requiresSecure()
 		.and()
+		.headers()
+	      .frameOptions()
+	         .sameOrigin().and()
 		.authorizeRequests()
 				.antMatchers("/login").permitAll()
 				.antMatchers("/oauth/token/**").permitAll()

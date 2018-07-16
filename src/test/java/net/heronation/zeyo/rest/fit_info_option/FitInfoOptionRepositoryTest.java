@@ -1,4 +1,4 @@
-package net.heronation.zeyo.rest.fit_info_option; 
+package net.heronation.zeyo.rest.fit_info_option;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,30 +9,30 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
+import net.heronation.zeyo.rest.item.repository.Item;
+import net.heronation.zeyo.rest.item.repository.ItemRepository;
+import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMap;
+import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMapRepository;
 
- 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class FitInfoOptionRepositoryTest{
+public class FitInfoOptionRepositoryTest {
 
-	@Autowired FitInfoOptionRepository repository;
+	@Autowired
+	FitInfoOptionRepository repository;
 
- 
+	@Autowired
+	ItemRepository itemRepository;
+
+	@Autowired
+	ItemFitInfoOptionMapRepository mapRepository;
+
 	@Test
-	@Ignore
 	public void initializesRepositoryWithSampleData() {
+
 		
-		for(int a = 0 ; a < 100;a++) {
-			FitInfoOption item = new FitInfoOption(); 
-                         item.setName("name_"+a);
+		
 
-
-
-
-item.setUseYn("useYn_"+a);
-			repository.save(item);	
-		}
-		 
 	}
-	
+
 }

@@ -128,6 +128,9 @@ public class Item {
 	private String linkYn;
 
 	private String sizeTableYn;
+	
+	// 자동으로 import시 예외가 발생하여 모든 정보를 다 수집하지 못한경우 
+	private String importHasErrorYn;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;

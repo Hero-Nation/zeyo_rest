@@ -22,58 +22,74 @@ import net.heronation.zeyo.rest.common.controller.BaseController;
 import net.heronation.zeyo.rest.common.dto.ResultDto;
 import net.heronation.zeyo.rest.integrate.service.cafe24.Cafe24Service;
 
- 
-
 @Slf4j
 @Controller
 @RequestMapping("/integrate")
 public class Cafe24ApiController extends BaseController {
-	
 
-	
-	
-    @Autowired
-    private Cafe24Service cafe24Service;
- 
-     @Autowired
-    private CategoryRepository repository; 
-     @Autowired
-    private CategoryResourceAssembler assembler;
+	@Autowired
+	private Cafe24Service cafe24Service;
 
-    private final RepositoryEntityLinks entityLinks;
+	@Autowired
+	private CategoryRepository repository;
+	@Autowired
+	private CategoryResourceAssembler assembler;
 
- 
+	private final RepositoryEntityLinks entityLinks;
 
- 	@Autowired
+	@Autowired
 	public Cafe24ApiController(RepositoryEntityLinks entityLinks) {
 		this.entityLinks = entityLinks;
-	} 
+	}
 
- 
 	@RequestMapping(method = RequestMethod.GET, value = "/cafe24_product_sync")
 	@ResponseBody
 	public ResponseEntity<ResultDto> cafe24_sync_produc(@AuthenticationPrincipal OAuth2Authentication auth,
 			@RequestParam(value = "shopmall_id", required = false) long shopmall_id) {
-		log.debug("/integrate/cafe24/produc/sync");
-		
+		log.debug("/integrate/cafe24_product_sync");
+
 		// 유저 정보 가지고 오기
-		if (auth == null) { 
+		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
-		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
-		
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
-		
-		String R = cafe24Service.sync_product(shopmall_id, 0, null, seq);
-		 
-		if(R.equals(CommonConstants.SUCCESS)) {
-			return return_success(CommonConstants.SUCCESS);	
-		}else{
+
+		String R = cafe24Service.sync_product(shopmall_id, 1, null, seq);
+
+		if (R.equals(CommonConstants.SUCCESS)) {
+			return return_success(CommonConstants.SUCCESS);
+		} else {
 			return return_fail(R);
 		}
-		
+
 	}
 	
- 
-	
+	@RequestMapping(method = RequestMethod.GET, value = "/cafe24_product_complete")
+	@ResponseBody
+	public ResponseEntity<ResultDto> cafe24_product_complete(@AuthenticationPrincipal OAuth2Authentication auth,
+			@RequestParam(value = "shopmall_id", required = false) long shopmall_id) {
+		log.debug("/integrate/cafe24_product_complete");
+
+		// 유저 정보 가지고 오기
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		String R = cafe24Service.complete_product(shopmall_id);
+
+		if (R.equals(CommonConstants.SUCCESS)) {
+			return return_success(CommonConstants.SUCCESS);
+		} else {
+			return return_fail(R);
+		}
+
+	}
+
 }

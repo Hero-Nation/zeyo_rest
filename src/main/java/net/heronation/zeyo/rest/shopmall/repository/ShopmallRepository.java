@@ -57,4 +57,5 @@ public interface ShopmallRepository extends JpaRepository<Shopmall, Long> , Quer
 	Shopmall findOne(Predicate arg0);
 	
 	
+	
 }

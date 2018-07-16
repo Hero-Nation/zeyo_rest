@@ -1,6 +1,7 @@
 package net.heronation.zeyo.rest.sub_category.repository;
 
 import java.util.List;
+ 
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public interface SubCategoryRepository
 	List<SubCategory> distinct_name(@Param(value = "category") Category category);
 
 	@RestResource(path = "findByName", rel = "findByName", exported = true)
-	@Query("select m from SubCategory m where m.name = ?1 and  m.useYn = 'Y'")
+	@Query(value="select * from sub_category sc join category c on sc.category_id = c.id  where  c.use_yn = 'Y' and  sc.use_yn = 'Y'  and  sc.name = ?1 ",nativeQuery=true)
 	List<SubCategory> findByName(@Param("name") String ktype);
 
 	@Override

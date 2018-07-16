@@ -638,7 +638,7 @@ public class ItemServiceImpl implements ItemService {
 		// 사이즈 테이블은 무조건 N으로 설정한다.
 		// 화면에서 생성을 누르고 사이즈표가 입력이 되면 그때 Y로 해준다.
 		new_item.setSizeTableYn("N");
-
+		new_item.setImportHasErrorYn("N");
 		new_item = itemRepository.save(new_item);
 
 		List<Shopmall> isms = ibd.getShopmalls();
