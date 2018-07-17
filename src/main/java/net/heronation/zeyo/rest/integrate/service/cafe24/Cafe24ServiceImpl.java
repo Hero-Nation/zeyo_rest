@@ -44,6 +44,10 @@ import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.AccessTokenByOauthCode;
+import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.Items;
+import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.Order;
+import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.OrderItem;
+import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.Orders;
 import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.Product;
 import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.Products;
 import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.ScriptCreateDto;
@@ -952,6 +956,78 @@ public class Cafe24ServiceImpl implements Cafe24Service {
 
 		}
 
+		return CommonConstants.SUCCESS;
+	}
+
+	// 검수용 엔드유저도 cafe24에 로그인 해야된다.
+	// 그러나 이 api는 검수용이고 현 zeyoshop에 있는 구매내역도 검수용 데이터이다.
+	// 검수용 데이터를 가지고오는게 목적이다. 
+	@Override
+	public String cafe24_order_list(Long shopmall_id) {
+		
+		
+		
+		
+		Shopmall this_shopmall = shopmallRepository.findOne(shopmall_id);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", String.format("Bearer %s", this_shopmall.getAccessToken()));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity entity = new HttpEntity(headers);
+		
+		URI get_orders_uri = UriComponentsBuilder.newInstance().scheme("https")
+				.host(String.format("%s.cafe24api.com", this_shopmall.getStoreId()))
+				.path(String.format("/api/v2/admin/orders" )) 
+				.queryParam("start_date", "2018-01-09")
+				.queryParam("end_date", "2018-12-31")
+				
+				.build().encode().toUri();
+
+		ResponseEntity<Orders> get_orders_response = restTemplate.exchange(get_orders_uri, HttpMethod.GET,
+				entity, Orders.class);
+
+		
+		if (get_orders_response.getStatusCodeValue() == 400) {
+			return CommonConstants.NOT_CONNECTED_MEMBER;
+		} else {
+			Order[] order_list = get_orders_response.getBody().getOrders();
+			
+			for(Order order : order_list) {
+				
+				
+				URI get_items_uri = UriComponentsBuilder.newInstance().scheme("https")
+						.host(String.format("%s.cafe24api.com", this_shopmall.getStoreId()))
+						.path(String.format("/api/v2/admin/orders/%s/items", order.getOrder_id()))  
+						.build().encode().toUri();
+
+				ResponseEntity<Items> get_items_response = restTemplate.exchange(get_items_uri, HttpMethod.GET,
+						entity, Items.class);
+				if (get_items_response.getStatusCodeValue() == 400) {
+					return CommonConstants.NOT_CONNECTED_MEMBER;
+				} else {
+					
+					OrderItem[] item_list = get_items_response.getBody().getItems();
+					
+					for(OrderItem order_item : item_list) {
+				
+						QItem qi = QItem.item;
+						Iterable<Item> this_item_ib = itemRepository.findAll(qi.shopProductId.eq(order_item.getProduct_no()) );
+							
+						Iterable<Item> this_item_it = (Iterable<Item>) this_item_ib.iterator();
+						
+						for(Item this_item : this_item_it) {
+							
+						}
+						
+						
+					}
+				}
+				
+			}
+			
+		}
+		
 		return CommonConstants.SUCCESS;
 	}
 

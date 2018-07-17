@@ -1,5 +1,6 @@
 package net.heronation.zeyo.rest.integrate.service.common;
 
+import java.util.List;
 import java.util.Map;
 
 import net.heronation.zeyo.rest.ip_temp_info.repository.IpTempInfo;
@@ -18,4 +19,8 @@ public interface IntegrateCommonService {
 	Item get_zeyo_item(long item_id);
 
 	Map<String, Object> get_zeyo_size(long item_id);
+	
+	List<Map<String, Object>> get_ordered_item_size(long shopmall_id);
+	
+	
 }

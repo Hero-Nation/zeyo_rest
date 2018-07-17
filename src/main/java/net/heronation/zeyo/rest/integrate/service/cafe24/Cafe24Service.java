@@ -17,4 +17,8 @@ public interface Cafe24Service {
 	
 	String complete_product(Long shopmall_id);
 	
+	String cafe24_order_list(Long shopmall_id);
+	
+	
+	
 }

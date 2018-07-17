@@ -28,7 +28,9 @@
 	var seller = '${seller}';
 	var ItemScmmSoValue = ${ItemScmmSoValue};
 	var sub_category = ${sub_category};
+	var ordered_item = ${ordered_item};
 
+	
 	// 상수
 
 	var CTS_COMPARE_MODE_BY_PRODUCT = "compare_by_product";
@@ -81,12 +83,7 @@
 					
 
 					
-				});
-				
-				
-				
-				
-				
+				}); 
 				
 				$.each(so, function(index, item) {
 					
@@ -110,6 +107,15 @@
 					$("#size_table_body_block").append("<td></td>");
 				});
 
+				
+				
+				$.each(ordered_item, function(index, item) {
+					
+				 console.dir(item);
+				 
+				});
+				
+				
 
 			});
 
@@ -230,200 +236,218 @@
 		}
 		
 		
-		var X  = $("#form_panel_by_info_input_height").val();
-		var Y  = $("#form_panel_by_info_input_weight").val();
-		
-		X = Number(X);
-		Y = Number(Y); 
-
-		
-		if(input_mode == "SIMPLE"){
+		if(compare_mode == CTS_COMPARE_MODE_BY_PRODUCT){
 			
-			
-			if(body_type == "NOT"){
-				alert("신체 타입을 선택해주세요!");
-				return;
-			}
-			
-			
-			if(X == ""){
-				alert("키를 입력하세요");
-				return;
-			}
-			
-			if(Y  == ""){
-				alert("몸무게를 입력하세요");
-				return;
-			}
-			
-			
-			if(chest_mi_id == 0){
-				alert("사이즈에 대한 가슴둘레 값이 존재하지 않습니다.");
-				return;
-			}
-
-			if (in_unit_display) {
-				X = X / centi_to_inch;
-				Y = Y / centi_to_inch; 
-			} 
-			
-			var Z = (((((((X * (X + Y)) / Y) + X) * (X / Y)) + ((((X * (X + ((X - 100) * 0.9))) / ((X - 100) * 0.9)) + X) * (X / ((X - 100) * 0.9))) + ((((X * (X + ((X * X * 22) / 10000))) / ((X * X * 22) / 10000)) + X) * (X / ((X * X * 22) / 10000)))) / 3) * (Y / X)) + ((X * X * 22) / 10000);
-			
- 			
-			
-			if(body_type == "A"){
-				Z = Z-(Z*0.05);
-			}else if(body_type == "B"){
-				
-			}else if(body_type == "C"){
-				Z = Z+(Z*0.035);
-			}else if(body_type == "D"){
-				Z = Z+(Z*0.075);
-			}
-					
-			
-			var user_cm_Z = Z / 10 ;
-			var user_in_Z = (Z / 10 ) * centi_to_inch;
-			
-			user_cm_Z = user_cm_Z.toFixed(1);
-			user_in_Z = user_in_Z.toFixed(1);
-			
-			var cloth_chest_value = iv[selected_so_id+"_"+chest_mi_id];
-			var cloth_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
-			
-			var R =  cloth_chest_value - user_cm_Z;
-			var R_in = cloth_chest_value_in - user_in_Z;
-			
-			R = R.toFixed(1);
-			R_in = R_in.toFixed(1);
-			
- 
-			if(R > 0 ){ 
-				
-				$("#result_cm").removeClass("red");
-				$("#result_cm").addClass("blue");
-				$("#result_cm").html(R+" cm 큽니다");
-
-				
-			}else{ 
-				
-				$("#result_cm").removeClass("blue");
-				$("#result_cm").addClass("red");
-				$("#result_cm").html(Math.abs(R)+" cm 작습니다.");
-			}
-			
-			
-			if(R_in > 0 ){ 
-				
-				$("#result_in").removeClass("blue");
-				$("#result_in").addClass("red");
-				$("#result_in").html(R_in+" in 큽니다");
-				
-				
-				
-			}else{ 
-				$("#result_in").removeClass("red");
-				$("#result_in").addClass("blue"); 
-				$("#result_in").html(Math.abs(R_in)+" in 작습니다.");
-			}
-			
- 
-			
-			
-			
-			$("#simple_result_in").html(user_in_Z+ " in");
-			$("#simple_result_cm").html(user_cm_Z+ " cm");
-			
-			
-			if(in_unit_display){
-				$("#simple_result_block_in").show();
-			}else{
-				$("#simple_result_block_cm").show();
-			}
-			 
 		}else{
 			
-			var V_chest  = $("#form_panel_by_info_input_chest").val();
-			var V_waist  = $("#form_panel_by_info_input_waist").val();
-			
-			if(V_chest == ""){
-				alert("가슴둘레를 입력하세요");
-				return;
-			}
-			
-			if(V_waist  == ""){
-				alert("허리둘레를 입력하세요");
-				return;
-			}
 			
 			
-			if(in_unit_display){
-				
-				var cloth_chest_value_in = Number(iv[selected_so_id+"_"+chest_mi_id]) * centi_to_inch;
+			
+			
+			var X  = $("#form_panel_by_info_input_height").val();
+			var Y  = $("#form_panel_by_info_input_weight").val();
+			
+			X = Number(X);
+			Y = Number(Y); 
+
+			
+			if(input_mode == "SIMPLE"){
 				
 				
-				var R_in = V_chest - cloth_chest_value_in;
-				R_in = Number(R_in).toFixed(1);
-				if(R_in < 0 ){ 					
-					$("#result_in").removeClass("red");
-					$("#result_in").addClass("blue"); 
-					$("#result_in").html(R_in+" in 큽니다");
-					
-				}else{  
-					$("#result_in").removeClass("blue");
-					$("#result_in").addClass("red");
-					$("#result_in").html(R_in+" in 작습니다.");
+				if(body_type == "NOT"){
+					alert("신체 타입을 선택해주세요!");
+					return;
 				}
 				
-				 
-			}else{
 				
-				var cloth_chest_value = Number(iv[selected_so_id+"_"+chest_mi_id]);
-				cloth_chest_value = cloth_chest_value.toFixed(1);
+				if(X == ""){
+					alert("키를 입력하세요");
+					return;
+				}
+				
+				if(Y  == ""){
+					alert("몸무게를 입력하세요");
+					return;
+				}
 				
 				
-				var R =  cloth_chest_value - V_chest;
-				R = Number(R).toFixed(1);
+				if(chest_mi_id == 0){
+					alert("사이즈에 대한 가슴둘레 값이 존재하지 않습니다.");
+					return;
+				}
+
+				if (in_unit_display) {
+					X = X / centi_to_inch;
+					Y = Y / centi_to_inch; 
+				} 
 				
-				if(R < 0 ){
+				var Z = (((((((X * (X + Y)) / Y) + X) * (X / Y)) + ((((X * (X + ((X - 100) * 0.9))) / ((X - 100) * 0.9)) + X) * (X / ((X - 100) * 0.9))) + ((((X * (X + ((X * X * 22) / 10000))) / ((X * X * 22) / 10000)) + X) * (X / ((X * X * 22) / 10000)))) / 3) * (Y / X)) + ((X * X * 22) / 10000);
+				
+	 			
+				
+				if(body_type == "A"){
+					Z = Z-(Z*0.05);
+				}else if(body_type == "B"){
+					
+				}else if(body_type == "C"){
+					Z = Z+(Z*0.035);
+				}else if(body_type == "D"){
+					Z = Z+(Z*0.075);
+				}
+						
+				
+				var user_cm_Z = Z / 10 ;
+				var user_in_Z = (Z / 10 ) * centi_to_inch;
+				
+				user_cm_Z = user_cm_Z.toFixed(1);
+				user_in_Z = user_in_Z.toFixed(1);
+				
+				var cloth_chest_value = iv[selected_so_id+"_"+chest_mi_id];
+				var cloth_chest_value_in = iv[selected_so_id+"_"+chest_mi_id] * centi_to_inch;
+				
+				var R =  cloth_chest_value - user_cm_Z;
+				var R_in = cloth_chest_value_in - user_in_Z;
+				
+				R = R.toFixed(1);
+				R_in = R_in.toFixed(1);
+				
+	 
+				if(R > 0 ){ 
+					
+					$("#result_cm").removeClass("red");
+					$("#result_cm").addClass("blue");
+					$("#result_cm").html(R+" cm 큽니다");
+
+					
+				}else{ 
+					
 					$("#result_cm").removeClass("blue");
 					$("#result_cm").addClass("red");
-					$("#result_cm").html(R+" cm 작습니다.");
+					$("#result_cm").html(Math.abs(R)+" cm 작습니다.");
+				}
 				
-
+				
+				if(R_in > 0 ){ 
+					
+					$("#result_in").removeClass("blue");
+					$("#result_in").addClass("red");
+					$("#result_in").html(R_in+" in 큽니다");
+					
 					
 					
 				}else{ 
-					$("#result_cm").removeClass("red");
-					$("#result_cm").addClass("blue"); 
-					$("#result_cm").html(R+" cm 큽니다");
+					$("#result_in").removeClass("red");
+					$("#result_in").addClass("blue"); 
+					$("#result_in").html(Math.abs(R_in)+" in 작습니다.");
 				}
 				
-			} 
+	 
+				
+				
+				
+				$("#simple_result_in").html(user_in_Z+ " in");
+				$("#simple_result_cm").html(user_cm_Z+ " cm");
+				
+				
+				if(in_unit_display){
+					$("#simple_result_block_in").show();
+				}else{
+					$("#simple_result_block_cm").show();
+				}
+				 
+			}else{
+				
+				var V_chest  = $("#form_panel_by_info_input_chest").val();
+				var V_waist  = $("#form_panel_by_info_input_waist").val();
+				
+				if(V_chest == ""){
+					alert("가슴둘레를 입력하세요");
+					return;
+				}
+				
+				if(V_waist  == ""){
+					alert("허리둘레를 입력하세요");
+					return;
+				}
+				
+				
+				if(in_unit_display){
+					
+					var cloth_chest_value_in = Number(iv[selected_so_id+"_"+chest_mi_id]) * centi_to_inch;
+					
+					
+					var R_in = V_chest - cloth_chest_value_in;
+					R_in = Number(R_in).toFixed(1);
+					if(R_in < 0 ){ 					
+						$("#result_in").removeClass("red");
+						$("#result_in").addClass("blue"); 
+						$("#result_in").html(R_in+" in 큽니다");
+						
+					}else{  
+						$("#result_in").removeClass("blue");
+						$("#result_in").addClass("red");
+						$("#result_in").html(R_in+" in 작습니다.");
+					}
+					
+					 
+				}else{
+					
+					var cloth_chest_value = Number(iv[selected_so_id+"_"+chest_mi_id]);
+					cloth_chest_value = cloth_chest_value.toFixed(1);
+					
+					
+					var R =  cloth_chest_value - V_chest;
+					R = Number(R).toFixed(1);
+					
+					if(R < 0 ){
+						$("#result_cm").removeClass("blue");
+						$("#result_cm").addClass("red");
+						$("#result_cm").html(R+" cm 작습니다.");
+					
+
+						
+						
+					}else{ 
+						$("#result_cm").removeClass("red");
+						$("#result_cm").addClass("blue"); 
+						$("#result_cm").html(R+" cm 큽니다");
+					}
+					
+				} 
+				
+
+			}
 			
 
-		}
-		
-
-		
-		if (in_unit_display) {
-			$(".in_unit_class").show();
-			$(".cm_unit_class").hide();  
 			
-		} else {
+			if (in_unit_display) {
+				$(".in_unit_class").show();
+				$(".cm_unit_class").hide();  
+				
+			} else {
 
-			$(".in_unit_class").hide();
-			$(".cm_unit_class").show(); 
+				$(".in_unit_class").hide();
+				$(".cm_unit_class").show(); 
+			}
+			
+			$("#result_after_block").show();
+			
+			if(input_mode == "SIMPLE"){
+			}else{
+				$("#simple_result_block_in").hide();
+				$("#simple_result_block_cm").hide(); 
+
+			}
+			
+			
+			
+			
+			
+			
+			
 		}
 		
-		$("#result_after_block").show();
 		
-		if(input_mode == "SIMPLE"){
-		}else{
-			$("#simple_result_block_in").hide();
-			$("#simple_result_block_cm").hide(); 
-
-		}
 	 
 	};
 	

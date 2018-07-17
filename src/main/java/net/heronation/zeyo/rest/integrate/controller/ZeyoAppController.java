@@ -2,11 +2,13 @@ package net.heronation.zeyo.rest.integrate.controller;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -34,6 +36,9 @@ import net.heronation.zeyo.rest.shopmall.repository.Shopmall;
 @RequestMapping("/zeyo_app")
 public class ZeyoAppController extends BaseController {
 
+	@Value(value = "${oauth.cafe24.client.scope}")
+	private String client_scope;
+	
 	@Autowired
 	private Cafe24Service cafe24Service;
 
@@ -119,6 +124,7 @@ public class ZeyoAppController extends BaseController {
 		
 		m.addAttribute("state", sm.getOauthID());
 		m.addAttribute("shop_eng_id",user_id);
+		m.addAttribute("scope",client_scope);
 		return "zeyo_app/cafe24/connect";
 	}
 	
@@ -216,7 +222,7 @@ public class ZeyoAppController extends BaseController {
 
 			Item i = integrateCommonService.get_zeyo_item(zeyo_pid);
 			Map<String, Object> issv_list = integrateCommonService.get_zeyo_size(zeyo_pid);
-
+			 List<Map<String, Object>> ordered_item  = integrateCommonService.get_ordered_item_size(10L);
 			try {
 
 				m.addAttribute("item", objectMapper.writeValueAsString(i));
@@ -226,6 +232,8 @@ public class ZeyoAppController extends BaseController {
 				m.addAttribute("sub_category_object", i.getSubCategory()); 
 				m.addAttribute("ItemScmmSoValue", objectMapper.writeValueAsString(issv_list));
 				m.addAttribute("ItemScmmSoValue_object", issv_list);
+				m.addAttribute("ordered_item",  objectMapper.writeValueAsString(ordered_item));
+				m.addAttribute("ordered_item_object", ordered_item);
 
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();

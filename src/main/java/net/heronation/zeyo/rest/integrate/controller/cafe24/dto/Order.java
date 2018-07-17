@@ -1,0 +1,60 @@
+package net.heronation.zeyo.rest.integrate.controller.cafe24.dto;
+
+import lombok.Data;
+
+@Data
+public class Order {
+    private String shop_no;
+    private String currency;
+    private String order_id;
+    private String market_id;
+    private String market_order_info;
+    private String market_name;
+    private String buyer_name;
+    private String buyer_email;
+    private String buyer_phone;
+    private String buyer_cellphone;
+    private String member_id;
+    private String member_authentication;
+    private String billing_name;
+    private String bank_code;
+    private String bank_code_name;
+    private String payment_method;
+    private String payment_method_name;
+    private String payment_method_icon;
+    private String payment_gateway_name;
+    private String paid;
+    private String order_date;
+    private String first_order;
+    private String payment_date;
+    private String order_from_mobile;
+    private String order_price_amount;
+    private String use_escrow;
+    private String customer_group_no_when_ordering;
+    private String membership_discount_amount;
+    private String actual_payment_amount;
+    private String mileage_spent_amount;
+    private String bank_account_no;
+    private String market_customer_id;
+    private String payment_amount;
+    private String cancel_date;
+    private String inflow_name;
+    private String inflow_id;
+    private String payment_confirmation;
+    private String postpay_commission;
+    private String postpay;
+    private String shipping_fee;
+    private String shipping_type;
+    private String shipping_type_text;
+    private String shipping_status;
+    private String wished_delivery_date;
+    private String wished_delivery_time;
+    private String wished_carrier_id;
+    private String return_confirmed_date;
+    private String total_supply_price;
+    private String[] additional_order_info_list;
+    private String store_pickup;
+    private String easypay_name;
+    private String loan_status;
+    private String shipping_message; 
+}

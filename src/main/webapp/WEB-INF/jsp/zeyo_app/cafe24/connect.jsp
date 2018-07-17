@@ -19,7 +19,7 @@
 		});
 		
 		var f_connnet = function(){
-			window.location ="https://${shop_eng_id}.cafe24api.com/api/v2/oauth/authorize?response_type=code&client_id=lTXWDxObBNEtZNE7sF9QkB&state=${state}&redirect_uri=https://www.zeyo.co.kr/oauth/cafe24/callback&scope=mall.read_application,mall.write_application,mall.read_collection,mall.read_customer,mall.read_personal,mall.read_product,mall.read_store"; 
+			window.location ="https://${shop_eng_id}.cafe24api.com/api/v2/oauth/authorize?response_type=code&client_id=lTXWDxObBNEtZNE7sF9QkB&state=${state}&redirect_uri=https://www.zeyo.co.kr/oauth/cafe24/callback&scope=${scope}"; 
 		};
 		
 		var f_not_avaiable = function(){

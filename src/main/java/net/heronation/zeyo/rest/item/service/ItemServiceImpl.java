@@ -1620,11 +1620,12 @@ public class ItemServiceImpl implements ItemService {
 		log.debug("modify 13 사이즈 수치 입력");
 
 		List<ItemScmmSoValue> user_miso_value = ibd.getItemScmmSoValues();
+		
 		QItemScmmSoValue qissv = QItemScmmSoValue.itemScmmSoValue;
-		Iterable<ItemScmmSoValue> db_miso_list_iter = itemScmmSoValueRepository
-				.findAll(qissv.item.id.eq(ibd.getItem_id()));
+		Iterable<ItemScmmSoValue> db_miso_list_iter = itemScmmSoValueRepository.findAll(qissv.item.id.eq(ibd.getItem_id()));
 		List<ItemScmmSoValue> db_miso_list = IteratorUtils.toList(db_miso_list_iter.iterator());
 
+		
 		for (ItemScmmSoValue user_data : user_miso_value) {
 			boolean is_this_option_added = true;
 

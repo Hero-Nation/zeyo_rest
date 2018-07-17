@@ -64,6 +64,7 @@ import net.heronation.zeyo.rest.size_option.repository.SizeOption;
 import net.heronation.zeyo.rest.size_option.repository.SizeOptionRepository;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
+import net.heronation.zeyo.rest.sub_category_measure_map.repository.QSubCategoryMeasureMap;
 import net.heronation.zeyo.rest.sub_category_measure_map.repository.SubCategoryMeasureMap;
 import net.heronation.zeyo.rest.sub_category_measure_map.repository.SubCategoryMeasureMapRepository;
 import net.heronation.zeyo.rest.warranty.repository.Warranty;
@@ -716,18 +717,18 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 			
 			JsonNode mi_so_value_node = mi_so_value_iterator.next();
 			
-			Long map_id = mi_so_value_node.get("map_id").asLong();
+ 
+			Long issv_id = mi_so_value_node.get("map_id").asLong();
 			
 			
 			
-			 
-			JsonNode sub_category_measure_map_sub_node = mi_so_value_node.get("sub_category_measure_map");
+			 // 버그 여기서 올라오는 값은 sub_category_measure_map id가 아니라 measure_item id값이다.
+			JsonNode measureItem_sub_node = mi_so_value_node.get("measureItem");
 
-			Long scmm_id = sub_category_measure_map_sub_node.get("id").asLong();
+			Long measure_item_id = measureItem_sub_node.get("id").asLong();
 			
 			
 
-			SubCategoryMeasureMap this_scmm = subCategoryMeasureMapRepository.findOne(scmm_id);
 
 			JsonNode sizeOption_sub_node = mi_so_value_node.get("sizeOption");
 
@@ -746,9 +747,13 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 
 			String mi_so_value_input_value = mi_so_value_node.get("input_value").textValue();
  
-		
+			QSubCategoryMeasureMap qscmm = QSubCategoryMeasureMap.subCategoryMeasureMap;
+			SubCategoryMeasureMap this_scmm = subCategoryMeasureMapRepository.findOne(qscmm.measureItem.id.eq(measure_item_id).and(qscmm.subCategory.id.eq(subCategory_id)));
+			
 
-			if(map_id ==0) {
+			if(issv_id ==0) {
+				
+				
 				ItemScmmSoValue this_issv = new ItemScmmSoValue();
 				this_issv.setInputValue(mi_so_value_input_value);
 				this_issv.setSizeOption(this_so);
@@ -757,7 +762,9 @@ public class ItemModifyDtoDeserializer extends JsonDeserializer {
 				this_issv.setId(0L);
 				itemScmmSoValues.add(this_issv);
 			}else {
-				ItemScmmSoValue this_issv = itemScmmSoValueRepository.findOne(map_id);
+				
+	
+				ItemScmmSoValue this_issv = itemScmmSoValueRepository.findOne(issv_id);
 				this_issv.setInputValue(mi_so_value_input_value);
 				this_issv.setSizeOption(this_so);
 				this_issv.setSubCategoryMeasureMap(this_scmm);

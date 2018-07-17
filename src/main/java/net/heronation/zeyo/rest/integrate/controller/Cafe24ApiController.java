@@ -91,5 +91,30 @@ public class Cafe24ApiController extends BaseController {
 		}
 
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/cafe24_order_list")
+	@ResponseBody
+	public ResponseEntity<ResultDto> cafe24_order_list(@AuthenticationPrincipal OAuth2Authentication auth,
+			@RequestParam(value = "shopmall_id", required = false) long shopmall_id) {
+		log.debug("/integrate/cafe24_order_list");
+
+		// 유저 정보 가지고 오기
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+				.getDecodedDetails();
+
+		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+		String R = cafe24Service.cafe24_order_list(shopmall_id);
+
+		if (R.equals(CommonConstants.SUCCESS)) {
+			return return_success(CommonConstants.SUCCESS);
+		} else {
+			return return_fail(R);
+		}
+
+	}
 
 }
