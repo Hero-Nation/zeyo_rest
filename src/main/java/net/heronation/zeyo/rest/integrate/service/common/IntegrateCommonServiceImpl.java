@@ -258,13 +258,22 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 			OrderItem[] item_list = get_items_response.getBody().getItems();
 
 			for (OrderItem order_item : item_list) {
+ 
+				StringBuffer  varname1 = new StringBuffer();
+				varname1.append("SELECT i.*, ");
+				varname1.append("       sc.id   AS sc_id, ");
+				varname1.append("       sc.name AS sc_name ");
+				varname1.append("FROM   item_shopmall_map ism ");
+				varname1.append("       LEFT JOIN item i ");
+				varname1.append("              ON ism.item_id = i.id ");
+				varname1.append("                 AND i.use_yn = 'Y' ");
+				varname1.append("       LEFT JOIN sub_category sc ");
+				varname1.append("              ON i.sub_category_id = sc.id ");
+				varname1.append("                 AND sc.use_yn = 'Y' ");
+				varname1.append("WHERE  ism.use_yn = 'Y' ");
+				varname1.append("       AND ism.shopmall_id = "+ shopmall_id);
+				varname1.append("       AND i.shop_product_id = "+order_item.getProduct_no());
 				
-				
-				StringBuffer varname1 = new StringBuffer();
-				varname1.append("SELECT i.* "); 
-				varname1.append("FROM   item i ");
-				varname1.append("WHERE  i.use_yn = 'Y' ");
-				varname1.append("       AND i.shop_product_id = " +order_item.getProduct_no());
 
 				Query item_select_q = entityManager.createNativeQuery(varname1.toString());
 				List<Object[]> list = item_select_q.getResultList();
@@ -273,10 +282,13 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 				for (Object[] this_item : list) {
 					varname1 = new StringBuffer();
 					varname1.append("SELECT issv.input_value, ");
-					varname1.append("       so.id 		as so_id, ");
-					varname1.append("       so.name 	as so_name, ");
-					varname1.append("       mi.id 		as mi_id, ");
-					varname1.append("       mi.name 	as mi_name ");
+					varname1.append("       so.id 		as so_id ");
+					varname1.append("     ,  so.name 	as so_name ");
+					varname1.append("     ,  mi.id 		as mi_id ");
+					varname1.append("     ,  mi.name 	as mi_name ");
+//					varname1.append("     ,  sc.name 	as sc_name ");
+//					varname1.append("     ,  sc.id 	as sc_id ");
+					
 					varname1.append("FROM   item_scmm_so_value issv ");
 					varname1.append("       LEFT JOIN size_option so ");
 					varname1.append("              ON issv.size_option_id = so.id ");
@@ -287,6 +299,13 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 					varname1.append("       LEFT JOIN measure_item mi ");
 					varname1.append("              ON scmm.measure_item_id = mi.id ");
 					varname1.append("                 AND mi.use_yn = 'Y' ");
+//					varname1.append("       LEFT JOIN item i ");
+//					varname1.append("              ON issv.item_id = i.id ");
+//					varname1.append("                 AND i.use_yn = 'Y' ");
+//					varname1.append("       LEFT JOIN sub_category sc ");
+//					varname1.append("              ON i.sub_category_id = sc.id ");
+//					varname1.append("                 AND sc.use_yn = 'Y' ");
+					
 					varname1.append("WHERE  issv.use_yn = 'Y' ");
 					varname1.append("       AND issv.item_id = " + this_item[0]);
 
@@ -303,6 +322,8 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 						search_R.put("so_name", row[2]);
 						search_R.put("mi_id", row[3]);
 						search_R.put("mi_name", row[4]);
+//						search_R.put("sc_name", row[5]);
+//						search_R.put("sc_id", row[6]);
 
 						return_list.add(search_R);
 					}
@@ -310,6 +331,7 @@ public class IntegrateCommonServiceImpl implements IntegrateCommonService {
 					Map<String, Object> item_data = new HashMap<String, Object>();
 					item_data.put("size", return_list);
 					item_data.put("item", this_item);
+					item_data.put("order", order_item);
 
 					R.add(item_data);
 

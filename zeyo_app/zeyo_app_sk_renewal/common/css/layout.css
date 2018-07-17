@@ -191,7 +191,7 @@
 	.sizeCloth .btn button{display:inline-block; border:2px solid #e14743; width:200px; height:40px; font-size:14px; font-weight:bold; color:#e14743; text-align:center; background-color:#fff; }
 	.sizeCloth .btn button:hover { background-color: #ed0923; color:#FFF}
 /*size guide line*/
-	.sizeCloth .guide{ position:absolute; right:80px; top:95px; font-size:12px}
+	.sizeCloth .guide { position:absolute; right:80px; top:95px; font-size:12px;overflow-wrap: break-word;  width: 200px;}
 	.sizeCloth .guide p span{width: 20px;display: inline-block; vertical-align: middle;margin-right:10px;}
 	.sizeCloth .guide .buy_pro span{border: 2px solid #38499c;}
 	.sizeCloth .guide .compare_pro span{border: 2px solid #ff1a77;}

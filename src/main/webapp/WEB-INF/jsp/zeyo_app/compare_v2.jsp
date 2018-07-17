@@ -52,7 +52,7 @@
 	var selected_so_id = "";
 	var chest_mi_id = 0;
 	var now_body_selecting = true;
-
+	var ordered_product_name_object = {};
 	$(window).load(
 			function() {
 				openLay('layerArea'); 
@@ -97,28 +97,115 @@
 				
 				$("#size_table_header_block").append("<th>상품명</th>");
 				$.each(mi, function(index, item) {
-					$("#size_table_header_block").append(
-							"<th>" + item.mi_name + "</th>");
+					$("#size_table_header_block").append("<th>" + item.mi_name + "</th>");
 				});
 
-				$("#size_table_body_block")
-						.append("<td>" + item.name + "</td>");
+				$("#size_table_body_block").append("<td>" + item.name + "</td>");
+				
 				$.each(mi, function(index, item) {
 					$("#size_table_body_block").append("<td></td>");
 				});
 
 				
+				$('#ordered_select_box').empty();
+				
+				
+				$('#ordered_select_box').append($('<option>', { 
+			        value:  "",
+			        text : "구매상품을 선택 해 주세요."
+			    }));
 				
 				$.each(ordered_item, function(index, item) {
+					//console.dir(item);
+					ordered_product_name_object[item.item[0]] = {
+							"name":item.item[12],
+							"sub_cate" : item.item[29]
+						};
 					
-				 console.dir(item);
-				 
+				 $('#ordered_select_box').append($('<option>', { 
+				        value: item.item[0],
+				        text : item.item[12] 
+				    }));
 				});
+				
+				$('#ordered_select_box').width(580);
+				
+				
+				
+				
+				if(sub_category.name == "반팔티셔츠"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/short_round_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/short_round_blue.png");
+				}else if(sub_category.name == "긴팔티셔츠"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/long_round_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/long_round_blue.png");
+				}else if(sub_category.name == "셔츠"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/long_shirt_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/long_shirt_blue.png");
+				}else if(sub_category.name == "자켓"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/long_shirt_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/long_shirt_blue.png");
+				}else if(sub_category.name == "점퍼/야상"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/long_shirt_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/long_shirt_blue.png");
+				}else if(sub_category.name == "조끼"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/short_round_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/short_round_blue.png");
+				}else if(sub_category.name == "청바지"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+				}else if(sub_category.name == "면바지"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+				}else if(sub_category.name == "반바지"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+				}else if(sub_category.name == "정장바지"){
+					$('#by_info_template').attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+					$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/pants_blue.png");
+				}
+				
 				
 				
 
 			});
 
+	var f_change_event_ordered_product = function(){
+		
+		var this_val = $("#ordered_select_box").val();
+ 
+		
+		$("#ordered_product_name").empty();
+		$("#ordered_product_name").html("<span></span>"+ordered_product_name_object[this_val].name);
+		
+		
+		if(ordered_product_name_object[this_val].sub_cate == "반팔티셔츠"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/short_round_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "긴팔티셔츠"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/long_round_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "셔츠"){ 
+			$("#by_product_template_target").attr("src","https://www.zeyo.co.kr/static/long_shirt_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "자켓"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/long_shirt_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "점퍼/야상"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/long_shirt_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "조끼"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/short_round_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "청바지"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/pants_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "면바지"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/pants_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "반바지"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/pants_red.png");
+		}else if(ordered_product_name_object[this_val].sub_cate == "정장바지"){ 
+			$("#by_product_template_ordered").attr("src","https://www.zeyo.co.kr/static/pants_red.png");
+		}
+		
+		f_size_option_click(0);
+		
+	};
+	
+	
 	var f_compare_by_product = function() {
 
 		compare_mode = CTS_COMPARE_MODE_BY_PRODUCT;
@@ -228,6 +315,57 @@
 	};
 	
 	
+	
+	var f_ordered_product_search = function(){
+		
+		
+		
+		var v_keyword = $("#form_panel_by_product_input_search").val();
+		
+		if(v_keyword == ""){
+			
+
+			$('#ordered_select_box').empty();
+			
+			$('#ordered_select_box').append($('<option>', { 
+		        value:  "",
+		        text : "구매상품을 선택 해 주세요."
+		    }));
+			
+			$.each(ordered_item, function(index, item) {
+				
+				
+					if(item.item[12].indexOf(v_keyword) != -1){
+					 	$('#ordered_select_box').append($('<option>', { 
+					        value: item.item[0],
+					        text : item.item[12] 
+					    }));
+					};	
+			});
+			
+		}else{
+			$('#ordered_select_box').empty();
+			
+			
+			$('#ordered_select_box').append($('<option>', { 
+		        value:  "",
+		        text : "구매상품을 선택 해 주세요."
+		    }));
+			$.each(ordered_item, function(index, item) {
+			
+					if(item.item[12].indexOf(v_keyword) != -1){
+					 	$('#ordered_select_box').append($('<option>', { 
+					        value: item.item[0],
+					        text : item.item[12] 
+					    }));
+					};	
+			});	
+		}
+		
+		
+		
+	};
+	
 	var f_get_result = function(){
  
 		if(selected_so_id == ""){
@@ -240,9 +378,7 @@
 			
 		}else{
 			
-			
-			
-			
+			 
 			
 			var X  = $("#form_panel_by_info_input_height").val();
 			var Y  = $("#form_panel_by_info_input_weight").val();
@@ -437,21 +573,17 @@
 				$("#simple_result_block_in").hide();
 				$("#simple_result_block_cm").hide(); 
 
-			}
-			
-			
-			
-			
-			
-			
+			} 
 			
 		}
-		
-		
-	 
+		 
 	};
 	
 	var f_size_option_click = function(p_so_id,p_type) {
+		
+		
+
+		
 		
 		if(p_so_id == 0){
 			so_index = Object.keys(so);
@@ -479,8 +611,7 @@
 
 			$("#size_table_header_block").append("<th>상품명</th>");
 			$.each(mi, function(index, item) {
-				$("#size_table_header_block").append(
-						"<th>" + item.mi_name + "</th>");
+				$("#size_table_header_block").append("<th>" + item.mi_name + "</th>");
 			});
 
 			$("#size_table_body_block").append("<td>" + item.name + "</td>");
@@ -488,19 +619,101 @@
 				
 				if(in_unit_display){
 					
-					$("#size_table_body_block").append(
-							"<td>" + iv_inch[p_so_id + "_" + item.mi_id] + "</td>");
+					$("#size_table_body_block").append("<td>" + iv_inch[p_so_id + "_" + item.mi_id] + "</td>");
 				}else{
 					
-					$("#size_table_body_block").append(
-							"<td>" + iv[p_so_id + "_" + item.mi_id] + "</td>");				
+					$("#size_table_body_block").append("<td>" + iv[p_so_id + "_" + item.mi_id] + "</td>");				
 				}
 
 			});
+			 
+			
+			so_index = Object.keys(so);
+			var select_count = 0;
+			for(var a = 0 ; a < so_index.length;a++){
+				if(so_index[a] == p_so_id){
+					break;
+				}
+				select_count++;
+			}
+			
+			var pic_width_percent = 30 + (select_count * 2);
+			$("#by_info_template").attr("width",pic_width_percent+"%");
+			$("#by_product_template_target").attr("width",pic_width_percent+"%");
+			$("#by_product_template_target").css('margin-left',"-"+(15+select_count)+"%");
+			
+			
+			
+			
+			////////////// by product target 테이블
+			
+			$("#size_table_header_block_by_product").empty();
+			$("#size_table_body_block_by_product").empty();
+
+			$("#size_table_header_block_by_product").append("<th>상품명</th>");
+			$.each(mi, function(index, item) {
+				$("#size_table_header_block_by_product").append("<th>" + item.mi_name + "</th>");
+			});
+
+			$("#size_table_body_block_by_product").append("<td>" + item.name + "</td>");
+			$.each(mi, function(index, item) {
+				
+				$("#size_table_body_block_by_product").append("<td>" + iv[p_so_id + "_" + item.mi_id] + "</td>");	
+
+			});
+			
+	 
+			var this_ordered_id = $("#ordered_select_box").val();
+			var this_ordered_size_option = [];
+			var this_ordered_size = null;
+			var this_ordered_name = "";
+				for(var a = 0; a < ordered_item.length;a++){ 
+					if(ordered_item[a].item[0] == this_ordered_id){
+						this_ordered_size_option = ordered_item[a].size;
+						this_ordered_size = ordered_item[a].order.option_value.split("=")[2];
+						this_ordered_name = ordered_item[a].item[12];
+					}
+				}
+				
+				
+				
+				////////////// by product ordered 테이블
+				
+				
+				$("#size_table_header_block_by_product_ordered").empty();
+				$("#size_table_body_block_by_product_ordered").empty();
+
+				if(this_ordered_size != null){
+					
+					$("#size_table_header_block_by_product_ordered").append("<th>상품명</th>");
+					$("#size_table_body_block_by_product_ordered").append("<td>" + this_ordered_name + "</td>");
+					
+					
+					$.each(this_ordered_size_option, function(index, item) {
+	
+						//input_value 						"81"
+						//mi_id 					:						6
+						//mi_name						:						"허리둘레"
+						//so_id						:						12
+						//so_name						:						"30"
+						
+						if(item.so_name == this_ordered_size){
+							$("#size_table_header_block_by_product_ordered").append("<th>" + item.mi_name + "</th>");
+							$("#size_table_body_block_by_product_ordered").append("<td>" + item.input_value + "</td>");							
+						}
+					});
+				}
+				 
+			
+			
+			
 			f_get_result();
 			 
 		}
 		
+ 
+		
+
 
 	};
 	
@@ -707,20 +920,14 @@
 									<input type="text" placeholder="예) 나드랑"
 										id="form_panel_by_product_input_search" />
 								</div>
-								<button class="schbt">검색</button>
+								<button class="schbt" onclick="f_ordered_product_search();">검색</button>
 							</div>
 							<div class="pinkWrap">
 								<span class="pinktx">※ 구매하신 상품을 선택 해 주세요.</span>
 							</div>
 							<div class="selectBx">
-								<select name="shplist">
+								<select id="ordered_select_box" onchange="f_change_event_ordered_product();">
 									<option value="" hidden>구매상품을 선택 해 주세요.</option>
-									<option value="shp01">구매상품1</option>
-									<option value="shp02">구매상품2</option>
-									<option value="shp03">구매상품3</option>
-									<option value="shp04">구매상품4</option>
-									<option value="shp05">구매상품5</option>
-									<option value="shp06">구매상품6</option>
 								</select>
 							</div>
 							<div class="top_btnWrap">
@@ -772,10 +979,10 @@
 				<!--<p class="text">구매하시려는 옷은 회원님의 가슴둘레보다 <span class="result red">0.8 in</span> 작습니다.</p>-->
 				<div class="guide">
 					<p class="buy_pro">
-						<span></span>봄 신상 박스 롱 티셔츠..
+						<span></span>${item_object.name} 
 					</p>
-					<p class="compare_pro">
-						<span></span>${item_object.name}
+					<p id="ordered_product_name" class="compare_pro">
+						<span></span>
 					</p>
 
 				</div>
@@ -784,63 +991,15 @@
 
 				<div class="clothimg mt5">
 				<div id="sizebutton_by_product" class="sizebutton"><p>SIZE</p></div>
-					<div class="big_tshirt">
-						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-							xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-							width="378.047px" height="357.5px" viewBox="0 0 378.047 357.5"
-							enable-background="new 0 0 378.047 357.5" xml:space="preserve">
-<path fill="#FFF" stroke="#38499d" stroke-width="3"
-								stroke-miterlimit="10"
-								d="M293.081,121.25c0,0,8.363,171.5,13.863,234H70.979
-	c5.5-62.5,13.863-234,13.863-234l-2.388,47.078l-9.976,22.232L1.28,152.438c1.5-3.5,65.069-115.46,65.533-115.46
-	s74.333-34.647,74.333-34.647c3.321,7.107,12.258,13.347,20.321,16.982c12.063,5.438,27.517,5.25,27.517,5.25
-	s15.409,0.188,27.472-5.25c8.063-3.635,17-9.875,20.322-16.982c0,0,73.869,34.647,74.333,34.647s64.148,113.189,65.532,115.46
-	l-71.199,38.123l-9.975-22.232" />
-<path fill="none" stroke="#38499d" stroke-width="3"
-								stroke-miterlimit="10"
-								d="M141.312,2.031
-	c21.637,6.914,47.629,7.063,47.629,7.063l0,0c0,0,26.046-0.149,47.684-7.063" />
-<path fill="none" stroke="#38499d" stroke-miterlimit="10"
-								d="M223.989,15.248c0,0-10.951,4.189-35.049,4.189
-	s-35.005-4.189-35.005-4.189" />
-<path fill="none" stroke="#38499d" stroke-miterlimit="10"
-								d="M66.843,36.917c0,0,19.965,49.166,17.982,85.5" />
-<path fill="none" stroke="#38499d" stroke-miterlimit="10"
-								d="M311.081,36.917c0,0-19.965,49.166-17.982,85.5" />
-<path fill="none" stroke="#38499d" stroke-miterlimit="10"
-								d="M247.372,7.297c0,0-5.616,10.775-20.541,19.453
-	c-13.973,8.125-32.625,8.313-37.869,8.313s-23.896-0.188-37.869-8.313c-14.924-8.678-20.541-19.453-20.541-19.453" />
-</svg>
+				
+				
+					<div  >
+<img id="by_product_template_target" width="30%" style="margin-top: 0%;position:absolute;margin-left:-15%; "/>
 					</div>
 
 
-					<div class="small_tshirt">
-						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-							xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-							width="378.047px" height="357.5px" viewBox="0 0 378.047 357.5"
-							enable-background="new 0 0 378.047 357.5" xml:space="preserve">
-<path fill="rgba(255,255,255,0.3)" stroke="#ff1a77" stroke-width="3"
-								stroke-miterlimit="10"
-								d="M293.081,121.25c0,0,8.363,171.5,13.863,234H70.979
-	c5.5-62.5,13.863-234,13.863-234l-2.388,47.078l-9.976,22.232L1.28,152.438c1.5-3.5,65.069-115.46,65.533-115.46
-	s74.333-34.647,74.333-34.647c3.321,7.107,12.258,13.347,20.321,16.982c12.063,5.438,27.517,5.25,27.517,5.25
-	s15.409,0.188,27.472-5.25c8.063-3.635,17-9.875,20.322-16.982c0,0,73.869,34.647,74.333,34.647s64.148,113.189,65.532,115.46
-	l-71.199,38.123l-9.975-22.232" />
-<path fill="none" stroke="#ff1a77" stroke-width="3"
-								stroke-miterlimit="10"
-								d="M141.312,2.031
-	c21.637,6.914,47.629,7.063,47.629,7.063l0,0c0,0,26.046-0.149,47.684-7.063" />
-<path fill="none" stroke="#ff1a77" stroke-miterlimit="10"
-								d="M223.989,15.248c0,0-10.951,4.189-35.049,4.189
-	s-35.005-4.189-35.005-4.189" />
-<path fill="none" stroke="#ff1a77" stroke-miterlimit="10"
-								d="M66.843,36.917c0,0,19.965,49.166,17.982,85.5" />
-<path fill="none" stroke="#ff1a77" stroke-miterlimit="10"
-								d="M311.081,36.917c0,0-19.965,49.166-17.982,85.5" />
-<path fill="none" stroke="#ff1a77" stroke-miterlimit="10"
-								d="M247.372,7.297c0,0-5.616,10.775-20.541,19.453
-	c-13.973,8.125-32.625,8.313-37.869,8.313s-23.896-0.188-37.869-8.313c-14.924-8.678-20.541-19.453-20.541-19.453" />
-</svg>
+					<div  >
+ <img id="by_product_template_ordered" width="30%" style="margin-top: 0%;position:absolute;margin-left:-15%; "/>
 					</div>
 
 
@@ -856,44 +1015,25 @@
 						<colgroup> 
 						</colgroup>
 						<thead>
-							<tr >
-								<th>상품명</th>
-								<th>사이즈</th>
-								<th>어깨너비</th>
-								<th>가슴둘레</th>
-								<th>소매길이</th>
-								<th>밑단둘레</th>
-								<th>총기장</th>
+							<tr id="size_table_header_block_by_product"> 
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>봄신상 박스 롱티셔츠..</td>
-								<td>95</td>
-								<td>34</td>
-								<td>132</td>
-								<td>44</td>
-								<td>124</td>
-								<td>75</td>
+							<tr id="size_table_body_block_by_product"> 
+							</tr> 
+						</tbody>
+					</table>
+					<table>
+						<caption></caption>
+						<colgroup> 
+						</colgroup>
+						<thead>
+							<tr id="size_table_header_block_by_product_ordered" > 
 							</tr>
-							<tr>
-								<td>비교하려는 상품명</td>
-								<td>one size</td>
-								<td>40</td>
-								<td>94</td>
-								<td>56</td>
-								<td>96</td>
-								<td>64</td>
-							</tr>
-							<tr>
-								<td>사이즈비교</td>
-								<td>-</td>
-								<td class="ft-red">-6</td>
-								<td>48</td>
-								<td class="ft-red">-12</td>
-								<td>28</td>
-								<td>11</td>
-							</tr>
+						</thead>
+						<tbody>
+							<tr id="size_table_body_block_by_product_ordered"> 
+							</tr> 
 						</tbody>
 					</table>
 				</div>
@@ -917,34 +1057,7 @@
 				<div class="clothimg mt20">
 <div id="sizebutton_by_info" class="sizebutton"><p>SIZE</p></div>
 
-					<div class="big_tshirt">
-						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-							xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-							width="378.047px" height="357.5px" viewBox="0 0 378.047 357.5"
-							enable-background="new 0 0 378.047 357.5" xml:space="preserve">
-<path fill="#FFF" stroke="#38499c" stroke-width="3"
-								stroke-miterlimit="10"
-								d="M293.081,121.25c0,0,8.363,171.5,13.863,234H70.979
-	c5.5-62.5,13.863-234,13.863-234l-2.388,47.078l-9.976,22.232L1.28,152.438c1.5-3.5,65.069-115.46,65.533-115.46
-	s74.333-34.647,74.333-34.647c3.321,7.107,12.258,13.347,20.321,16.982c12.063,5.438,27.517,5.25,27.517,5.25
-	s15.409,0.188,27.472-5.25c8.063-3.635,17-9.875,20.322-16.982c0,0,73.869,34.647,74.333,34.647s64.148,113.189,65.532,115.46
-	l-71.199,38.123l-9.975-22.232" />
-<path fill="none" stroke="#38499c" stroke-width="3"
-								stroke-miterlimit="10"
-								d="M141.312,2.031
-	c21.637,6.914,47.629,7.063,47.629,7.063l0,0c0,0,26.046-0.149,47.684-7.063" />
-<path fill="none" stroke="#38499c" stroke-miterlimit="10"
-								d="M223.989,15.248c0,0-10.951,4.189-35.049,4.189
-	s-35.005-4.189-35.005-4.189" />
-<path fill="none" stroke="#38499c" stroke-miterlimit="10"
-								d="M66.843,36.917c0,0,19.965,49.166,17.982,85.5" />
-<path fill="none" stroke="#38499c" stroke-miterlimit="10"
-								d="M311.081,36.917c0,0-19.965,49.166-17.982,85.5" />
-<path fill="none" stroke="#38499c" stroke-miterlimit="10"
-								d="M247.372,7.297c0,0-5.616,10.775-20.541,19.453
-	c-13.973,8.125-32.625,8.313-37.869,8.313s-23.896-0.188-37.869-8.313c-14.924-8.678-20.541-19.453-20.541-19.453" />
-</svg>
-					</div>
+ 				<img id="by_info_template" width="30%" style="margin-top: -5%"/>
 				</div>
 				<p class="text restxtbox" style="display: none;" id="result_after_block">
 					<span class="restxt">구매하시려는 옷은 회원님의 가슴둘레보다&nbsp;</span>
