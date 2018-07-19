@@ -14,6 +14,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.querydsl.core.types.Predicate;
+
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 
  
@@ -41,4 +43,8 @@ public interface SubCategoryMeasureMapRepository extends JpaRepository<SubCatego
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	SubCategoryMeasureMap findOne(Long arg0);
 
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	SubCategoryMeasureMap findOne(Predicate predicate);
 }

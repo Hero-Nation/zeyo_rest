@@ -24,7 +24,8 @@
 		};
 		
 		var f_by_user_data = function(){
-			window.location ="https://www.zeyo.co.kr/zeyo_app/compare?zeyo_pid=${zeyo_pid}";
+		//	window.location ="https://www.zeyo.co.kr/zeyo_app/compare?zeyo_pid=${zeyo_pid}";
+			window.location ="https://www.zeyo.co.kr/zeyo_app/compare_v2?zeyo_pid=${zeyo_pid}";
 		};
 		
 		//]]>

@@ -543,7 +543,7 @@ public class SizeTableServiceImpl implements SizeTableService {
 
 			QSizeTable st = QSizeTable.sizeTable;
 			SizeTable this_st = size_tableRepository.findOne(st.item.id.eq(tv.getId()).and(st.useYn.eq("Y")));
-			this_st.setUseYn("N");
+			size_tableRepository.delete(this_st.getId());
 		}
 		return "Y";
 	}
