@@ -412,6 +412,7 @@
 
 	var f_change_event_ordered_product = function(){
 		
+		
 		var this_val = $("#ordered_select_box").val();
  
 		

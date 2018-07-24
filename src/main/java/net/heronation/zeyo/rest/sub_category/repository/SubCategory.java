@@ -70,6 +70,8 @@ public class SubCategory {
 	private DateTime createDt;
 
 	private String useYn;
+	
+	private Long parentId;
 
 	@JsonBackReference
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
