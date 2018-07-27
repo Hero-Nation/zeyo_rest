@@ -7,4 +7,6 @@ public interface CommonService {
 	Map<String,Object> dash_board_statistic(); 
 	
 	void unit_test();
+	
+	void insert_random_v2_category();
 }

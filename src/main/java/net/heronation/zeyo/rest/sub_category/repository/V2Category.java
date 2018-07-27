@@ -10,5 +10,6 @@ public class V2Category {
 
 	private String name;
 	private List<IdNameDto> parent;
+	private List<IdNameDto> child;
 	private SubCategory info;
 }

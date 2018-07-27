@@ -5,16 +5,20 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.RandomUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.category.repository.Category;
 import net.heronation.zeyo.rest.category.repository.CategoryRepository;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
@@ -22,6 +26,8 @@ import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.item.repository.ItemRepository;
 import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMap;
 import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMapRepository;
+import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
+import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 
 @Slf4j
 @Service
@@ -34,6 +40,10 @@ public class CommonServiceImpl implements CommonService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
+	@Autowired
+	private SubCategoryRepository subCategoryRepository;
+
+	
 	@Autowired
 	EntityManager entityManager;
 
@@ -1161,6 +1171,51 @@ public class CommonServiceImpl implements CommonService {
 	public void unit_test() {
 		// 입력완료
 	 
+		
+	}
+
+
+	@Override
+	@Transactional
+	public void insert_random_v2_category() {
+		
+		
+		Category c = categoryRepository.findOne(4L);
+		Random rand = new Random(); 
+		
+		// TODO Auto-generated method stub
+		for(int a = 1; a < 10000;a++) {
+		
+			
+			int parentId = rand.nextInt(a); 
+			int ss  = rand.nextInt(100); 
+			
+			if(ss == 0) ss = 1;
+			
+			if(parentId % ss == 0) {
+				parentId = 0;
+			}
+			
+			
+			SubCategory sc = new SubCategory();
+			sc.setBleachYn("Y");
+			sc.setCategory(c);
+			sc.setClothImage("");
+			sc.setCreateDt(new DateTime());
+			sc.setDrycleaningYn("Y");
+			sc.setDrymethodYn("Y");
+			sc.setIroningYn("Y");
+			sc.setItemImage("");
+			sc.setLaundryYn("Y");
+			sc.setName("category_"+a);
+			sc.setParentId(Integer.toUnsignedLong(parentId));
+			sc.setUseYn("Y");
+			
+			subCategoryRepository.save(sc);
+			
+		}
+		
+		
 		
 	}
 

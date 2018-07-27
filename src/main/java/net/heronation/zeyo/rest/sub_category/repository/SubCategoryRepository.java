@@ -30,6 +30,10 @@ public interface SubCategoryRepository
 	@RestResource(path = "", rel = "", exported = true)
 	Page<SubCategory> findAll(Pageable arg0);
 
+	@Override
+	@PreAuthorize("permitAll()")
+	List<SubCategory> findAll();
+	
 	@PreAuthorize("hasRole('ROLE_CLIENT')")
 	@RestResource(path = "distinct_name", rel = "distinct_name", exported = true)
 	@Query("select distinct m  from SubCategory m where  m.category = ?1 and m.useYn = 'Y'")
@@ -44,6 +48,7 @@ public interface SubCategoryRepository
 	SubCategory findOne(Long arg0);
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_CLIENT')")
+	//@PreAuthorize("hasRole('ROLE_CLIENT')")
+	@PreAuthorize("permitAll()")
 	<S extends SubCategory> S save(S arg0);
 }
