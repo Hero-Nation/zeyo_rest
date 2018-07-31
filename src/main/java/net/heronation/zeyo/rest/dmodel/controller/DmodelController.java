@@ -1,0 +1,140 @@
+package net.heronation.zeyo.rest.dmodel.controller;
+
+import net.heronation.zeyo.rest.common.constants.Format;
+import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
+import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
+import net.heronation.zeyo.rest.dmodel.repository.DmodelResourceAssembler;
+import net.heronation.zeyo.rest.dmodel.service.DmodelService;
+import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMap;
+import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
+import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
+import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.RandomUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
+import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RepositoryRestController
+@RequestMapping("/dmodels")
+public class DmodelController extends BaseController {
+
+	@Autowired
+	private DmodelService dmodelService;
+
+	@Autowired
+	private DmodelRepository repository;
+	
+	@Autowired
+	private DmodelMeasureMapRepository dmmrepo;
+	
+	@Autowired
+	private MeasureItemRepository mirepo;
+	
+	@Autowired
+	private DmodelRatioRepository drrepo;
+	
+	@Autowired
+	private DmodelResourceAssembler assembler;
+
+	private final RepositoryEntityLinks entityLinks;
+
+	@Autowired
+	public DmodelController(RepositoryEntityLinks entityLinks) {
+		this.entityLinks = entityLinks;
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	@ResponseBody
+	public ResponseEntity<ResultDto> list(
+			@RequestParam(value = "name",required=false) String name,  Pageable pageable) {
+
+		Map<String,Object> param = new HashMap<String,Object>();
+		param.put("name", name); 
+
+		return return_success((Object) dmodelService.search(param, pageable));
+	} 
+
+
+	@RequestMapping(path = "/test")
+	public ResponseEntity<String> test() {
+		log.debug("/test");
+		
+		// 초기 개발 데이터 입력 로직 
+		
+		/*
+		for(int a = 1; a < 10000;a++) {
+//			Dmodel dm = new Dmodel();
+//			dm.setController("controller "+a);
+//			dm.setCreateDt(new DateTime());
+//			dm.setSvgdata("svgdata "+a);
+//			dm.setTitle("dynamic mode title "+a);
+//			dm.setUpdateDt(new DateTime());
+//			dm.setUseYn("Y");
+//			repository.save(dm);
+
+			Dmodel this_model = repository.findOne(Long.parseLong(String.valueOf(a)));
+			
+			int rc = RandomUtils.nextInt(1, 5);
+			
+			
+			for(int b = 0;b < rc;b++) {
+				
+				int ri = RandomUtils.nextInt(1, 9);
+				MeasureItem this_mi = mirepo.findOne(Long.parseLong(String.valueOf(ri)));
+				
+				int rmin = RandomUtils.nextInt(50,100);
+				int rmax = RandomUtils.nextInt(100,200);
+				
+				DmodelMeasureMap dmm = new DmodelMeasureMap();
+				dmm.setDmodel(this_model);
+				dmm.setMeasureItem(this_mi);
+				dmm.setMaxValue(rmin+"");
+				dmm.setMinValue(rmax+"");
+				dmm.setUseYn("Y");
+				
+				dmmrepo.save(dmm);
+			}
+
+			
+			int wmin = RandomUtils.nextInt(10,500);
+			int wmax = RandomUtils.nextInt(500,1000);
+			float rratio = RandomUtils.nextFloat();
+			
+			DmodelRatio this_ratio = new DmodelRatio();
+			this_ratio.setDmodel(this_model);
+			this_ratio.setMaxValue(wmin+"");
+			this_ratio.setMinValue(wmax+"");
+			this_ratio.setRatioValue(rratio+"");
+			this_ratio.setUseYn("Y");
+			this_ratio.setDefaultYn("N");
+			
+			drrepo.save(this_ratio);
+			
+		}
+		*/
+		return new ResponseEntity<>("test", HttpStatus.OK);
+	}
+
+}

@@ -39,5 +39,9 @@ public interface MeasureItemRepository extends JpaRepository<MeasureItem, Long> 
 	@RestResource(path = "distinct_name", rel = "distinct_name",exported = true) 
 	@Query("select distinct m from MeasureItem m where m.useYn = 'Y'")
 	List<MeasureItem> distinct_name();
+
+	// 테스트를 위하 임시 권한 허락
+	@PreAuthorize("permitAll()")
+	MeasureItem findOne(Long id);
 	
 }

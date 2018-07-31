@@ -1,5 +1,7 @@
 package net.heronation.zeyo.rest.ip_temp_info.repository;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -8,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -55,12 +58,12 @@ public class IpTempInfo {
 		return true;
 	}
 
+	@Transient
+	private UUID hash_id = UUID.randomUUID();
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		return hash_id.hashCode();
 	}
 
 }

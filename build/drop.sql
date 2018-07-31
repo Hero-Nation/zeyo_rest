@@ -3,6 +3,9 @@ alter table bbs drop foreign key FKnaka108edskn5qa9ylk0vpe0x
 alter table brand drop foreign key FK59a73qwpcnt6h66lpmqjsn73n
 alter table cloth_color drop foreign key FKr8v9kbek5xgg3ah0le73ikcm0
 alter table company_no_history drop foreign key FK6b2m83qo8rnxd9gijfceuh1gx
+alter table dmodel_measure_map drop foreign key FKkbycmdy4esfstn3q5rf0hqfu3
+alter table dmodel_measure_map drop foreign key FKhsgji8xbeg3hhxe9uuwextelb
+alter table dmodel_ratio drop foreign key FK89n4aodwxte6syakhkxq5j673
 alter table fit_info_option drop foreign key FKcl17pn9grtkgnbxf3ooxc006b
 alter table item drop foreign key FKhie4w6g67io9k67mf87clka9l
 alter table item drop foreign key FK2n9w8d0dp4bsfra9dcg0046l4
@@ -36,6 +39,7 @@ alter table size_option drop foreign key FKq70xqw0aysxxlckxqktrcwrr
 alter table size_option drop foreign key FKk7k3fvg25k3lfv9y076ulrs2w
 alter table size_table drop foreign key FK9947teyv7wkgf2mvg256qkamy
 alter table sub_category drop foreign key FKl65dyy5me2ypoyj8ou1hnt64e
+alter table sub_category drop foreign key FKat0x4w57eu0x190su9cdy2jsi
 alter table sub_category_fit_info_map drop foreign key FKsaxh7lembocgbr9a0mvcmc0it
 alter table sub_category_fit_info_map drop foreign key FKk794pi1kpj5ip8w3059qc0riq
 alter table sub_category_measure_map drop foreign key FK6a9jysggnoexi3iou12x0xyi8
@@ -47,6 +51,9 @@ drop table if exists category
 drop table if exists cloth_color
 drop table if exists company_no_history
 drop table if exists consumer
+drop table if exists dmodel
+drop table if exists dmodel_measure_map
+drop table if exists dmodel_ratio
 drop table if exists email_validation
 drop table if exists fit_info
 drop table if exists fit_info_option
