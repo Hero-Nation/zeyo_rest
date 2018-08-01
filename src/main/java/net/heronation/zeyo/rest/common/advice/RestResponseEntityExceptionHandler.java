@@ -1,6 +1,8 @@
 package net.heronation.zeyo.rest.common.advice;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,21 +17,35 @@ import net.heronation.zeyo.rest.common.dto.ResultDto;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ResultDto> handleError(HttpServletRequest request, Exception e) {
-		e.printStackTrace();
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ResultDto> handleError(HttpServletRequest request, ConstraintViolationException e) {
+		
+		log.debug("RestResponseEntityExceptionHandler : handleError");
+		 
+		ConstraintViolation<?> this_cons = e.getConstraintViolations().iterator().next();
+		
+		//e.printStackTrace();
 		ResultDto R = new ResultDto();
 		R.setMsg("FAILED");
-		R.setR(e.toString());
+		//R.setR(e.getMessage());
+		//R.setR(e.getCause());
+		R.setR(this_cons.getMessage());
 		return new ResponseEntity<ResultDto>(R, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public ResponseEntity<ResultDto> handleError404(HttpServletRequest request, Exception e) {
+		
+		log.debug("RestResponseEntityExceptionHandler : handleError404");
+		
+		
 		e.printStackTrace();
 		ResultDto R = new ResultDto();
 		R.setMsg("FAILED");
+		//R.setR(e.getMessage());
 		R.setR(e.toString());
 		return new ResponseEntity<ResultDto>(R, HttpStatus.BAD_REQUEST);
 	}
+	
+	
 }

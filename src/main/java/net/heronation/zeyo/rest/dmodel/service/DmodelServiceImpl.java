@@ -7,22 +7,24 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import javax.persistence.Query; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.dto.ToggleDto;
+import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
 import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
+import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 
 @Slf4j
-@Service
-@Transactional
+@Service 
 public class DmodelServiceImpl implements DmodelService {
 
 	@Autowired
@@ -46,6 +48,7 @@ public class DmodelServiceImpl implements DmodelService {
 	
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Map<String, Object> search(Map<String, Object> param, Pageable page) {
 
 		StringBuffer count_query = new StringBuffer();
@@ -145,5 +148,19 @@ public class DmodelServiceImpl implements DmodelService {
 
 		return R;
 
+	}
+
+
+	@Override
+	@Transactional
+	public String delete(List<String> param, Long seq) {
+		for (String tv : param) {
+
+			Dmodel dm = dmodelRepository.findOne(Long.valueOf(tv)); 
+			dm.setUseYn("N");
+
+		}
+
+		return "Y";
 	}
 }
