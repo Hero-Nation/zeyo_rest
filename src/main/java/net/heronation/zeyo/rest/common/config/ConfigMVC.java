@@ -176,17 +176,17 @@ public class ConfigMVC implements WebMvcConfigurer {
 	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> arg0) {
 		// TODO Auto-generated method stub
 
-		arg0.add(new HandlerExceptionResolver() {
-
-			@Override
-			public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
-					Object handler, Exception ex) {
-				log.debug("HandlerExceptionResolver resolveException");
-
-				return null;
-			}
-
-		});
+//		arg0.add(new HandlerExceptionResolver() {
+//
+//			@Override
+//			public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
+//					Object handler, Exception ex) {
+//				log.debug("HandlerExceptionResolver resolveException");
+//
+//				return null;
+//			}
+//
+//		});
 	}
 
 	@Override

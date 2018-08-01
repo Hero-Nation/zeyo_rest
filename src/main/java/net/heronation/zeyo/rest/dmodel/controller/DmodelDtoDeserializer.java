@@ -2,6 +2,8 @@ package net.heronation.zeyo.rest.dmodel.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,16 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
+import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMap;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
+import net.heronation.zeyo.rest.item_size_option_map.repository.ItemSizeOptionMap;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
+import net.heronation.zeyo.rest.size_option.repository.SizeOption;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 
@@ -28,7 +36,12 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 
 	@Autowired
 	private DmodelMeasureMapRepository dmodelMeasureMapRepository;
-
+	
+	@Autowired
+	private DmodelRepository dmodelRepository;
+	
+	@Autowired
+	private MeasureItemRepository measureItemRepository; 
 	@Autowired
 	private DmodelRatioRepository dmodelRatioRepository;
 
@@ -41,6 +54,12 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 
 		Long dmodel_id = root_node.get("id").asLong();
 
+		Dmodel this_model = null;
+		
+		if(dmodel_id != 0) {
+			this_model = dmodelRepository.findOne(dmodel_id);	
+		} 
+		
 		String title = root_node.get("title").asText();
 
 		String controller = root_node.get("controller").asText();
@@ -49,6 +68,83 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 
 		String useYn = root_node.get("use_yn").asText();
 
+		Iterator<JsonNode> subCategorys_node = root_node.get("sub_category").elements();
+		List<SubCategory> subCategorys = new ArrayList<SubCategory>();
+		while (subCategorys_node.hasNext()) {
+			JsonNode sc_child = subCategorys_node.next();
+			
+			long sc_id = sc_child.asLong();
+			
+			SubCategory this_sc = subCategoryRepository.findOne(sc_id);
+			subCategorys.add(this_sc);
+			
+			log.debug("sub_category  "+sc_id);
+		}
+		
+		
+		
+		Iterator<JsonNode> dmodelMeasureMaps_node = root_node.get("measure_item").elements();
+		List<DmodelMeasureMap> dmodelMeasureMaps = new ArrayList<DmodelMeasureMap>();
+		
+		while (dmodelMeasureMaps_node.hasNext()) {
+			JsonNode dmm_child = dmodelMeasureMaps_node.next();
+			
+			long mm_id = dmm_child.get("id").asLong();
+			long mm_map_id = dmm_child.get("map_id").asLong();
+			String mm_min = dmm_child.get("min").asText();
+			String mm_max = dmm_child.get("max").asText();
+			
+			MeasureItem this_mi = measureItemRepository.findOne(mm_id);
+			
+			DmodelMeasureMap this_dmm = new DmodelMeasureMap();
+			this_dmm.setMaxValue(mm_max);
+			this_dmm.setMinValue(mm_min);
+			this_dmm.setUseYn("Y");
+			this_dmm.setMeasureItem(this_mi);
+			this_dmm.setDmodel(this_model);
+			if(mm_map_id != 0) {
+				this_dmm.setId(mm_map_id);
+			}
+			
+			dmodelMeasureMaps.add(this_dmm);
+			
+			log.debug("measure_item  mm_id "+mm_id);
+			log.debug("measure_item  mm_map_id "+mm_map_id);
+			
+			log.debug("measure_item  min "+mm_min);
+			log.debug("measure_item  max "+mm_max);
+			 
+			
+		}
+		
+		
+		
+		Iterator<JsonNode> dmodelRatios_node = root_node.get("width_ratio").elements();
+		List<DmodelRatio> dmodelRatios = new ArrayList<DmodelRatio>();
+		
+		while (dmodelRatios_node.hasNext()) {
+			JsonNode dr_child = dmodelRatios_node.next();
+			 
+			String mm_ratio = dr_child.get("ratio").asText();
+			String mm_min = dr_child.get("min").asText();
+			String mm_max = dr_child.get("max").asText();
+			
+			 
+			log.debug("measure_item  mm_ratio "+mm_ratio); 
+			log.debug("measure_item  min "+mm_min);
+			log.debug("measure_item  max "+mm_max);
+			
+			DmodelRatio this_ds = new DmodelRatio();
+			this_ds.setDefaultYn("N");
+			this_ds.setMaxValue(mm_max);
+			this_ds.setMinValue(mm_min);
+			this_ds.setRatioValue(mm_ratio);
+			this_ds.setUseYn("Y");
+			
+			dmodelRatios.add(this_ds); 
+		}
+		
+		
 		DmodelDto R = new DmodelDto();
 		R.setId(dmodel_id);
 		R.setTitle(title);
@@ -57,9 +153,9 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 		R.setUseYn(useYn);
 		R.setCreateDt(new DateTime());
 		R.setUpdateDt(new DateTime());
-		R.setSubCategorys(new ArrayList<SubCategory>());
-		R.setDmodelMeasureMaps(new ArrayList<DmodelMeasureMap>());
-		R.setDmodelRatios(new ArrayList<DmodelRatio>());
+		R.setSubCategorys(subCategorys);
+		R.setDmodelMeasureMaps(dmodelMeasureMaps);
+		R.setDmodelRatios(dmodelRatios);
 		return R;
 	}
 

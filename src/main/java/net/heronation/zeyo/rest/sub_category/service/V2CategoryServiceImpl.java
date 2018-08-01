@@ -161,7 +161,11 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 
 		for (V2Category vc : v2_list) {
 
-			if (vc != null && vc.getInfo() != null && vc.getInfo().getParentId() == p_parent_id) {
+//			log.debug((vc != null)+ "  1 ");
+//			log.debug((vc.getInfo() != null)+ " 2 ");
+//			log.debug((vc.getInfo().getParentId() != null)+ " 3 ");
+			
+			if (vc != null && vc.getInfo() != null && vc.getInfo().getParentId() != null && vc.getInfo().getParentId() == p_parent_id) {
 //				log.debug("FUNCTION getChildList child");
 //				log.debug(vc.getInfo().getId() + "  |  "+vc.getInfo().getParentId());
 				IdNameDto ind = new IdNameDto();
@@ -209,7 +213,10 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 //				 log.debug("vc.getInfo() ");
 //				 log.debug(vc.getInfo().getId()+" "+vc.getInfo().getParentId()+"");
 
-				if (vc.getInfo().getParentId().compareTo(p_parent_id) == 0) {
+				if (vc != null &&
+						vc.getInfo() != null && 
+								vc.getInfo().getParentId() != null &&
+								vc.getInfo().getParentId().compareTo(p_parent_id) == 0) {
 
 					log.debug("FUNCTION list IF p_name == null |>| vc.getInfo().getParentId() == p_parent_id "
 							+ count_index);

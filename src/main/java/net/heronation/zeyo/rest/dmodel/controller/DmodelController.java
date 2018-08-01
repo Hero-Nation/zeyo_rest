@@ -149,7 +149,7 @@ public class DmodelController extends BaseController {
 
 			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-			return return_success();
+			return return_success(dmodelService.insert(insertDto));
 		}
 
 	}

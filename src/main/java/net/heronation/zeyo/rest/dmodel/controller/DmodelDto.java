@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMap;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
@@ -43,5 +44,23 @@ public class DmodelDto {
 	private List<SubCategory> subCategorys;
 	private List<DmodelMeasureMap> dmodelMeasureMaps;
 	private List<DmodelRatio> dmodelRatios;
+	
+	public Dmodel getAsEntity() {
+		
+		Dmodel R = new Dmodel();
+		R.setId(id);
+		R.setController(controller);
+		R.setCreateDt(createDt);
+		R.setDmodelMeasureMaps(dmodelMeasureMaps);
+		R.setDmodelRatios(dmodelRatios);
+		R.setSubCategorys(subCategorys);
+		R.setSvgdata(svgdata);
+		R.setTitle(title);
+		R.setUpdateDt(updateDt);
+		R.setUseYn(useYn);
+		
+		return R;
+		
+	}
 
 }
