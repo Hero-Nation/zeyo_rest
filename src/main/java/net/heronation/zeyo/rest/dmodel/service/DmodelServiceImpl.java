@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
+import org.apache.commons.collections.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,10 +24,13 @@ import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
 import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMap;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
+import net.heronation.zeyo.rest.dmodel_measure_map.repository.QDmodelMeasureMap;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
+import net.heronation.zeyo.rest.dmodel_ratio.repository.QDmodelRatio;
 import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
+import net.heronation.zeyo.rest.sub_category.repository.QSubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 
@@ -200,5 +205,47 @@ public class DmodelServiceImpl implements DmodelService {
 		}
 
 		return CommonConstants.SUCCESS;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Map<String, Object> single(long id) {
+		
+		Dmodel dmodel = dmodelRepository.findOne(id);
+		
+		
+		QDmodelMeasureMap qdmm = QDmodelMeasureMap.dmodelMeasureMap;
+		
+		Iterable<DmodelMeasureMap> dmm_list_iter =  dmodelMeasureMapRepository.findAll(qdmm.dmodel.id.eq(id).and(qdmm.useYn.eq("Y")));
+		
+//		List<DmodelMeasureMap> dmm_list  = new ArrayList<DmodelMeasureMap>();
+//		
+//		dmm_list_iter.forEach(dmm_list::add); 
+		
+		QDmodelRatio qdr = QDmodelRatio.dmodelRatio;
+		
+		Iterable<DmodelRatio> dr_list_iter =  dmodelRatioRepository.findAll(qdr.dmodel.id.eq(id).and(qdr.useYn.eq("Y")));
+		
+//		List<DmodelRatio> dr_list  = new ArrayList<DmodelRatio>();
+//		
+//		dr_list_iter.forEach(dr_list::add); 
+		
+		QSubCategory qsc = QSubCategory.subCategory;
+		
+		Iterable<SubCategory> sc_list_iter =  subCategoryRepository.findAll(qsc.dmodel.id.eq(id).and(qsc.useYn.eq("Y")));
+		
+//		List<SubCategory> sc_list  = new ArrayList<SubCategory>();
+//		
+//		sc_list_iter.forEach(sc_list::add); 
+		
+ 	
+		Map<String, Object> R = new HashMap<String, Object>();
+		R.put("Dmodel", dmodel);
+		R.put("DmodelMeasureMap", dmm_list_iter);
+		R.put("DmodelRatio", dr_list_iter); 
+		R.put("SubCategory", sc_list_iter); 
+
+		return R;
+
 	}
 }

@@ -17,6 +17,8 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.heronation.zeyo.rest.item.repository.Item;
@@ -51,10 +53,7 @@ public class ItemScmmSoValue {
 
 	private String useYn;
 
-	@Override
-	public String toString() {
-		return "ItemScmmSoValue ]";
-	}
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -74,10 +73,38 @@ public class ItemScmmSoValue {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemScmmSoValue [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (inputValue != null) {
+			builder.append("inputValue=");
+			builder.append(inputValue);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

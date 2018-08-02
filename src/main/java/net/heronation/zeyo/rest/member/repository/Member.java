@@ -117,12 +117,7 @@ public class Member {
 	
 	
 	
-	@Override
-	public String toString() {
-		return "Member ]";
-	}
-
-
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -144,11 +139,99 @@ public class Member {
 
 	
 	@Transient
-	private UUID hash_id = UUID.randomUUID();
+	@JsonIgnore private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Member [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (memberId != null) {
+			builder.append("memberId=");
+			builder.append(memberId);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (password != null) {
+			builder.append("password=");
+			builder.append(password);
+			builder.append(", ");
+		}
+		if (phone != null) {
+			builder.append("phone=");
+			builder.append(phone);
+			builder.append(", ");
+		}
+		if (email != null) {
+			builder.append("email=");
+			builder.append(email);
+			builder.append(", ");
+		}
+		if (confirm_no != null) {
+			builder.append("confirm_no=");
+			builder.append(confirm_no);
+			builder.append(", ");
+		}
+		if (manager != null) {
+			builder.append("manager=");
+			builder.append(manager);
+			builder.append(", ");
+		}
+		if (managerEmail != null) {
+			builder.append("managerEmail=");
+			builder.append(managerEmail);
+			builder.append(", ");
+		}
+		if (managerPhone != null) {
+			builder.append("managerPhone=");
+			builder.append(managerPhone);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (deleteDt != null) {
+			builder.append("deleteDt=");
+			builder.append(deleteDt);
+			builder.append(", ");
+		}
+		if (adminYn != null) {
+			builder.append("adminYn=");
+			builder.append(adminYn);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (email_noti_yn != null) {
+			builder.append("email_noti_yn=");
+			builder.append(email_noti_yn);
+			builder.append(", ");
+		}
+ 
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
  

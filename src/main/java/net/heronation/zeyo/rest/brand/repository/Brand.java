@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -35,13 +36,13 @@ import net.heronation.zeyo.rest.member.repository.Member;
 @RequiredArgsConstructor
 @Table(name = "BRAND")
 @TableGenerator(name = "BRAND_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "BRAND_ID", allocationSize = 1)
-@EntityListeners(AuditingEntityListener.class) 
+@EntityListeners(AuditingEntityListener.class)
 public class Brand {
 
 	@JsonBackReference
 	@OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "BRAND_ID_GENERATOR")
 	@Column(name = "ID")
@@ -51,21 +52,15 @@ public class Brand {
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
 	private String name;
-	
+
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime deleteDt;
 
 	private String useYn;
-	
-	
-	@Override
-	public String toString() {
-		return "Brand ]";
-	}
 
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -83,12 +78,49 @@ public class Brand {
 		return true;
 	}
 
-
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Brand [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (deleteDt != null) {
+			builder.append("deleteDt=");
+			builder.append(deleteDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

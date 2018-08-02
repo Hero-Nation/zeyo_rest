@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ import net.heronation.zeyo.rest.sub_category_fit_info_map.repository.SubCategory
 @EntityListeners(AuditingEntityListener.class)
 
 public class FitInfo {
-	@JsonBackReference(value="sub_cate_fit_info_map")
+	@JsonBackReference(value = "sub_cate_fit_info_map")
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<SubCategoryFitInfoMap> subCategoryFitInfoMaps = new ArrayList<SubCategoryFitInfoMap>();
 
@@ -57,10 +58,7 @@ public class FitInfo {
 	@OneToMany(mappedBy = "fitInfo", fetch = FetchType.LAZY)
 	private List<FitInfoOption> fitInfoOptions = new ArrayList<FitInfoOption>();
 
-	@Override
-	public String toString() {
-		return "FitInfo ]";
-	}
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -80,11 +78,49 @@ public class FitInfo {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FitInfo [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (metaDesc != null) {
+			builder.append("metaDesc=");
+			builder.append(metaDesc);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

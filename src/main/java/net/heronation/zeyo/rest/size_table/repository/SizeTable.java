@@ -37,8 +37,8 @@ import net.heronation.zeyo.rest.item.repository.Item;
 
 public class SizeTable {
 
-	private @Version Long version;
-	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
+//	private @Version Long version;
+//	private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SIZE_TABLE_ID_GENERATOR")
@@ -77,11 +77,7 @@ public class SizeTable {
 	
 	private String table_image;
 	
-	@Override
-	public String toString() {
-		return "SizeTable ]";
-	}
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -101,11 +97,93 @@ public class SizeTable {
 
 	
 	@Transient
-	private UUID hash_id = UUID.randomUUID();
+	@JsonIgnore private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SizeTable [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (visibleNameYn != null) {
+			builder.append("visibleNameYn=");
+			builder.append(visibleNameYn);
+			builder.append(", ");
+		}
+		if (visibleCodeYn != null) {
+			builder.append("visibleCodeYn=");
+			builder.append(visibleCodeYn);
+			builder.append(", ");
+		}
+		if (visibleBasicYn != null) {
+			builder.append("visibleBasicYn=");
+			builder.append(visibleBasicYn);
+			builder.append(", ");
+		}
+		if (visibleItemImageYn != null) {
+			builder.append("visibleItemImageYn=");
+			builder.append(visibleItemImageYn);
+			builder.append(", ");
+		}
+		if (visibleColorYn != null) {
+			builder.append("visibleColorYn=");
+			builder.append(visibleColorYn);
+			builder.append(", ");
+		}
+		if (visibleMeasureTableYn != null) {
+			builder.append("visibleMeasureTableYn=");
+			builder.append(visibleMeasureTableYn);
+			builder.append(", ");
+		}
+		if (visibleLaundryInfoYn != null) {
+			builder.append("visibleLaundryInfoYn=");
+			builder.append(visibleLaundryInfoYn);
+			builder.append(", ");
+		}
+		if (visibleMeasureHowAYn != null) {
+			builder.append("visibleMeasureHowAYn=");
+			builder.append(visibleMeasureHowAYn);
+			builder.append(", ");
+		}
+		if (visibleMeasureHowBYn != null) {
+			builder.append("visibleMeasureHowBYn=");
+			builder.append(visibleMeasureHowBYn);
+			builder.append(", ");
+		}
+		if (visibleFitInfoYn != null) {
+			builder.append("visibleFitInfoYn=");
+			builder.append(visibleFitInfoYn);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (table_image != null) {
+			builder.append("table_image=");
+			builder.append(table_image);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 

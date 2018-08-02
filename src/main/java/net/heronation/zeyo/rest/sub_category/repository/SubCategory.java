@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -96,11 +97,7 @@ public class SubCategory {
 	@OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
 
-	@Override
-	public String toString() {
-		return "SubCategory ]";
-	}
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -117,8 +114,9 @@ public class SubCategory {
 			return false;
 		return true;
 	}
-	
+
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
@@ -126,5 +124,76 @@ public class SubCategory {
 		return hash_id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SubCategory [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (itemImage != null) {
+			builder.append("itemImage=");
+			builder.append(itemImage);
+			builder.append(", ");
+		}
+		if (clothImage != null) {
+			builder.append("clothImage=");
+			builder.append(clothImage);
+			builder.append(", ");
+		}
+		if (laundryYn != null) {
+			builder.append("laundryYn=");
+			builder.append(laundryYn);
+			builder.append(", ");
+		}
+		if (drycleaningYn != null) {
+			builder.append("drycleaningYn=");
+			builder.append(drycleaningYn);
+			builder.append(", ");
+		}
+		if (ironingYn != null) {
+			builder.append("ironingYn=");
+			builder.append(ironingYn);
+			builder.append(", ");
+		}
+		if (drymethodYn != null) {
+			builder.append("drymethodYn=");
+			builder.append(drymethodYn);
+			builder.append(", ");
+		}
+		if (bleachYn != null) {
+			builder.append("bleachYn=");
+			builder.append(bleachYn);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (parentId != null) {
+			builder.append("parentId=");
+			builder.append(parentId);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 
 }

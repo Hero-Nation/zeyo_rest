@@ -27,6 +27,7 @@ import net.heronation.zeyo.rest.cloth_color.repository.ClothColor;
 import net.heronation.zeyo.rest.cloth_color.repository.ClothColorRepository;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
+import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.item.repository.ItemBuildDto;
 import net.heronation.zeyo.rest.item_bleach_map.repository.ItemBleachMap;
 import net.heronation.zeyo.rest.item_cloth_color_map.repository.ItemClothColorMap;
@@ -56,7 +57,7 @@ import net.heronation.zeyo.rest.warranty.repository.Warranty;
 import net.heronation.zeyo.rest.warranty.repository.WarrantyRepository;
 
 @Slf4j
-public class ItemBuildDtoDeserializer extends JsonDeserializer {
+public class ItemBuildDtoDeserializer extends JsonDeserializer<ItemBuildDto> {
 
 	@Autowired
 	private BrandRepository brandRepository;
@@ -99,11 +100,26 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer {
 	
 	
 	@Override
-	public Object deserialize(JsonParser jsonParser, DeserializationContext arg1)
+	public ItemBuildDto deserialize(JsonParser jsonParser, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
 
 		log.debug("ItemBuildDtoDeserializer : deserialize");
 
+		log.debug("brandRepository : " +(brandRepository == null)+"");	
+		log.debug("shopmallRepository : " +(shopmallRepository == null)+"");	
+		log.debug("categoryRepository : " +(categoryRepository == null)+"");	
+		log.debug("subCategoryRepository : " +(subCategoryRepository == null)+"");	
+		log.debug("madeinRepository : " +(madeinRepository == null)+"");	
+		log.debug("warrantyRepository : " +(warrantyRepository == null)+"");	
+		log.debug("materialRepository : " +(materialRepository == null)+"");	
+		log.debug("sizeOptionRepository : " +(sizeOptionRepository == null)+"");	
+		log.debug("clothColorRepository : " +(clothColorRepository == null)+"");	
+		log.debug("clothColorRepository : " +(clothColorRepository == null)+"");	
+		log.debug("fitInfoOptionRepository : " +(fitInfoOptionRepository == null)+"");	
+		log.debug("fitInfoOptionRepository : " +(fitInfoOptionRepository == null)+"");	
+		log.debug("subCategoryMeasureMapRepository : " +(subCategoryMeasureMapRepository == null)+"");	
+		log.debug("kindofRepository : " +(kindofRepository == null)+"");	
+		  
 		
 		// kindof table (변경될수 있음)
 //		'1', 'input_type', '관리자', 'Y'

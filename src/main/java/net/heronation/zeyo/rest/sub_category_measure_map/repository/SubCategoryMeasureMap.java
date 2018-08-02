@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -37,26 +38,19 @@ public class SubCategoryMeasureMap {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SUB_CATEGORY_MEASURE_MAP_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
-	
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEASURE_ITEM_ID")
 	private MeasureItem measureItem;
-	
-	
+
 	private String useYn;
-
-	@Override
-	public String toString() {
-		return "SubCategoryMeasureMap ]";
-	}
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -74,8 +68,8 @@ public class SubCategoryMeasureMap {
 		return true;
 	}
 
-	
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
@@ -83,5 +77,26 @@ public class SubCategoryMeasureMap {
 		return hash_id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SubCategoryMeasureMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 
 }

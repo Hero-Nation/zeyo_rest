@@ -52,8 +52,8 @@ import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RepositoryRestController
-@RequestMapping("/dmodels")
+@RestController
+@RequestMapping("/api/dmodels")
 @Validated
 public class DmodelController extends BaseController {
 
@@ -88,24 +88,33 @@ public class DmodelController extends BaseController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	@RequestMapping(method = RequestMethod.GET, value = "")
 	@ResponseBody
 	public ResponseEntity<ResultDto> list(@RequestParam(value = "name", required = false) String name,
 			Pageable pageable) {
-		log.debug("/api/dmodels/list");
+		log.debug("GET /api/dmodels/");
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("name", name);
 
 		return return_success((Object) dmodelService.search(param, pageable));
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
+	@ResponseBody
+	public ResponseEntity<ResultDto> single(@PathVariable(value = "id", required = true) long id) {
+		log.debug("GET /api/dmodels/{id}");
+	 
+		return return_success((Object) dmodelService.single(id));
+	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
+	@RequestMapping(method = RequestMethod.DELETE, value = "")
 	@ResponseBody
 	public ResponseEntity<ResultDto> delete(
 
 			@RequestBody List<String> param, @AuthenticationPrincipal OAuth2Authentication auth) {
-		log.debug("/api/dmodels/delete");
+		log.debug("DELETE /api/dmodels/delete");
 		// 유저 정보 가지고 오기
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -124,11 +133,11 @@ public class DmodelController extends BaseController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.POST, value = "/insert")
+	@RequestMapping(method = RequestMethod.POST, value = "")
 	@ResponseBody
 	public ResponseEntity<ResultDto> insert(@Valid @RequestBody DmodelDto insertDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-		log.debug("/api/dmodels/insert");
+		log.debug("POST /api/dmodels/insert");
 
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);

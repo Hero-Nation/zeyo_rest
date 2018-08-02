@@ -73,12 +73,7 @@ public class Kindof {
 	private String kvalue;
 	@JsonIgnore
 	private String useYn;
-
-	@Override
-	public String toString() {
-		return "Kindof ]";
-	}
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -97,11 +92,43 @@ public class Kindof {
 	}
 
 	@Transient
-	private UUID hash_id = UUID.randomUUID();
+	@JsonIgnore private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Kindof [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (ktype != null) {
+			builder.append("ktype=");
+			builder.append(ktype);
+			builder.append(", ");
+		}
+		if (kvalue != null) {
+			builder.append("kvalue=");
+			builder.append(kvalue);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

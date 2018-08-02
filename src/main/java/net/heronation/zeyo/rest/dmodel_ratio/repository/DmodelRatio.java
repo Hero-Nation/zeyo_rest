@@ -14,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
 
@@ -33,7 +34,8 @@ public class DmodelRatio {
 	@Column(name = "ID")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
+	@ManyToOne(fetch = FetchType.EAGER )
 	@JoinColumn(name = "DMODEL_ID")
 	private Dmodel dmodel;
 
@@ -82,6 +84,7 @@ public class DmodelRatio {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override

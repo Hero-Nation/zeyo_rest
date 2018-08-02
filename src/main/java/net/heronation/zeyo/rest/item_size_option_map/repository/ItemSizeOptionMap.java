@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -50,12 +51,8 @@ public class ItemSizeOptionMap {
 	private String optionValue;
 
 	private String useYn;
-	
-	@Override
-	public String toString() {
-		return "ItemSizeOptionMap ]";
-	}
 
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -72,12 +69,41 @@ public class ItemSizeOptionMap {
 			return false;
 		return true;
 	}
+
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemSizeOptionMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (optionValue != null) {
+			builder.append("optionValue=");
+			builder.append(optionValue);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

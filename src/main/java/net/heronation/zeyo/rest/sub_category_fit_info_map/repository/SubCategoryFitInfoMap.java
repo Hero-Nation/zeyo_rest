@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -37,28 +38,19 @@ public class SubCategoryFitInfoMap {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SUB_CATEGORY_FIT_INFO_MAP_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	
-	
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
-	
-	
-	@JsonManagedReference(value="sub_cate_fit_info_map")
+
+	@JsonManagedReference(value = "sub_cate_fit_info_map")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FIT_INFO_ID")
 	private FitInfo fitInfo;
-	
-	
-	
-	private String useYn;
 
-	@Override
-	public String toString() {
-		return "SubCategoryFitInfoMap ]";
-	}
+	private String useYn;
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -77,8 +69,8 @@ public class SubCategoryFitInfoMap {
 		return true;
 	}
 
-	
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
@@ -86,5 +78,26 @@ public class SubCategoryFitInfoMap {
 		return hash_id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SubCategoryFitInfoMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 
 }

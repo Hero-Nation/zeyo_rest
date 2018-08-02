@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -58,10 +59,7 @@ public class CompanyNoHistory {
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime changeDt;
 
-	@Override
-	public String toString() {
-		return "CompanyNoHistory ]";
-	}
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -81,11 +79,49 @@ public class CompanyNoHistory {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("CompanyNoHistory [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (companyNo != null) {
+			builder.append("companyNo=");
+			builder.append(companyNo);
+			builder.append(", ");
+		}
+		if (beforeNo != null) {
+			builder.append("beforeNo=");
+			builder.append(beforeNo);
+			builder.append(", ");
+		}
+		if (changeDt != null) {
+			builder.append("changeDt=");
+			builder.append(changeDt);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

@@ -48,17 +48,22 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 	@Override
 	public DmodelDto deserialize(JsonParser jsonParser, DeserializationContext arg1)
 			throws IOException, JsonProcessingException {
-		log.debug("DmodelDtoDeserializer : deserialize");
+		
+		log.debug("DmodelDtoDeserializer : deserialize"); 
+		log.debug("subCategoryRepository : " +(subCategoryRepository == null)+"");	  
+		log.debug("dmodelMeasureMapRepository : " +(dmodelMeasureMapRepository == null)+"");	 
+		log.debug("dmodelRepository : " +(dmodelRepository == null)+"");	  
+		log.debug("measureItemRepository : " +(measureItemRepository == null)+"");	 
+		log.debug("dmodelRatioRepository : " +(dmodelRatioRepository == null)+"");	 	
+		
+		
 
 		JsonNode root_node = jsonParser.getCodec().readTree(jsonParser);
 
 		Long dmodel_id = root_node.get("id").asLong();
 
-		Dmodel this_model = null;
-		
-		if(dmodel_id != 0) {
-			this_model = dmodelRepository.findOne(dmodel_id);	
-		} 
+		Dmodel this_model = new Dmodel();
+		this_model.setId(dmodel_id);
 		
 		String title = root_node.get("title").asText();
 
@@ -70,15 +75,18 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 
 		Iterator<JsonNode> subCategorys_node = root_node.get("sub_category").elements();
 		List<SubCategory> subCategorys = new ArrayList<SubCategory>();
+		
 		while (subCategorys_node.hasNext()) {
 			JsonNode sc_child = subCategorys_node.next();
 			
 			long sc_id = sc_child.asLong();
+			log.debug("sub_category  "+sc_id);	 
 			
-			SubCategory this_sc = subCategoryRepository.findOne(sc_id);
+			SubCategory this_sc = new SubCategory();
+			this_sc.setId(sc_id);
 			subCategorys.add(this_sc);
 			
-			log.debug("sub_category  "+sc_id);
+
 		}
 		
 		
@@ -94,8 +102,15 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			String mm_min = dmm_child.get("min").asText();
 			String mm_max = dmm_child.get("max").asText();
 			
-			MeasureItem this_mi = measureItemRepository.findOne(mm_id);
+			log.debug("measure_item  mm_id "+mm_id);
+			log.debug("measure_item  mm_map_id "+mm_map_id);
 			
+			log.debug("measure_item  min "+mm_min);
+			log.debug("measure_item  max "+mm_max);
+			
+			MeasureItem this_mi = new MeasureItem();
+			this_mi.setId(mm_id);
+
 			DmodelMeasureMap this_dmm = new DmodelMeasureMap();
 			this_dmm.setMaxValue(mm_max);
 			this_dmm.setMinValue(mm_min);
@@ -108,11 +123,7 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			
 			dmodelMeasureMaps.add(this_dmm);
 			
-			log.debug("measure_item  mm_id "+mm_id);
-			log.debug("measure_item  mm_map_id "+mm_map_id);
-			
-			log.debug("measure_item  min "+mm_min);
-			log.debug("measure_item  max "+mm_max);
+
 			 
 			
 		}

@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -49,14 +50,8 @@ public class ItemClothColorMap {
 	private ClothColor clothColor;
 	private String useYn;
 	private String optionValue;
-	
-	
-	@Override
-	public String toString() {
-		return "ItemClothColorMap ]";
-	}
 
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -74,13 +69,40 @@ public class ItemClothColorMap {
 		return true;
 	}
 
-
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemClothColorMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (optionValue != null) {
+			builder.append("optionValue=");
+			builder.append(optionValue);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

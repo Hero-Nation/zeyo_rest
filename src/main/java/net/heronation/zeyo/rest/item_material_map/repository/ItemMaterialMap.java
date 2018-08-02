@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -42,7 +43,7 @@ public class ItemMaterialMap {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ITEM_ID")
 	private Item item;
- 
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MATERIAL_ID")
@@ -52,10 +53,7 @@ public class ItemMaterialMap {
 	private String useLocatoin;
 	private String useYn;
 
-	@Override
-	public String toString() {
-		return "ItemMaterialMap ]";
-	}
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -73,12 +71,46 @@ public class ItemMaterialMap {
 			return false;
 		return true;
 	}
+
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemMaterialMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (contain != null) {
+			builder.append("contain=");
+			builder.append(contain);
+			builder.append(", ");
+		}
+		if (useLocatoin != null) {
+			builder.append("useLocatoin=");
+			builder.append(useLocatoin);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

@@ -11,7 +11,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 import com.querydsl.core.types.dsl.StringPath;
 
-@RepositoryRestResource(collectionResourceRel = "dmodels", path = "dmodels")
+@RepositoryRestResource(collectionResourceRel = "dmodels", path = "dmodels"  )
 public interface DmodelRepository extends JpaRepository<Dmodel, Long>, QueryDslPredicateExecutor<Dmodel> {
 	/****
 	 * 

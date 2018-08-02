@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -49,12 +50,8 @@ public class ItemIroningMap {
 	private String endTemp;
 
 	private String useYn;
-	
-	@Override
-	public String toString() {
-		return "ItemIroningMap ]";
-	}
 
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -73,11 +70,54 @@ public class ItemIroningMap {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemIroningMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (ironcan != null) {
+			builder.append("ironcan=");
+			builder.append(ironcan);
+			builder.append(", ");
+		}
+		if (addprotection != null) {
+			builder.append("addprotection=");
+			builder.append(addprotection);
+			builder.append(", ");
+		}
+		if (startTemp != null) {
+			builder.append("startTemp=");
+			builder.append(startTemp);
+			builder.append(", ");
+		}
+		if (endTemp != null) {
+			builder.append("endTemp=");
+			builder.append(endTemp);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

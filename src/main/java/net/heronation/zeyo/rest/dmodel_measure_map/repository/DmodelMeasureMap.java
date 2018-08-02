@@ -18,6 +18,9 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
@@ -39,11 +42,13 @@ public class DmodelMeasureMap {
 	@Column(name = "ID")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "DMODEL_ID")
 	private Dmodel dmodel;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEASURE_ITEM_ID")
 	private MeasureItem measureItem;
 	private String minValue;
@@ -83,6 +88,7 @@ public class DmodelMeasureMap {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override

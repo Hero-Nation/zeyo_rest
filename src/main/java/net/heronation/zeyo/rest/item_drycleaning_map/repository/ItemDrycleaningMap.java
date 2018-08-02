@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -29,7 +30,7 @@ import net.heronation.zeyo.rest.item.repository.Item;
 @Table(name = "ITEM_DRYCLEANING_MAP")
 @TableGenerator(name = "ITEM_DRYCLEANING_MAP_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_DRYCLEANING_MAP_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
- 
+
 public class ItemDrycleaningMap {
 
 	@Id
@@ -48,11 +49,7 @@ public class ItemDrycleaningMap {
 
 	private String useYn;
 
-	@Override
-	public String toString() {
-		return "ItemDrycleaningMap ]";
-	}
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -71,10 +68,48 @@ public class ItemDrycleaningMap {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemDrycleaningMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (drycan != null) {
+			builder.append("drycan=");
+			builder.append(drycan);
+			builder.append(", ");
+		}
+		if (storecan != null) {
+			builder.append("storecan=");
+			builder.append(storecan);
+			builder.append(", ");
+		}
+		if (detergent != null) {
+			builder.append("detergent=");
+			builder.append(detergent);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

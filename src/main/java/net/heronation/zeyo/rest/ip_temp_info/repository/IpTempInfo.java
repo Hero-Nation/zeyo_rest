@@ -16,6 +16,8 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -40,7 +42,7 @@ public class IpTempInfo {
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,11 +61,54 @@ public class IpTempInfo {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("IpTempInfo [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (ip != null) {
+			builder.append("ip=");
+			builder.append(ip);
+			builder.append(", ");
+		}
+		if (shopType != null) {
+			builder.append("shopType=");
+			builder.append(shopType);
+			builder.append(", ");
+		}
+		if (shopId != null) {
+			builder.append("shopId=");
+			builder.append(shopId);
+			builder.append(", ");
+		}
+		if (productId != null) {
+			builder.append("productId=");
+			builder.append(productId);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

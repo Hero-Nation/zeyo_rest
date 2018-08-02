@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -35,12 +36,10 @@ import net.heronation.zeyo.rest.kindof.repository.Kindof;
 @RequiredArgsConstructor
 @Table(name = "MADEIN")
 @TableGenerator(name = "MADEIN_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "MADEIN_ID", allocationSize = 1)
-@EntityListeners(AuditingEntityListener.class) 
+@EntityListeners(AuditingEntityListener.class)
 public class Madein {
-	
-	
-	
-	@JsonBackReference(value="madein_items")
+
+	@JsonBackReference(value = "madein_items")
 	@OneToMany(mappedBy = "madein", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
 
@@ -48,26 +47,20 @@ public class Madein {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "MADEIN_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	
-	
-	@JsonManagedReference(value="madein_kindof")
+
+	@JsonManagedReference(value = "madein_kindof")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
-	
-	
-	
+
 	private String name;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;
-	
-	@Override
-	public String toString() {
-		return "Madein ]";
-	}
+
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -87,10 +80,43 @@ public class Madein {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Madein [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

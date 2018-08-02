@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -31,6 +32,7 @@ import net.heronation.zeyo.rest.category.repository.Category;
 import net.heronation.zeyo.rest.item_size_option_map.repository.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.kindof.repository.Kindof;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
+
 @Entity
 @Data
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 @EntityListeners(AuditingEntityListener.class)
 
 public class SizeOption {
-	@JsonBackReference(value="sizeOption_kindof")
+	@JsonBackReference(value = "sizeOption_kindof")
 	@OneToMany(mappedBy = "sizeOption", fetch = FetchType.LAZY)
 	private List<ItemSizeOptionMap> itemSizeOptionMaps = new ArrayList<ItemSizeOptionMap>();
 	@Id
@@ -68,12 +70,7 @@ public class SizeOption {
 
 	private String useYn;
 
-	
-	@Override
-	public String toString() {
-		return "SizeOption ]";
-	}
-
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -92,9 +89,8 @@ public class SizeOption {
 		return true;
 	}
 
-
-	
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
@@ -102,5 +98,36 @@ public class SizeOption {
 		return hash_id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SizeOption [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 
 }

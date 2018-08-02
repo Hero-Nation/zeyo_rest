@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -59,14 +60,14 @@ public class Shopmall {
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime deleteDt;
 	private String useYn;
-	
-	
+
 	private String storeType;
 	private String storeId;
 	private String oauthID;
 	private String oauthCode;
 	private String accessToken;
 	private String refreshToken;
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -83,8 +84,9 @@ public class Shopmall {
 			return false;
 		return true;
 	}
-	
+
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
@@ -92,9 +94,71 @@ public class Shopmall {
 		return hash_id.hashCode();
 	}
 
-
-//	@Override
-//	public String toString() {
-//		return "Shopmall ]";
-//	}
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Shopmall [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (deleteDt != null) {
+			builder.append("deleteDt=");
+			builder.append(deleteDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (storeType != null) {
+			builder.append("storeType=");
+			builder.append(storeType);
+			builder.append(", ");
+		}
+		if (storeId != null) {
+			builder.append("storeId=");
+			builder.append(storeId);
+			builder.append(", ");
+		}
+		if (oauthID != null) {
+			builder.append("oauthID=");
+			builder.append(oauthID);
+			builder.append(", ");
+		}
+		if (oauthCode != null) {
+			builder.append("oauthCode=");
+			builder.append(oauthCode);
+			builder.append(", ");
+		}
+		if (accessToken != null) {
+			builder.append("accessToken=");
+			builder.append(accessToken);
+			builder.append(", ");
+		}
+		if (refreshToken != null) {
+			builder.append("refreshToken=");
+			builder.append(refreshToken);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+ 
 }

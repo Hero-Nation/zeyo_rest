@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -32,7 +33,6 @@ import net.heronation.zeyo.rest.item.repository.Item;
 
 public class ItemLaundryMap {
 
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_LAUNDRY_MAP_ID_GENERATOR")
 	@Column(name = "ID")
@@ -57,11 +57,7 @@ public class ItemLaundryMap {
 
 	private String useYn;
 
-	@Override
-	public String toString() {
-		return "ItemLaundryMap ]";
-	}
-
+ 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -80,11 +76,64 @@ public class ItemLaundryMap {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
-	
+
 	@Override
-	public int hashCode() { 
+	public int hashCode() {
 		return hash_id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ItemLaundryMap [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (water != null) {
+			builder.append("water=");
+			builder.append(water);
+			builder.append(", ");
+		}
+		if (machine != null) {
+			builder.append("machine=");
+			builder.append(machine);
+			builder.append(", ");
+		}
+		if (hand != null) {
+			builder.append("hand=");
+			builder.append(hand);
+			builder.append(", ");
+		}
+		if (waterTemp != null) {
+			builder.append("waterTemp=");
+			builder.append(waterTemp);
+			builder.append(", ");
+		}
+		if (intensity != null) {
+			builder.append("intensity=");
+			builder.append(intensity);
+			builder.append(", ");
+		}
+		if (detergent != null) {
+			builder.append("detergent=");
+			builder.append(detergent);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

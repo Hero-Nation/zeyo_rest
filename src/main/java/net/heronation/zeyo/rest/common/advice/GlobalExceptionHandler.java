@@ -39,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleMethodArgumentNotValid");
- 
+		ex.printStackTrace();
 		return super.handleMethodArgumentNotValid(ex, headers, status, request);
 	}
 
@@ -48,6 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleExceptionInternal");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
@@ -56,6 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleNoSuchRequestHandlingMethod");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleNoSuchRequestHandlingMethod(ex, headers, status, request);
 	}
 
@@ -64,6 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleHttpRequestMethodNotSupported");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleHttpRequestMethodNotSupported(ex, headers, status, request);
 	}
 
@@ -72,6 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleHttpMediaTypeNotSupported");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleHttpMediaTypeNotSupported(ex, headers, status, request);
 	}
 
@@ -80,6 +84,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleHttpMediaTypeNotAcceptable");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleHttpMediaTypeNotAcceptable(ex, headers, status, request);
 	}
 
@@ -88,6 +93,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleMissingPathVariable");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleMissingPathVariable(ex, headers, status, request);
 	}
 
@@ -96,6 +102,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleMissingServletRequestParameter");
 	 	
+		ex.printStackTrace();
 		ResultDto R = new ResultDto();
 		R.setMsg(CommonConstants.FAIL);
 		R.setR(ex.getMessage());
@@ -106,6 +113,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleServletRequestBindingException");
+		ex.printStackTrace();
 		// TODO Auto-generated method stub
 		return super.handleServletRequestBindingException(ex, headers, status, request);
 	}
@@ -115,6 +123,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleConversionNotSupported");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleConversionNotSupported(ex, headers, status, request);
 	}
 
@@ -123,6 +132,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleTypeMismatch");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleTypeMismatch(ex, headers, status, request);
 	}
 
@@ -131,6 +141,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleHttpMessageNotReadable");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleHttpMessageNotReadable(ex, headers, status, request);
 	}
 
@@ -139,6 +150,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleHttpMessageNotWritable");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleHttpMessageNotWritable(ex, headers, status, request);
 	}
 
@@ -147,6 +159,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleMissingServletRequestPart");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleMissingServletRequestPart(ex, headers, status, request);
 	}
 
@@ -155,6 +168,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleBindException");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleBindException(ex, headers, status, request);
 	}
 
@@ -163,6 +177,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpStatus status, WebRequest request) {
 		log.debug("GlobalExceptionHandler : handleNoHandlerFoundException");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleNoHandlerFoundException(ex, headers, status, request);
 	}
 
@@ -171,6 +186,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest webRequest) {
 		log.debug("GlobalExceptionHandler : handleAsyncRequestTimeoutException");
 		// TODO Auto-generated method stub
+		ex.printStackTrace();
 		return super.handleAsyncRequestTimeoutException(ex, headers, status, webRequest);
 	}
 

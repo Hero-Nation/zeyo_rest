@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -52,42 +53,42 @@ import net.heronation.zeyo.rest.warranty.repository.Warranty;
 @Table(name = "ITEM")
 @TableGenerator(name = "ITEM_ID_GENERATOR", table = "JPA_ID_TABLE", pkColumnValue = "ITEM_ID", allocationSize = 1)
 @EntityListeners(AuditingEntityListener.class)
- 
+
 public class Item {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ITEM_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
 	private Member member;
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BRAND_ID")
 	private Brand brand;
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CATEGORY_ID")
 	private Category category;
-	
+
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "SUB_CATEGORY_ID")
 	private SubCategory subCategory;
 
 	private String shopProductId;
-	
+
 	private String imageMode;
 
 	private String image;
 
 	private String shop_image;
-	
+
 	private String sizeMeasureMode;
 
 	private String sizeMeasureImage;
@@ -99,24 +100,20 @@ public class Item {
 	private int price;
 
 	private String madeinBuilder;
-	
-	
-	@JsonManagedReference(value="madein_items")
+
+	@JsonManagedReference(value = "madein_items")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "MADEIN_ID")
 	private Madein madein;
-	
-	
+
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime madeinDate;
-	
-	@JsonManagedReference(value="warranty_items")
+
+	@JsonManagedReference(value = "warranty_items")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "WARRANTY_ID")
 	private Warranty warranty;
 
-
-	
 	private String laundryYn;
 
 	private String drycleaningYn;
@@ -130,36 +127,35 @@ public class Item {
 	private String linkYn;
 
 	private String sizeTableYn;
-	
-	// 자동으로 import시 예외가 발생하여 모든 정보를 다 수집하지 못한경우 
+
+	// 자동으로 import시 예외가 발생하여 모든 정보를 다 수집하지 못한경우
 	private String importHasErrorYn;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime createDt;
 
 	private String useYn;
-	
+
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemLaundryMap itemLaundryMap;
-	
+
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemDrycleaningMap itemDrycleaningMap;
-	
+
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemIroningMap itemIroningMap;
-	
+
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemDrymethodMap itemDrymethodMap;
-	
+
 	@JsonBackReference
 	@OneToOne(mappedBy = "item")
 	private ItemBleachMap itemBleachMap;
-	
-	
+
 	@JsonBackReference
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemShopmallMap> itemShopmallMaps = new ArrayList<ItemShopmallMap>();
@@ -181,13 +177,10 @@ public class Item {
 	private List<ItemFitInfoOptionMap> itemFitInfoOptionMaps = new ArrayList<ItemFitInfoOptionMap>();
 
 	@JsonBackReference
-	@OneToOne(mappedBy = "item" )
+	@OneToOne(mappedBy = "item")
 	private SizeTable sizeTable;
 
-	@Override
-	public String toString() {
-		return "Item ]";
-	}
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -207,12 +200,135 @@ public class Item {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
 	public int hashCode() {
 		return hash_id.hashCode();
 	}
-	 
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Item [");
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+		if (shopProductId != null) {
+			builder.append("shopProductId=");
+			builder.append(shopProductId);
+			builder.append(", ");
+		}
+		if (imageMode != null) {
+			builder.append("imageMode=");
+			builder.append(imageMode);
+			builder.append(", ");
+		}
+		if (image != null) {
+			builder.append("image=");
+			builder.append(image);
+			builder.append(", ");
+		}
+		if (shop_image != null) {
+			builder.append("shop_image=");
+			builder.append(shop_image);
+			builder.append(", ");
+		}
+		if (sizeMeasureMode != null) {
+			builder.append("sizeMeasureMode=");
+			builder.append(sizeMeasureMode);
+			builder.append(", ");
+		}
+		if (sizeMeasureImage != null) {
+			builder.append("sizeMeasureImage=");
+			builder.append(sizeMeasureImage);
+			builder.append(", ");
+		}
+		if (name != null) {
+			builder.append("name=");
+			builder.append(name);
+			builder.append(", ");
+		}
+		if (code != null) {
+			builder.append("code=");
+			builder.append(code);
+			builder.append(", ");
+		}
+		builder.append("price=");
+		builder.append(price);
+		builder.append(", ");
+		if (madeinBuilder != null) {
+			builder.append("madeinBuilder=");
+			builder.append(madeinBuilder);
+			builder.append(", ");
+		}
+ 
+		if (madeinDate != null) {
+			builder.append("madeinDate=");
+			builder.append(madeinDate);
+			builder.append(", ");
+		}
+ 
+		if (laundryYn != null) {
+			builder.append("laundryYn=");
+			builder.append(laundryYn);
+			builder.append(", ");
+		}
+		if (drycleaningYn != null) {
+			builder.append("drycleaningYn=");
+			builder.append(drycleaningYn);
+			builder.append(", ");
+		}
+		if (ironingYn != null) {
+			builder.append("ironingYn=");
+			builder.append(ironingYn);
+			builder.append(", ");
+		}
+		if (drymethodYn != null) {
+			builder.append("drymethodYn=");
+			builder.append(drymethodYn);
+			builder.append(", ");
+		}
+		if (bleachYn != null) {
+			builder.append("bleachYn=");
+			builder.append(bleachYn);
+			builder.append(", ");
+		}
+		if (linkYn != null) {
+			builder.append("linkYn=");
+			builder.append(linkYn);
+			builder.append(", ");
+		}
+		if (sizeTableYn != null) {
+			builder.append("sizeTableYn=");
+			builder.append(sizeTableYn);
+			builder.append(", ");
+		}
+		if (importHasErrorYn != null) {
+			builder.append("importHasErrorYn=");
+			builder.append(importHasErrorYn);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+ 
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
 
 }

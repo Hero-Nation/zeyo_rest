@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
@@ -32,7 +33,8 @@ public class Dmodel {
 	// private @Version Long version;
 	// private @JsonIgnore @LastModifiedDate LocalDateTime lastModifiedDate;
 
-	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonBackReference
+	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY)
 	private List<SubCategory> subCategorys = new ArrayList<SubCategory>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "DMODEL_ID_GENERATOR")
@@ -53,10 +55,12 @@ public class Dmodel {
 
 	private String useYn;
 
-	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonBackReference
+	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY )
 	private List<DmodelMeasureMap> dmodelMeasureMaps = new ArrayList<DmodelMeasureMap>();
 
-	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonBackReference
+	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY )
 	private List<DmodelRatio> dmodelRatios = new ArrayList<DmodelRatio>();
 
 	@Override
@@ -96,6 +100,7 @@ public class Dmodel {
 	}
 
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override

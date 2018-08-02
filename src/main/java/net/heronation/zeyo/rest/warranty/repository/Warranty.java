@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -38,23 +39,20 @@ import net.heronation.zeyo.rest.kindof.repository.Kindof;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Warranty {
-	@JsonBackReference(value="warranty_items")
+	@JsonBackReference(value = "warranty_items")
 	@OneToMany(mappedBy = "warranty", fetch = FetchType.LAZY)
 	private List<Item> items = new ArrayList<Item>();
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "WARRANTY_ID_GENERATOR")
 	@Column(name = "ID")
 	private Long id;
-	
-	
-	@JsonManagedReference(value="warranty_kindof")
+
+	@JsonManagedReference(value = "warranty_kindof")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "KINDOF_ID")
 	private Kindof kindof;
-	
-	
-	
+
 	private String scope;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -62,10 +60,7 @@ public class Warranty {
 
 	private String useYn;
 
-	@Override
-	public String toString() {
-		return "Warranty ]";
-	}
+ 
 
 	@Override
 	public boolean equals(Object obj) {
@@ -84,8 +79,8 @@ public class Warranty {
 		return true;
 	}
 
-	
 	@Transient
+	@JsonIgnore
 	private UUID hash_id = UUID.randomUUID();
 
 	@Override
@@ -93,4 +88,39 @@ public class Warranty {
 		return hash_id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Warranty [");
+ 
+		if (id != null) {
+			builder.append("id=");
+			builder.append(id);
+			builder.append(", ");
+		}
+ 
+		if (scope != null) {
+			builder.append("scope=");
+			builder.append(scope);
+			builder.append(", ");
+		}
+		if (createDt != null) {
+			builder.append("createDt=");
+			builder.append(createDt);
+			builder.append(", ");
+		}
+		if (useYn != null) {
+			builder.append("useYn=");
+			builder.append(useYn);
+			builder.append(", ");
+		}
+		if (hash_id != null) {
+			builder.append("hash_id=");
+			builder.append(hash_id);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+ 
 }
