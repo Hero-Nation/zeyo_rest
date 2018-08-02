@@ -14,12 +14,19 @@ public class DmodelDtoValidator implements Validator {
 	@Override
 	public boolean supports(Class<?> clazz) {
 		log.debug("DmodelDtoValidator : supports");
-		return DmodelDto.class.equals(clazz);
+		log.debug(DmodelDto.class.equals(clazz)+"");
+		log.debug(clazz.getCanonicalName());
+		log.debug(clazz.getTypeName());
+		log.debug(clazz.getSimpleName());
+		return true; 
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
 		log.debug("DmodelDtoValidator : validate");
+		// supports와 valid 주석이 제대로 동작하지 않은것같다.
+		// 아래 명령어 꼼수로 해결한다. 
+		if (!DmodelDto.class.getClass().equals(target.getClass()))  return;
 
 		DmodelDto dto = (DmodelDto) target;
 		if (dto.getId() < 0) {

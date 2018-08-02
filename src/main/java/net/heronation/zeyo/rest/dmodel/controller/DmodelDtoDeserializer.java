@@ -63,7 +63,10 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 		Long dmodel_id = root_node.get("id").asLong();
 
 		Dmodel this_model = new Dmodel();
-		this_model.setId(dmodel_id);
+		if(dmodel_id != 0) {
+			this_model.setId(dmodel_id);	
+		}
+		
 		
 		String title = root_node.get("title").asText();
 
@@ -119,7 +122,7 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			this_dmm.setDmodel(this_model);
 			if(mm_map_id != 0) {
 				this_dmm.setId(mm_map_id);
-			}
+			} 
 			
 			dmodelMeasureMaps.add(this_dmm);
 			
@@ -139,17 +142,23 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			String mm_ratio = dr_child.get("ratio").asText();
 			String mm_min = dr_child.get("min").asText();
 			String mm_max = dr_child.get("max").asText();
+			long mm_id = dr_child.get("id").asLong();
 			
 			 
 			log.debug("measure_item  mm_ratio "+mm_ratio); 
 			log.debug("measure_item  min "+mm_min);
 			log.debug("measure_item  max "+mm_max);
+			log.debug("measure_item  mm_id "+mm_id);
 			
 			DmodelRatio this_ds = new DmodelRatio();
 			this_ds.setDefaultYn("N");
 			this_ds.setMaxValue(mm_max);
 			this_ds.setMinValue(mm_min);
 			this_ds.setRatioValue(mm_ratio);
+			if(mm_id != 0) {
+				this_ds.setId(mm_id);	
+			}
+			
 			this_ds.setUseYn("Y");
 			
 			dmodelRatios.add(this_ds); 

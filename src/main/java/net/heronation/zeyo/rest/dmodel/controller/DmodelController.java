@@ -17,6 +17,7 @@ import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.item.repository.ItemBuildDto;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
+import net.heronation.zeyo.rest.sub_category.service.V2CategoryService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,9 @@ public class DmodelController extends BaseController {
 	@Autowired
 	private DmodelService dmodelService;
 
+	@Autowired
+	private V2CategoryService v2Service;
+	
 	@Autowired
 	private DmodelRepository repository;
 
@@ -109,12 +113,11 @@ public class DmodelController extends BaseController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping(method = RequestMethod.DELETE, value = "")
+	@RequestMapping(method = RequestMethod.PATCH, value = "/delete")
 	@ResponseBody
-	public ResponseEntity<ResultDto> delete(
-
+	public ResponseEntity<ResultDto> delete( 
 			@RequestBody List<String> param, @AuthenticationPrincipal OAuth2Authentication auth) {
-		log.debug("DELETE /api/dmodels/delete");
+		log.debug("PATCH /api/dmodels");
 		// 유저 정보 가지고 오기
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -163,7 +166,37 @@ public class DmodelController extends BaseController {
 
 	}
 	
- 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.PUT, value = "")
+	@ResponseBody
+	public ResponseEntity<ResultDto> update(@Valid @RequestBody DmodelDto insertDto, BindingResult bindingResult,
+			@AuthenticationPrincipal OAuth2Authentication auth) {
+		log.debug("POST /api/dmodels/upate");
+
+		if (auth == null) {
+			return return_fail(CommonConstants.NO_TOKEN);
+		}
+
+		log.debug(bindingResult.getErrorCount() + "");
+		log.debug(bindingResult.hasErrors() + "");
+
+		if (bindingResult.hasErrors()) {
+			log.debug("/api/dmodels/insert bindingResult.hasErrors()");
+			return return_fail(bindingResult.getFieldError());
+		} else {
+
+			log.debug(insertDto.toString());
+
+			Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
+					.getDecodedDetails();
+
+			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
+
+			return return_success(dmodelService.insert(insertDto));
+		}
+
+	}
+	
 
 	@RequestMapping(path = "/test")
 	public ResponseEntity<ResultDto> test(

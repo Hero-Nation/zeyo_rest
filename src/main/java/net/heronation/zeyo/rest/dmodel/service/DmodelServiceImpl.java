@@ -33,11 +33,16 @@ import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 import net.heronation.zeyo.rest.sub_category.repository.QSubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
+import net.heronation.zeyo.rest.sub_category.repository.V2Category;
+import net.heronation.zeyo.rest.sub_category.service.V2CategoryService;
 
 @Slf4j
 @Service
 public class DmodelServiceImpl implements DmodelService {
 
+	@Autowired
+	private V2CategoryService v2Service;
+	
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -171,7 +176,7 @@ public class DmodelServiceImpl implements DmodelService {
 		for (String tv : param) {
 
 			Dmodel dm = dmodelRepository.findOne(Long.valueOf(tv));
-			dm.setUseYn("N");
+			if(dm != null) dm.setUseYn("N");
 
 		}
 
@@ -210,7 +215,7 @@ public class DmodelServiceImpl implements DmodelService {
 	@Override
 	@Transactional(readOnly = true)
 	public Map<String, Object> single(long id) {
-		
+		log.debug("single ");
 		Dmodel dmodel = dmodelRepository.findOne(id);
 		
 		
@@ -233,6 +238,17 @@ public class DmodelServiceImpl implements DmodelService {
 		QSubCategory qsc = QSubCategory.subCategory;
 		
 		Iterable<SubCategory> sc_list_iter =  subCategoryRepository.findAll(qsc.dmodel.id.eq(id).and(qsc.useYn.eq("Y")));
+		List<V2Category> v2_list = new ArrayList<V2Category>();
+		// 기존의 서브카테고리정보를 v2카테고리로 전환해서 입력해준다. 
+		sc_list_iter.forEach(sc -> { 
+			log.debug("sc.getId() "+sc.getId());
+			V2Category  this_v2_sc = v2Service.single_info(sc.getId());
+			if(this_v2_sc != null) {
+				v2_list.add(this_v2_sc);
+				log.debug(this_v2_sc.toString());	
+			}
+			
+		});
 		
 //		List<SubCategory> sc_list  = new ArrayList<SubCategory>();
 //		
@@ -243,7 +259,7 @@ public class DmodelServiceImpl implements DmodelService {
 		R.put("Dmodel", dmodel);
 		R.put("DmodelMeasureMap", dmm_list_iter);
 		R.put("DmodelRatio", dr_list_iter); 
-		R.put("SubCategory", sc_list_iter); 
+		R.put("SubCategory", v2_list); 
 
 		return R;
 

@@ -27,7 +27,6 @@ import net.heronation.zeyo.rest.cloth_color.repository.ClothColor;
 import net.heronation.zeyo.rest.cloth_color.repository.ClothColorRepository;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
-import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.item.repository.ItemBuildDto;
 import net.heronation.zeyo.rest.item_bleach_map.repository.ItemBleachMap;
 import net.heronation.zeyo.rest.item_cloth_color_map.repository.ItemClothColorMap;
@@ -113,10 +112,8 @@ public class ItemBuildDtoDeserializer extends JsonDeserializer<ItemBuildDto> {
 		log.debug("warrantyRepository : " +(warrantyRepository == null)+"");	
 		log.debug("materialRepository : " +(materialRepository == null)+"");	
 		log.debug("sizeOptionRepository : " +(sizeOptionRepository == null)+"");	
-		log.debug("clothColorRepository : " +(clothColorRepository == null)+"");	
-		log.debug("clothColorRepository : " +(clothColorRepository == null)+"");	
-		log.debug("fitInfoOptionRepository : " +(fitInfoOptionRepository == null)+"");	
-		log.debug("fitInfoOptionRepository : " +(fitInfoOptionRepository == null)+"");	
+		log.debug("clothColorRepository : " +(clothColorRepository == null)+"");	 
+		log.debug("fitInfoOptionRepository : " +(fitInfoOptionRepository == null)+"");	 
 		log.debug("subCategoryMeasureMapRepository : " +(subCategoryMeasureMapRepository == null)+"");	
 		log.debug("kindofRepository : " +(kindofRepository == null)+"");	
 		  
