@@ -43,6 +43,7 @@ public class Dmodel {
 	@JsonBackReference
 	@OneToMany(mappedBy = "dmodel", fetch = FetchType.LAZY)
 	private List<SubCategory> subCategorys = new ArrayList<SubCategory>();
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "DMODEL_ID_GENERATOR")
 	@Column(name = "ID")

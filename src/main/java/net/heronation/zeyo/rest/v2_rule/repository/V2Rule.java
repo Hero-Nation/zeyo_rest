@@ -1,23 +1,23 @@
 package net.heronation.zeyo.rest.v2_rule.repository;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore; 
+
+import net.heronation.zeyo.rest.sub_category.repository.SubCategory; 
 
 @Entity
 @Data
@@ -41,12 +41,14 @@ public class V2Rule {
 
 	private String ruleMessage;
 
-	private Long firstCt;
-
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "FIRST_CT")
+	private SubCategory firstCt;
 	private String firstIncludeChild;
 
-	private Long secondCt;
-
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "SECOND_CT")
+	private SubCategory secondCt;
 	private String secondIncludeChild;
 
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -56,28 +58,26 @@ public class V2Rule {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("  V2Rule  Entity  ").append("\n id  =  ").append(id)
+		StringBuilder builder = new StringBuilder(); 
+		builder.append("  V2Rule  Entity  ")
+                .append("\n id  =  ").append(id)
 
 				.append("\n title  =  ").append(title)
-
+				
 				.append("\n rule_type  =  ").append(ruleType)
-
+				
 				.append("\n rule_message  =  ").append(ruleMessage)
-
-				.append("\n first_ct  =  ").append(firstCt)
-
+				
 				.append("\n first_include_child  =  ").append(firstIncludeChild)
-
-				.append("\n second_ct  =  ").append(secondCt)
-
+				
 				.append("\n second_include_child  =  ").append(secondIncludeChild)
-
+				
 				.append("\n create_dt  =  ").append(createDt)
-
+				
+				
 				.append("\n use_yn  =  ").append(useYn);
-
-		return builder.toString();
+		
+		return builder.toString();	
 	}
 
 	@Override

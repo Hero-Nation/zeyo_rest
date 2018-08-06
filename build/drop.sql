@@ -44,6 +44,8 @@ alter table sub_category_fit_info_map drop foreign key FKsaxh7lembocgbr9a0mvcmc0
 alter table sub_category_fit_info_map drop foreign key FKk794pi1kpj5ip8w3059qc0riq
 alter table sub_category_measure_map drop foreign key FK6a9jysggnoexi3iou12x0xyi8
 alter table sub_category_measure_map drop foreign key FK6pddla5y42wkv6a5y9w2u7g5t
+alter table v2_rule drop foreign key FKfpub1f0g16p9435d0vysawki6
+alter table v2_rule drop foreign key FKkubs2715wcfqiw0n752crc0g5
 alter table warranty drop foreign key FK8hfqdbikdbkajxl9vyd3o61fa
 drop table if exists bbs
 drop table if exists brand

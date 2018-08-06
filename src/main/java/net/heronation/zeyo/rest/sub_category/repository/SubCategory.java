@@ -35,6 +35,7 @@ import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.size_option.repository.SizeOption;
 import net.heronation.zeyo.rest.sub_category_fit_info_map.repository.SubCategoryFitInfoMap;
 import net.heronation.zeyo.rest.sub_category_measure_map.repository.SubCategoryMeasureMap;
+import net.heronation.zeyo.rest.v2_rule.repository.V2Rule;
 
 @Entity
 @Data
@@ -98,6 +99,16 @@ public class SubCategory {
 	private List<SizeOption> sizeOptions = new ArrayList<SizeOption>();
 
  
+	@JsonBackReference
+	@OneToMany(mappedBy = "firstCt", fetch = FetchType.LAZY)
+	private List<V2Rule> first_ct_v2rules = new ArrayList<V2Rule>();
+ 
+	
+	@JsonBackReference
+	@OneToMany(mappedBy = "secondCt", fetch = FetchType.LAZY)
+	private List<V2Rule> second_ct_v2rules = new ArrayList<V2Rule>();
+ 
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -26,7 +26,7 @@ public class DmodelDtoValidator implements Validator {
 		log.debug("DmodelDtoValidator : validate");
 		// supports와 valid 주석이 제대로 동작하지 않은것같다.
 		// 아래 명령어 꼼수로 해결한다. 
-		if (!DmodelDto.class.getClass().equals(target.getClass()))  return;
+		if (!DmodelDto.class.equals(target.getClass()))  return;
 
 		DmodelDto dto = (DmodelDto) target;
 		if (dto.getId() < 0) {
