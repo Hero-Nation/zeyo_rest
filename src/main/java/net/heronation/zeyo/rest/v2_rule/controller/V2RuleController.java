@@ -1,0 +1,48 @@
+package net.heronation.zeyo.rest.v2_rule.controller; 
+ 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.v2_rule.repository.V2RuleRepository;
+import net.heronation.zeyo.rest.v2_rule.repository.V2RuleResourceAssembler;
+import net.heronation.zeyo.rest.v2_rule.service.V2RuleService; 
+
+@Slf4j
+@RepositoryRestController
+@RequestMapping("/v2_rules")
+public class V2RuleController extends BaseController {
+	
+    @Autowired
+    private V2RuleService v2_ruleService;
+ 
+     @Autowired
+    private V2RuleRepository repository; 
+     @Autowired
+    private V2RuleResourceAssembler assembler;
+
+    private final RepositoryEntityLinks entityLinks;
+
+ 
+
+ 	@Autowired
+	public V2RuleController(RepositoryEntityLinks entityLinks) {
+		this.entityLinks = entityLinks;
+	} 
+
+	@RequestMapping(path = "/test")
+	public ResponseEntity<String> test() {
+		log.debug("/test");
+		return new ResponseEntity<>("test", HttpStatus.OK);
+	}
+
+
+   
+
+ 
+}

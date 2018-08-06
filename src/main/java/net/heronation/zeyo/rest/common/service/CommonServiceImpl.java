@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.category.repository.Category;
 import net.heronation.zeyo.rest.category.repository.CategoryRepository;
-import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
-import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
-import net.heronation.zeyo.rest.item.repository.Item;
-import net.heronation.zeyo.rest.item.repository.ItemRepository;
-import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMap;
-import net.heronation.zeyo.rest.item_fit_info_option_map.repository.ItemFitInfoOptionMapRepository;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 

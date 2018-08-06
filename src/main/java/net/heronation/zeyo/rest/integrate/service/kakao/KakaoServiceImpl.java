@@ -1,7 +1,6 @@
 package net.heronation.zeyo.rest.integrate.service.kakao;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,12 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.brand.repository.BrandRepository;
 import net.heronation.zeyo.rest.category.repository.CategoryRepository;
 import net.heronation.zeyo.rest.cloth_color.repository.ClothColorRepository;
-import net.heronation.zeyo.rest.common.LoggingRequestInterceptor;
 import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.consumer.repository.Consumer;
 import net.heronation.zeyo.rest.consumer.repository.ConsumerRepository;

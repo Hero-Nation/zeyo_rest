@@ -9,16 +9,16 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.apache.commons.collections.IteratorUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.constants.CommonConstants;
-import net.heronation.zeyo.rest.common.dto.ToggleDto;
 import net.heronation.zeyo.rest.dmodel.controller.DmodelDto;
 import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
 import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
@@ -28,7 +28,6 @@ import net.heronation.zeyo.rest.dmodel_measure_map.repository.QDmodelMeasureMap;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.QDmodelRatio;
-import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 import net.heronation.zeyo.rest.sub_category.repository.QSubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
@@ -42,13 +41,12 @@ public class DmodelServiceImpl implements DmodelService {
 
 	@Autowired
 	private V2CategoryService v2Service;
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
 
 	@Autowired
 	private DmodelRepository dmodelRepository;
- 
 
 	@Autowired
 	private MeasureItemRepository mirepo;
@@ -176,7 +174,8 @@ public class DmodelServiceImpl implements DmodelService {
 		for (String tv : param) {
 
 			Dmodel dm = dmodelRepository.findOne(Long.valueOf(tv));
-			if(dm != null) dm.setUseYn("N");
+			if (dm != null)
+				dm.setUseYn("N");
 
 		}
 
@@ -188,11 +187,18 @@ public class DmodelServiceImpl implements DmodelService {
 	public String insert(DmodelDto insertDto) {
 		Dmodel this_model = insertDto.getAsEntity();
 
-		Dmodel db_model = dmodelRepository.save(this_model);
-
+		
 		List<DmodelMeasureMap> dmodelMeasureMaps = this_model.getDmodelMeasureMaps();
 		List<DmodelRatio> dmodelRatios = this_model.getDmodelRatios();
 		List<SubCategory> subCategorys = this_model.getSubCategorys();
+		
+		this_model.setDmodelMeasureMaps(null);
+		this_model.setDmodelRatios(null);
+		this_model.setSubCategorys(null);
+		
+		Dmodel db_model = dmodelRepository.save(this_model);
+
+
 
 		for (DmodelMeasureMap this_dmm : dmodelMeasureMaps) {
 			this_dmm.setDmodel(db_model);
@@ -217,51 +223,251 @@ public class DmodelServiceImpl implements DmodelService {
 	public Map<String, Object> single(long id) {
 		log.debug("single ");
 		Dmodel dmodel = dmodelRepository.findOne(id);
-		
-		
+
 		QDmodelMeasureMap qdmm = QDmodelMeasureMap.dmodelMeasureMap;
-		
-		Iterable<DmodelMeasureMap> dmm_list_iter =  dmodelMeasureMapRepository.findAll(qdmm.dmodel.id.eq(id).and(qdmm.useYn.eq("Y")));
-		
-//		List<DmodelMeasureMap> dmm_list  = new ArrayList<DmodelMeasureMap>();
-//		
-//		dmm_list_iter.forEach(dmm_list::add); 
-		
+
+		Iterable<DmodelMeasureMap> dmm_list_iter = dmodelMeasureMapRepository
+				.findAll(qdmm.dmodel.id.eq(id).and(qdmm.useYn.eq("Y")));
+
+		// List<DmodelMeasureMap> dmm_list = new ArrayList<DmodelMeasureMap>();
+		//
+		// dmm_list_iter.forEach(dmm_list::add);
+
 		QDmodelRatio qdr = QDmodelRatio.dmodelRatio;
-		
-		Iterable<DmodelRatio> dr_list_iter =  dmodelRatioRepository.findAll(qdr.dmodel.id.eq(id).and(qdr.useYn.eq("Y")));
-		
-//		List<DmodelRatio> dr_list  = new ArrayList<DmodelRatio>();
-//		
-//		dr_list_iter.forEach(dr_list::add); 
-		
+
+		Iterable<DmodelRatio> dr_list_iter = dmodelRatioRepository.findAll(qdr.dmodel.id.eq(id).and(qdr.useYn.eq("Y")));
+
+		// List<DmodelRatio> dr_list = new ArrayList<DmodelRatio>();
+		//
+		// dr_list_iter.forEach(dr_list::add);
+
 		QSubCategory qsc = QSubCategory.subCategory;
-		
-		Iterable<SubCategory> sc_list_iter =  subCategoryRepository.findAll(qsc.dmodel.id.eq(id).and(qsc.useYn.eq("Y")));
+
+		Iterable<SubCategory> sc_list_iter = subCategoryRepository.findAll(qsc.dmodel.id.eq(id).and(qsc.useYn.eq("Y")));
 		List<V2Category> v2_list = new ArrayList<V2Category>();
-		// 기존의 서브카테고리정보를 v2카테고리로 전환해서 입력해준다. 
-		sc_list_iter.forEach(sc -> { 
-			log.debug("sc.getId() "+sc.getId());
-			V2Category  this_v2_sc = v2Service.single_info(sc.getId());
-			if(this_v2_sc != null) {
+		// 기존의 서브카테고리정보를 v2카테고리로 전환해서 입력해준다.
+		sc_list_iter.forEach(sc -> {
+			log.debug("sc.getId() " + sc.getId());
+			V2Category this_v2_sc = v2Service.single_info(sc.getId());
+			if (this_v2_sc != null) {
 				v2_list.add(this_v2_sc);
-				log.debug(this_v2_sc.toString());	
+				log.debug(this_v2_sc.toString());
 			}
-			
+
 		});
-		
-//		List<SubCategory> sc_list  = new ArrayList<SubCategory>();
-//		
-//		sc_list_iter.forEach(sc_list::add); 
-		
- 	
+
+		// List<SubCategory> sc_list = new ArrayList<SubCategory>();
+		//
+		// sc_list_iter.forEach(sc_list::add);
+
 		Map<String, Object> R = new HashMap<String, Object>();
 		R.put("Dmodel", dmodel);
 		R.put("DmodelMeasureMap", dmm_list_iter);
-		R.put("DmodelRatio", dr_list_iter); 
-		R.put("SubCategory", v2_list); 
+		R.put("DmodelRatio", dr_list_iter);
+		R.put("SubCategory", v2_list);
 
 		return R;
 
+	}
+
+	@Override
+	@Transactional
+	public String update(DmodelDto updateDto) {
+		log.debug("update");
+		log.debug(updateDto.toString());
+		Dmodel this_model = updateDto.getAsEntity();
+		log.debug(this_model.toString());
+
+		Dmodel db_model = dmodelRepository.findOne(this_model.getId());
+		db_model.setController(this_model.getController());
+		db_model.setSvgdata(this_model.getSvgdata());
+		db_model.setTitle(this_model.getTitle());
+		db_model.setUpdateDt(new DateTime());
+		db_model.setUseYn("Y");
+
+		QSubCategory qsc = QSubCategory.subCategory;
+
+		Iterable<SubCategory> db_sc_list_iter = subCategoryRepository.findAll(qsc.dmodel.id.eq(this_model.getId()));
+
+		List<SubCategory> user_sc_list = updateDto.getSubCategorys();
+		List<SubCategory> db_sc_list = new ArrayList<SubCategory>();
+		db_sc_list_iter.forEach(db_sc_list::add);
+
+		// 새로 추가된 sub category를 dmodel과 연결 시킨다.
+		for (SubCategory user_sc : user_sc_list) {
+
+			boolean is_new_connected = true;
+
+			for (SubCategory db_sc : db_sc_list) {
+				if (db_sc.getId().compareTo(user_sc.getId()) == 0) {
+					is_new_connected = false;
+				}
+			}
+
+			log.debug(user_sc.getId() + "   " + is_new_connected);
+
+			if (is_new_connected) {
+				SubCategory new_connected_sc = subCategoryRepository.findOne(user_sc.getId());
+				new_connected_sc.setDmodel(db_model);
+				new_connected_sc.setUseYn("Y");
+			}
+
+		}
+
+		// 기존에 연결괸 sub category중 유저가 삭제한것은 연결을 끊어준다.
+		for (SubCategory db_sc : db_sc_list) {
+
+			boolean did_user_delete_this = true;
+
+			for (SubCategory user_sc : user_sc_list) {
+				if (db_sc.getId().compareTo(user_sc.getId()) == 0) {
+					did_user_delete_this = false;
+				}
+			}
+			log.debug(db_sc.getId() + "   " + did_user_delete_this);
+
+			if (did_user_delete_this) { // 유저가 삭제한 값이면 삭제한다.
+				db_sc.setDmodel(null);
+			}
+
+		}
+
+		List<DmodelMeasureMap> user_dmm_list = updateDto.getDmodelMeasureMaps();
+		QDmodelMeasureMap qdmm = QDmodelMeasureMap.dmodelMeasureMap;
+		Iterable<DmodelMeasureMap> db_dmm_list_iter = dmodelMeasureMapRepository
+				.findAll(qdmm.dmodel.id.eq(this_model.getId()));
+		List<DmodelMeasureMap> db_dmm_list = new ArrayList<DmodelMeasureMap>();
+		db_dmm_list_iter.forEach(db_dmm_list::add);
+
+		// 새로 추가된 Measure item 를 dmodel과 연결 시킨다.
+		for (DmodelMeasureMap user_dmm : user_dmm_list) {
+
+			boolean is_new_connected = true;
+			boolean is_old_db_exist = false;
+			for (DmodelMeasureMap db_dmm : db_dmm_list) {
+
+				if (user_dmm.getId() == null) {
+					is_new_connected = true;
+				} else {
+					if (db_dmm.getId().compareTo(user_dmm.getId()) == 0) {
+						is_old_db_exist = true;
+						if (db_dmm.getUseYn().equals("Y")) {
+							is_new_connected = false;
+						} else {
+							is_new_connected = true;
+						}
+
+					}
+				}
+
+			}
+
+			if (is_new_connected) {
+				if (is_old_db_exist) {
+					DmodelMeasureMap old_db = dmodelMeasureMapRepository.getOne(user_dmm.getId());
+					old_db.setUseYn("Y");
+					old_db.setDmodel(db_model);
+					old_db.setMaxValue(user_dmm.getMaxValue());
+					old_db.setMinValue(user_dmm.getMinValue());
+					old_db.setMeasureItem(user_dmm.getMeasureItem());
+				} else {
+					user_dmm.setDmodel(db_model);
+					dmodelMeasureMapRepository.save(user_dmm);
+				}
+
+			} else {
+				DmodelMeasureMap old_db = dmodelMeasureMapRepository.getOne(user_dmm.getId());
+				old_db.setUseYn("Y");
+				old_db.setDmodel(db_model);
+				old_db.setMaxValue(user_dmm.getMaxValue());
+				old_db.setMinValue(user_dmm.getMinValue());
+				old_db.setMeasureItem(user_dmm.getMeasureItem());
+			}
+
+		}
+
+		// 기존에 연결괸 Measure item 중 유저가 삭제한것은 연결을 끊어준다.
+
+		for (DmodelMeasureMap db_dmm : db_dmm_list) {
+
+			boolean did_user_delete_this = true;
+
+			for (DmodelMeasureMap user_dmm : user_dmm_list) {
+				if (user_dmm.getId() == null) {
+					did_user_delete_this = false;
+				} else {
+					if (db_dmm.getId().compareTo(user_dmm.getId()) == 0) {
+						if (db_dmm.getUseYn().equals("Y")) {
+							did_user_delete_this = false;
+						} else {
+							did_user_delete_this = true;
+						}
+					}
+				}
+
+			}
+
+			if (did_user_delete_this) { // 유저가 삭제한 값이면 삭제한다.
+				db_dmm.setUseYn("N");
+			}
+
+		}
+
+		List<DmodelRatio> user_dr_list = updateDto.getDmodelRatios();
+		QDmodelRatio qdr = QDmodelRatio.dmodelRatio;
+		Iterable<DmodelRatio> db_dr_list_iter = dmodelRatioRepository.findAll(qdr.dmodel.id.eq(this_model.getId()));
+		List<DmodelRatio> db_dr_list = new ArrayList<DmodelRatio>();
+		db_dr_list_iter.forEach(db_dr_list::add);
+
+
+
+		// 기존에 연결괸 QDmodelRatio 중 유저가 삭제한것은 연결을 끊어준다.
+
+		for (DmodelRatio db_dr : db_dr_list) {
+
+			boolean did_user_delete_this = true;
+
+			for (DmodelRatio user_dr : user_dr_list) {
+
+				if (db_dr.getId() == user_dr.getId()) {
+					if (db_dr.getUseYn().equals("Y")) {
+						did_user_delete_this = false;
+					}
+				}
+
+			}
+
+			if (did_user_delete_this) { // 유저가 삭제한 값이면 삭제한다.
+				db_dr.setUseYn("N");
+			}
+
+		}
+		
+		
+		// 새로 추가된QDmodelRatio 를 dmodel과 연결 시킨다.
+		for (DmodelRatio user_dr : user_dr_list) {
+
+			boolean is_new_connected = false;
+			if(user_dr.getId().compareTo(0L) == 0) {
+				is_new_connected = true;
+			}
+
+			if (is_new_connected) {
+ 
+					user_dr.setDmodel(db_model);
+					dmodelRatioRepository.save(user_dr);
+				 
+			} else {
+				DmodelRatio old_db = dmodelRatioRepository.getOne(user_dr.getId());
+				old_db.setUseYn("Y");
+				old_db.setDmodel(db_model);
+				old_db.setMaxValue(user_dr.getMaxValue());
+				old_db.setMinValue(user_dr.getMinValue());
+				old_db.setRatioValue(user_dr.getRatioValue());
+			}
+
+		}
+
+		return CommonConstants.SUCCESS;
 	}
 }

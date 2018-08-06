@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
 import net.heronation.zeyo.rest.item_material_map.repository.ItemMaterialMap;
 
 @Entity

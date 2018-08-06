@@ -1,15 +1,12 @@
 package net.heronation.zeyo.rest.dmodel.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
- 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.heronation.zeyo.rest.dmodel.repository.Dmodel;

@@ -33,7 +33,6 @@ import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
 import net.heronation.zeyo.rest.sub_category.controller.V2CategoryDto;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
-import net.heronation.zeyo.rest.sub_category.repository.SubCategoryDto;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 import net.heronation.zeyo.rest.sub_category.repository.V2Category;
 import net.heronation.zeyo.rest.sub_category_fit_info_map.repository.QSubCategoryFitInfoMap;
@@ -125,11 +124,11 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 	}
 
 	private List<IdNameDto> getParentList(long p_parent_id, List<IdNameDto> p_parent_list) {
-		log.debug("FUNCTION getParentList ");
-		log.debug("FUNCTION getParentList this_id");
-		log.debug(p_parent_id + "");
-		log.debug("FUNCTION getParentList list");
-		log.debug(p_parent_list.size() + "");
+//		log.debug("FUNCTION getParentList ");
+//		log.debug("FUNCTION getParentList this_id");
+//		log.debug(p_parent_id + "");
+//		log.debug("FUNCTION getParentList list");
+//		log.debug(p_parent_list.size() + "");
 
 		V2Category parent_vc = map.get(p_parent_id);
 		if (p_parent_id == 0L || parent_vc == null || parent_vc.getInfo() == null) {
@@ -153,11 +152,11 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 	}
 
 	private List<IdNameDto> getChildList(long p_parent_id, List<IdNameDto> p_child_list) {
-		log.debug("FUNCTION getChildList ");
-		log.debug("FUNCTION getChildList p_parent_id");
-		log.debug(p_parent_id + "");
-		log.debug("FUNCTION getChildList list");
-		log.debug(p_child_list.size() + "");
+//		log.debug("FUNCTION getChildList ");
+//		log.debug("FUNCTION getChildList p_parent_id");
+//		log.debug(p_parent_id + "");
+//		log.debug("FUNCTION getChildList list");
+//		log.debug(p_child_list.size() + "");
 
 		for (V2Category vc : v2_list) {
 
@@ -207,7 +206,7 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 		// 검색 이름이 없으면 parent_id로 목록을 만든다.
 		if (p_name == null || p_name.equals("")) {
 
-			log.debug("FUNCTION list IF p_name == null");
+			//log.debug("FUNCTION list IF p_name == null");
 
 			for (V2Category vc : v2_list) {
 //				 log.debug("vc.getInfo() ");
@@ -218,13 +217,11 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 								vc.getInfo().getParentId() != null &&
 								vc.getInfo().getParentId().compareTo(p_parent_id) == 0) {
 
-					log.debug("FUNCTION list IF p_name == null |>| vc.getInfo().getParentId() == p_parent_id "
-							+ count_index);
+					//log.debug("FUNCTION list IF p_name == null |>| vc.getInfo().getParentId() == p_parent_id " + count_index);
 
 					if ((count_index >= ((page - 1) * page_size)) && (count_index < (page * page_size))) {
 
-						log.debug(
-								"FUNCTION list IF p_name == null |>| vc.getInfo().getParentId() == p_parent_id |>| if ((count_index >= ((page - 1) * page_size)) && (count_index < (page * page_size))) {");
+						//log.debug( "FUNCTION list IF p_name == null |>| vc.getInfo().getParentId() == p_parent_id |>| if ((count_index >= ((page - 1) * page_size)) && (count_index < (page * page_size))) {");
 
 						if (vc.getParent() == null && p_parent_id != 0L) {
 							vc.setParent(getParentList(vc.getInfo().getParentId(), new ArrayList<IdNameDto>()));
@@ -254,17 +251,17 @@ public class V2CategoryServiceImpl implements V2CategoryService {
 
 			// 검색 결과가 있으면 검색결과를 중심으로 만든다.
 		} else {
-			log.debug("FUNCTION list IF p_name != null");
+			//log.debug("FUNCTION list IF p_name != null");
 			for (V2Category vc : v2_list) {
 				// log.debug("vc.getInfo() ");
 				// log.debug(vc.getInfo().getId()+" "+vc.getInfo().getParentId()+"");
 
 				if (vc.getName().contains(p_name)) {
 
-					log.debug("FUNCTION list IF p_name != null |>| vc.getName().contains(p_name) " + count_index);
+					//log.debug("FUNCTION list IF p_name != null |>| vc.getName().contains(p_name) " + count_index);
 
 					if ((count_index >= ((page - 1) * page_size)) && (count_index < (page * page_size))) {
-						log.debug("FUNCTION list IF p_name != null |>| vc.getName().contains(p_name)  |>|  (count_index >= ((page - 1) * page_size)) && (count_index < (page * page_size)) ");
+						//log.debug("FUNCTION list IF p_name != null |>| vc.getName().contains(p_name)  |>|  (count_index >= ((page - 1) * page_size)) && (count_index < (page * page_size)) ");
 						
 						if (vc.getParent() == null) {
 							vc.setParent(getParentList(vc.getInfo().getParentId(), new ArrayList<IdNameDto>()));

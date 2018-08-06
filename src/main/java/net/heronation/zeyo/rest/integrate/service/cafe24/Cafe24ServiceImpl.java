@@ -1,7 +1,6 @@
 package net.heronation.zeyo.rest.integrate.service.cafe24;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,11 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -40,7 +34,6 @@ import net.heronation.zeyo.rest.category.repository.CategoryRepository;
 import net.heronation.zeyo.rest.cloth_color.repository.ClothColor;
 import net.heronation.zeyo.rest.cloth_color.repository.ClothColorRepository;
 import net.heronation.zeyo.rest.common.constants.CommonConstants;
-import net.heronation.zeyo.rest.common.controller.CommonException;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOption;
 import net.heronation.zeyo.rest.fit_info_option.repository.FitInfoOptionRepository;
 import net.heronation.zeyo.rest.integrate.controller.cafe24.dto.AccessTokenByOauthCode;

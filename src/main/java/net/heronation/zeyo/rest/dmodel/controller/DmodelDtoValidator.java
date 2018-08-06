@@ -2,7 +2,6 @@ package net.heronation.zeyo.rest.dmodel.controller;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +12,12 @@ public class DmodelDtoValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		log.debug("DmodelDtoValidator : supports");
-		log.debug(DmodelDto.class.equals(clazz)+"");
-		log.debug(clazz.getCanonicalName());
-		log.debug(clazz.getTypeName());
-		log.debug(clazz.getSimpleName());
+		// 이유를 모르겠으나.. supports 가 올바로 동작하지 않음
+//		log.debug("DmodelDtoValidator : supports");
+//		log.debug(DmodelDto.class.equals(clazz)+"");
+//		log.debug(clazz.getCanonicalName());
+//		log.debug(clazz.getTypeName());
+//		log.debug(clazz.getSimpleName());
 		return true; 
 	}
 

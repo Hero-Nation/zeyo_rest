@@ -1,45 +1,17 @@
 package net.heronation.zeyo.rest.dmodel.controller;
 
-import net.heronation.zeyo.rest.common.constants.CommonConstants;
-import net.heronation.zeyo.rest.common.constants.Format;
-import net.heronation.zeyo.rest.common.controller.BaseController;
-import net.heronation.zeyo.rest.common.dto.ResultDto;
-import net.heronation.zeyo.rest.common.dto.ToggleDto;
-import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
-import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
-import net.heronation.zeyo.rest.dmodel.repository.DmodelResourceAssembler;
-import net.heronation.zeyo.rest.dmodel.service.DmodelService;
-import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMap;
-import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
-import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
-import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
-import net.heronation.zeyo.rest.item.repository.Item;
-import net.heronation.zeyo.rest.item.repository.ItemBuildDto;
-import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
-import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
-import net.heronation.zeyo.rest.sub_category.service.V2CategoryService;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,10 +19,27 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import lombok.extern.slf4j.Slf4j;
+import net.heronation.zeyo.rest.common.constants.CommonConstants;
+import net.heronation.zeyo.rest.common.controller.BaseController;
+import net.heronation.zeyo.rest.common.dto.ResultDto;
+import net.heronation.zeyo.rest.dmodel.repository.DmodelRepository;
+import net.heronation.zeyo.rest.dmodel.repository.DmodelResourceAssembler;
+import net.heronation.zeyo.rest.dmodel.service.DmodelService;
+import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
+import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
+import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
+import net.heronation.zeyo.rest.sub_category.service.V2CategoryService;
 
 @Slf4j
 @RestController
@@ -169,7 +158,7 @@ public class DmodelController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.PUT, value = "")
 	@ResponseBody
-	public ResponseEntity<ResultDto> update(@Valid @RequestBody DmodelDto insertDto, BindingResult bindingResult,
+	public ResponseEntity<ResultDto> update(@Valid @RequestBody DmodelDto updateDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
 		log.debug("POST /api/dmodels/upate");
 
@@ -181,18 +170,18 @@ public class DmodelController extends BaseController {
 		log.debug(bindingResult.hasErrors() + "");
 
 		if (bindingResult.hasErrors()) {
-			log.debug("/api/dmodels/insert bindingResult.hasErrors()");
+			log.debug("/api/dmodels/upate bindingResult.hasErrors()");
 			return return_fail(bindingResult.getFieldError());
 		} else {
 
-			log.debug(insertDto.toString());
+			log.debug(updateDto.toString());
 
 			Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails())
 					.getDecodedDetails();
 
 			Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
 
-			return return_success(dmodelService.insert(insertDto));
+			return return_success(dmodelService.update(updateDto));
 		}
 
 	}

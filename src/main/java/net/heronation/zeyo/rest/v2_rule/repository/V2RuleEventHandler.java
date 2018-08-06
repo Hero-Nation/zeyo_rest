@@ -1,4 +1,4 @@
-package net.heronation.zeyo.rest.dmodel.repository; 
+package net.heronation.zeyo.rest.v2_rule.repository; 
 
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
@@ -16,56 +16,56 @@ import lombok.extern.slf4j.Slf4j;
  
 @Slf4j
 @RepositoryEventHandler
-public class DmodelEventHandler {
+public class V2RuleEventHandler {
 
 	@HandleAfterCreate
-	public void handleAfterCreate(Dmodel p) {
-		log.debug("Dmodel Entity @HandleAfterCreate Event");
+	public void handleAfterCreate(V2Rule p) {
+		log.debug("V2Rule Entity @HandleAfterCreate Event");
 	}
 
 	@HandleBeforeCreate
-	public void HandleBeforeCreate(Dmodel p) {
-		log.debug("Dmodel Entity @HandleBeforeCreate Event");
+	public void HandleBeforeCreate(V2Rule p) {
+		log.debug("V2Rule Entity @HandleBeforeCreate Event");
 	}
 
 	@HandleAfterDelete
-	public void handleAfterDelete(Dmodel p) {
-		log.debug("Dmodel Entity @HandleAfterDelete Event");
+	public void handleAfterDelete(V2Rule p) {
+		log.debug("V2Rule Entity @HandleAfterDelete Event");
 	}
 
 	@HandleBeforeDelete
-	public void HandleBeforeDelete(Dmodel p) {
-		log.debug("Dmodel Entity @HandleBeforeDelete Event");
+	public void HandleBeforeDelete(V2Rule p) {
+		log.debug("V2Rule Entity @HandleBeforeDelete Event");
 	}
 
 	@HandleAfterSave
-	public void HandleAfterSave(Dmodel p) {
-		log.debug("Dmodel Entity @HandleAfterSave Event");
+	public void HandleAfterSave(V2Rule p) {
+		log.debug("V2Rule Entity @HandleAfterSave Event");
 	}
 
 	@HandleBeforeSave
-	public void handleBeforeSave(Dmodel p) {
-		log.debug("Dmodel Entity @HandleBeforeSave Event");
+	public void handleBeforeSave(V2Rule p) {
+		log.debug("V2Rule Entity @HandleBeforeSave Event");
 	}
 
 	@HandleAfterLinkDelete
-	public void HandleAfterLinkDelete(Dmodel p) {
-		log.debug("Dmodel Entity @HandleAfterLinkDelete Event");
+	public void HandleAfterLinkDelete(V2Rule p) {
+		log.debug("V2Rule Entity @HandleAfterLinkDelete Event");
 	}
 
 	@HandleBeforeLinkDelete
-	public void HandleBeforeLinkDelete(Dmodel p) {
-		log.debug("Dmodel Entity @HandleBeforeLinkDelete Event");
+	public void HandleBeforeLinkDelete(V2Rule p) {
+		log.debug("V2Rule Entity @HandleBeforeLinkDelete Event");
 	}
 
 	@HandleAfterLinkSave
-	public void HandleAfterLinkSave(Dmodel p) {
-		log.debug("Dmodel Entity @HandleAfterLinkSave Event");
+	public void HandleAfterLinkSave(V2Rule p) {
+		log.debug("V2Rule Entity @HandleAfterLinkSave Event");
 	}
 
 	@HandleBeforeLinkSave
-	public void HandleBeforeLinkSave(Dmodel p) {
-		log.debug("Dmodel Entity @HandleBeforeLinkSave Event");
+	public void HandleBeforeLinkSave(V2Rule p) {
+		log.debug("V2Rule Entity @HandleBeforeLinkSave Event");
 	}
 
 }

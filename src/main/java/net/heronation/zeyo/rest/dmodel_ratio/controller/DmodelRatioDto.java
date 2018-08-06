@@ -1,8 +1,5 @@
 package net.heronation.zeyo.rest.dmodel_ratio.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import lombok.Data;
 import net.heronation.zeyo.rest.dmodel.repository.Dmodel;
  

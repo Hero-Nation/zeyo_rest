@@ -16,7 +16,7 @@ public class CommandLine {
 
 			Runtime rt = Runtime.getRuntime();
 
-			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\zeyo_image\\. 8e9e284ada78:/home/zeyo/zeyo_image");
+			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\zeyo_image\\. aec0d2170db3:/home/zeyo/zeyo_image");
 
 			InputStream stderr = proc.getErrorStream();
 
@@ -61,7 +61,7 @@ public class CommandLine {
 
 			Runtime rt = Runtime.getRuntime();
 
-			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\temp\\. 8e9e284ada78:/home/zeyo/temp");
+			Process proc = rt.exec("docker cp D:\\TEST_SERVER_ROOT\\temp\\. aec0d2170db3:/home/zeyo/temp");
 
 			InputStream stderr = proc.getErrorStream();
 

@@ -1,7 +1,5 @@
 package net.heronation.zeyo.rest.integrate.controller.cafe24.dto;
 
-import org.joda.time.DateTime;
-
 import lombok.Data; 
 
 @Data

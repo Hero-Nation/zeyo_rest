@@ -16,7 +16,6 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -27,7 +26,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
 import lombok.extern.slf4j.Slf4j;
 import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.common.dto.ResultDto;
-import net.heronation.zeyo.rest.dmodel.controller.DmodelController;
 
 @Slf4j
 @ControllerAdvice

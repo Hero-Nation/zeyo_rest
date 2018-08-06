@@ -35,6 +35,7 @@ create table size_table (id bigint not null, create_dt datetime, table_image var
 create table sub_category (id bigint not null, bleach_yn varchar(255), cloth_image varchar(255), create_dt datetime, drycleaning_yn varchar(255), drymethod_yn varchar(255), ironing_yn varchar(255), item_image varchar(255), laundry_yn varchar(255), name varchar(255), parent_id bigint, use_yn varchar(255), category_id bigint, dmodel_id bigint, primary key (id))
 create table sub_category_fit_info_map (id bigint not null, use_yn varchar(255), fit_info_id bigint, sub_category_id bigint, primary key (id))
 create table sub_category_measure_map (id bigint not null, use_yn varchar(255), measure_item_id bigint, sub_category_id bigint, primary key (id))
+create table v2_rule (id bigint not null, create_dt datetime, first_ct bigint, first_include_child varchar(255), rule_message varchar(255), rule_type varchar(255), second_ct bigint, second_include_child varchar(255), title varchar(255), use_yn varchar(255), primary key (id))
 create table warranty (id bigint not null, create_dt datetime, scope varchar(255), use_yn varchar(255), kindof_id bigint, primary key (id))
 alter table bbs add constraint FKenr5nejc0bi4oa346asfqcdon foreign key (kindof_id) references kindof (id)
 alter table bbs add constraint FKnaka108edskn5qa9ylk0vpe0x foreign key (member_id) references member (id)

@@ -82,4 +82,5 @@ drop table if exists size_table
 drop table if exists sub_category
 drop table if exists sub_category_fit_info_map
 drop table if exists sub_category_measure_map
+drop table if exists v2_rule
 drop table if exists warranty

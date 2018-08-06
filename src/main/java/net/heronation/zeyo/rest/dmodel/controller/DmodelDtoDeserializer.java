@@ -21,10 +21,8 @@ import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMap;
 import net.heronation.zeyo.rest.dmodel_measure_map.repository.DmodelMeasureMapRepository;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatio;
 import net.heronation.zeyo.rest.dmodel_ratio.repository.DmodelRatioRepository;
-import net.heronation.zeyo.rest.item_size_option_map.repository.ItemSizeOptionMap;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItem;
 import net.heronation.zeyo.rest.measure_item.repository.MeasureItemRepository;
-import net.heronation.zeyo.rest.size_option.repository.SizeOption;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 
@@ -122,7 +120,9 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			this_dmm.setDmodel(this_model);
 			if(mm_map_id != 0) {
 				this_dmm.setId(mm_map_id);
-			} 
+			}else {
+				this_dmm.setId(0L);
+			}
 			
 			dmodelMeasureMaps.add(this_dmm);
 			
@@ -148,7 +148,7 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			log.debug("measure_item  mm_ratio "+mm_ratio); 
 			log.debug("measure_item  min "+mm_min);
 			log.debug("measure_item  max "+mm_max);
-			log.debug("measure_item  mm_id "+mm_id);
+			log.debug("me asure_item  mm_id "+mm_id);
 			
 			DmodelRatio this_ds = new DmodelRatio();
 			this_ds.setDefaultYn("N");
@@ -157,6 +157,8 @@ public class DmodelDtoDeserializer extends JsonDeserializer<DmodelDto> {
 			this_ds.setRatioValue(mm_ratio);
 			if(mm_id != 0) {
 				this_ds.setId(mm_id);	
+			}else {
+				this_ds.setId(0L);
 			}
 			
 			this_ds.setUseYn("Y");

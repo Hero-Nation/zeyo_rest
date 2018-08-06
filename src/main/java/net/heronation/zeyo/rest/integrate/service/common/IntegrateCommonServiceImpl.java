@@ -3,7 +3,6 @@ package net.heronation.zeyo.rest.integrate.service.common;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
-import net.heronation.zeyo.rest.common.constants.CommonConstants;
 import net.heronation.zeyo.rest.consumer.repository.Consumer;
 import net.heronation.zeyo.rest.consumer.repository.ConsumerRepository;
 import net.heronation.zeyo.rest.consumer.repository.QConsumer;
@@ -37,7 +35,6 @@ import net.heronation.zeyo.rest.ip_temp_info.repository.IpTempInfoRepository;
 import net.heronation.zeyo.rest.ip_temp_info.repository.QIpTempInfo;
 import net.heronation.zeyo.rest.item.repository.Item;
 import net.heronation.zeyo.rest.item.repository.ItemRepository;
-import net.heronation.zeyo.rest.item.repository.QItem;
 import net.heronation.zeyo.rest.item_scmm_so_value.repository.ItemScmmSoValueRepository;
 import net.heronation.zeyo.rest.shopmall.repository.Shopmall;
 import net.heronation.zeyo.rest.shopmall.repository.ShopmallRepository;
