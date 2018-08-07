@@ -28,6 +28,7 @@ import net.heronation.zeyo.rest.sub_category.repository.QSubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategory;
 import net.heronation.zeyo.rest.sub_category.repository.SubCategoryRepository;
 import net.heronation.zeyo.rest.sub_category.repository.V2Category;
+import net.heronation.zeyo.rest.sub_category.service.V2CategoryService;
 import net.heronation.zeyo.rest.v2_rule.controller.V2RuleDto;
 import net.heronation.zeyo.rest.v2_rule.repository.V2Rule;
 import net.heronation.zeyo.rest.v2_rule.repository.V2RuleRepository;
@@ -45,6 +46,9 @@ public class V2RuleServiceImpl implements V2RuleService {
 	EntityManager entityManager;
 
 
+	@Autowired
+	private V2CategoryService v2service;
+	
 	@Autowired
 	private V2RuleRepository v2_ruleRepository;
 	@Autowired
@@ -122,14 +126,16 @@ public class V2RuleServiceImpl implements V2RuleService {
 
 		for (Object[] row : list) {
 			Map<String, Object> search_R = new HashMap<String, Object>();
-
+			
+			V2Category  first_ct = v2service.single_info(Long.valueOf(String.valueOf(row[1])));
+			V2Category  second_ct = v2service.single_info(Long.valueOf(String.valueOf(row[2])));
+			
 			search_R.put("id", row[0]);
-			search_R.put("first_ct", row[1]);
-			search_R.put("second_ct", row[2]);
+			search_R.put("first_ct", first_ct);
+			search_R.put("second_ct",second_ct);
 			search_R.put("create_dt", row[3]);
 			search_R.put("rule_type", row[4]);
 
-			
 			return_list.add(search_R);
 		}
 
@@ -186,49 +192,16 @@ public class V2RuleServiceImpl implements V2RuleService {
 	@Transactional(readOnly = true)
 	public Map<String, Object> single(long id) {
 		log.debug("single ");
-		V2Rule V2Rule = v2_ruleRepository.findOne(id);
-
-		QDmodelMeasureMap qdmm = QDmodelMeasureMap.dmodelMeasureMap;
-
-		//Iterable<DmodelMeasureMap> dmm_list_iter = dmodelMeasureMapRepository .findAll(qdmm.V2Rule.id.eq(id).and(qdmm.useYn.eq("Y")));
-
-		// List<DmodelMeasureMap> dmm_list = new ArrayList<DmodelMeasureMap>();
-		//
-		// dmm_list_iter.forEach(dmm_list::add);
-
-		QDmodelRatio qdr = QDmodelRatio.dmodelRatio;
-
-		//Iterable<DmodelRatio> dr_list_iter = dmodelRatioRepository.findAll(qdr.V2Rule.id.eq(id).and(qdr.useYn.eq("Y")));
-
-		// List<DmodelRatio> dr_list = new ArrayList<DmodelRatio>();
-		//
-		// dr_list_iter.forEach(dr_list::add);
-
-		QSubCategory qsc = QSubCategory.subCategory;
-
-//		Iterable<SubCategory> sc_list_iter = subCategoryRepository.findAll(qsc.V2Rule.id.eq(id).and(qsc.useYn.eq("Y")));
-//		List<V2Category> v2_list = new ArrayList<V2Category>();
-//		// 기존의 서브카테고리정보를 v2카테고리로 전환해서 입력해준다.
-//		sc_list_iter.forEach(sc -> {
-//			log.debug("sc.getId() " + sc.getId());
-//			V2Category this_v2_sc = v2Service.single_info(sc.getId());
-//			if (this_v2_sc != null) {
-//				v2_list.add(this_v2_sc);
-//				log.debug(this_v2_sc.toString());
-//			}
-//
-//		});
-
-		// List<SubCategory> sc_list = new ArrayList<SubCategory>();
-		//
-		// sc_list_iter.forEach(sc_list::add);
-
+		V2Rule V2Rule = v2_ruleRepository.findOne(id); 
+		
+		V2Category  first_ct = v2service.single_info(Long.valueOf(String.valueOf(V2Rule.getFirstCt().getId())));
+		V2Category  second_ct = v2service.single_info(Long.valueOf(String.valueOf(V2Rule.getSecondCt().getId())));
+		
 		Map<String, Object> R = new HashMap<String, Object>();
-		R.put("V2Rule", V2Rule);
-//		R.put("DmodelMeasureMap", dmm_list_iter);
-//		R.put("DmodelRatio", dr_list_iter);
-//		R.put("SubCategory", v2_list);
-
+		R.put("V2Rule", V2Rule); 
+		R.put("v2_first_ct", first_ct); 
+		R.put("v2_second_ct", second_ct); 
+		
 		return R;
 
 	}
@@ -238,13 +211,22 @@ public class V2RuleServiceImpl implements V2RuleService {
 	public String update(V2RuleDto updateDto) {
 		log.debug("update");
 		log.debug(updateDto.toString());
-		V2Rule this_model = updateDto.getAsEntity();
-		log.debug(this_model.toString());
+		V2Rule user_rule = updateDto.getAsEntity();
+		log.debug(user_rule.toString());
 
-		V2Rule db_model = v2_ruleRepository.findOne(this_model.getId()); 
-		db_model.setTitle(this_model.getTitle()); 
-		db_model.setUseYn("Y");
- 
+		
+		SubCategory first_ct = scRepository.findOne(user_rule.getFirstCt().getId());
+		SubCategory second_ct = scRepository.findOne(user_rule.getSecondCt().getId());
+		
+		V2Rule db_rule = v2_ruleRepository.findOne(user_rule.getId()); 
+		db_rule.setFirstCt(first_ct);
+		db_rule.setFirstIncludeChild(user_rule.getFirstIncludeChild());
+		db_rule.setRuleMessage(user_rule.getRuleMessage());
+		db_rule.setRuleType(user_rule.getRuleType());
+		db_rule.setSecondCt(second_ct);
+		db_rule.setSecondIncludeChild(user_rule.getSecondIncludeChild());
+		db_rule.setTitle(user_rule.getTitle());
+		 
 
 		return CommonConstants.SUCCESS;
 	}

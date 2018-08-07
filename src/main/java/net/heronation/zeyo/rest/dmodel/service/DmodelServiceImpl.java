@@ -237,6 +237,9 @@ public class DmodelServiceImpl implements DmodelService {
 
 		Iterable<DmodelRatio> dr_list_iter = dmodelRatioRepository.findAll(qdr.dmodel.id.eq(id).and(qdr.useYn.eq("Y")));
 
+		Iterable<DmodelRatio> dr_default_list_iter = dmodelRatioRepository.findAll(qdr.defaultYn.eq("Y").and(qdr.useYn.eq("Y")));
+
+		
 		// List<DmodelRatio> dr_list = new ArrayList<DmodelRatio>();
 		//
 		// dr_list_iter.forEach(dr_list::add);
@@ -264,6 +267,7 @@ public class DmodelServiceImpl implements DmodelService {
 		R.put("Dmodel", dmodel);
 		R.put("DmodelMeasureMap", dmm_list_iter);
 		R.put("DmodelRatio", dr_list_iter);
+		R.put("DmodelDefaultRatio", dr_default_list_iter); 
 		R.put("SubCategory", v2_list);
 
 		return R;

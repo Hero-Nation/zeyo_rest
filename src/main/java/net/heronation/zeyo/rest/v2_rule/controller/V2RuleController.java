@@ -97,6 +97,8 @@ public class V2RuleController extends BaseController {
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
 		}
+		
+		
 		Map<String, Object> user = (Map<String, Object>) ((OAuth2AuthenticationDetails) auth.getDetails()).getDecodedDetails();
 
 		Long seq = Long.valueOf(String.valueOf(user.get("member_seq")));
@@ -144,7 +146,7 @@ public class V2RuleController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<ResultDto> update(@Valid @RequestBody V2RuleDto updateDto, BindingResult bindingResult,
 			@AuthenticationPrincipal OAuth2Authentication auth) {
-		log.debug("POST /api/v2_rules/upate");
+		log.debug("POST /api/v2_rules/update");
 
 		if (auth == null) {
 			return return_fail(CommonConstants.NO_TOKEN);
@@ -154,7 +156,7 @@ public class V2RuleController extends BaseController {
 		log.debug(bindingResult.hasErrors() + "");
 
 		if (bindingResult.hasErrors()) {
-			log.debug("/api/v2_rules/upate bindingResult.hasErrors()");
+			log.debug("/api/v2_rules/update bindingResult.hasErrors()");
 			return return_fail(bindingResult.getFieldError());
 		} else {
 
