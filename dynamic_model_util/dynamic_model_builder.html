@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>수치 모델 빌더</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="svg.js"></script>
+
+<script>
+
+	/*
+	
+	 textarea 에 그리고자 하는 svg data를 입력한다.
+	
+	 data format
+	
+	 {
+		
+		"path" : [
+			{
+				"id" : "",
+				"data" : ""
+			},....
+		],
+		"point" : [
+			{
+				"id" : "",
+				"x" : " ",  << 소수점 두자리까지
+				"y" : " "
+			},...
+		],
+		"line" : [
+			{
+				"id" :"" ,
+				"point1" : point_id, <<< 앞 point에서 기술한 이름
+				"point2" : point_id
+			},..
+		]		
+		
+	 }
+	
+	
+	
+	 data format에 맞는 데이터를 입력하고 그리기 버튼을 클릭한다. 
+	
+	
+	 */
+</script>
+<script>
+
+	(function(){
+		
+	})();
+
+	var draw = function() {
+		var svg_data_text = $("#data_editor").val();
+		
+		try {
+			var svg_data = eval(svg_data_text);
+			
+			alert(svg_data);
+			
+		} catch (e) {
+			// TODO: handle exception
+			alert(e);
+		}
+	};
+</script>
+<style>
+#canvas {
+	width: 900px;
+	height: 900px;
+	border: 1px solid black;
+}
+
+#maintable {
+	width: 100%;
+	height: 100%;
+}
+
+#back_green {
+	background-color: green;
+}
+</style>
+</head>
+<body>
+ <h3>수치 모델 빌더</h3>
+ <table id="maintable">
+  <tr>
+   <td><div id="canvas"></div></td>
+   <td><textarea id="data_editor" cols="135" rows="60"></textarea>
+    <button onclick="draw();">그리기</button></td>
+  </tr>
+ </table>
+</body>
+</html>

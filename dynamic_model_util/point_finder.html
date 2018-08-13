@@ -5,6 +5,25 @@
 <title>Point Finder</title>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="svg.js"></script>
+<script>
+
+/*
+
+사용법
+
+포인트를 조사하고 싶은 svg element id를 target으로 설정한다.
+
+새로운 svg를 디자이너로부터 받은후에 아래 테그를 svg에 embedded 시킨다.
+
+<rect id="marker" width="3" height="3" style="fill:rgb(255,0,0);stroke-width:3;stroke:rgb(255,0,0)" />
+
+위 태그는 현재 표시를 나타낸다. 
+
+실행후 컨트롤러를 통해서 포인트의 x,y값을 알아낸다. 
+
+*/
+
+</script>
 </head>
 <body>
  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="535.334px" height="287.659px" viewBox="0 0 535.334 287.659" enable-background="new 0 0 535.334 287.659" xml:space="preserve">
@@ -17,17 +36,12 @@
 </g>
 <g id="stroke">
    <g>
-      <path id="target"  fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M300.743,25.096c0,0-6.413,17.843-32.485,17.843
-         s-32.485-17.843-32.485-17.843" />
-      <path fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M308.18,28.504c0,0-7.951,22.526-39.922,22.526
-         s-39.921-22.526-39.921-22.526" />
-      <path fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M291.967,35.967c0,0-8.226,2.809-23.709,2.809
-         s-23.709-2.809-23.709-2.809" />
+      <path id="target" fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M300.743,25.096c0,0-6.413,17.843-32.485,17.843s-32.485-17.843-32.485-17.843" />
+      <path fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M308.18,28.504c0,0-7.951,22.526-39.922,22.526s-39.921-22.526-39.921-22.526" />
+      <path fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M291.967,35.967c0,0-8.226,2.809-23.709,2.809s-23.709-2.809-23.709-2.809" />
       <path fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M180.961,50.911c0,0,15.651,45.925,9.583,82.599" />
-      <path  fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M355.41,50.911c0,0-15.651,45.925-9.582,82.599" />
-      <path  fill="none" stroke="#000000" stroke-width="2.5" stroke-miterlimit="10" d="M268.004,282.035h80.998l-2.883-147.23
-         l87.163,120.56l36.445-23.014L355.873,50.665l-55.815-25.568c-9.076,5.588-32.24,5.287-32.24,5.287h0.215
-         c0,0-23.176,0.301-32.26-5.287l-55.795,25.568L66.121,232.352l36.426,23.014l87.204-120.56l-2.923,147.23h81.018H268.004z" />
+      <path fill="none" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" d="M355.41,50.911c0,0-15.651,45.925-9.582,82.599" />
+      <path fill="none" stroke="#000000" stroke-width="2.5" stroke-miterlimit="10" d="M268.004,282.035h80.998l-2.883-147.23l87.163,120.56l36.445-23.014L355.873,50.665l-55.815-25.568c-9.076,5.588-32.24,5.287-32.24,5.287h0.215c0,0-23.176,0.301-32.26-5.287l-55.795,25.568L66.121,232.352l36.426,23.014l87.204-120.56l-2.923,147.23h81.018H268.004z" />
    </g>
 </g>
 <g id="chest_x5F_line">
@@ -118,21 +132,7 @@
  </div>
 </body>
 <script>
-	/*
-	
-	 사용법
-	
-	 포인트를 조사하고 싶은 svg element id를 target으로 설정한다.
-	
-	 새로운 svg를 디자이너로부터 받은후에 아래 테그를 svg에 embedded 시킨다.
-	
-	 <rect id="marker" width="3" height="3" style="fill:rgb(255,0,0);stroke-width:3;stroke:rgb(255,0,0)" />
 
-	 위 태그는 현재 표시를 나타낸다. 
-	
-	 실행후 컨트롤러를 통해서 포인트의 x,y값을 알아낸다. 
-	
-	 */
 	var target = SVG.get("target");
 	var length = target.length();
 	var rect = SVG.get("marker");
