@@ -5,9 +5,7 @@
 <title>수치 모델 빌더</title>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="svg.js"></script>
-
 <script>
-
 	/*
 	
 	 textarea 에 그리고자 하는 svg data를 입력한다.
@@ -16,26 +14,12 @@
 	
 	 {
 		
-		"path" : [
+		"path" : [   >> 배열
 			{
-				"id" : "",
-				"data" : ""
-			},....
-		],
-		"point" : [
-			{
-				"id" : "",
-				"x" : " ",  << 소수점 두자리까지
-				"y" : " "
-			},...
-		],
-		"line" : [
-			{
-				"id" :"" ,
-				"point1" : point_id, <<< 앞 point에서 기술한 이름
-				"point2" : point_id
-			},..
-		]		
+				"id" : "neck_line",
+				"data" : "M300.743,25.096c0,0-6.413,17.843-32.485,17.843s-32.485-17.843-32.485-17.843"
+			}
+		] 		
 		
 	 }
 	
@@ -47,27 +31,355 @@
 	 */
 </script>
 <script>
+	var MAIN_CANVAS = null;
+	var data_full_path = [];
+	var data_point = [];
+	var data_point_map = {};
+	var data_unit_path = [];
+	const circle_radius = 10;
 
-	(function(){
-		
+	(function() {
+
 	})();
 
-	var draw = function() {
-		var svg_data_text = $("#data_editor").val();
-		
-		try {
-			var svg_data = eval(svg_data_text);
-			
-			alert(svg_data);
-			
-		} catch (e) {
-			// TODO: handle exception
-			alert(e);
+	var loading = function() {
+		var svg_data_text = $("#input_data_editor").val();
+
+		if (MAIN_CANVAS != null) {
+			MAIN_CANVAS.clear();
+		} else {
+			MAIN_CANVAS = SVG('MAIN_CANVAS');
 		}
+
+		MAIN_CANVAS.svg(svg_data_text);
+		MAIN_CANVAS.on("mousemove",function(e){
+			$("#mouse_x").val(e.x);
+			$("#mouse_y").val(e.y);
+		});
+
+	};
+
+	var extract_path = function() {
+
+		var target = MAIN_CANVAS.get(2);
+		var paths = target.children();
+		for ( var paths_index in paths) {
+			data_full_path.push(paths[paths_index]);
+			console.dir(paths[paths_index].array());
+		}
+		console.dir(data_full_path);
+
+	};
+
+	var extract_data = function() {
+
+		if (data_full_path.length == 0) {
+
+			alert("loading 후 path를 추출해주세요!");
+
+		} else {
+
+			var output_return = "";
+			var total_unit_count = 0;
+
+			for ( var full_path_index in data_full_path) {
+
+				console
+						.log("//////------------------------------//////----------------------------------//////")
+				console.log("FULL PATH NUMBER  " + full_path_index);
+
+				var full_path_data = data_full_path[full_path_index].array();
+				var string_unit_data = "";
+				var svg_path_object = null;
+				var full_path_point = [];
+				var here_point_key = "";
+
+				for ( var unit_path_index in full_path_data.value) {
+
+					console.log("      UNIT PATH NUMBER  " + unit_path_index);
+
+					if (unit_path_index != 0) {
+						
+					 
+
+						if (unit_path_index == 1) {
+							// path_data_arr의 처음 값은 move 값으로 시작하고, 그 다음 draw data가 들어온다
+
+							var full_path_first_move_point = full_path_data.value[0];
+							var full_path_first_path = full_path_data.value[1];
+
+							string_unit_data += full_path_first_move_point[0];
+							string_unit_data += full_path_first_move_point[1];
+							string_unit_data += " ";
+							string_unit_data += full_path_first_move_point[2];
+
+							var here_point_name = "";
+							here_point_key = ""+ Math.round(full_path_first_move_point[1])+ "-" + Math.round(full_path_first_move_point[2]);
+						
+							
+							if(data_point_map[here_point_key]){
+								here_point_name = data_point_map[here_point_key]; 
+							}else{
+								total_unit_count++;
+								here_point_name = "P"+total_unit_count;
+								data_point_map[here_point_key] = here_point_name;
+							}
+							console.log("here_point_key "+here_point_key); 
+							console.log("here_point_name "+here_point_name); 
+							var here_point =  {
+									name : here_point_name,
+									x : Math.round(full_path_first_move_point[1]),
+									y : Math.round(full_path_first_move_point[2])
+								}; 
+							
+							data_point.push(here_point); 
+							full_path_point.push(here_point);
+							
+							var point_circle = MAIN_CANVAS.circle(circle_radius).fill('black').move(full_path_first_move_point[1],full_path_first_move_point[2]);
+							point_circle.data("info",here_point);
+							point_circle.on("mouseover",function(e){
+							 	$("#mouse_info").val(JSON.stringify(this.data("info")));
+							});
+							
+
+							string_unit_data += path_data_processor(full_path_first_path);
+
+							svg_path_object = MAIN_CANVAS.path(string_unit_data);
+							svg_path_object.fill('none')
+							svg_path_object.stroke({
+								color : '#f00',
+								width : 3,
+								linecap : 'round',
+								linejoin : 'round'
+							});
+							
+							var svg_path_object_length = svg_path_object.length();
+							var svg_path_object_last_point = svg_path_object.pointAt(svg_path_object_length); 
+							
+							here_point_key = ""+ Math.round(svg_path_object_last_point.x)+ "-" + Math.round(svg_path_object_last_point.y);
+							
+							if(data_point_map[here_point_key]){
+								here_point_name = data_point_map[here_point_key]; 
+							}else{
+								total_unit_count++;
+								here_point_name = "P"+total_unit_count;
+								data_point_map[here_point_key] = here_point_name;
+							}
+							console.log("here_point_key "+here_point_key); 
+							console.log("here_point_name "+here_point_name); 
+							var here_point =  {
+									name : here_point_name,
+									x : Math.round(svg_path_object_last_point.x),
+									y : Math.round(svg_path_object_last_point.y)
+							}; 
+
+							data_point.push(here_point);
+							full_path_point.push(here_point);
+
+							var point_circle = MAIN_CANVAS.circle(circle_radius).fill('black').move(svg_path_object_last_point.x,svg_path_object_last_point.y);
+							point_circle.data("info",here_point); 
+							point_circle.on("mouseover",function(e){
+								$("#mouse_info").val(JSON.stringify(this.data("info")));
+							});
+
+						} else {
+
+							// 2이상부터는 draw data 만 존재한다.
+							var full_path_next_path = full_path_data.value[unit_path_index];
+							string_unit_data += path_data_processor(full_path_next_path);
+
+							svg_path_object.clear();
+							svg_path_object.plot(string_unit_data);
+							
+							
+							var svg_path_object_length = svg_path_object.length();
+							var svg_path_object_last_point = svg_path_object
+									.pointAt(svg_path_object_length);
+
+							console.log("svg_path_object_last_point")
+							console.dir(svg_path_object_last_point);
+							
+							var here_point_name = "";
+							here_point_key = ""+ Math.round(svg_path_object_last_point.x)+ "-" + Math.round(svg_path_object_last_point.y);
+							
+							if(data_point_map[here_point_key]){
+								here_point_name = data_point_map[here_point_key]; 
+							}else{
+								total_unit_count++;
+								here_point_name = "P"+total_unit_count;
+								data_point_map[here_point_key] = here_point_name;
+							}
+							console.log("here_point_key "+here_point_key); 
+							console.log("here_point_name "+here_point_name); 
+							var here_point =  {
+									name : here_point_name,
+									x : Math.round(svg_path_object_last_point.x),
+									y : Math.round(svg_path_object_last_point.y)
+							}; 
+
+							data_point.push(here_point);
+							full_path_point.push(here_point);
+
+							var point_circle = MAIN_CANVAS.circle(circle_radius).fill('black').move(svg_path_object_last_point.x,svg_path_object_last_point.y);
+							point_circle.data("info",here_point); 
+							point_circle.on("mouseover",function(e){
+								$("#mouse_info").val(JSON.stringify(this.data("info")));
+							});
+
+						}
+
+						
+						
+					}//if (unit_path_index != 0) { 
+				}// for ( var unit_path_index in full_path_data.value) { 
+
+				console.log("--------> string_unit_data " + full_path_index
+						+ " full_path_point");
+				console.dir(full_path_point);
+
+		/* 		for ( var this_point in data_point) {
+
+					MAIN_CANVAS.circle(3).fill('#ff0').move(
+							data_point[this_point].x, data_point[this_point].y);
+
+				} */
+
+				output_return += "FULL PATH  ";
+				output_return += full_path_index;
+				output_return += "\n";
+				output_return += "\n";
+				output_return += "DRAWING DATA ";
+				output_return += "\n";
+				output_return += "\n";
+				output_return += "\n";
+				output_return += JSON.stringify(full_path_data.value);
+				output_return += "\n";
+				output_return += "\n";
+				output_return += "\n";
+				output_return += "POINT ";
+				output_return += "\n";
+				output_return += "\n";
+				output_return += JSON.stringify(full_path_point);
+				output_return += "\n";
+				output_return += "\n";
+				output_return += "************************************************************************************************************************************";
+				output_return += "\n";
+				output_return += "\n";
+				output_return += "\n";
+
+			}// for ( var full_path_index in data_full_path) {
+			$("#output_data_editor").val("");
+			$("#output_data_editor").val(output_return);
+		}
+	};
+
+	var path_data_processor = function(p_step_data) {
+
+		console.log("path_data_processor p_step_data");
+		console.dir(p_step_data);
+
+		var R = "";
+		if (p_step_data[0] == "L") {
+
+			R += "L";
+			R += " ";
+			R += p_step_data[1];
+			R += " ";
+			R += p_step_data[2];
+
+		} else if (p_step_data[0] == "H") {
+
+			R += "H";
+			R += " ";
+			R += p_step_data[1];
+
+		} else if (p_step_data[0] == "V") {
+
+			R += "V";
+			R += " ";
+			R += p_step_data[1];
+
+		} else if (p_step_data[0] == "C") {
+
+			R += "C";
+			R += " ";
+			R += p_step_data[1];
+			R += " ";
+			R += p_step_data[2];
+			R += ",";
+			R += p_step_data[3];
+			R += " ";
+			R += p_step_data[4];
+			R += ",";
+			R += p_step_data[5];
+			R += " ";
+			R += p_step_data[6];
+
+		} else if (p_step_data[0] == "S") {
+
+			R += "S";
+			R += " ";
+			R += p_step_data[1];
+			R += " ";
+			R += p_step_data[2];
+			R += ",";
+			R += p_step_data[3];
+			R += " ";
+			R += p_step_data[4];
+
+		} else if (p_step_data[0] == "Q") {
+
+			R += "Q";
+			R += " ";
+			R += p_step_data[1];
+			R += " ";
+			R += p_step_data[2];
+			R += ",";
+			R += p_step_data[3];
+			R += " ";
+			R += p_step_data[4];
+
+		} else if (p_step_data[0] == "T") {
+
+			R += "T";
+			R += " ";
+			R += p_step_data[1];
+			R += " ";
+			R += p_step_data[2];
+
+		} else if (p_step_data[0] == "A") {
+			console.log("A _____");
+		}
+
+		R += " ";
+		console.log(R);
+
+		return R;
+	}
+
+	var move_to_xy = function() {
+		if (MAIN_CANVAS == null) {
+			alert("그리기,path 가지고 오기 를 먼저해주세요");
+			return;
+		}
+
+		MAIN_CANVAS.clear();
+
+		var xy_x = $("#x_point").val();
+		var xy_y = $("#y_point").val();
+
+		for ( var this_point in data_point) {
+			var new_x = Number(data_point[this_point].x) + Number(xy_x);
+			var new_y = Number(data_point[this_point].y) + Number(xy_y);
+
+			MAIN_CANVAS.circle(3).fill('#000').move(new_x, new_y);
+
+		}
+
 	};
 </script>
 <style>
-#canvas {
+#MAIN_CANVAS {
 	width: 900px;
 	height: 900px;
 	border: 1px solid black;
@@ -87,9 +399,24 @@
  <h3>수치 모델 빌더</h3>
  <table id="maintable">
   <tr>
-   <td><div id="canvas"></div></td>
-   <td><textarea id="data_editor" cols="135" rows="60"></textarea>
-    <button onclick="draw();">그리기</button></td>
+   <td>
+    <div>
+      마우스 위치 X : <input type="text" id="mouse_x" value="0" /> Y  : <input type="text" id="mouse_y" value="0" /><br>
+     중심 정하기 X 축 : <input type="text" id="x_point" value="450" /> Y 축 : <input type="text" id="y_point" value="450" />
+    </div>
+    <div>
+     <button onclick="loading();">loading</button>
+     <button onclick="extract_path();">path 추출하기</button>
+     <button onclick="extract_data();">data 추출하기</button>
+     <button onclick="move_to_xy();">XY 좌표계 이동</button>
+    </div>
+    <div id="MAIN_CANVAS"></div>
+   </td>
+   <td>
+    <h3>마우스정보</h3> <textarea id="mouse_info" cols="135" rows="5"></textarea>
+    <h3>입력</h3> <textarea id="input_data_editor" cols="135" rows="20"></textarea>
+    <h3>출력</h3> <textarea id="output_data_editor" cols="135" rows="20"></textarea>
+   </td>
   </tr>
  </table>
 </body>
