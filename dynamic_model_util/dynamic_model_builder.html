@@ -32,11 +32,15 @@
 </script>
 <script>
 	var MAIN_CANVAS = null;
-	var data_full_path = [];
+	var data_svg_element = [];
+	var data_unit_path = [];
+	var data_line = [];
+	var data_circle = {};
+	var data_text = {};
 	var data_point = [];
 	var data_point_map = {};
-	var data_unit_path = [];
-	const circle_radius = 10;
+	const circle_radius = 5;
+	const element_line_width = 5;
 
 	(function() {
 
@@ -52,28 +56,35 @@
 		}
 
 		MAIN_CANVAS.svg(svg_data_text);
-		MAIN_CANVAS.on("mousemove",function(e){
+		MAIN_CANVAS.on("mousemove", function(e) {
 			$("#mouse_x").val(e.x);
 			$("#mouse_y").val(e.y);
 		});
 
 	};
 
-	var extract_path = function() {
+	var extract_element = function() {
+		var target_index = $("#target_index").val();
+		try {
+			var target = MAIN_CANVAS.get(target_index);
+			var elements = target.children();
+			console.dir(elements);
+			for ( var element_index in elements) {
+				var element = elements[element_index];
 
-		var target = MAIN_CANVAS.get(2);
-		var paths = target.children();
-		for ( var paths_index in paths) {
-			data_full_path.push(paths[paths_index]);
-			console.dir(paths[paths_index].array());
+				data_svg_element.push(element);
+
+			}
+			//console.dir(data_svg_element);	
+		} catch (e) {
+			alert("인덱스값을 높여보세요");
+			console.dir(e);
 		}
-		console.dir(data_full_path);
-
 	};
 
 	var extract_data = function() {
 
-		if (data_full_path.length == 0) {
+		if (data_svg_element.length == 0) {
 
 			alert("loading 후 path를 추출해주세요!");
 
@@ -81,283 +92,543 @@
 
 			var output_return = "";
 			var total_unit_count = 0;
+			
+			var before_end_point = null;
 
-			for ( var full_path_index in data_full_path) {
+			for ( var data_svg_element_index in data_svg_element) {
 
-				console
-						.log("//////------------------------------//////----------------------------------//////")
-				console.log("FULL PATH NUMBER  " + full_path_index);
+				console.log("**************************")
+				console.log("★ FULL PATH NUMBER  " + data_svg_element_index);
 
-				var full_path_data = data_full_path[full_path_index].array();
-				var string_unit_data = "";
-				var svg_path_object = null;
-				var full_path_point = [];
-				var here_point_key = "";
+				var this_element = data_svg_element[data_svg_element_index];
+				console.dir(this_element);
+				
 
-				for ( var unit_path_index in full_path_data.value) {
+				
+				if (this_element.type == "path") {
+				
+					var element_unit_data = this_element.array();
+					
+					for ( var unit_path_index in element_unit_data.value) {
 
-					console.log("      UNIT PATH NUMBER  " + unit_path_index);
+						console.log("     ◎ UNIT PATH NUMBER  "+ unit_path_index);
 
-					if (unit_path_index != 0) {
-						
+						if (unit_path_index != 0) {
+							if (unit_path_index == 1) {
+
+								var full_path_first_move_point = element_unit_data.value[0];
+
+								var string_unit_data = "";
+								string_unit_data += full_path_first_move_point[0];
+								string_unit_data += full_path_first_move_point[1];
+								string_unit_data += " ";
+								string_unit_data += full_path_first_move_point[2];
+
+								var start_point_name = "";
+								var start_point_key = ""
+										+ float_fixed(full_path_first_move_point[1])
+										+ "-"
+										+ float_fixed(full_path_first_move_point[2]);
+
+								if (data_point_map[start_point_key]) {
+									start_point_name = data_point_map[start_point_key];
+								} else {
+									total_unit_count++;
+									start_point_name = "P" + total_unit_count;
+									data_point_map[start_point_key] = start_point_name;
+								}
+
+								var start_point = {
+									name : start_point_name,
+									x : float_fixed(full_path_first_move_point[1]),
+									y : float_fixed(full_path_first_move_point[2])
+								};
+
+								console.log("     		  START POINT  ");
+								console.dir(start_point);
+								console.log("     		  PATH  ");
+								console.dir(element_unit_data.value[1]);
+
+								var this_unit_path_data = element_unit_data.value[1];
+
+								string_unit_data += element_data_processor(this_unit_path_data);
+
+								var unit_path_svg_object = MAIN_CANVAS.path(string_unit_data);
+
+								unit_path_svg_object.fill('none')
+								unit_path_svg_object.stroke({
+									color : '#000',
+									width : element_line_width,
+									linecap : 'round',
+									linejoin : 'round'
+								});
+
+								unit_path_svg_object.data("start", start_point);
+								data_point.push(start_point);
+
+								var this_path_length = unit_path_svg_object.length();
+								var this_path_last_point = unit_path_svg_object.pointAt(this_path_length);
+
+								var end_point_name = null;
+								var end_point_key = ""
+										+ float_fixed(this_path_last_point.x)
+										+ "-"
+										+ float_fixed(this_path_last_point.y);
+
+								if (data_point_map[end_point_key]) {
+									end_point_name = data_point_map[end_point_key];
+								} else {
+									total_unit_count++;
+									end_point_name = "P" + total_unit_count;
+									data_point_map[end_point_key] = end_point_name;
+								}
+								
+								var end_point = {
+									name : end_point_name,
+									x : float_fixed(this_path_last_point.x),
+									y : float_fixed(this_path_last_point.y)
+								};
+
+								console.log("     		  END POINT  ");
+								console.dir(end_point);
+								before_end_point = end_point;
+								unit_path_svg_object.data("end", end_point);
+								data_point.push(end_point);
+ 
+								unit_path_svg_object.on('mouseenter', function(e) {
+
+									element_focus(this);
+								});
+
+								unit_path_svg_object.on('mouseleave', function(e) {
+
+									element_unfocus(this);
+								});
+								
+								data_unit_path.push(unit_path_svg_object);
+
+							} else {
+								// 2이상부터는 draw data 만 존재한다.
+
+								var start_point_name = "";
+								var start_point_key = ""
+										+ float_fixed(before_end_point.x) + "-"
+										+ float_fixed(before_end_point.y);
+
+								if (data_point_map[start_point_key]) {
+									start_point_name = data_point_map[start_point_key];
+								} else {
+									total_unit_count++;
+									start_point_name = "P" + total_unit_count;
+									data_point_map[start_point_key] = start_point_name;
+								}
+
+								var start_point = {
+									name : start_point_name,
+									x : float_fixed(before_end_point.x),
+									y : float_fixed(before_end_point.y)
+								};
+
+								console.log("     		  START POINT  ");
+								console.dir(start_point);
+								console.log("     		  PATH  ");
+								console.dir(element_unit_data.value[unit_path_index]);
+
+								var string_unit_data = "";
+								string_unit_data += "M";
+								string_unit_data += start_point.x;
+								string_unit_data += " ";
+								string_unit_data += start_point.y;
+
+								var full_path_next_path = element_unit_data.value[unit_path_index];
+								string_unit_data += element_data_processor(full_path_next_path);
+
+								var unit_path_svg_object = MAIN_CANVAS
+										.path(string_unit_data);
+								unit_path_svg_object.fill('none')
+								unit_path_svg_object.stroke({
+									color : '#000',
+									width : element_line_width,
+									linecap : 'round',
+									linejoin : 'round'
+								});
+
+								unit_path_svg_object.data("start", start_point);
+								// 중복되어서 여기서는 하지 않는다. 
+								//data_point.push(start_point);
+
+								var this_path_length = unit_path_svg_object
+										.length();
+								var this_path_last_point = unit_path_svg_object
+										.pointAt(this_path_length);
+								var end_point_name = null;
+								var end_point_key = ""
+										+ float_fixed(this_path_last_point.x)
+										+ "-"
+										+ float_fixed(this_path_last_point.y);
+
+								if (data_point_map[end_point_key]) {
+									end_point_name = data_point_map[end_point_key];
+								} else {
+									total_unit_count++;
+									end_point_name = "P" + total_unit_count;
+									data_point_map[end_point_key] = end_point_name;
+								}
+								
+								var end_point = {
+									name : end_point_name,
+									x : float_fixed(this_path_last_point.x),
+									y : float_fixed(this_path_last_point.y)
+								};
+
+								console.log("     		  END POINT  ");
+								console.dir(end_point);
+
+								before_end_point = end_point;
+								unit_path_svg_object.data("end", end_point);
+								data_point.push(end_point);
+
+								
+
+								unit_path_svg_object.on('mouseenter', function(e) {
+									console.log("PATH 2");
+									element_focus(this);
+								});
+
+								unit_path_svg_object.on('mouseleave', function(e) {
+									console.log("PATH 2");
+									element_unfocus(this);
+								});
+								
+								data_unit_path.push(unit_path_svg_object);
+
+							}
+
+						}//if (unit_path_index != 0) { 
+					}// for ( var unit_path_index in element_unit_data.value) {  
+
+				} else if (this_element.type == "line") {
+
+					console.log("     ◎ UNIT LINE  ");
+					
+					var element_unit_data = this_element.array();
+					
+					var element_start_point = element_unit_data.value[0];
+					var element_end_point = element_unit_data.value[1];
 					 
 
-						if (unit_path_index == 1) {
-							// path_data_arr의 처음 값은 move 값으로 시작하고, 그 다음 draw data가 들어온다
+					var start_point_name = "";
+					var start_point_key = ""+ float_fixed(element_start_point[0]) + "-"+ float_fixed(element_start_point[1]);
 
-							var full_path_first_move_point = full_path_data.value[0];
-							var full_path_first_path = full_path_data.value[1];
+					if (data_point_map[start_point_key]) {
+						start_point_name = data_point_map[start_point_key];
+					} else {
+						total_unit_count++;
+						start_point_name = "P" + total_unit_count;
+						data_point_map[start_point_key] = start_point_name;
+					}
 
-							string_unit_data += full_path_first_move_point[0];
-							string_unit_data += full_path_first_move_point[1];
-							string_unit_data += " ";
-							string_unit_data += full_path_first_move_point[2];
+					var start_point = {
+						name : start_point_name,
+						x : float_fixed(element_start_point[0]),
+						y : float_fixed(element_start_point[1])
+					};
 
-							var here_point_name = "";
-							here_point_key = ""+ Math.round(full_path_first_move_point[1])+ "-" + Math.round(full_path_first_move_point[2]);
-						
-							
-							if(data_point_map[here_point_key]){
-								here_point_name = data_point_map[here_point_key]; 
-							}else{
-								total_unit_count++;
-								here_point_name = "P"+total_unit_count;
-								data_point_map[here_point_key] = here_point_name;
-							}
-							console.log("here_point_key "+here_point_key); 
-							console.log("here_point_name "+here_point_name); 
-							var here_point =  {
-									name : here_point_name,
-									x : Math.round(full_path_first_move_point[1]),
-									y : Math.round(full_path_first_move_point[2])
-								}; 
-							
-							data_point.push(here_point); 
-							full_path_point.push(here_point);
-							
-							var point_circle = MAIN_CANVAS.circle(circle_radius).fill('black').move(full_path_first_move_point[1],full_path_first_move_point[2]);
-							point_circle.data("info",here_point);
-							point_circle.on("mouseover",function(e){
-							 	$("#mouse_info").val(JSON.stringify(this.data("info")));
-							});
-							
+					console.log("     		  START POINT  ");
+					console.dir(start_point);
+					console.log("     		  PATH  ");
+					console.dir(element_unit_data);
 
-							string_unit_data += path_data_processor(full_path_first_path);
+					var string_unit_data = ""; 
+					string_unit_data += start_point.x;
+					string_unit_data += ",";
+					string_unit_data += start_point.y;
+ 
 
-							svg_path_object = MAIN_CANVAS.path(string_unit_data);
-							svg_path_object.fill('none')
-							svg_path_object.stroke({
-								color : '#f00',
-								width : 3,
-								linecap : 'round',
-								linejoin : 'round'
-							});
-							
-							var svg_path_object_length = svg_path_object.length();
-							var svg_path_object_last_point = svg_path_object.pointAt(svg_path_object_length); 
-							
-							here_point_key = ""+ Math.round(svg_path_object_last_point.x)+ "-" + Math.round(svg_path_object_last_point.y);
-							
-							if(data_point_map[here_point_key]){
-								here_point_name = data_point_map[here_point_key]; 
-							}else{
-								total_unit_count++;
-								here_point_name = "P"+total_unit_count;
-								data_point_map[here_point_key] = here_point_name;
-							}
-							console.log("here_point_key "+here_point_key); 
-							console.log("here_point_name "+here_point_name); 
-							var here_point =  {
-									name : here_point_name,
-									x : Math.round(svg_path_object_last_point.x),
-									y : Math.round(svg_path_object_last_point.y)
-							}; 
+					var unit_line_svg_object = MAIN_CANVAS.line(element_unit_data);
+					unit_line_svg_object.fill('none')
+					unit_line_svg_object.stroke({
+						color : '#000',
+						width : element_line_width,
+						linecap : 'round',
+						linejoin : 'round'
+					});
 
-							data_point.push(here_point);
-							full_path_point.push(here_point);
+					unit_line_svg_object.data("start", start_point);
+					// 중복되어서 여기서는 하지 않는다. 
+					//data_point.push(start_point);
 
-							var point_circle = MAIN_CANVAS.circle(circle_radius).fill('black').move(svg_path_object_last_point.x,svg_path_object_last_point.y);
-							point_circle.data("info",here_point); 
-							point_circle.on("mouseover",function(e){
-								$("#mouse_info").val(JSON.stringify(this.data("info")));
-							});
+ 
+					var end_point_name = null;
+					var end_point_key = ""
+							+ float_fixed(element_end_point[0])
+							+ "-"
+							+ float_fixed(element_end_point[1]);
 
-						} else {
+					if (data_point_map[end_point_key]) {
+						end_point_name = data_point_map[end_point_key];
+					} else {
+						total_unit_count++;
+						end_point_name = "P" + total_unit_count;
+						data_point_map[end_point_key] = end_point_name;
+					}
+					
+					var end_point = {
+						name : end_point_name,
+						x : float_fixed(element_end_point[0]),
+						y : float_fixed(element_end_point[1])
+					};
 
-							// 2이상부터는 draw data 만 존재한다.
-							var full_path_next_path = full_path_data.value[unit_path_index];
-							string_unit_data += path_data_processor(full_path_next_path);
+					console.log("     		  END POINT  ");
+					console.dir(end_point);
 
-							svg_path_object.clear();
-							svg_path_object.plot(string_unit_data);
-							
-							
-							var svg_path_object_length = svg_path_object.length();
-							var svg_path_object_last_point = svg_path_object
-									.pointAt(svg_path_object_length);
+					before_end_point = end_point;
+					unit_line_svg_object.data("end", end_point);
+					data_point.push(end_point);
 
-							console.log("svg_path_object_last_point")
-							console.dir(svg_path_object_last_point);
-							
-							var here_point_name = "";
-							here_point_key = ""+ Math.round(svg_path_object_last_point.x)+ "-" + Math.round(svg_path_object_last_point.y);
-							
-							if(data_point_map[here_point_key]){
-								here_point_name = data_point_map[here_point_key]; 
-							}else{
-								total_unit_count++;
-								here_point_name = "P"+total_unit_count;
-								data_point_map[here_point_key] = here_point_name;
-							}
-							console.log("here_point_key "+here_point_key); 
-							console.log("here_point_name "+here_point_name); 
-							var here_point =  {
-									name : here_point_name,
-									x : Math.round(svg_path_object_last_point.x),
-									y : Math.round(svg_path_object_last_point.y)
-							}; 
+					data_unit_path.push(unit_line_svg_object);
 
-							data_point.push(here_point);
-							full_path_point.push(here_point);
+					unit_line_svg_object.on('mouseenter', function(e) {
+						element_focus(this);
+					});
 
-							var point_circle = MAIN_CANVAS.circle(circle_radius).fill('black').move(svg_path_object_last_point.x,svg_path_object_last_point.y);
-							point_circle.data("info",here_point); 
-							point_circle.on("mouseover",function(e){
-								$("#mouse_info").val(JSON.stringify(this.data("info")));
-							});
+					unit_line_svg_object.on('mouseleave', function(e) {
 
-						}
+						element_unfocus(this);
+					});
 
-						
-						
-					}//if (unit_path_index != 0) { 
-				}// for ( var unit_path_index in full_path_data.value) { 
+					
+					
+				}
 
-				console.log("--------> string_unit_data " + full_path_index
-						+ " full_path_point");
-				console.dir(full_path_point);
+			}// for ( var data_svg_element_index in data_svg_element) {
 
-		/* 		for ( var this_point in data_point) {
+			var report_data = [];
+			for ( var unit_index in data_unit_path) {
+ 				var this_e = data_unit_path[unit_index];
+ 				
+ 				var this_data = {};
+ 				this_data.type = this_e.type;
+ 				this_data.start = this_e.data("start");
+ 				this_data.end = this_e.data("end");
+ 				this_data.data = this_e.array().value;
+ 				report_data.push(this_data);
+			}
 
-					MAIN_CANVAS.circle(3).fill('#ff0').move(
-							data_point[this_point].x, data_point[this_point].y);
-
-				} */
-
-				output_return += "FULL PATH  ";
-				output_return += full_path_index;
-				output_return += "\n";
-				output_return += "\n";
-				output_return += "DRAWING DATA ";
-				output_return += "\n";
-				output_return += "\n";
-				output_return += "\n";
-				output_return += JSON.stringify(full_path_data.value);
-				output_return += "\n";
-				output_return += "\n";
-				output_return += "\n";
-				output_return += "POINT ";
-				output_return += "\n";
-				output_return += "\n";
-				output_return += JSON.stringify(full_path_point);
-				output_return += "\n";
-				output_return += "\n";
-				output_return += "************************************************************************************************************************************";
-				output_return += "\n";
-				output_return += "\n";
-				output_return += "\n";
-
-			}// for ( var full_path_index in data_full_path) {
 			$("#output_data_editor").val("");
-			$("#output_data_editor").val(output_return);
+			$("#output_data_editor").val(JSON.stringify(report_data));
 		}
 	};
+	
+	var element_focus = function(p_element){
+	
+		var start_point = p_element.data("start");
+		var end_point = p_element.data("end");
+		console.log("element_focus");
+		console.dir(start_point);
+		console.dir(end_point);
+		
+		
+		if(data_circle[start_point.name]){
+			var this_circle = data_circle[start_point.name];
+			this_circle.show();
+			
+		}else{
+			var this_circle = MAIN_CANVAS.circle(circle_radius).fill('#f06').move(Number(start_point.x), Number(start_point.y));
+			data_circle[start_point.name] = this_circle;
+			this_circle.show();
+		}
+		
 
-	var path_data_processor = function(p_step_data) {
+		if(data_circle[end_point.name]){
+			var this_circle = data_circle[end_point.name];
+			this_circle.show();
+			
+		}else{
+			var this_circle = MAIN_CANVAS.circle(circle_radius).fill('#f06').move(Number(end_point.x), Number(end_point.y));
+			data_circle[end_point.name] = this_circle;
+			this_circle.show();
+		}
+		
+		
+		
+		if(data_text[start_point.name]){
+			var this_text = data_text[start_point.name];
+			this_text.show();
+			
+		}else{
+			var this_text = MAIN_CANVAS.text(start_point.name).move(Number(start_point.x),Number(start_point.y)).font({ fill: '#f06', family: 'Inconsolata' });
+			data_text[start_point.name] = this_text;
+			this_text.show();
+		}
+		
+		if(data_text[end_point.name]){
+			var this_text = data_text[end_point.name];
+			this_text.show();
+			
+		}else{
+			var this_text = MAIN_CANVAS.text(end_point.name).move(Number(end_point.x),Number(end_point.y)).font({ fill: '#f06', family: 'Inconsolata' });
+			data_text[end_point.name] = this_text;
+			this_text.show();
+		}
+		
+		p_element.stroke({
+			color : '#f00'
+		});
+		
+		var info_data = "START POINT";
+		info_data += "\n";
+		info_data += JSON.stringify(start_point);
+		info_data += "\n";
+		info_data += "ELEMENT TYPE";
+		info_data += "\n";
+		info_data += JSON.stringify(p_element.type);
+		info_data += "\n";
+		info_data += "ELEMENT DATA";
+		info_data += "\n";
+		info_data += JSON.stringify(p_element.array().value);
+		info_data += "\n";
+		info_data += "END POINT";
+		info_data += "\n";
+		info_data += JSON.stringify(end_point);
+		
+		$("#mouse_info").val(info_data); 
+	};
+	
+	var element_unfocus = function(p_element){
+		
+		
+		var start_point = p_element.data("start");
+		var end_point = p_element.data("end");
 
-		console.log("path_data_processor p_step_data");
+		console.log("element_unfocus");
+		console.dir(start_point);
+		console.dir(end_point);
+		
+		
+		var this_start_circle = data_circle[start_point.name];
+		this_start_circle.hide();
+		 
+		var this_end_circle = data_circle[end_point.name];
+		this_end_circle.hide();
+		
+		var this_start_text = data_text[start_point.name];
+		this_start_text.hide();
+		
+		var this_end_text = data_text[end_point.name];
+		this_end_text.hide();
+		
+		
+		p_element.stroke({
+			color : '#000'
+		});
+	};
+
+	var element_data_processor = function(p_step_data,p_type) {
+
+		console.log("element_data_processor p_step_data");
 		console.dir(p_step_data);
 
 		var R = "";
-		if (p_step_data[0] == "L") {
+		
+		if(p_type != "LINE"){
+			
+			if (p_step_data[0] == "L") {
 
-			R += "L";
-			R += " ";
-			R += p_step_data[1];
-			R += " ";
-			R += p_step_data[2];
+				R += "L";
+				R += " ";
+				R += p_step_data[1];
+				R += " ";
+				R += p_step_data[2];
 
-		} else if (p_step_data[0] == "H") {
+			} else if (p_step_data[0] == "H") {
 
-			R += "H";
-			R += " ";
-			R += p_step_data[1];
+				R += "H";
+				R += " ";
+				R += p_step_data[1];
 
-		} else if (p_step_data[0] == "V") {
+			} else if (p_step_data[0] == "V") {
 
-			R += "V";
-			R += " ";
-			R += p_step_data[1];
+				R += "V";
+				R += " ";
+				R += p_step_data[1];
 
-		} else if (p_step_data[0] == "C") {
+			} else if (p_step_data[0] == "C") {
 
-			R += "C";
-			R += " ";
-			R += p_step_data[1];
-			R += " ";
-			R += p_step_data[2];
-			R += ",";
-			R += p_step_data[3];
-			R += " ";
-			R += p_step_data[4];
-			R += ",";
-			R += p_step_data[5];
-			R += " ";
-			R += p_step_data[6];
+				R += "C";
+				R += " ";
+				R += p_step_data[1];
+				R += " ";
+				R += p_step_data[2];
+				R += ",";
+				R += p_step_data[3];
+				R += " ";
+				R += p_step_data[4];
+				R += ",";
+				R += p_step_data[5];
+				R += " ";
+				R += p_step_data[6];
 
-		} else if (p_step_data[0] == "S") {
+			} else if (p_step_data[0] == "S") {
 
-			R += "S";
-			R += " ";
-			R += p_step_data[1];
-			R += " ";
-			R += p_step_data[2];
-			R += ",";
-			R += p_step_data[3];
-			R += " ";
-			R += p_step_data[4];
+				R += "S";
+				R += " ";
+				R += p_step_data[1];
+				R += " ";
+				R += p_step_data[2];
+				R += ",";
+				R += p_step_data[3];
+				R += " ";
+				R += p_step_data[4];
 
-		} else if (p_step_data[0] == "Q") {
+			} else if (p_step_data[0] == "Q") {
 
-			R += "Q";
-			R += " ";
-			R += p_step_data[1];
-			R += " ";
-			R += p_step_data[2];
-			R += ",";
-			R += p_step_data[3];
-			R += " ";
-			R += p_step_data[4];
+				R += "Q";
+				R += " ";
+				R += p_step_data[1];
+				R += " ";
+				R += p_step_data[2];
+				R += ",";
+				R += p_step_data[3];
+				R += " ";
+				R += p_step_data[4];
 
-		} else if (p_step_data[0] == "T") {
+			} else if (p_step_data[0] == "T") {
 
-			R += "T";
-			R += " ";
-			R += p_step_data[1];
-			R += " ";
-			R += p_step_data[2];
+				R += "T";
+				R += " ";
+				R += p_step_data[1];
+				R += " ";
+				R += p_step_data[2];
 
-		} else if (p_step_data[0] == "A") {
-			console.log("A _____");
+			} else if (p_step_data[0] == "A") {
+				console.log("A _____");
+			} else if (p_step_data[0] == "Z") {
+				console.log("A _____");
+			}
+		}else{
+
+				R += " ";
+				R += p_step_data[1];
+				R += " ";
+				R += p_step_data[2];
+
 		}
 
+	
+
 		R += " ";
-		console.log(R);
+		//console.log(R);
 
 		return R;
 	}
+	
+	var float_fixed = function(p_num){
+		return Number(p_num).toFixed(2);
+	}
 
 	var move_to_xy = function() {
+
 		if (MAIN_CANVAS == null) {
 			alert("그리기,path 가지고 오기 를 먼저해주세요");
 			return;
@@ -401,21 +672,20 @@
   <tr>
    <td>
     <div>
-      마우스 위치 X : <input type="text" id="mouse_x" value="0" /> Y  : <input type="text" id="mouse_y" value="0" /><br>
-     중심 정하기 X 축 : <input type="text" id="x_point" value="450" /> Y 축 : <input type="text" id="y_point" value="450" />
+     타겟 인덱스 (1 ~ 4) : <input type="text" id="target_index" value="1" /><br> 마우스 위치 X : <input type="text" id="mouse_x" value="0" /> Y : <input type="text" id="mouse_y" value="0" /><br> 현재 중심축 X 축 : <input type="text" id="current_x_point" value="0" readonly="readonly" /> Y 축 : <input type="text" id="current_y_point" value="0" readonly="readonly" /><br> 이동할 중심축 X 축 : <input type="text" id="x_point" value="450" /> Y 축 : <input type="text" id="y_point" value="450" />
     </div>
     <div>
      <button onclick="loading();">loading</button>
-     <button onclick="extract_path();">path 추출하기</button>
+     <button onclick="extract_element();">요소 추출하기</button>
      <button onclick="extract_data();">data 추출하기</button>
      <button onclick="move_to_xy();">XY 좌표계 이동</button>
     </div>
     <div id="MAIN_CANVAS"></div>
    </td>
    <td>
-    <h3>마우스정보</h3> <textarea id="mouse_info" cols="135" rows="5"></textarea>
-    <h3>입력</h3> <textarea id="input_data_editor" cols="135" rows="20"></textarea>
-    <h3>출력</h3> <textarea id="output_data_editor" cols="135" rows="20"></textarea>
+    <h3>마우스정보</h3> <textarea id="mouse_info" cols="135" rows="8"></textarea>
+    <h3>입력</h3> <textarea id="input_data_editor" cols="135" rows="18"></textarea>
+    <h3>출력</h3> <textarea id="output_data_editor" cols="135" rows="18"></textarea>
    </td>
   </tr>
  </table>
