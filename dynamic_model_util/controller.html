@@ -6,15 +6,357 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="svg.js"></script>
 <script>
+	var dm = dm || {};
+	
+	var MAIN_CANVAS = null;
 
-var load_dm = function(){
-	alert("load_dm");
-}
+	var import_model = function() {
+		
+		if (MAIN_CANVAS != null) {
+			MAIN_CANVAS.clear();
+		} else {
+			MAIN_CANVAS = SVG('MAIN_CANVAS');
+		}
+		
+		dm = $("#input_dm").val();
+		dm = $.trim(dm);
+		if (dm == "") {
+			alert("수치 모델을 입력해주세요!");
+			return;
+		}
+		dm = JSON.parse(dm);
 
-var mi_exe = function(p_target,p_op){
-	alert(p_target+ " "+p_op);
-}
+		draw_model(dm);
+		
+	};
 
+	var export_model = function() {
+
+
+		
+	};
+
+	var move_center = function() {
+
+		var center_x = $("#center_x").val();
+		var center_y = $("#center_y").val();
+		var center_ratio = $("#center_ratio").val();
+		
+		if(center_x == null){
+			alert("새로운 중심점 X 값을 넣어주세요!");
+			return;
+		}
+		
+		if(center_y == null){
+			alert("새로운 중심점 Y 값을 넣어주세요!");
+			return;
+		}
+		
+		if(center_ratio == null){
+			alert("새로운 비율 값을 넣어주세요!");
+			return;
+		}
+		
+		var move_gap = {};
+		
+		move_gap.x = center_x - dm.center.x;
+		move_gap.y = center_y - dm.center.y;
+		
+		var clone_dm = $.extend(true, {}, dm); 
+				
+		for ( var data_index in clone_dm.dynamic_model_element) {
+			var element = clone_dm.dynamic_model_element[data_index];	
+			clone_dm.dynamic_model_element[data_index] = move_element_data(element, move_gap);
+		}
+		
+		draw_model(clone_dm);
+		
+	};
+
+	var draw_model = function(p_dynamic_model) {
+
+		
+		MAIN_CANVAS.clear();
+		
+		var element_data = p_dynamic_model.dynamic_model_element;
+
+		for ( var data_index in element_data) {
+			
+			var element = element_data[data_index];
+			var flat_data = flat_element_data(element); 
+			
+			if(element.type == "path"){
+			 
+			 
+				var path = MAIN_CANVAS.path(flat_data);
+				path.fill('none');
+				path.stroke({ color: '#60f', width: 2, linecap: 'round', linejoin: 'round' });
+			 
+			 
+			}else if(element.type == "line"){
+				
+				var line = MAIN_CANVAS.line(flat_data).stroke({ color: '#f06',  width: 2 });
+				
+				
+			}
+		}
+
+	};
+	
+	var move_element_data = function(p_element,p_move_gap){
+
+
+		
+		var start_x = Number(p_element.start.x)  + p_move_gap.x;
+		var start_y = Number(p_element.start.y)  + p_move_gap.y;
+		
+		p_element.start.x = start_x;
+		p_element.start.y = start_y;
+		
+		var end_x = Number(p_element.end.x)  + p_move_gap.x;
+		var end_y = Number(p_element.end.y)  + p_move_gap.y;
+		
+		p_element.end.x = end_x;
+		p_element.end.y = end_y;
+		
+		
+		var data = p_element.data;
+		
+		for ( var data_index in data) {
+			
+			var step_data = data[data_index];
+			
+			if (p_element.type == "path") {
+
+				
+				if (data_index == 0) {
+					
+				
+					step_data[1] += p_move_gap.x;
+					step_data[2] += p_move_gap.y;
+					
+				} else {
+
+					if (step_data[0] == "L") {
+						
+						step_data[1] += p_move_gap.x;
+						step_data[2] += p_move_gap.y;
+
+					} else if (step_data[0] == "H") {
+ 
+						step_data[1] += p_move_gap.x;
+
+					} else if (step_data[0] == "V") {
+						step_data[1] += p_move_gap.y;
+						
+
+					} else if (step_data[0] == "C") {
+
+						step_data[1] += p_move_gap.x;
+						step_data[2] += p_move_gap.y;
+						step_data[3] += p_move_gap.x;
+						step_data[4] += p_move_gap.y;
+						step_data[5] += p_move_gap.x;
+						step_data[6] += p_move_gap.y;
+				  
+
+					} else if (step_data[0] == "S") {
+
+						step_data[1] += p_move_gap.x;
+						step_data[2] += p_move_gap.y;
+						step_data[3] += p_move_gap.x;
+						step_data[4] += p_move_gap.y;
+
+					} else if (step_data[0] == "Q") {
+
+						step_data[1] += p_move_gap.x;
+						step_data[2] += p_move_gap.y;
+						step_data[3] += p_move_gap.x;
+						step_data[4] += p_move_gap.y;
+
+					} else if (step_data[0] == "T") {
+
+						step_data[1] += p_move_gap.x;
+						step_data[2] += p_move_gap.y;
+
+					} else if (step_data[0] == "A") {
+						console.log("A _____");
+					} else if (step_data[0] == "Z") {
+						console.log("A _____");
+					}
+					
+					//R += " ";
+					//R += "z";
+				}
+
+			} else if (p_element.type == "line") {
+				
+				if (data_index == 0) { 
+					
+					step_data[1] += p_move_gap.x;
+					step_data[2] += p_move_gap.y;
+					
+				}else{ 
+					
+					step_data[1] += p_move_gap.x;
+					step_data[2] += p_move_gap.y;
+					
+				}
+				
+			}
+			
+			data[data_index] = step_data;
+			
+		} // for ( var data_index in data) { 
+		
+		p_element.data = data;
+		
+		return p_element;
+ 
+	}
+
+	var flat_element_data = function(p_element) {
+
+		var R = null;
+
+		var data = p_element.data;
+
+		for ( var data_index in data) {
+
+			
+			var step_data = data[data_index];
+			console.dir(step_data);
+			
+			if (p_element.type == "path") {
+
+				
+				if (data_index == 0) {
+					
+					R = "M";
+					R += step_data[1];
+					R += " ";
+					R += step_data[2];
+					R += " ";
+
+				} else {
+
+					if (step_data[0] == "L") {
+
+						R += "L";
+						R += " ";
+						R += step_data[1];
+						R += " ";
+						R += step_data[2];
+
+					} else if (step_data[0] == "H") {
+
+						R += "H";
+						R += " ";
+						R += step_data[1];
+
+					} else if (step_data[0] == "V") {
+
+						R += "V";
+						R += " ";
+						R += step_data[1];
+
+					} else if (step_data[0] == "C") {
+
+						R += "C";
+						R += " ";
+						R += step_data[1];
+						R += " ";
+						R += step_data[2];
+						R += ",";
+						R += step_data[3];
+						R += " ";
+						R += step_data[4];
+						R += ",";
+						R += step_data[5];
+						R += " ";
+						R += step_data[6];
+
+					} else if (step_data[0] == "S") {
+
+						R += "S";
+						R += " ";
+						R += step_data[1];
+						R += " ";
+						R += step_data[2];
+						R += ",";
+						R += step_data[3];
+						R += " ";
+						R += step_data[4];
+
+					} else if (step_data[0] == "Q") {
+
+						R += "Q";
+						R += " ";
+						R += step_data[1];
+						R += " ";
+						R += step_data[2];
+						R += ",";
+						R += step_data[3];
+						R += " ";
+						R += step_data[4];
+
+					} else if (step_data[0] == "T") {
+
+						R += "T";
+						R += " ";
+						R += step_data[1];
+						R += " ";
+						R += step_data[2];
+
+					} else if (step_data[0] == "A") {
+						console.log("A _____");
+					} else if (step_data[0] == "Z") {
+						console.log("A _____");
+					}
+					
+					//R += " ";
+					//R += "z";
+				}
+
+			} else if (p_element.type == "line") {
+				
+				
+				
+				if (data_index == 0) {
+					
+					/* R = [];
+					R.push(step_data[1]);
+					R.push(step_data[2]); */
+					
+					R = "";
+					R += step_data[1];
+					R += ",";
+					R += step_data[2];
+					
+				}else{
+					/* R.push(step_data[3]);
+					R.push(step_data[4]); */
+					
+					R = " ";
+					R += step_data[1];
+					R += ",";
+					R += step_data[2];
+					
+				}
+				
+				
+			}
+		}
+		
+		console.log(R);
+
+		return R;
+
+	};
+
+	var mi_exe = function(p_target, p_op) {
+		alert(p_target + " " + p_op);
+	};
 </script>
 <style>
 #MAIN_CANVAS {
@@ -34,38 +376,64 @@ var mi_exe = function(p_target,p_op){
 </style>
 </head>
 <body>
-<h1>컨트롤러 시뮬레이터</h1>
-<a href="dynamic_model_builder.html" target="_blank">수치 모델 빌더</a>
+ <h1>컨트롤러 시뮬레이터</h1>
+ <a href="dynamic_model_builder.html" target="_blank">수치 모델 빌더</a>
  <a href="http://jsbeautifier.org" target="_blank">beautifier</a>
  <a href="http://jsonviewer.stack.hu" target="_blank">jsonviewer</a>
  <table id="maintable">
   <tr>
-   <td> 
+   <td>
     <div>
-        X 축 : <input  type="text" id="center_x" value="450" /> Y 축 :  <input  type="text"  id="center_x"  value="450" /> 비율 : <input  type="text" id="center_ratio" value="1"  />
-        <button onclick="load_dm();">중심축이동</button><br> 
-
+     X 축 : <input type="text" id="center_x" value="450" /> 
+     Y 축 : <input type="text" id="center_y" value="450" /> 
+     비율 : <input type="text" id="center_ratio" value="1" />
+     <button onclick="move_center();">중심축이동</button>
+     <br>
     </div>
     <div id="MAIN_CANVAS"></div>
    </td>
    <td>
-    <h3>수치모델</h3>
-         <button onclick="load_dm();">수치모델입력</button><button onclick="load_dm();">현재모델출력</button>
-     <textarea id="input_dm" cols="135" rows="10"></textarea>
+    <h3>수치모델 입력</h3>
+    <button onclick="import_model();">불러들이기</button>
+
+    <textarea id="input_dm" cols="135" rows="5"></textarea>
+    <h3>수치모델 출력</h3>
+        <button onclick="export_model();">내보내기</button>
+    <textarea id="output_dm" cols="135" rows="5"></textarea>
     <h3>controller</h3> <textarea id="input_ctrl" cols="135" rows="10"></textarea>
-    <h3>측정항목</h3> 
+    <h3>측정항목</h3>
     <div>
-    이름 : <input  type="text" id="mi_name_1" /> min :  <input  type="text"  id="mi_min_1">  max :  <input  type="text"  id="mi_max_1">  now :  <input  type="text"  id="mi_now_1"> <button onclick="mi_exe('1','up')">△</button> <button onclick="mi_exe('1','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_2" /> min :  <input  type="text"  id="mi_min_2">  max :  <input  type="text"  id="mi_max_2">  now :  <input  type="text"  id="mi_now_2"> <button onclick="mi_exe('2','up')">△</button> <button onclick="mi_exe('2','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_3" /> min :  <input  type="text"  id="mi_min_3">  max :  <input  type="text"  id="mi_max_3">  now :  <input  type="text"  id="mi_now_3"> <button onclick="mi_exe('3','up')">△</button> <button onclick="mi_exe('3','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_4" /> min :  <input  type="text"  id="mi_min_4">  max :  <input  type="text"  id="mi_max_4">  now :  <input  type="text"  id="mi_now_4"> <button onclick="mi_exe('4','up')">△</button> <button onclick="mi_exe('4','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_5" /> min :  <input  type="text"  id="mi_min_5">  max :  <input  type="text"  id="mi_max_5">  now :  <input  type="text"  id="mi_now_5"> <button onclick="mi_exe('5','up')">△</button> <button onclick="mi_exe('5','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_6" /> min :  <input  type="text"  id="mi_min_6">  max :  <input  type="text"  id="mi_max_6">  now :  <input  type="text"  id="mi_now_6"> <button onclick="mi_exe('6','up')">△</button> <button onclick="mi_exe('6','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_7" /> min :  <input  type="text"  id="mi_min_7">  max :  <input  type="text"  id="mi_max_7">  now :  <input  type="text"  id="mi_now_6"> <button onclick="mi_exe('6','up')">△</button> <button onclick="mi_exe('7','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_8" /> min :  <input  type="text"  id="mi_min_8">  max :  <input  type="text"  id="mi_max_8">  now :  <input  type="text"  id="mi_now_6"> <button onclick="mi_exe('6','up')">△</button> <button onclick="mi_exe('8','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_9" /> min :  <input  type="text"  id="mi_min_9">  max :  <input  type="text"  id="mi_max_9">  now :  <input  type="text"  id="mi_now_6"> <button onclick="mi_exe('6','up')">△</button> <button onclick="mi_exe('9','down')">▽</button><br>
-    이름 : <input  type="text" id="mi_name_10" /> min :  <input  type="text"  id="mi_min_10">  max :  <input  type="text"  id="mi_max_10">  now :  <input  type="text"  id="mi_now_6"> <button onclick="mi_exe('6','up')">△</button> <button onclick="mi_exe('10','down')">▽</button><br>
-          
+     이름 : <input type="text" id="mi_name_1" /> min : <input type="text" id="mi_min_1"> max : <input type="text" id="mi_max_1"> now : <input type="text" id="mi_now_1">
+     <button onclick="mi_exe('1','up')">△</button>
+     <button onclick="mi_exe('1','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_2" /> min : <input type="text" id="mi_min_2"> max : <input type="text" id="mi_max_2"> now : <input type="text" id="mi_now_2">
+     <button onclick="mi_exe('2','up')">△</button>
+     <button onclick="mi_exe('2','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_3" /> min : <input type="text" id="mi_min_3"> max : <input type="text" id="mi_max_3"> now : <input type="text" id="mi_now_3">
+     <button onclick="mi_exe('3','up')">△</button>
+     <button onclick="mi_exe('3','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_4" /> min : <input type="text" id="mi_min_4"> max : <input type="text" id="mi_max_4"> now : <input type="text" id="mi_now_4">
+     <button onclick="mi_exe('4','up')">△</button>
+     <button onclick="mi_exe('4','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_5" /> min : <input type="text" id="mi_min_5"> max : <input type="text" id="mi_max_5"> now : <input type="text" id="mi_now_5">
+     <button onclick="mi_exe('5','up')">△</button>
+     <button onclick="mi_exe('5','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_6" /> min : <input type="text" id="mi_min_6"> max : <input type="text" id="mi_max_6"> now : <input type="text" id="mi_now_6">
+     <button onclick="mi_exe('6','up')">△</button>
+     <button onclick="mi_exe('6','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_7" /> min : <input type="text" id="mi_min_7"> max : <input type="text" id="mi_max_7"> now : <input type="text" id="mi_now_6">
+     <button onclick="mi_exe('6','up')">△</button>
+     <button onclick="mi_exe('7','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_8" /> min : <input type="text" id="mi_min_8"> max : <input type="text" id="mi_max_8"> now : <input type="text" id="mi_now_6">
+     <button onclick="mi_exe('6','up')">△</button>
+     <button onclick="mi_exe('8','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_9" /> min : <input type="text" id="mi_min_9"> max : <input type="text" id="mi_max_9"> now : <input type="text" id="mi_now_6">
+     <button onclick="mi_exe('6','up')">△</button>
+     <button onclick="mi_exe('9','down')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_10" /> min : <input type="text" id="mi_min_10"> max : <input type="text" id="mi_max_10"> now : <input type="text" id="mi_now_6">
+     <button onclick="mi_exe('6','up')">△</button>
+     <button onclick="mi_exe('10','down')">▽</button>
+     <br>
     </div>
    </td>
   </tr>
