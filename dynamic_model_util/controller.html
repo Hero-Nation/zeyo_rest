@@ -2,14 +2,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Controller</title>
+<title>컨트롤러 시뮬레이터</title>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="algebra-0.2.6.min.js" ></script>
 <script src="svg.js"></script>
 <script>
+
+    var Fraction = algebra.Fraction;
+    var Expression = algebra.Expression;
+    var Equation = algebra.Equation;
+
 	var dm = dm || {};
 	
 	var MAIN_CANVAS = null;
-
+	
+ 
 	var import_model = function() {
 		
 		if (MAIN_CANVAS != null) {
@@ -101,6 +108,336 @@
 			}
 		}
 
+	};
+	
+	var get_point_by_ratio = function(p_center,p_original_point,p_ratio){
+ 
+		var d = new Date();
+		var start = d.getMilliseconds();
+		
+		var target_x = null;
+		var target_y = null;
+		
+		console.log("시작점 ");
+		console.log(p_center);
+		
+		
+		console.log("끝점 ");
+		console.log(p_original_point);
+		
+		
+		
+		// scale 적용전의 두점을 거리를 구한다.
+		
+		var original_length = distants_on_two_point(p_center,p_original_point);
+		
+		// scale이 적용된 거리
+		
+		var scale_length = original_length * p_ratio;
+		var scale_length_pow = Math.floor(scale_length * scale_length );
+		
+		var x1 = Number(p_center.x);
+		var y1 = Number(p_center.y);
+		
+		var x2 = Number(p_original_point.x);
+		var y2 = Number(p_original_point.y);
+		
+		
+		console.log("두점의 길이 ");
+		console.log(scale_length);
+		console.log("두점의 길이의 제곱 ");
+		console.log(scale_length_pow);
+		
+		// 방정식 1 : 두점을 지나는 직선의 방정식
+		
+		/*
+		
+		eq1 = ((y2-y1)/(x2-x1))*(x - x1) + y1;
+ 
+		*/
+		
+		var expr1_str = " ( ( "  +y2 + " -  "  +y1 + " ) / ( "  +x2 + " - "  +x1 + " ) ) * ( x - "  +x1 + " ) + "  +y1;
+		
+		if(x2 == x1){
+			expr1_str =  " ( 0 + "+y1+" ) ";
+		}
+		
+		
+		var expr1 = algebra.parse(expr1_str); 
+		console.log("방정식 1 ");
+		console.log(expr1.toString()); 
+		
+		// 방정식 2 : 두점의 거리를 이용한 방정식
+		
+		/*
+		
+		
+			scale_length_pow =  (x - x1) * (x - x1) + (y - y1) *  (y - y1);
+		
+ 
+		*/
+		
+		var expr2_str ="(x - "  +x1 + ") * (x - "  +x1 + ") + (y - "  +y1 + ") *  (y - "  +y1 + ")";
+		var expr2 = algebra.parse(expr2_str);
+		
+		console.log("방정식 2 ");
+		console.log(expr2.toString());
+		var eq = new Equation(expr2,scale_length_pow);
+		
+		eq = eq.eval({y: expr1});
+		console.log("대입 ");
+		console.log(eq.toString());
+		
+		
+		var new_lhs = algebra.parse(eq.lhs.toString());
+		console.log("좌측항 ");
+		console.log(new_lhs.toString());
+		var eq = new Equation(new_lhs,scale_length_pow);
+		console.log(eq.toString());
+		
+		var eq_answer = eq.solveFor("x");
+		console.log("결과 ");
+		console.dir(eq_answer);
+		
+		var answer_x = 0;
+		
+		if(x1 <= x2){
+		
+			if(eval(eq_answer[0].toString()) > x1){
+				answer_x = eval(eq_answer[0].toString());
+			}else if(eval(eq_answer[1].toString()) > x1){
+				answer_x = eval(eq_answer[1].toString());
+			}
+			
+			 
+			
+		}else{
+			
+			if(eval(eq_answer[0].toString()) < x1){
+				answer_x = eval(eq_answer[0].toString());
+			}else if(eval(eq_answer[1].toString()) < x1){
+				answer_x = eval(eq_answer[1].toString());
+			}
+			
+		}
+		
+		console.log("결과 X");
+		console.dir(answer_x);
+		
+		var ex_x =  new Expression(""+(answer_x < 0 ? "-"+answer_x :answer_x  ) );
+		console.log(ex_x.toString());
+		
+		var expr1_str = "";
+		if(x2 != x1){
+			var part_rxpr1 = expr1.toString().split("x");
+			
+			if($.trim(part_rxpr1[0]) == ""){
+				part_rxpr1[0] = 1;
+			}
+			
+			expr1_str = part_rxpr1[0] + " * "+ex_x.toString() +part_rxpr1[1]
+		} 
+		
+		console.dir(expr1_str);
+		
+		var d = new Date();
+		var end = d.getMilliseconds();
+		
+		console.log("execution time : "+(end - start) + " ms");
+		
+		return {
+			x : answer_x,
+			y : eval(expr1_str.toString())
+		};
+		
+	};
+	
+	 
+	var get_point_by_extension = function(p_center,p_original_point,p_extension){
+ 
+		var d = new Date();
+		var start = d.getMilliseconds();
+		
+		var target_x = null;
+		var target_y = null;
+		
+		console.log("시작점 ");
+		console.log(p_center);
+		
+		
+		console.log("끝점 ");
+		console.log(p_original_point);
+		
+		
+		
+		// scale 적용전의 두점을 거리를 구한다.
+		
+		var original_length = distants_on_two_point(p_center,p_original_point);
+		
+		// scale이 적용된 거리
+		
+		var scale_length = original_length + p_extension;
+		var scale_length_pow = Math.floor(scale_length * scale_length );
+		
+		var x1 = Number(p_center.x);
+		var y1 = Number(p_center.y);
+		
+		var x2 = Number(p_original_point.x);
+		var y2 = Number(p_original_point.y);
+		
+		
+		console.log("두점의 길이 ");
+		console.log(scale_length);
+		console.log("두점의 길이의 제곱 ");
+		console.log(scale_length_pow);
+		
+		// 방정식 1 : 두점을 지나는 직선의 방정식
+		
+		/*
+		
+		eq1 = ((y2-y1)/(x2-x1))*(x - x1) + y1;
+ 
+		*/
+		
+		var expr1_str = " ( ( "  +y2 + " -  "  +y1 + " ) / ( "  +x2 + " - "  +x1 + " ) ) * ( x - "  +x1 + " ) + "  +y1;
+		
+		if(x2 == x1){
+			expr1_str =  " ( 0 + "+y1+" ) ";
+		}
+		
+		
+		var expr1 = algebra.parse(expr1_str); 
+		console.log("방정식 1 ");
+		console.log(expr1.toString()); 
+		
+		// 방정식 2 : 두점의 거리를 이용한 방정식
+		
+		/*
+		
+		
+			scale_length_pow =  (x - x1) * (x - x1) + (y - y1) *  (y - y1);
+		
+ 
+		*/
+		
+		var expr2_str ="(x - "  +x1 + ") * (x - "  +x1 + ") + (y - "  +y1 + ") *  (y - "  +y1 + ")";
+		var expr2 = algebra.parse(expr2_str);
+		
+		console.log("방정식 2 ");
+		console.log(expr2.toString());
+		var eq = new Equation(expr2,scale_length_pow);
+		
+		eq = eq.eval({y: expr1});
+		console.log("대입 ");
+		console.log(eq.toString());
+		
+		
+		var new_lhs = algebra.parse(eq.lhs.toString());
+		console.log("좌측항 ");
+		console.log(new_lhs.toString());
+		var eq = new Equation(new_lhs,scale_length_pow);
+		console.log(eq.toString());
+		
+		var eq_answer = eq.solveFor("x");
+		console.log("결과 ");
+		console.dir(eq_answer);
+		
+		var answer_x = 0;
+		
+		if(x1 <= x2){
+		
+			if(eval(eq_answer[0].toString()) > x1){
+				answer_x = eval(eq_answer[0].toString());
+			}else if(eval(eq_answer[1].toString()) > x1){
+				answer_x = eval(eq_answer[1].toString());
+			}
+			
+			 
+			
+		}else{
+			
+			if(eval(eq_answer[0].toString()) < x1){
+				answer_x = eval(eq_answer[0].toString());
+			}else if(eval(eq_answer[1].toString()) < x1){
+				answer_x = eval(eq_answer[1].toString());
+			}
+			
+		}
+		
+		console.log("결과 X");
+		console.dir(answer_x);
+		
+		var ex_x =  new Expression(""+(answer_x < 0 ? "-"+answer_x :answer_x  ) );
+		console.log(ex_x.toString());
+		
+		var expr1_str = "";
+		if(x2 != x1){
+			var part_rxpr1 = expr1.toString().split("x");
+			
+			if($.trim(part_rxpr1[0]) == ""){
+				part_rxpr1[0] = 1;
+			}
+			
+			expr1_str = part_rxpr1[0] + " * "+ex_x.toString() +part_rxpr1[1]
+		} 
+		
+		console.dir(expr1_str);
+		
+		var d = new Date();
+		var end = d.getMilliseconds();
+		
+		console.log("execution time : "+(end - start) + " ms");
+		
+		return {
+			x : answer_x,
+			y : eval(expr1_str.toString())
+		};
+		
+	};
+	 
+	
+	var distants_on_two_point = function(p_point1,p_point2){
+		var x1 = Number(p_point1.x);
+		var y1 = Number(p_point1.y);
+		
+		var x2 = Number(p_point2.x);
+		var y2 = Number(p_point2.y);
+		
+		
+		var d = ( (x2 - x1) * (x2 - x1) ) + ( ( y2 - y1 ) * ( y2 - y1 ) );
+		return Math.sqrt(d);
+	};
+	
+	var target_y_on_two_point_line = function(p_point1,p_point2,p_target_x){
+		
+		var x1 = Number(p_point1.x);
+		var y1 = Number(p_point1.y);
+		
+		var x2 = Number(p_point2.x);
+		var y2 = Number(p_point2.y);
+	
+		if(x1 == x2){
+			
+			if(x1 == p_target_x){
+				
+				return "all";
+				
+			}else{
+				
+				return "not";
+				
+			}
+			
+		}else if(y1 == y2){
+			
+			return "all";
+			
+		}else{
+			
+			var y = ((y2 - y1)/(x2 - x1))*(p_target_x - x1)+y1;
+			
+			return y;	
+		}
 	};
 	
 	var move_element_data = function(p_element,p_move_gap){
