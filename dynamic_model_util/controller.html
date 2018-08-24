@@ -33,6 +33,39 @@
 	var export_model = function() {
 
 	};
+	
+	var find_center_xy = function(p_dm){
+		
+		var max_x = 0;
+		var max_y = 0;
+		
+		for ( var unit_index in p_dm.dynamic_model_element) {
+			
+			var this_e = p_dm.dynamic_model_element[unit_index];
+	 
+			if (this_e.start.x > max_x) {
+				max_x = this_e.start.x;
+			}
+
+			if (this_e.end.x > max_x) {
+				max_x = this_e.end.x;
+			}
+
+			if (this_e.start.y > max_y) {
+				max_y = this_e.start.y;
+			}
+
+			if (this_e.end.x > max_y) {
+				max_y = this_e.end.y;
+			}
+			
+		}
+
+		return {
+			x : max_x / 2,
+			y : max_y / 2
+		};
+	}
 
 	var move_center = function() {
 
@@ -69,17 +102,21 @@
 
 		for ( var data_index in clone_dm.dynamic_model_element) {
 			var element = clone_dm.dynamic_model_element[data_index];
-			element = move_element_data(element, move_gap);
-			clone_dm.dynamic_model_element[data_index] = scale_element_data(center,element,center_ratio);
-			//clone_dm.dynamic_model_element[data_index] = element;
+			var move_element = move_element_data(element, move_gap);
+			//clone_dm.dynamic_model_element[data_index] = move_element;
+			clone_dm.dynamic_model_element[data_index] = scale_element_data(center,move_element,center_ratio);
 		}
 
 		draw_model(clone_dm);
-
+		
+		clone_dm.center = center;
+		
+		$("#output_dm").val(JSON.stringify(clone_dm));
 	};
 
 	var draw_model = function(p_dynamic_model) {
-
+		console.log("draw_model");
+		console.dir(p_dynamic_model);
 		MAIN_CANVAS.clear();
 
 		var element_data = p_dynamic_model.dynamic_model_element;
@@ -87,6 +124,7 @@
 		for ( var data_index in element_data) {
 
 			var element = element_data[data_index];
+			console.dir(element);
 			var flat_data = flat_element_data(element);
 
 			if (element.type == "path") {
@@ -692,7 +730,6 @@
 	};
 
 	var scale_element_data = function(p_center, p_element, p_ratio) {
-		console.log("scale_element_data");
 
 		var element_clone = $.extend(true, {}, p_element);
 
@@ -904,73 +941,82 @@
 	};
 
 	var move_element_data = function(p_element, p_move_gap) {
-
-		var start_x = Number(p_element.start.x) + p_move_gap.x;
-		var start_y = Number(p_element.start.y) + p_move_gap.y;
-
-		p_element.start.x = start_x;
-		p_element.start.y = start_y;
-
-		var end_x = Number(p_element.end.x) + p_move_gap.x;
-		var end_y = Number(p_element.end.y) + p_move_gap.y;
-
-		p_element.end.x = end_x;
-		p_element.end.y = end_y;
-
+		
+		var x_gap =  Number(p_move_gap.x);
+		var y_gap =  Number(p_move_gap.y);
+		
+		var start_name = p_element.start.name;
+		var start_x = Number(p_element.start.x) + x_gap;
+		var start_y = Number(p_element.start.y) + y_gap; 
+		
+		var end_name = p_element.end.name;
+		var end_x = Number(p_element.end.x) + x_gap;
+		var end_y = Number(p_element.end.y) + y_gap; 
+		
+		var R = {};
+		R.start = {};
+		R.start.x = start_x;
+		R.start.y = start_y;
+		R.start.name = start_name; 
+		R.end = {};
+		R.end.x = end_x;
+		R.end.y = end_y;
+		R.end.name = end_name;
+ 		R.type = p_element.type;
+		
 		var data = p_element.data;
-
+		
 		for ( var data_index in data) {
 
-			var step_data = data[data_index];
-
+			var step_data = data[data_index]; 
 			if (p_element.type == "path") {
 
 				if (data_index == 0) {
 
-					step_data[1] += p_move_gap.x;
-					step_data[2] += p_move_gap.y;
+					step_data[1] = Number(step_data[1]) + x_gap;
+					step_data[2] = Number(step_data[2]) + y_gap;
 
 				} else {
 
 					if (step_data[0] == "L") {
 
-						step_data[1] += p_move_gap.x;
-						step_data[2] += p_move_gap.y;
+						step_data[1] = Number(step_data[1]) + x_gap;
+						step_data[2] = Number(step_data[2]) + y_gap;
 
 					} else if (step_data[0] == "H") {
 
-						step_data[1] += p_move_gap.x;
+						step_data[1] = Number(step_data[1]) + x_gap; 
 
-					} else if (step_data[0] == "V") {
-						step_data[1] += p_move_gap.y;
+					} else if (step_data[0] == "V") { 
+						step_data[1] = Number(step_data[1]) + y_gap;
 
 					} else if (step_data[0] == "C") {
 
-						step_data[1] += p_move_gap.x;
-						step_data[2] += p_move_gap.y;
-						step_data[3] += p_move_gap.x;
-						step_data[4] += p_move_gap.y;
-						step_data[5] += p_move_gap.x;
-						step_data[6] += p_move_gap.y;
+						step_data[1] = Number(step_data[1]) + x_gap;
+						step_data[2] = Number(step_data[2]) + y_gap;
+						step_data[3] = Number(step_data[3]) + x_gap;
+						step_data[4] = Number(step_data[4]) + y_gap;
+						step_data[5] = Number(step_data[5]) + x_gap;
+						step_data[6] = Number(step_data[6]) + y_gap;
 
 					} else if (step_data[0] == "S") {
 
-						step_data[1] += p_move_gap.x;
-						step_data[2] += p_move_gap.y;
-						step_data[3] += p_move_gap.x;
-						step_data[4] += p_move_gap.y;
+						step_data[1] = Number(step_data[1]) + x_gap;
+						step_data[2] = Number(step_data[2]) + y_gap;
+						step_data[3] = Number(step_data[3]) + x_gap;
+						step_data[4] = Number(step_data[4]) + y_gap;
 
 					} else if (step_data[0] == "Q") {
 
-						step_data[1] += p_move_gap.x;
-						step_data[2] += p_move_gap.y;
-						step_data[3] += p_move_gap.x;
-						step_data[4] += p_move_gap.y;
+						step_data[1] = Number(step_data[1]) + x_gap;
+						step_data[2] = Number(step_data[2]) + y_gap;
+						step_data[3] = Number(step_data[3]) + x_gap;
+						step_data[4] = Number(step_data[4]) + y_gap;
 
 					} else if (step_data[0] == "T") {
 
-						step_data[1] += p_move_gap.x;
-						step_data[2] += p_move_gap.y;
+						step_data[1] = Number(step_data[1]) + x_gap;
+						step_data[2] = Number(step_data[2]) + y_gap;
 
 					} else if (step_data[0] == "A") {
 						console.log("A _____");
@@ -986,13 +1032,13 @@
 
 				if (data_index == 0) {
 
-					step_data[1] += p_move_gap.x;
-					step_data[2] += p_move_gap.y;
+					step_data[1] = Number(step_data[1]) + x_gap;
+					step_data[2] = Number(step_data[2]) + y_gap;
 
 				} else {
 
-					step_data[1] += p_move_gap.x;
-					step_data[2] += p_move_gap.y;
+					step_data[1] = Number(step_data[1]) + x_gap;
+					step_data[2] = Number(step_data[2]) + y_gap;
 
 				}
 
@@ -1002,102 +1048,104 @@
 
 		} // for ( var data_index in data) { 
 
-		p_element.data = data;
-
-		return p_element;
+ 
+		R.data = data;
+		return R;
 
 	}
 
 	var flat_element_data = function(p_element) {
-
-		var R = null;
+		console.log("flat_element_data  ");
+		var flat_R = "";
 
 		var data = p_element.data;
-
-		for ( var data_index in data) {
+		console.dir(p_element);
+		
+		for (var data_index in data) {
 
 			var step_data = data[data_index];
+			console.log("data_index : "+data_index);
 			console.dir(step_data);
 
 			if (p_element.type == "path") {
 
 				if (data_index == 0) {
 
-					R = "M";
-					R += step_data[1];
-					R += " ";
-					R += step_data[2];
-					R += " ";
+					flat_R = "M";
+					flat_R += step_data[1];
+					flat_R += " ";
+					flat_R += step_data[2];
+					flat_R += " ";
 
 				} else {
 
 					if (step_data[0] == "L") {
 
-						R += "L";
-						R += " ";
-						R += step_data[1];
-						R += " ";
-						R += step_data[2];
+						flat_R += "L";
+						flat_R += " ";
+						flat_R += step_data[1];
+						flat_R += " ";
+						flat_R += step_data[2];
 
 					} else if (step_data[0] == "H") {
 
-						R += "H";
-						R += " ";
-						R += step_data[1];
+						flat_R += "H";
+						flat_R += " ";
+						flat_R += step_data[1];
 
 					} else if (step_data[0] == "V") {
 
-						R += "V";
-						R += " ";
-						R += step_data[1];
+						flat_R += "V";
+						flat_R += " ";
+						flat_R += step_data[1];
 
 					} else if (step_data[0] == "C") {
 
-						R += "C";
-						R += " ";
-						R += step_data[1];
-						R += " ";
-						R += step_data[2];
-						R += ",";
-						R += step_data[3];
-						R += " ";
-						R += step_data[4];
-						R += ",";
-						R += step_data[5];
-						R += " ";
-						R += step_data[6];
+						flat_R += "C";
+						flat_R += " ";
+						flat_R += step_data[1];
+						flat_R += " ";
+						flat_R += step_data[2];
+						flat_R += ",";
+						flat_R += step_data[3];
+						flat_R += " ";
+						flat_R += step_data[4];
+						flat_R += ",";
+						flat_R += step_data[5];
+						flat_R += " ";
+						flat_R += step_data[6];
 
 					} else if (step_data[0] == "S") {
 
-						R += "S";
-						R += " ";
-						R += step_data[1];
-						R += " ";
-						R += step_data[2];
-						R += ",";
-						R += step_data[3];
-						R += " ";
-						R += step_data[4];
+						flat_R += "S";
+						flat_R += " ";
+						flat_R += step_data[1];
+						flat_R += " ";
+						flat_R += step_data[2];
+						flat_R += ",";
+						flat_R += step_data[3];
+						flat_R += " ";
+						flat_R += step_data[4];
 
 					} else if (step_data[0] == "Q") {
 
-						R += "Q";
-						R += " ";
-						R += step_data[1];
-						R += " ";
-						R += step_data[2];
-						R += ",";
-						R += step_data[3];
-						R += " ";
-						R += step_data[4];
+						flat_R += "Q";
+						flat_R += " ";
+						flat_R += step_data[1];
+						flat_R += " ";
+						flat_R += step_data[2];
+						flat_R += ",";
+						flat_R += step_data[3];
+						flat_R += " ";
+						flat_R += step_data[4];
 
 					} else if (step_data[0] == "T") {
 
-						R += "T";
-						R += " ";
-						R += step_data[1];
-						R += " ";
-						R += step_data[2];
+						flat_R += "T";
+						flat_R += " ";
+						flat_R += step_data[1];
+						flat_R += " ";
+						flat_R += step_data[2];
 
 					} else if (step_data[0] == "A") {
 						console.log("A _____");
@@ -1105,40 +1153,40 @@
 						console.log("A _____");
 					}
 
-					//R += " ";
-					//R += "z";
+					//flat_R += " ";
+					//flat_R += "z";
 				}
 
 			} else if (p_element.type == "line") {
 
 				if (data_index == 0) {
 
-					/* R = [];
-					R.push(step_data[1]);
-					R.push(step_data[2]); */
+					/* flat_R = [];
+					flat_R.push(step_data[1]);
+					flat_R.push(step_data[2]); */
 
-					R = "";
-					R += step_data[1];
-					R += ",";
-					R += step_data[2];
+					flat_R = "";
+					flat_R += step_data[1];
+					flat_R += ",";
+					flat_R += step_data[2];
 
 				} else {
-					/* R.push(step_data[3]);
-					R.push(step_data[4]); */
+					/* flat_R.push(step_data[3]);
+					flat_R.push(step_data[4]); */
 
-					R = " ";
-					R += step_data[1];
-					R += ",";
-					R += step_data[2];
+					flat_R = " ";
+					flat_R += step_data[1];
+					flat_R += ",";
+					flat_R += step_data[2];
 
 				}
 
 			}
 		}
 
-		console.log(R);
+		console.log(flat_R);
 
-		return R;
+		return flat_R;
 
 	};
 

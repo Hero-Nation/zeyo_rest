@@ -386,27 +386,27 @@
 			var max_y = 0;
 
 			for ( var unit_index in data_unit_path) {
+			
 				var this_e = data_unit_path[unit_index];
 				var this_data = {};
-
 				this_data.type = this_e.type;
 				this_data.start = this_e.data("start");
 				this_data.end = this_e.data("end");
 
-				if (this_data.start.x > max_x) {
-					max_x = this_data.start.x;
+				if (Number(this_data.start.x) > Number(max_x)) {
+					max_x = Number(this_data.start.x);
 				}
 
-				if (this_data.end.x > max_x) {
-					max_x = this_data.end.x;
+				if (Number(this_data.end.x) > Number(max_x)) {
+					max_x = Number(this_data.end.x);
 				}
 
-				if (this_data.start.y > max_y) {
-					max_y = this_data.start.y;
+				if (Number(this_data.start.y) > Number(max_y)) {
+					max_y = Number(this_data.start.y);
 				}
 
-				if (this_data.end.x > max_y) {
-					max_y = this_data.end.y;
+				if (Number(this_data.end.y) > Number(max_y)) {
+					max_y = Number(this_data.end.y);
 				}
 
 				this_data.data = this_e.array().value;
