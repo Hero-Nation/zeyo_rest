@@ -4,27 +4,20 @@
 <meta charset="UTF-8">
 <title>컨트롤러 시뮬레이터</title>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script src="algebra-0.2.6.min.js" ></script>
 <script src="svg.js"></script>
 <script>
-
-    var Fraction = algebra.Fraction;
-    var Expression = algebra.Expression;
-    var Equation = algebra.Equation;
-
 	var dm = dm || {};
-	
+
 	var MAIN_CANVAS = null;
-	
- 
+
 	var import_model = function() {
-		
+
 		if (MAIN_CANVAS != null) {
 			MAIN_CANVAS.clear();
 		} else {
 			MAIN_CANVAS = SVG('MAIN_CANVAS');
 		}
-		
+
 		dm = $("#input_dm").val();
 		dm = $.trim(dm);
 		if (dm == "") {
@@ -34,13 +27,11 @@
 		dm = JSON.parse(dm);
 
 		draw_model(dm);
-		
+
 	};
 
 	var export_model = function() {
 
-
-		
 	};
 
 	var move_center = function() {
@@ -48,444 +39,910 @@
 		var center_x = $("#center_x").val();
 		var center_y = $("#center_y").val();
 		var center_ratio = $("#center_ratio").val();
-		
-		if(center_x == null){
+
+		if (center_x == null) {
 			alert("새로운 중심점 X 값을 넣어주세요!");
 			return;
 		}
-		
-		if(center_y == null){
+
+		if (center_y == null) {
 			alert("새로운 중심점 Y 값을 넣어주세요!");
 			return;
 		}
-		
-		if(center_ratio == null){
+
+		if (center_ratio == null) {
 			alert("새로운 비율 값을 넣어주세요!");
 			return;
 		}
-		
+
 		var move_gap = {};
-		
+
 		move_gap.x = center_x - dm.center.x;
 		move_gap.y = center_y - dm.center.y;
-		
-		var clone_dm = $.extend(true, {}, dm); 
-				
+
+		var center = {
+			x : center_x,
+			y : center_y
+		};
+
+		var clone_dm = $.extend(true, {}, dm);
+
 		for ( var data_index in clone_dm.dynamic_model_element) {
-			var element = clone_dm.dynamic_model_element[data_index];	
-			clone_dm.dynamic_model_element[data_index] = move_element_data(element, move_gap);
+			var element = clone_dm.dynamic_model_element[data_index];
+			element = move_element_data(element, move_gap);
+			clone_dm.dynamic_model_element[data_index] = scale_element_data(center,element,center_ratio);
+			//clone_dm.dynamic_model_element[data_index] = element;
 		}
-		
+
 		draw_model(clone_dm);
-		
+
 	};
 
 	var draw_model = function(p_dynamic_model) {
 
-		
 		MAIN_CANVAS.clear();
-		
+
 		var element_data = p_dynamic_model.dynamic_model_element;
 
 		for ( var data_index in element_data) {
-			
+
 			var element = element_data[data_index];
-			var flat_data = flat_element_data(element); 
-			
-			if(element.type == "path"){
-			 
-			 
+			var flat_data = flat_element_data(element);
+
+			if (element.type == "path") {
+
 				var path = MAIN_CANVAS.path(flat_data);
 				path.fill('none');
-				path.stroke({ color: '#60f', width: 2, linecap: 'round', linejoin: 'round' });
-			 
-			 
-			}else if(element.type == "line"){
-				
-				var line = MAIN_CANVAS.line(flat_data).stroke({ color: '#f06',  width: 2 });
-				
-				
+				path.stroke({
+					color : '#60f',
+					width : 2,
+					linecap : 'round',
+					linejoin : 'round'
+				});
+
+			} else if (element.type == "line") {
+
+				var line = MAIN_CANVAS.line(flat_data).stroke({
+					color : '#f06',
+					width : 2
+				});
+
 			}
 		}
 
 	};
-	
-	var get_point_by_ratio = function(p_center,p_original_point,p_ratio){
- 
+
+	var get_point_by_ratio2_test = function() {
+
+		MAIN_CANVAS = SVG('MAIN_CANVAS');
+
+		var p_center = {
+			x : 30,
+			y : 50
+		};
+
+		var p_original_point = {
+			x : 0,
+			y : 0
+		};
+
+		/*
+		x1 : 10.00
+		controller.html:246 y1 : 50.00
+		controller.html:247 x2 : 0.00
+		controller.html:248 y2 : 0.00
+		controller.html:249 두점의 길이 : 50.99019513592785
+		controller.html:250 비율만큼 늘어난 길이 : 101.98
+		controller.html:251 비율만큼 늘어난 길이의 제곱 : 10399.00
+		controller.html:401 기울기 : 5
+		controller.html:411 a : 26
+		controller.html:412 b : 480
+		controller.html:413 c : -7799
+		controller.html:429 eq_x1 : 10.39
+		controller.html:430 eq_y1 : 51.95
+		controller.html:431 eq_x2 : -28.86
+		controller.html:432 eq_y2 : -144.3
+		controller.html:452 execution time : 9 ms
+		
+		
+		 */
+		/*
+		
+		
+		var p_center = {
+			x : 0,
+			y : 0
+		}; 
+		
+		var p_original_point = { 	
+			x : 30,
+			y : 50
+		}; 
+		
+		
+
+		
+		x1 : 0.00
+		controller.html:245 y1 : 0.00
+		controller.html:246 x2 : 10.00
+		controller.html:247 y2 : 50.00
+		controller.html:248 두점의 길이 : 50.99019513592785
+		controller.html:249 비율만큼 늘어난 길이 : 101.98
+		controller.html:250 비율만큼 늘어난 길이의 제곱 : 10399.00
+		controller.html:400 기울기 : 5
+		controller.html:410 a : 26
+		controller.html:411 b : 0
+		controller.html:412 c : -10399
+		controller.html:428 eq_x1 : 20.00
+		controller.html:429 eq_y1 : 100
+		controller.html:430 eq_x2 : -20.00
+		controller.html:431 eq_y2 : -100
+		controller.html:451 execution time : 9 ms
+		
+		
+		
+		 */
+
+		var p_ratio = 2;
+
+		/* 		var p_original_point = {
+		 x : -120,
+		 y : 130
+		 };
+		
+		 var p_original_point = {
+		 x : -120,
+		 y : -130
+		 };
+		
+		 var p_original_point = {
+		 x : 120,
+		 y : -130
+		 };
+		 */
+
 		var d = new Date();
 		var start = d.getMilliseconds();
-		
+
 		var target_x = null;
 		var target_y = null;
-		
+
 		console.log("시작점 ");
 		console.log(p_center);
-		
-		
+
 		console.log("끝점 ");
 		console.log(p_original_point);
-		
-		
-		
+
+		console.log("비율 ");
+		console.log(p_ratio);
+
 		// scale 적용전의 두점을 거리를 구한다.
-		
-		var original_length = distants_on_two_point(p_center,p_original_point);
-		
+
+		var original_length = distants_on_two_point(p_center, p_original_point);
+
 		// scale이 적용된 거리
-		
+
 		var scale_length = original_length * p_ratio;
-		var scale_length_pow = Math.floor(scale_length * scale_length );
-		
-		var x1 = Number(p_center.x);
-		var y1 = Number(p_center.y);
-		
-		var x2 = Number(p_original_point.x);
-		var y2 = Number(p_original_point.y);
-		
-		
-		console.log("두점의 길이 ");
-		console.log(scale_length);
-		console.log("두점의 길이의 제곱 ");
-		console.log(scale_length_pow);
-		
-		// 방정식 1 : 두점을 지나는 직선의 방정식
-		
+		scale_length = scale_length.toFixed(2);
+		var scale_length_pow = Math.floor(scale_length * scale_length);
+		scale_length_pow = scale_length_pow.toFixed(2);
+
+		var x1 = Number(p_center.x).toFixed(2);
+		var y1 = Number(p_center.y).toFixed(2);
+
+		var x2 = Number(p_original_point.x).toFixed(2);
+		var y2 = Number(p_original_point.y).toFixed(2);
+
+		console.log("x1 : " + x1);
+		console.log("y1 : " + y1);
+		console.log("x2 : " + x2);
+		console.log("y2 : " + y2);
+		console.log("두점의 길이 : " + original_length);
+		console.log("비율만큼 늘어난 길이 : " + scale_length);
+		console.log("비율만큼 늘어난 길이의 제곱 : " + scale_length_pow);
+
 		/*
 		
-		eq1 = ((y2-y1)/(x2-x1))*(x - x1) + y1;
- 
-		*/
+		방정식 1 
 		
-		var expr1_str = " ( ( "  +y2 + " -  "  +y1 + " ) / ( "  +x2 + " - "  +x1 + " ) ) * ( x - "  +x1 + " ) + "  +y1;
+			eq_y = ( ( y2 - y1 ) / ( x2 - x1 ) ) * ( eq_x - x1 ) + y1;
 		
-		if(x2 == x1){
-			expr1_str =  " ( 0 + "+y1+" ) ";
-		}
+		방정식 2
+		
+			(eq_x - x1) * (eq_x - x1) + (eq_y - y1) *  (eq_y - y1) - scale_length_pow = 0;
 		
 		
-		var expr1 = algebra.parse(expr1_str); 
-		console.log("방정식 1 ");
-		console.log(expr1.toString()); 
+		근의 공식
 		
-		// 방정식 2 : 두점의 거리를 이용한 방정식
+		    ax2 + bx + c = 0 ;
 		
-		/*
-		
-		
-			scale_length_pow =  (x - x1) * (x - x1) + (y - y1) *  (y - y1);
-		
- 
-		*/
-		
-		var expr2_str ="(x - "  +x1 + ") * (x - "  +x1 + ") + (y - "  +y1 + ") *  (y - "  +y1 + ")";
-		var expr2 = algebra.parse(expr2_str);
-		
-		console.log("방정식 2 ");
-		console.log(expr2.toString());
-		var eq = new Equation(expr2,scale_length_pow);
-		
-		eq = eq.eval({y: expr1});
-		console.log("대입 ");
-		console.log(eq.toString());
-		
-		
-		var new_lhs = algebra.parse(eq.lhs.toString());
-		console.log("좌측항 ");
-		console.log(new_lhs.toString());
-		var eq = new Equation(new_lhs,scale_length_pow);
-		console.log(eq.toString());
-		
-		var eq_answer = eq.solveFor("x");
-		console.log("결과 ");
-		console.dir(eq_answer);
-		
-		var answer_x = 0;
-		
-		if(x1 <= x2){
-		
-			if(eval(eq_answer[0].toString()) > x1){
-				answer_x = eval(eq_answer[0].toString());
-			}else if(eval(eq_answer[1].toString()) > x1){
-				answer_x = eval(eq_answer[1].toString());
-			}
+		 */
+
+		var a = 0;
+		var b = 0;
+		var c = 0;
+		var eq_y = 0;
+
+		var eq_x1 = 0;
+		var eq_x2 = 0;
+
+		var eq_y1 = 0;
+		var eq_y2 = 0;
+
+		if (x2 == x1) {
+
+			/*
+			
+			 * 방정식 1 
+			
+			ex_x = x1;
+			
+			
+			 * 방정식 2
+			
+			
+			eq_y * eq_y - 2 * y1 * eq_y + y1 * y1 = 0
+			
+			
+			 * 근의 공식 변수
+			
+			a = 1 ;
+			
+			b = -2 * y1;
+			
+			c = y1 * y1 - scale_length_pow;
+			
+			 */
+
+			a = 1;
+
+			b = -2 * y1;
+
+			c = y1 * y1 - scale_length_pow;
+
+			eq_x1 = x1;
+			eq_x1 = x2;
+
+			console.log("a : " + a);
+			console.log("b : " + b);
+			console.log("c : " + c);
+
+			eq_y1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_y1 = Number(eq_y1).toFixed(2);
+			eq_y2 = (-b - Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_y2 = Number(eq_y2).toFixed(2);
+
+		} else {
+
+			/*
 			
 			 
 			
-		}else{
+			방정식 1 
 			
-			if(eval(eq_answer[0].toString()) < x1){
-				answer_x = eval(eq_answer[0].toString());
-			}else if(eval(eq_answer[1].toString()) < x1){
-				answer_x = eval(eq_answer[1].toString());
-			}
+				eq_y = ( ( y2 - y1 ) / ( x2 - x1 ) ) * ( eq_x - x1 ) + y1;
 			
+			
+			기울기
+			
+				var eq1_slope = (y2 - y1)/(x2 - x1);
+			
+			
+				eq_y = eq1_slope * (eq_x - x1) + y1;
+				
+				eq_y = eq1_slope * eq_x - eq1_slope * x1 + y1;
+			
+			
+			방정식 2
+			
+				(eq_x - x1) * (eq_x - x1) + (eq_y - y1) * (eq_y - y1) - scale_length_pow = 0;
+			
+			-------------------------------------------------------------------------------------------------------------------------------------------------------
+			
+			(eq_y - y1) * (eq_y - y1) 	   수식 풀이 버전 1
+			   
+			   
+			
+			eq_y - y1 = eq1_slope * eq_x - eq1_slope * x1 + y1 - y1 ;
+			
+			eq_y - y1 = eq1_slope * eq_x - eq1_slope * x1;
+			
+			   
+			(eq1_slope * eq_x - eq1_slope * x1 ) * (eq1_slope * eq_x - eq1_slope * x1 ) 
+			
+			
+			= eq1_slope * eq_x * eq1_slope * eq_x     -     2 * eq1_slope * x1 * eq1_slope * eq_x      +       eq1_slope * x1 * eq1_slope * x1
+			
+			= eq1_slope * eq1_slope * eq_x * eq_x     -     2 * eq1_slope * eq1_slope * x1 * eq_x      +       eq1_slope * eq1_slope * x1 * x1
+			
+			
+			~~~~~~~~~~~~~~~~~~
+			
+			
+			(eq_x - x1) * (eq_x - x1) + (eq_y - y1) * (eq_y - y1)
+			
+			
+			= eq_x * eq_x                               -     2 * x1 * eq_x                                +       x1 * x1 
+			
+			+ eq1_slope * eq1_slope * eq_x * eq_x       -     2 * eq1_slope * eq1_slope * x1 * eq_x        +       eq1_slope * eq1_slope * x1 * x1
+			
+			
+			= (1 +  eq1_slope * eq1_slope)(eq_x * eq_x) - 2 * (x1 + eq1_slope * eq1_slope * x1 ) * eq_x  + ( 1 + eq1_slope * eq1_slope)( x1 * x1);
+			   
+			
+				a = (1 +  eq1_slope * eq1_slope);
+				b = -2 * x1 -2 * eq1_slope * eq1_slope * x1 
+				c = (1 + eq1_slope * eq1_slope)(x1 * x1);
+			
+			
+			근의 공식
+			
+			    ax2 + bx + c = 0 ;
+			
+			 */
+
+			var eq1_slope = (y2 - y1) / (x2 - x1);
+
+			console.log("기울기 : " + eq1_slope);
+
+			a = 1 + eq1_slope * eq1_slope;
+
+			b = -2 * x1 - 2 * eq1_slope * eq1_slope * x1;
+
+			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow;
+
+			console.log("a : " + a);
+			console.log("b : " + b);
+			console.log("c : " + c);
+
+			eq_x1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_x1 = Number(eq_x1).toFixed(2);
+			eq_x2 = (-b - Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_x2 = Number(eq_x2).toFixed(2);
+
+			var eq1_slope = (y2 - y1) / (x2 - x1);
+
+			eq_y1 = (eq1_slope * eq_x1) - (eq1_slope * x1) + Number(y1);
+			eq_y2 = (eq1_slope * eq_x2) - (eq1_slope * x1) + Number(y1);
+
 		}
-		
-		console.log("결과 X");
-		console.dir(answer_x);
-		
-		var ex_x =  new Expression(""+(answer_x < 0 ? "-"+answer_x :answer_x  ) );
-		console.log(ex_x.toString());
-		
-		var expr1_str = "";
-		if(x2 != x1){
-			var part_rxpr1 = expr1.toString().split("x");
-			
-			if($.trim(part_rxpr1[0]) == ""){
-				part_rxpr1[0] = 1;
-			}
-			
-			expr1_str = part_rxpr1[0] + " * "+ex_x.toString() +part_rxpr1[1]
-		} 
-		
-		console.dir(expr1_str);
-		
+
+		console.log("eq_x1 : " + eq_x1);
+		console.log("eq_y1 : " + eq_y1);
+		console.log("eq_x2 : " + eq_x2);
+		console.log("eq_y2 : " + eq_y2);
+
+		var center_axis_gap = 400;
+		var circle_size = 6;
+
+		var center_svg = MAIN_CANVAS.circle(circle_size).fill('red').move(
+				Number(p_center.x) + Number(center_axis_gap),
+				Number(p_center.y) + Number(center_axis_gap));
+		var original_point_svg = MAIN_CANVAS.circle(circle_size).fill('blue')
+				.move(Number(p_original_point.x) + Number(center_axis_gap),
+						Number(p_original_point.y) + Number(center_axis_gap));
+		var ratio_point_1_svg = MAIN_CANVAS.circle(circle_size).fill('green')
+				.move(Number(eq_x1) + Number(center_axis_gap),
+						Number(eq_y1) + Number(center_axis_gap));
+		var ratio_point_2_svg = MAIN_CANVAS.circle(circle_size).fill('black')
+				.move(Number(eq_x2) + Number(center_axis_gap),
+						Number(eq_y2) + Number(center_axis_gap));
+
 		var d = new Date();
 		var end = d.getMilliseconds();
-		
-		console.log("execution time : "+(end - start) + " ms");
-		
-		return {
-			x : answer_x,
-			y : eval(expr1_str.toString())
-		};
-		
-	};
-	
-	 
-	var get_point_by_extension = function(p_center,p_original_point,p_extension){
+
+		console.log("execution time : " + (end - start) + " ms");
+
+	}
+
+	var circlle_test = function() {
+
+		MAIN_CANVAS = SVG('MAIN_CANVAS');
+		MAIN_CANVAS.clear();
+
+		var center = {x : 390,y:390};
+		var rect1 = MAIN_CANVAS.rect(10, 10).fill("red");
+		var rect2 = MAIN_CANVAS.rect(10, 10).fill("blue");
  
-		var d = new Date();
-		var start = d.getMilliseconds();
+		//var path = MAIN_CANVAS.path(" M 100, 100  m -75, 0  a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"); // 원
+		var path = MAIN_CANVAS.path("M0,100 Q50,-50 100,100 T200,100"); 
+		//var path = MAIN_CANVAS.path("M17,42 L117,42 V142 H17 Z");
+		//var path = MAIN_CANVAS.path("M 100 260 T 105 121 T 280 330 Z");
+		 path.center(center.x,center.y);
+		var length = path.length()
+		  
+		path.fill('none').stroke({width:1, color: '#ccc'})
 		
+		var duration = 10000
+
+		path.animate(duration).during(function(pos, morph, eased) {
+			//console.log(pos+":"+ morph+":"+eased);
+			var target = path.pointAt(eased * length);
+			var new_position = get_point_by_ratio(center,target,2);
+			
+			console.log(target.x + " "+target.y);
+			console.dir(new_position);
+			rect1.center(target.x,target.y);
+			rect2.center(new_position.x,new_position.y);
+			//
+			 
+		});
+
+	}
+
+	var get_point_by_ratio = function(p_center, p_original_point, p_ratio) {
+ 
+
 		var target_x = null;
-		var target_y = null;
-		
-		console.log("시작점 ");
-		console.log(p_center);
-		
-		
-		console.log("끝점 ");
-		console.log(p_original_point);
-		
-		
-		
+		var target_y = null; 
+
 		// scale 적용전의 두점을 거리를 구한다.
-		
-		var original_length = distants_on_two_point(p_center,p_original_point);
-		
+
+		var original_length = distants_on_two_point(p_center, p_original_point);
+
 		// scale이 적용된 거리
-		
+
+		var scale_length = original_length * p_ratio;
+		scale_length = scale_length.toFixed(2);
+		var scale_length_pow = Math.floor(scale_length * scale_length);
+		scale_length_pow = scale_length_pow.toFixed(2);
+
+		var x1 = Number(p_center.x).toFixed(2);
+		var y1 = Number(p_center.y).toFixed(2);
+
+		var x2 = Number(p_original_point.x).toFixed(2);
+		var y2 = Number(p_original_point.y).toFixed(2);
+ 
+		var a = 0;
+		var b = 0;
+		var c = 0;
+		var eq_y = 0;
+
+		var eq_x1 = 0;
+		var eq_x2 = 0;
+
+		var eq_y1 = 0;
+		var eq_y2 = 0;
+
+		if (x2 == x1) {
+ 
+			a = 1;
+
+			b = -2 * y1;
+
+			c = y1 * y1 - scale_length_pow;
+
+			eq_x1 = x1;
+			eq_x1 = x2;
+ 
+
+			eq_y1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_y1 = Number(eq_y1).toFixed(2);
+			eq_y2 = (-b - Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_y2 = Number(eq_y2).toFixed(2);
+
+		} else {
+ 
+
+			var eq1_slope = (y2 - y1) / (x2 - x1); 
+
+			a = 1 + eq1_slope * eq1_slope;
+
+			b = -2 * x1 - 2 * eq1_slope * eq1_slope * x1;
+
+			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow; 
+
+			eq_x1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_x1 = Number(eq_x1).toFixed(2);
+			eq_x2 = (-b - Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_x2 = Number(eq_x2).toFixed(2);
+
+			var eq1_slope = (y2 - y1) / (x2 - x1);
+
+			eq_y1 = (eq1_slope * eq_x1) - (eq1_slope * x1) + Number(y1);
+			eq_y2 = (eq1_slope * eq_x2) - (eq1_slope * x1) + Number(y1);
+
+		}
+ 
+  		if(x2 >= x1){
+  			return {
+  					x : eq_x1,
+  					y : eq_y1
+  				}; 
+  		}else{
+  			return {
+  					x : eq_x2,
+  					y : eq_y2
+  				}; 
+  		}
+ 
+
+	}
+
+	var get_point_by_extension = function(p_center, p_original_point,
+			p_extension) {
+
+		var target_x = null;
+		var target_y = null; 
+
+		// scale 적용전의 두점을 거리를 구한다.
+
+		var original_length = distants_on_two_point(p_center, p_original_point);
+
+		// scale이 적용된 거리
+
 		var scale_length = original_length + p_extension;
-		var scale_length_pow = Math.floor(scale_length * scale_length );
-		
-		var x1 = Number(p_center.x);
-		var y1 = Number(p_center.y);
-		
-		var x2 = Number(p_original_point.x);
-		var y2 = Number(p_original_point.y);
-		
-		
-		console.log("두점의 길이 ");
-		console.log(scale_length);
-		console.log("두점의 길이의 제곱 ");
-		console.log(scale_length_pow);
-		
-		// 방정식 1 : 두점을 지나는 직선의 방정식
-		
-		/*
-		
-		eq1 = ((y2-y1)/(x2-x1))*(x - x1) + y1;
+		scale_length = scale_length.toFixed(2);
+		var scale_length_pow = Math.floor(scale_length * scale_length);
+		scale_length_pow = scale_length_pow.toFixed(2);
+
+		var x1 = Number(p_center.x).toFixed(2);
+		var y1 = Number(p_center.y).toFixed(2);
+
+		var x2 = Number(p_original_point.x).toFixed(2);
+		var y2 = Number(p_original_point.y).toFixed(2);
  
-		*/
-		
-		var expr1_str = " ( ( "  +y2 + " -  "  +y1 + " ) / ( "  +x2 + " - "  +x1 + " ) ) * ( x - "  +x1 + " ) + "  +y1;
-		
-		if(x2 == x1){
-			expr1_str =  " ( 0 + "+y1+" ) ";
-		}
-		
-		
-		var expr1 = algebra.parse(expr1_str); 
-		console.log("방정식 1 ");
-		console.log(expr1.toString()); 
-		
-		// 방정식 2 : 두점의 거리를 이용한 방정식
-		
-		/*
-		
-		
-			scale_length_pow =  (x - x1) * (x - x1) + (y - y1) *  (y - y1);
-		
+		var a = 0;
+		var b = 0;
+		var c = 0;
+		var eq_y = 0;
+
+		var eq_x1 = 0;
+		var eq_x2 = 0;
+
+		var eq_y1 = 0;
+		var eq_y2 = 0;
+
+		if (x2 == x1) {
  
-		*/
-		
-		var expr2_str ="(x - "  +x1 + ") * (x - "  +x1 + ") + (y - "  +y1 + ") *  (y - "  +y1 + ")";
-		var expr2 = algebra.parse(expr2_str);
-		
-		console.log("방정식 2 ");
-		console.log(expr2.toString());
-		var eq = new Equation(expr2,scale_length_pow);
-		
-		eq = eq.eval({y: expr1});
-		console.log("대입 ");
-		console.log(eq.toString());
-		
-		
-		var new_lhs = algebra.parse(eq.lhs.toString());
-		console.log("좌측항 ");
-		console.log(new_lhs.toString());
-		var eq = new Equation(new_lhs,scale_length_pow);
-		console.log(eq.toString());
-		
-		var eq_answer = eq.solveFor("x");
-		console.log("결과 ");
-		console.dir(eq_answer);
-		
-		var answer_x = 0;
-		
-		if(x1 <= x2){
-		
-			if(eval(eq_answer[0].toString()) > x1){
-				answer_x = eval(eq_answer[0].toString());
-			}else if(eval(eq_answer[1].toString()) > x1){
-				answer_x = eval(eq_answer[1].toString());
-			}
-			
-			 
-			
-		}else{
-			
-			if(eval(eq_answer[0].toString()) < x1){
-				answer_x = eval(eq_answer[0].toString());
-			}else if(eval(eq_answer[1].toString()) < x1){
-				answer_x = eval(eq_answer[1].toString());
-			}
-			
+			a = 1;
+
+			b = -2 * y1;
+
+			c = y1 * y1 - scale_length_pow;
+
+			eq_x1 = x1;
+			eq_x1 = x2;
+ 
+
+			eq_y1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_y1 = Number(eq_y1).toFixed(2);
+			eq_y2 = (-b - Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_y2 = Number(eq_y2).toFixed(2);
+
+		} else {
+ 
+
+			var eq1_slope = (y2 - y1) / (x2 - x1); 
+
+			a = 1 + eq1_slope * eq1_slope;
+
+			b = -2 * x1 - 2 * eq1_slope * eq1_slope * x1;
+
+			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow; 
+
+			eq_x1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_x1 = Number(eq_x1).toFixed(2);
+			eq_x2 = (-b - Math.sqrt(b * b - (4 * a * c))) / (2 * a);
+			eq_x2 = Number(eq_x2).toFixed(2);
+
+			var eq1_slope = (y2 - y1) / (x2 - x1);
+
+			eq_y1 = (eq1_slope * eq_x1) - (eq1_slope * x1) + Number(y1);
+			eq_y2 = (eq1_slope * eq_x2) - (eq1_slope * x1) + Number(y1);
+
 		}
-		
-		console.log("결과 X");
-		console.dir(answer_x);
-		
-		var ex_x =  new Expression(""+(answer_x < 0 ? "-"+answer_x :answer_x  ) );
-		console.log(ex_x.toString());
-		
-		var expr1_str = "";
-		if(x2 != x1){
-			var part_rxpr1 = expr1.toString().split("x");
-			
-			if($.trim(part_rxpr1[0]) == ""){
-				part_rxpr1[0] = 1;
-			}
-			
-			expr1_str = part_rxpr1[0] + " * "+ex_x.toString() +part_rxpr1[1]
-		} 
-		
-		console.dir(expr1_str);
-		
-		var d = new Date();
-		var end = d.getMilliseconds();
-		
-		console.log("execution time : "+(end - start) + " ms");
-		
-		return {
-			x : answer_x,
-			y : eval(expr1_str.toString())
-		};
-		
-	};
-	 
-	
-	var distants_on_two_point = function(p_point1,p_point2){
+ 
+  		if(x2 >= x1){
+  			return {
+  					x : eq_x1,
+  					y : eq_y1
+  				}; 
+  		}else{
+  			return {
+  					x : eq_x2,
+  					y : eq_y2
+  				}; 
+  		}
+
+	}
+
+	var distants_on_two_point = function(p_point1, p_point2) {
+
 		var x1 = Number(p_point1.x);
 		var y1 = Number(p_point1.y);
-		
+
 		var x2 = Number(p_point2.x);
 		var y2 = Number(p_point2.y);
-		
-		
-		var d = ( (x2 - x1) * (x2 - x1) ) + ( ( y2 - y1 ) * ( y2 - y1 ) );
+
+		var d = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 		return Math.sqrt(d);
 	};
-	
-	var target_y_on_two_point_line = function(p_point1,p_point2,p_target_x){
-		
+
+	var target_y_on_two_point_line = function(p_point1, p_point2, p_target_x) {
+
 		var x1 = Number(p_point1.x);
 		var y1 = Number(p_point1.y);
-		
+
 		var x2 = Number(p_point2.x);
 		var y2 = Number(p_point2.y);
-	
-		if(x1 == x2){
-			
-			if(x1 == p_target_x){
-				
+
+		if (x1 == x2) {
+
+			if (x1 == p_target_x) {
+
 				return "all";
-				
-			}else{
-				
+
+			} else {
+
 				return "not";
-				
+
 			}
-			
-		}else if(y1 == y2){
-			
+
+		} else if (y1 == y2) {
+
 			return "all";
-			
-		}else{
-			
-			var y = ((y2 - y1)/(x2 - x1))*(p_target_x - x1)+y1;
-			
-			return y;	
+
+		} else {
+
+			var y = ((y2 - y1) / (x2 - x1)) * (p_target_x - x1) + y1;
+
+			return y;
 		}
 	};
-	
-	var move_element_data = function(p_element,p_move_gap){
 
+	var scale_element_data = function(p_center, p_element, p_ratio) {
+		console.log("scale_element_data");
 
-		
-		var start_x = Number(p_element.start.x)  + p_move_gap.x;
-		var start_y = Number(p_element.start.y)  + p_move_gap.y;
-		
-		p_element.start.x = start_x;
-		p_element.start.y = start_y;
-		
-		var end_x = Number(p_element.end.x)  + p_move_gap.x;
-		var end_y = Number(p_element.end.y)  + p_move_gap.y;
-		
-		p_element.end.x = end_x;
-		p_element.end.y = end_y;
-		
-		
+		var element_clone = $.extend(true, {}, p_element);
+
+		p_element.start = get_point_by_ratio(p_center, p_element.start, p_ratio);
+		p_element.end = get_point_by_ratio(p_center, p_element.end, p_ratio);
+
 		var data = p_element.data;
-		
+
 		for ( var data_index in data) {
-			
+
 			var step_data = data[data_index];
-			
+
 			if (p_element.type == "path") {
 
-				
 				if (data_index == 0) {
-					
-				
-					step_data[1] += p_move_gap.x;
-					step_data[2] += p_move_gap.y;
-					
+
+					var p_target = {
+						x : step_data[1],
+						y : step_data[2]
+					};
+
+					p_target = get_point_by_ratio(p_center, p_target, p_ratio);
+
+					step_data[1] = p_target.x;
+					step_data[2] = p_target.y;
+
 				} else {
 
 					if (step_data[0] == "L") {
-						
+
+						var p_target = {
+							x : step_data[1],
+							y : step_data[2]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.x;
+						step_data[2] = p_target.y;
+
+					} else if (step_data[0] == "H") {
+
+						var p_target = {
+							x : step_data[1],
+							y : element_clone.start.y
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.x;
+
+					} else if (step_data[0] == "V") {
+
+						var p_target = {
+							x : element_clone.start.x,
+							y : step_data[1]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.y;
+
+					} else if (step_data[0] == "C") {
+
+						var p_target = {
+							x : step_data[1],
+							y : step_data[2]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.x;
+						step_data[2] = p_target.y;
+
+						p_target = {
+							x : step_data[3],
+							y : step_data[4]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[3] = p_target.x;
+						step_data[4] = p_target.y;
+
+						p_target = {
+							x : step_data[5],
+							y : step_data[6]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[5] = p_target.x;
+						step_data[6] = p_target.y;
+
+					} else if (step_data[0] == "S") {
+
+						var p_target = {
+							x : step_data[1],
+							y : step_data[2]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.x;
+						step_data[2] = p_target.y;
+
+						p_target = {
+							x : step_data[3],
+							y : step_data[4]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[3] = p_target.x;
+						step_data[4] = p_target.y;
+
+					} else if (step_data[0] == "Q") {
+
+						var p_target = {
+							x : step_data[1],
+							y : step_data[2]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.x;
+						step_data[2] = p_target.y;
+
+						p_target = {
+							x : step_data[3],
+							y : step_data[4]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[3] = p_target.x;
+						step_data[4] = p_target.y;
+
+					} else if (step_data[0] == "T") {
+
+						var p_target = {
+							x : step_data[1],
+							y : step_data[2]
+						};
+
+						p_target = get_point_by_ratio(p_center, p_target,
+								p_ratio);
+
+						step_data[1] = p_target.x;
+						step_data[2] = p_target.y;
+
+					} else if (step_data[0] == "A") {
+						console.log("A _____");
+					} else if (step_data[0] == "Z") {
+						console.log("A _____");
+					}
+
+					//R += " ";
+					//R += "z";
+				}
+
+			} else if (p_element.type == "line") {
+
+				if (data_index == 0) {
+
+					var p_target = {
+						x : step_data[1],
+						y : step_data[2]
+					};
+
+					p_target = get_point_by_ratio(p_center, p_target, p_ratio);
+
+					step_data[1] = p_target.x;
+					step_data[2] = p_target.y;
+
+				} else {
+
+					var p_target = {
+						x : step_data[1],
+						y : step_data[2]
+					};
+
+					p_target = get_point_by_ratio(p_center, p_target, p_ratio);
+
+					step_data[1] = p_target.x;
+					step_data[2] = p_target.y;
+
+				}
+
+			}
+
+			data[data_index] = step_data;
+
+		} // for ( var data_index in data) { 
+
+		p_element.data = data;
+
+		return p_element;
+	};
+
+	var move_element_data = function(p_element, p_move_gap) {
+
+		var start_x = Number(p_element.start.x) + p_move_gap.x;
+		var start_y = Number(p_element.start.y) + p_move_gap.y;
+
+		p_element.start.x = start_x;
+		p_element.start.y = start_y;
+
+		var end_x = Number(p_element.end.x) + p_move_gap.x;
+		var end_y = Number(p_element.end.y) + p_move_gap.y;
+
+		p_element.end.x = end_x;
+		p_element.end.y = end_y;
+
+		var data = p_element.data;
+
+		for ( var data_index in data) {
+
+			var step_data = data[data_index];
+
+			if (p_element.type == "path") {
+
+				if (data_index == 0) {
+
+					step_data[1] += p_move_gap.x;
+					step_data[2] += p_move_gap.y;
+
+				} else {
+
+					if (step_data[0] == "L") {
+
 						step_data[1] += p_move_gap.x;
 						step_data[2] += p_move_gap.y;
 
 					} else if (step_data[0] == "H") {
- 
+
 						step_data[1] += p_move_gap.x;
 
 					} else if (step_data[0] == "V") {
 						step_data[1] += p_move_gap.y;
-						
 
 					} else if (step_data[0] == "C") {
 
@@ -495,7 +952,6 @@
 						step_data[4] += p_move_gap.y;
 						step_data[5] += p_move_gap.x;
 						step_data[6] += p_move_gap.y;
-				  
 
 					} else if (step_data[0] == "S") {
 
@@ -521,35 +977,35 @@
 					} else if (step_data[0] == "Z") {
 						console.log("A _____");
 					}
-					
+
 					//R += " ";
 					//R += "z";
 				}
 
 			} else if (p_element.type == "line") {
-				
-				if (data_index == 0) { 
-					
+
+				if (data_index == 0) {
+
 					step_data[1] += p_move_gap.x;
 					step_data[2] += p_move_gap.y;
-					
-				}else{ 
-					
+
+				} else {
+
 					step_data[1] += p_move_gap.x;
 					step_data[2] += p_move_gap.y;
-					
+
 				}
-				
+
 			}
-			
+
 			data[data_index] = step_data;
-			
+
 		} // for ( var data_index in data) { 
-		
+
 		p_element.data = data;
-		
+
 		return p_element;
- 
+
 	}
 
 	var flat_element_data = function(p_element) {
@@ -560,15 +1016,13 @@
 
 		for ( var data_index in data) {
 
-			
 			var step_data = data[data_index];
 			console.dir(step_data);
-			
+
 			if (p_element.type == "path") {
 
-				
 				if (data_index == 0) {
-					
+
 					R = "M";
 					R += step_data[1];
 					R += " ";
@@ -650,41 +1104,38 @@
 					} else if (step_data[0] == "Z") {
 						console.log("A _____");
 					}
-					
+
 					//R += " ";
 					//R += "z";
 				}
 
 			} else if (p_element.type == "line") {
-				
-				
-				
+
 				if (data_index == 0) {
-					
+
 					/* R = [];
 					R.push(step_data[1]);
 					R.push(step_data[2]); */
-					
+
 					R = "";
 					R += step_data[1];
 					R += ",";
 					R += step_data[2];
-					
-				}else{
+
+				} else {
 					/* R.push(step_data[3]);
 					R.push(step_data[4]); */
-					
+
 					R = " ";
 					R += step_data[1];
 					R += ",";
 					R += step_data[2];
-					
+
 				}
-				
-				
+
 			}
 		}
-		
+
 		console.log(R);
 
 		return R;
@@ -721,9 +1172,7 @@
   <tr>
    <td>
     <div>
-     X 축 : <input type="text" id="center_x" value="450" /> 
-     Y 축 : <input type="text" id="center_y" value="450" /> 
-     비율 : <input type="text" id="center_ratio" value="1" />
+     X 축 : <input type="text" id="center_x" value="450" /> Y 축 : <input type="text" id="center_y" value="450" /> 비율 : <input type="text" id="center_ratio" value="1" />
      <button onclick="move_center();">중심축이동</button>
      <br>
     </div>
@@ -731,12 +1180,9 @@
    </td>
    <td>
     <h3>수치모델 입력</h3>
-    <button onclick="import_model();">불러들이기</button>
-
-    <textarea id="input_dm" cols="135" rows="5"></textarea>
+    <button onclick="import_model();">불러들이기</button> <textarea id="input_dm" cols="135" rows="5"></textarea>
     <h3>수치모델 출력</h3>
-        <button onclick="export_model();">내보내기</button>
-    <textarea id="output_dm" cols="135" rows="5"></textarea>
+    <button onclick="export_model();">내보내기</button> <textarea id="output_dm" cols="135" rows="5"></textarea>
     <h3>controller</h3> <textarea id="input_ctrl" cols="135" rows="10"></textarea>
     <h3>측정항목</h3>
     <div>
