@@ -7,6 +7,7 @@
 <script src="svg.js"></script>
 <script>
 	var dm = dm || {};
+	var export_dm = {};
 
 	var MAIN_CANVAS = null;
 
@@ -30,19 +31,17 @@
 
 	};
 
-	var export_model = function() {
+ 
 
-	};
-	
-	var find_center_xy = function(p_dm){
-		
+	var find_center_xy = function(p_dm) {
+
 		var max_x = 0;
 		var max_y = 0;
-		
+
 		for ( var unit_index in p_dm.dynamic_model_element) {
-			
+
 			var this_e = p_dm.dynamic_model_element[unit_index];
-	 
+
 			if (this_e.start.x > max_x) {
 				max_x = this_e.start.x;
 			}
@@ -58,7 +57,7 @@
 			if (this_e.end.x > max_y) {
 				max_y = this_e.end.y;
 			}
-			
+
 		}
 
 		return {
@@ -103,15 +102,18 @@
 		for ( var data_index in clone_dm.dynamic_model_element) {
 			var element = clone_dm.dynamic_model_element[data_index];
 			var move_element = move_element_data(element, move_gap);
-			//clone_dm.dynamic_model_element[data_index] = move_element;
-			clone_dm.dynamic_model_element[data_index] = scale_element_data(center,move_element,center_ratio);
+			clone_dm.dynamic_model_element[data_index] = scale_element_data(
+					center, move_element, center_ratio);
 		}
 
 		draw_model(clone_dm);
-		
+
 		clone_dm.center = center;
-		
+
 		$("#output_dm").val(JSON.stringify(clone_dm));
+		
+		export_dm = clone_dm;
+ 
 	};
 
 	var draw_model = function(p_dynamic_model) {
@@ -473,46 +475,74 @@
 
 	}
 
-	var circlle_test = function() {
+	var circle_test = function() {
 
 		MAIN_CANVAS = SVG('MAIN_CANVAS');
 		MAIN_CANVAS.clear();
 
-		var center = {x : 390,y:390};
+		var center = {
+			x : 390,
+			y : 390
+		};
 		var rect1 = MAIN_CANVAS.rect(10, 10).fill("red");
 		var rect2 = MAIN_CANVAS.rect(10, 10).fill("blue");
- 
-		//var path = MAIN_CANVAS.path(" M 100, 100  m -75, 0  a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"); // 원
-		var path = MAIN_CANVAS.path("M0,100 Q50,-50 100,100 T200,100"); 
+
+		var path = MAIN_CANVAS
+				.path(" M 100, 100  m -75, 0  a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"); // 원
+		//var path = MAIN_CANVAS.path("M0,100 Q50,-50 100,100 T200,100");
 		//var path = MAIN_CANVAS.path("M17,42 L117,42 V142 H17 Z");
 		//var path = MAIN_CANVAS.path("M 100 260 T 105 121 T 280 330 Z");
-		 path.center(center.x,center.y);
+		path.center(center.x, center.y);
 		var length = path.length()
-		  
-		path.fill('none').stroke({width:1, color: '#ccc'})
-		
-		var duration = 10000
+
+		path.fill('none').stroke({
+			width : 1,
+			color : '#ccc'
+		})
+
+		var duration = 10000;
+		var ratio = 0;
+		var error_scope = 2;
+
+		var count = 0;
+
+		var max_x = 0;
+		var min_x = 0;
+
+		var sum_x = 0;
+		var avg_x = 0;
+
+		var max_y = 0;
+		var min_y = 0;
+
+		var sum_y = 0;
+		var avg_y = 0;
 
 		path.animate(duration).during(function(pos, morph, eased) {
-			//console.log(pos+":"+ morph+":"+eased);
+
+			count++;
+
 			var target = path.pointAt(eased * length);
-			var new_position = get_point_by_ratio(center,target,2);
-			
-			console.log(target.x + " "+target.y);
-			console.dir(new_position);
-			rect1.center(target.x,target.y);
-			rect2.center(new_position.x,new_position.y);
-			//
-			 
-		});
+
+			var new_position = get_point_by_extension(center, target, ratio);
+
+			var tx = ((new_position.x - target.x) / ratio);
+			var ty = ((new_position.y - target.y) / ratio);
+
+			if (tx == 0) {
+				ratio -= 0.1;
+			}
+			rect1.center(target.x, target.y);
+			rect2.center(new_position.x, new_position.y);
+
+		}).loop();
 
 	}
 
 	var get_point_by_ratio = function(p_center, p_original_point, p_ratio) {
- 
 
 		var target_x = null;
-		var target_y = null; 
+		var target_y = null;
 
 		// scale 적용전의 두점을 거리를 구한다.
 
@@ -530,7 +560,7 @@
 
 		var x2 = Number(p_original_point.x).toFixed(2);
 		var y2 = Number(p_original_point.y).toFixed(2);
- 
+
 		var a = 0;
 		var b = 0;
 		var c = 0;
@@ -543,7 +573,7 @@
 		var eq_y2 = 0;
 
 		if (x2 == x1) {
- 
+
 			a = 1;
 
 			b = -2 * y1;
@@ -552,7 +582,6 @@
 
 			eq_x1 = x1;
 			eq_x1 = x2;
- 
 
 			eq_y1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
 			eq_y1 = Number(eq_y1).toFixed(2);
@@ -560,15 +589,14 @@
 			eq_y2 = Number(eq_y2).toFixed(2);
 
 		} else {
- 
 
-			var eq1_slope = (y2 - y1) / (x2 - x1); 
+			var eq1_slope = (y2 - y1) / (x2 - x1);
 
 			a = 1 + eq1_slope * eq1_slope;
 
 			b = -2 * x1 - 2 * eq1_slope * eq1_slope * x1;
 
-			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow; 
+			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow;
 
 			eq_x1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
 			eq_x1 = Number(eq_x1).toFixed(2);
@@ -581,19 +609,18 @@
 			eq_y2 = (eq1_slope * eq_x2) - (eq1_slope * x1) + Number(y1);
 
 		}
- 
-  		if(x2 >= x1){
-  			return {
-  					x : eq_x1,
-  					y : eq_y1
-  				}; 
-  		}else{
-  			return {
-  					x : eq_x2,
-  					y : eq_y2
-  				}; 
-  		}
- 
+
+		if (x2 >= x1) {
+			return {
+				x : Number(Number(eq_x1).toFixed(2)),
+				y : Number(Number(eq_y1).toFixed(2))
+			};
+		} else {
+			return {
+				x : Number(Number(eq_x2).toFixed(2)),
+				y : Number(Number(eq_y2).toFixed(2))
+			};
+		}
 
 	}
 
@@ -601,7 +628,7 @@
 			p_extension) {
 
 		var target_x = null;
-		var target_y = null; 
+		var target_y = null;
 
 		// scale 적용전의 두점을 거리를 구한다.
 
@@ -619,7 +646,7 @@
 
 		var x2 = Number(p_original_point.x).toFixed(2);
 		var y2 = Number(p_original_point.y).toFixed(2);
- 
+
 		var a = 0;
 		var b = 0;
 		var c = 0;
@@ -632,7 +659,7 @@
 		var eq_y2 = 0;
 
 		if (x2 == x1) {
- 
+
 			a = 1;
 
 			b = -2 * y1;
@@ -641,7 +668,6 @@
 
 			eq_x1 = x1;
 			eq_x1 = x2;
- 
 
 			eq_y1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
 			eq_y1 = Number(eq_y1).toFixed(2);
@@ -649,15 +675,14 @@
 			eq_y2 = Number(eq_y2).toFixed(2);
 
 		} else {
- 
 
-			var eq1_slope = (y2 - y1) / (x2 - x1); 
+			var eq1_slope = (y2 - y1) / (x2 - x1);
 
 			a = 1 + eq1_slope * eq1_slope;
 
 			b = -2 * x1 - 2 * eq1_slope * eq1_slope * x1;
 
-			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow; 
+			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow;
 
 			eq_x1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
 			eq_x1 = Number(eq_x1).toFixed(2);
@@ -670,19 +695,18 @@
 			eq_y2 = (eq1_slope * eq_x2) - (eq1_slope * x1) + Number(y1);
 
 		}
- 
-  		if(x2 >= x1){
-  			return {
-  					x : eq_x1,
-  					y : eq_y1
-  				}; 
-  		}else{
-  			return {
-  					x : eq_x2,
-  					y : eq_y2
-  				}; 
-  		}
 
+		if (x2 >= x1) {
+			return {
+				x : Number(Number(eq_x1).toFixed(2)),
+				y : Number(Number(eq_y1).toFixed(2))
+			};
+		} else {
+			return {
+				x : Number(Number(eq_x2).toFixed(2)),
+				y : Number(Number(eq_y2).toFixed(2))
+			};
+		}
 	}
 
 	var distants_on_two_point = function(p_point1, p_point2) {
@@ -697,52 +721,26 @@
 		return Math.sqrt(d);
 	};
 
-	var target_y_on_two_point_line = function(p_point1, p_point2, p_target_x) {
-
-		var x1 = Number(p_point1.x);
-		var y1 = Number(p_point1.y);
-
-		var x2 = Number(p_point2.x);
-		var y2 = Number(p_point2.y);
-
-		if (x1 == x2) {
-
-			if (x1 == p_target_x) {
-
-				return "all";
-
-			} else {
-
-				return "not";
-
-			}
-
-		} else if (y1 == y2) {
-
-			return "all";
-
-		} else {
-
-			var y = ((y2 - y1) / (x2 - x1)) * (p_target_x - x1) + y1;
-
-			return y;
-		}
-	};
-
 	var scale_element_data = function(p_center, p_element, p_ratio) {
+		console.log("scale_element_data");
 
 		var element_clone = $.extend(true, {}, p_element);
+		console.dir(p_element);
 
-		p_element.start = get_point_by_ratio(p_center, p_element.start, p_ratio);
-		p_element.end = get_point_by_ratio(p_center, p_element.end, p_ratio);
+		element_clone.start = get_point_by_ratio(p_center, element_clone.start,
+				p_ratio);
+		element_clone.start.name = p_element.start.name;
+		element_clone.end = get_point_by_ratio(p_center, element_clone.end,
+				p_ratio);
+		element_clone.end.name = p_element.end.name;
 
-		var data = p_element.data;
+		var data = element_clone.data;
 
 		for ( var data_index in data) {
 
 			var step_data = data[data_index];
 
-			if (p_element.type == "path") {
+			if (element_clone.type == "path") {
 
 				if (data_index == 0) {
 
@@ -901,7 +899,7 @@
 					//R += "z";
 				}
 
-			} else if (p_element.type == "line") {
+			} else if (element_clone.type == "line") {
 
 				if (data_index == 0) {
 
@@ -935,40 +933,40 @@
 
 		} // for ( var data_index in data) { 
 
-		p_element.data = data;
-
-		return p_element;
+		element_clone.data = data;
+		console.dir(element_clone);
+		return element_clone;
 	};
 
 	var move_element_data = function(p_element, p_move_gap) {
-		
-		var x_gap =  Number(p_move_gap.x);
-		var y_gap =  Number(p_move_gap.y);
-		
+
+		var x_gap = Number(p_move_gap.x);
+		var y_gap = Number(p_move_gap.y);
+
 		var start_name = p_element.start.name;
 		var start_x = Number(p_element.start.x) + x_gap;
-		var start_y = Number(p_element.start.y) + y_gap; 
-		
+		var start_y = Number(p_element.start.y) + y_gap;
+
 		var end_name = p_element.end.name;
 		var end_x = Number(p_element.end.x) + x_gap;
-		var end_y = Number(p_element.end.y) + y_gap; 
-		
+		var end_y = Number(p_element.end.y) + y_gap;
+
 		var R = {};
 		R.start = {};
 		R.start.x = start_x;
 		R.start.y = start_y;
-		R.start.name = start_name; 
+		R.start.name = start_name;
 		R.end = {};
 		R.end.x = end_x;
 		R.end.y = end_y;
 		R.end.name = end_name;
- 		R.type = p_element.type;
-		
+		R.type = p_element.type;
+
 		var data = p_element.data;
-		
+
 		for ( var data_index in data) {
 
-			var step_data = data[data_index]; 
+			var step_data = data[data_index];
 			if (p_element.type == "path") {
 
 				if (data_index == 0) {
@@ -985,9 +983,9 @@
 
 					} else if (step_data[0] == "H") {
 
-						step_data[1] = Number(step_data[1]) + x_gap; 
+						step_data[1] = Number(step_data[1]) + x_gap;
 
-					} else if (step_data[0] == "V") { 
+					} else if (step_data[0] == "V") {
 						step_data[1] = Number(step_data[1]) + y_gap;
 
 					} else if (step_data[0] == "C") {
@@ -1048,7 +1046,6 @@
 
 		} // for ( var data_index in data) { 
 
- 
 		R.data = data;
 		return R;
 
@@ -1060,11 +1057,11 @@
 
 		var data = p_element.data;
 		console.dir(p_element);
-		
-		for (var data_index in data) {
+
+		for ( var data_index in data) {
 
 			var step_data = data[data_index];
-			console.log("data_index : "+data_index);
+			console.log("data_index : " + data_index);
 			console.dir(step_data);
 
 			if (p_element.type == "path") {
@@ -1193,6 +1190,52 @@
 	var mi_exe = function(p_target, p_op) {
 		alert(p_target + " " + p_op);
 	};
+
+	var import_controller_data = function() {
+		var ctrl_data = $("#input_ctrl").val();
+		
+		// 수치모델에서 포인트 이름과 그 이름이 있는 인덱스를 정리한다. 
+		
+		
+		var point_dic = {}; 
+			
+		
+		// 측정항목과 포인트 map을 parsing 한다. 
+		
+		var ctrl_data_dic = {};
+		
+		/*
+		 포인트 이동 정의
+		 
+		  축 : x (X)
+		
+		  	방향 : Left, Right
+		       크기 :
+		  
+		  축 : y (Y)
+		  
+		  	방향 : Up,Down
+		       크기 : 
+		 
+		  축 : two point (TP)  두점을 지나는 직선의 방정식 
+		  
+		       두점이름 : P12-P14  
+		  	뱡향 : Front, Back
+		  	크기 : 
+		  	
+		  
+		  		
+		  	예) 
+		  	
+		  		P12:X,L,10
+		  		P12:Y,U,3
+		  		P16:TP,P12-P16,F,12
+		  	
+		  		
+		*/  
+		
+			
+	};
 </script>
 <style>
 #MAIN_CANVAS {
@@ -1220,7 +1263,9 @@
   <tr>
    <td>
     <div>
-     X 축 : <input type="text" id="center_x" value="450" /> Y 축 : <input type="text" id="center_y" value="450" /> 비율 : <input type="text" id="center_ratio" value="1" />
+     X 축 : <input type="text" id="center_x" value="450" /> 
+     Y 축 : <input type="text" id="center_y" value="450" /> 
+         비율 : <input type="text" id="center_ratio" value="1.1" />
      <button onclick="move_center();">중심축이동</button>
      <br>
     </div>
@@ -1229,9 +1274,9 @@
    <td>
     <h3>수치모델 입력</h3>
     <button onclick="import_model();">불러들이기</button> <textarea id="input_dm" cols="135" rows="5"></textarea>
-    <h3>수치모델 출력</h3>
-    <button onclick="export_model();">내보내기</button> <textarea id="output_dm" cols="135" rows="5"></textarea>
-    <h3>controller</h3> <textarea id="input_ctrl" cols="135" rows="10"></textarea>
+    <h3>수치모델 출력</h3> <textarea id="output_dm" cols="135" rows="5"></textarea>
+    <h3>controller</h3>
+    <button onclick="import_controller_data();">조건 불러들이기</button> <textarea id="input_ctrl" cols="135" rows="10"></textarea>
     <h3>측정항목</h3>
     <div>
      이름 : <input type="text" id="mi_name_1" /> min : <input type="text" id="mi_min_1"> max : <input type="text" id="mi_max_1"> now : <input type="text" id="mi_now_1">
