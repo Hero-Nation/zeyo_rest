@@ -6,7 +6,6 @@
 
 	<groupId>net.heronation.zeyo</groupId>
 	<version>1.0</version>
-	<packaging>war</packaging>
 
 	<name>rest</name>
 
@@ -340,4 +339,5 @@
 		<url>http://heronation.net</url>
 	</organization>
 	<artifactId>rest</artifactId>
+	<packaging>war</packaging>
 </project>

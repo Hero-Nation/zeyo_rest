@@ -6,8 +6,9 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="svg.js"></script>
 <script>
-	var dm = dm || {};
-	var export_dm = {};
+	var imported_dm = imported_dm || {};
+	var current_zip_dm = null;
+	var current_control_data = null;
 
 	var MAIN_CANVAS = null;
 
@@ -19,28 +20,27 @@
 			MAIN_CANVAS = SVG('MAIN_CANVAS');
 		}
 
-		dm = $("#input_dm").val();
-		dm = $.trim(dm);
-		if (dm == "") {
+		imported_dm = $("#input_dm").val();
+		imported_dm = $.trim(imported_dm);
+
+		if (imported_dm == "") {
 			alert("수치 모델을 입력해주세요!");
 			return;
 		}
-		dm = JSON.parse(dm);
 
-		draw_model(dm);
+		imported_dm = JSON.parse(imported_dm);
+		draw_model(imported_dm);
 
 	};
-
- 
 
 	var find_center_xy = function(p_dm) {
 
 		var max_x = 0;
 		var max_y = 0;
 
-		for ( var unit_index in p_dm.dynamic_model_element) {
+		for ( var unit_index in p_dm.component) {
 
-			var this_e = p_dm.dynamic_model_element[unit_index];
+			var this_e = p_dm.component[unit_index];
 
 			if (this_e.start.x > max_x) {
 				max_x = this_e.start.x;
@@ -54,7 +54,7 @@
 				max_y = this_e.start.y;
 			}
 
-			if (this_e.end.x > max_y) {
+			if (this_e.end.y > max_y) {
 				max_y = this_e.end.y;
 			}
 
@@ -89,47 +89,42 @@
 
 		var move_gap = {};
 
-		move_gap.x = center_x - dm.center.x;
-		move_gap.y = center_y - dm.center.y;
+		move_gap.x = center_x - imported_dm.center.x;
+		move_gap.y = center_y - imported_dm.center.y;
 
 		var center = {
 			x : center_x,
 			y : center_y
 		};
 
-		var clone_dm = $.extend(true, {}, dm);
+		var clone_dm = $.extend(true, {}, imported_dm);
 
-		for ( var data_index in clone_dm.dynamic_model_element) {
-			var element = clone_dm.dynamic_model_element[data_index];
-			var move_element = move_element_data(element, move_gap);
-			clone_dm.dynamic_model_element[data_index] = scale_element_data(
-					center, move_element, center_ratio);
+		for ( var component_index in clone_dm.component) {
+			var component = clone_dm.component[component_index];
+			var moved_component = move_component(component, move_gap);
+			clone_dm.component[component_index] = scale_component_data(center,
+					moved_component, center_ratio);
 		}
 
-		draw_model(clone_dm);
-
 		clone_dm.center = center;
+		clone_dm.ratio = center_ratio;
 
-		$("#output_dm").val(JSON.stringify(clone_dm));
-		
-		export_dm = clone_dm;
- 
+		zip_model(clone_dm);
 	};
 
 	var draw_model = function(p_dynamic_model) {
-		console.log("draw_model");
-		console.dir(p_dynamic_model);
+
 		MAIN_CANVAS.clear();
 
-		var element_data = p_dynamic_model.dynamic_model_element;
+		var component_data = p_dynamic_model.component;
 
-		for ( var data_index in element_data) {
+		for ( var component_index in component_data) {
 
-			var element = element_data[data_index];
-			console.dir(element);
-			var flat_data = flat_element_data(element);
+			var component = component_data[component_index];
 
-			if (element.type == "path") {
+			var flat_data = flat_component(component);
+
+			if (component.type == "path") {
 
 				var path = MAIN_CANVAS.path(flat_data);
 				path.fill('none');
@@ -140,7 +135,7 @@
 					linejoin : 'round'
 				});
 
-			} else if (element.type == "line") {
+			} else if (component.type == "line") {
 
 				var line = MAIN_CANVAS.line(flat_data).stroke({
 					color : '#f06',
@@ -247,14 +242,14 @@
 		var target_x = null;
 		var target_y = null;
 
-		console.log("시작점 ");
-		console.log(p_center);
+		//console.log("시작점 ");
+		//console.log(p_center);
 
-		console.log("끝점 ");
-		console.log(p_original_point);
+		//console.log("끝점 ");
+		//console.log(p_original_point);
 
-		console.log("비율 ");
-		console.log(p_ratio);
+		//console.log("비율 ");
+		//console.log(p_ratio);
 
 		// scale 적용전의 두점을 거리를 구한다.
 
@@ -273,13 +268,13 @@
 		var x2 = Number(p_original_point.x).toFixed(2);
 		var y2 = Number(p_original_point.y).toFixed(2);
 
-		console.log("x1 : " + x1);
-		console.log("y1 : " + y1);
-		console.log("x2 : " + x2);
-		console.log("y2 : " + y2);
-		console.log("두점의 길이 : " + original_length);
-		console.log("비율만큼 늘어난 길이 : " + scale_length);
-		console.log("비율만큼 늘어난 길이의 제곱 : " + scale_length_pow);
+		//console.log("x1 : " + x1);
+		//console.log("y1 : " + y1);
+		//console.log("x2 : " + x2);
+		//console.log("y2 : " + y2);
+		//console.log("두점의 길이 : " + original_length);
+		//console.log("비율만큼 늘어난 길이 : " + scale_length);
+		//console.log("비율만큼 늘어난 길이의 제곱 : " + scale_length_pow);
 
 		/*
 		
@@ -343,9 +338,9 @@
 			eq_x1 = x1;
 			eq_x1 = x2;
 
-			console.log("a : " + a);
-			console.log("b : " + b);
-			console.log("c : " + c);
+			//console.log("a : " + a);
+			//console.log("b : " + b);
+			//console.log("c : " + c);
 
 			eq_y1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
 			eq_y1 = Number(eq_y1).toFixed(2);
@@ -423,7 +418,7 @@
 
 			var eq1_slope = (y2 - y1) / (x2 - x1);
 
-			console.log("기울기 : " + eq1_slope);
+			//console.log("기울기 : " + eq1_slope);
 
 			a = 1 + eq1_slope * eq1_slope;
 
@@ -431,9 +426,9 @@
 
 			c = x1 * x1 + eq1_slope * eq1_slope * x1 * x1 - scale_length_pow;
 
-			console.log("a : " + a);
-			console.log("b : " + b);
-			console.log("c : " + c);
+			//console.log("a : " + a);
+			//console.log("b : " + b);
+			//console.log("c : " + c);
 
 			eq_x1 = (-b + Math.sqrt(b * b - (4 * a * c))) / (2 * a);
 			eq_x1 = Number(eq_x1).toFixed(2);
@@ -447,10 +442,10 @@
 
 		}
 
-		console.log("eq_x1 : " + eq_x1);
-		console.log("eq_y1 : " + eq_y1);
-		console.log("eq_x2 : " + eq_x2);
-		console.log("eq_y2 : " + eq_y2);
+		//console.log("eq_x1 : " + eq_x1);
+		//console.log("eq_y1 : " + eq_y1);
+		//console.log("eq_x2 : " + eq_x2);
+		//console.log("eq_y2 : " + eq_y2);
 
 		var center_axis_gap = 400;
 		var circle_size = 6;
@@ -471,7 +466,7 @@
 		var d = new Date();
 		var end = d.getMilliseconds();
 
-		console.log("execution time : " + (end - start) + " ms");
+		//console.log("execution time : " + (end - start) + " ms");
 
 	}
 
@@ -488,7 +483,8 @@
 		var rect2 = MAIN_CANVAS.rect(10, 10).fill("blue");
 
 		var path = MAIN_CANVAS
-				.path(" M 100, 100  m -75, 0  a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0"); // 원
+				.path(" M 100, 100  m -75, 0  a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0");
+
 		//var path = MAIN_CANVAS.path("M0,100 Q50,-50 100,100 T200,100");
 		//var path = MAIN_CANVAS.path("M17,42 L117,42 V142 H17 Z");
 		//var path = MAIN_CANVAS.path("M 100 260 T 105 121 T 280 330 Z");
@@ -721,28 +717,27 @@
 		return Math.sqrt(d);
 	};
 
-	var scale_element_data = function(p_center, p_element, p_ratio) {
-		console.log("scale_element_data");
+	var scale_component_data = function(p_center, p_component, p_ratio) {
 
-		var element_clone = $.extend(true, {}, p_element);
-		console.dir(p_element);
+		var component_clone = $.extend(true, {}, p_component);
 
-		element_clone.start = get_point_by_ratio(p_center, element_clone.start,
+		component_clone.start = get_point_by_ratio(p_center,
+				component_clone.start, p_ratio);
+		component_clone.start.name = p_component.start.name;
+
+		component_clone.end = get_point_by_ratio(p_center, component_clone.end,
 				p_ratio);
-		element_clone.start.name = p_element.start.name;
-		element_clone.end = get_point_by_ratio(p_center, element_clone.end,
-				p_ratio);
-		element_clone.end.name = p_element.end.name;
+		component_clone.end.name = p_component.end.name;
 
-		var data = element_clone.data;
+		var data = component_clone.data;
 
-		for ( var data_index in data) {
+		for ( var component_index in data) {
 
-			var step_data = data[data_index];
+			var step_data = data[component_index];
 
-			if (element_clone.type == "path") {
+			if (component_clone.type == "path") {
 
-				if (data_index == 0) {
+				if (component_index == 0) {
 
 					var p_target = {
 						x : step_data[1],
@@ -773,7 +768,7 @@
 
 						var p_target = {
 							x : step_data[1],
-							y : element_clone.start.y
+							y : component_clone.start.y
 						};
 
 						p_target = get_point_by_ratio(p_center, p_target,
@@ -784,7 +779,7 @@
 					} else if (step_data[0] == "V") {
 
 						var p_target = {
-							x : element_clone.start.x,
+							x : component_clone.start.x,
 							y : step_data[1]
 						};
 
@@ -890,18 +885,18 @@
 						step_data[2] = p_target.y;
 
 					} else if (step_data[0] == "A") {
-						console.log("A _____");
+						//console.log("A _____");
 					} else if (step_data[0] == "Z") {
-						console.log("A _____");
+						//console.log("A _____");
 					}
 
 					//R += " ";
 					//R += "z";
 				}
 
-			} else if (element_clone.type == "line") {
+			} else if (component_clone.type == "line") {
 
-				if (data_index == 0) {
+				if (component_index == 0) {
 
 					var p_target = {
 						x : step_data[1],
@@ -929,27 +924,27 @@
 
 			}
 
-			data[data_index] = step_data;
+			data[component_index] = step_data;
 
-		} // for ( var data_index in data) { 
+		} // for ( var component_index in data) { 
 
-		element_clone.data = data;
-		console.dir(element_clone);
-		return element_clone;
+		component_clone.data = data;
+		//console.dir(component_clone);
+		return component_clone;
 	};
 
-	var move_element_data = function(p_element, p_move_gap) {
+	var move_component = function(p_component, p_move_gap) {
 
 		var x_gap = Number(p_move_gap.x);
 		var y_gap = Number(p_move_gap.y);
 
-		var start_name = p_element.start.name;
-		var start_x = Number(p_element.start.x) + x_gap;
-		var start_y = Number(p_element.start.y) + y_gap;
+		var start_name = p_component.start.name;
+		var start_x = Number(p_component.start.x) + x_gap;
+		var start_y = Number(p_component.start.y) + y_gap;
 
-		var end_name = p_element.end.name;
-		var end_x = Number(p_element.end.x) + x_gap;
-		var end_y = Number(p_element.end.y) + y_gap;
+		var end_name = p_component.end.name;
+		var end_x = Number(p_component.end.x) + x_gap;
+		var end_y = Number(p_component.end.y) + y_gap;
 
 		var R = {};
 		R.start = {};
@@ -960,16 +955,16 @@
 		R.end.x = end_x;
 		R.end.y = end_y;
 		R.end.name = end_name;
-		R.type = p_element.type;
+		R.type = p_component.type;
 
-		var data = p_element.data;
+		var data = p_component.data;
 
-		for ( var data_index in data) {
+		for ( var component_index in data) {
 
-			var step_data = data[data_index];
-			if (p_element.type == "path") {
+			var step_data = data[component_index];
+			if (p_component.type == "path") {
 
-				if (data_index == 0) {
+				if (component_index == 0) {
 
 					step_data[1] = Number(step_data[1]) + x_gap;
 					step_data[2] = Number(step_data[2]) + y_gap;
@@ -1017,18 +1012,18 @@
 						step_data[2] = Number(step_data[2]) + y_gap;
 
 					} else if (step_data[0] == "A") {
-						console.log("A _____");
+						//console.log("A _____");
 					} else if (step_data[0] == "Z") {
-						console.log("A _____");
+						//console.log("A _____");
 					}
 
 					//R += " ";
 					//R += "z";
 				}
 
-			} else if (p_element.type == "line") {
+			} else if (p_component.type == "line") {
 
-				if (data_index == 0) {
+				if (component_index == 0) {
 
 					step_data[1] = Number(step_data[1]) + x_gap;
 					step_data[2] = Number(step_data[2]) + y_gap;
@@ -1042,31 +1037,31 @@
 
 			}
 
-			data[data_index] = step_data;
+			data[component_index] = step_data;
 
-		} // for ( var data_index in data) { 
+		} // for ( var component_index in data) { 
 
 		R.data = data;
 		return R;
 
 	}
 
-	var flat_element_data = function(p_element) {
-		console.log("flat_element_data  ");
+	var flat_component = function(p_component) {
+		//console.log("flat_component  ");
 		var flat_R = "";
 
-		var data = p_element.data;
-		console.dir(p_element);
+		var data = p_component.data;
+		//console.dir(p_component);
 
-		for ( var data_index in data) {
+		for ( var component_index in data) {
 
-			var step_data = data[data_index];
-			console.log("data_index : " + data_index);
-			console.dir(step_data);
+			var step_data = data[component_index];
+			//console.log("component_index : " + component_index);
+			//console.dir(step_data);
 
-			if (p_element.type == "path") {
+			if (p_component.type == "path") {
 
-				if (data_index == 0) {
+				if (component_index == 0) {
 
 					flat_R = "M";
 					flat_R += step_data[1];
@@ -1145,18 +1140,18 @@
 						flat_R += step_data[2];
 
 					} else if (step_data[0] == "A") {
-						console.log("A _____");
+						//console.log("A _____");
 					} else if (step_data[0] == "Z") {
-						console.log("A _____");
+						//console.log("A _____");
 					}
 
 					//flat_R += " ";
 					//flat_R += "z";
 				}
 
-			} else if (p_element.type == "line") {
+			} else if (p_component.type == "line") {
 
-				if (data_index == 0) {
+				if (component_index == 0) {
 
 					/* flat_R = [];
 					flat_R.push(step_data[1]);
@@ -1181,60 +1176,539 @@
 			}
 		}
 
-		console.log(flat_R);
+		//console.log(flat_R);
 
 		return flat_R;
 
 	};
 
-	var mi_exe = function(p_target, p_op) {
-		alert(p_target + " " + p_op);
+	var zip_model = function(p_dme) {
+
+		// 수치모델에서 포인트 이름과 그 이름이 있는 인덱스를 정리한다. 
+
+		var point_dic = {};
+
+		// 측정항목과 포인트 map을 parsing 한다. 
+
+		var ctrl_data_dic = {};
+
+		var dme = p_dme.component;
+		var dme_center = p_dme.center;
+
+		var pure_dme_index = {};
+		var pure_dme = [];
+
+		for ( var dme_index in dme) {
+
+			var dme_item = dme[dme_index];
+			var start_point = dme_item.start;
+			var end_point = dme_item.end;
+
+			var point_key = start_point.name + end_point.name;
+
+			if (pure_dme_index.hasOwnProperty(point_key)) {
+				continue;
+			} else {
+				pure_dme.push(dme_item);
+				pure_dme_index[point_key] = "EXIST";
+			}
+
+			if (!point_dic.hasOwnProperty(start_point.name)) {
+
+				point_dic[start_point.name] = {};
+				point_dic[start_point.name].dme_index = [];
+				point_dic[start_point.name].dme_index.push({
+					"type" : "start",
+					"component_index" : Number(dme_index)
+				});
+
+			} else {
+
+				point_dic[start_point.name].dme_index.push({
+					"type" : "start",
+					"component_index" : Number(dme_index)
+				});
+
+			}
+
+			if (!point_dic.hasOwnProperty(end_point.name)) {
+
+				point_dic[end_point.name] = {};
+				point_dic[end_point.name].dme_index = [];
+				point_dic[end_point.name].dme_index.push({
+					"type" : "end",
+					"component_index" : Number(dme_index)
+				});
+
+			} else {
+
+				point_dic[end_point.name].dme_index.push({
+					"type" : "end",
+					"component_index" : Number(dme_index)
+				});
+
+			}
+
+		}
+
+		var zip_dme = {};
+		zip_dme.component = pure_dme;
+		zip_dme.center = dme_center;
+		zip_dme.point_dic = point_dic;
+		zip_dme.ratio = Number(p_dme.ratio);
+
+		current_zip_dm = zip_dme;
+		draw_model(zip_dme);
+		$("#output_dm").val(JSON.stringify(zip_dme));
+
 	};
 
-	var import_controller_data = function() {
-		var ctrl_data = $("#input_ctrl").val();
-		
-		// 수치모델에서 포인트 이름과 그 이름이 있는 인덱스를 정리한다. 
-		
-		
-		var point_dic = {}; 
-			
-		
-		// 측정항목과 포인트 map을 parsing 한다. 
-		
-		var ctrl_data_dic = {};
-		
+	var import_control_data = function() {
+
 		/*
+		
 		 포인트 이동 정의
 		 
-		  축 : x (X)
+		                축 : x (X)
+		                
+		                	방향 : + (오른쪽) , - (왼쪽)
+		                
+		                축 : y (Y)
+		                
+		                	방향 : + (아래) ,- (위쪽) 
+		                
+		                축 : two point (TP)  두점을 지나는 직선의 방정식 
+		                
+		                        두점이름 : 형식      = 중심점-끝점 (예 P12-P14 )
+		                     
+		                                    뱡향 : + (중심에서 끝점으로) , - (끝점에서 중심으로)
+		                        
+		                                    예약어 : svg_center (이미지의 중간 위치 점을 나타낸다.)
+		         
+		                예)
+		                
+		                P12를 X축 오른쪽으로 10만큼           	  : P12:X,10
+		                P12를 Y축 위로 3만큼                          : P12:Y,3
+		                P12를 P12-P14 선에서 끝점으로 4만큼    : P12:TP,P12-P16,4
+		                p12를 이미지 중간에서 이미지 밖으로 4만쿰 : p12:tp,svg_center-p12,4
+		                
+		  		
+		 */
+
+		var control_data = $("#input_ctrl").val();
+
+		try {
+			current_control_data = JSON.parse(control_data);
+		} catch (e) {
+			alert("통제 데이터 파싱 오류입니다.");
+			return;
+		}
+
+		if (current_zip_dm == null) {
+			alert("수치 모델이 존재하지 않습니다. ");
+			return;
+		}
+		console.dir(current_control_data);
+		console.dir(current_zip_dm);
+
+	};
+
+	var mi_exe = function(p_target, p_mi_direction) {
+
+		//mi_min_1
+		//mi_max_1
+		//mi_step_1
+		//mi_now_1
+
+		var name = $("#mi_name_" + p_target).val();
+		var min = $("#mi_min_" + p_target).val();
+		var max = $("#mi_max_" + p_target).val();
+		var step = $("#mi_step_" + p_target).val();
+		var now = $("#mi_now_" + p_target).val();
+
+		//console.dir(current_control_data);
+		//console.dir(current_zip_dm);
+
+		console.log("name   : " + name);
+		console.log("min   : " + min);
+		console.log("max   : " + max);
+		console.log("step   : " + step);
+		console.log("now   : " + now);
+
+		var op_data = {};
+		op_data.name = name;
+		op_data.min = min;
+		op_data.max = max;
+		op_data.step = step;
+		op_data.now = now;
+		op_data.mi_direction = p_mi_direction;
+
+		if (current_control_data[name]) {
+
+			var cd = current_control_data[name];
+
+			for ( var cd_index in cd) {
+
+				var step_cd = cd[cd_index];
+				var step_cd_fist_split = step_cd.split(":");
+				var target_point = step_cd_fist_split[0].toUpperCase();
+				var target_op = step_cd_fist_split[1].split(",");
+				var op_type = target_op[0].toUpperCase();
+				var op_direction = target_op[1];
+
+				//console.log(target_point);
+				//console.log(target_op);
+
+				op_data.target = target_point;
+				op_data.data = target_op;
+
+				if (op_type == "X") {
+					op_x_move(op_data, current_zip_dm);
+				} else if (op_type == "Y") {
+					op_y_move(op_data, current_zip_dm);
+				} else if (op_type == "TP") {
+					op_tp_move(op_data, current_zip_dm);
+				}
+
+			}
+
+			console.dir(current_zip_dm);
+			draw_model(current_zip_dm);
+		} else {
+			alert("통제 데이터가 존재 하지 않습니다.");
+		}
+
+	};
+
+	/*
+
+	       스커트 컨트롤러 데이터 샘플  
+	       
+	       
+	       
+	       {
+                "소매" :  ["p14:x,+,1","p14:y,+,1","p13:x,-,1","p13:y,-,1","p4:x,-,1","p4:y,-,1","p5:x,+,1","p5:y,-,1"],
+	    	    "p14_x_+": ["p14:x,+,5"],
+	    	    "p14_x_-": ["p14:x,-,5"],
+	    	    "p14_y_+": ["p14:y,+,5"],
+	    	    "p14_y_-": ["p14:y,-,5"],
+	    	    "p14_tp_p15_+": ["p14:tp,+,p15-p14,5"],
+	    	    "p14_tp_p15_-": ["p14:tp,-,p15-p14,5"],
+	    	    "p14_tp_center_+": ["p14:tp,+,svg_center-p14,5"],
+	    	    "p14_tp_center_-": ["p14:tp,-,svg_center-p14,5"]
+	    	}
+	
+	 */
+
+	var op_x_move = function(p_op_data, p_dm) {
+
+		console.log("             OP_X_MOVE START");
+		console.dir(p_op_data);
+		console.dir(p_dm);
+
+		var move_ratio = p_dm.ratio;
+		var op_data = p_op_data.data;
+		var op_direction = op_data[1];
+		var op_size = Number(op_data[2]);
+		var mi_direction = p_op_data.mi_direction;
 		
-		  	방향 : Left, Right
-		       크기 :
-		  
-		  축 : y (Y)
-		  
-		  	방향 : Up,Down
-		       크기 : 
+		if (p_dm.point_dic[p_op_data.target]) {
+
+			var point_index_data = p_dm.point_dic[p_op_data.target].dme_index;
+
+			for ( var pid_index in point_index_data) {
+
+				
+
+				var component_index = point_index_data[pid_index].component_index;
+				var point_type = point_index_data[pid_index].type;
+				var component = p_dm.component[component_index];
+				var component_data = component.data;
+				var point_data = component[point_type];
+
+				console.log("------- COMPONENT POINT X MOVE  [ BEFORE ]-----------------------------------------------------");
+				console.log(" point_name : " + p_op_data.target);
+				console.log(" component type : " + component.type);
+				console.log(" component index : " + component_index);
+				console.log(" point_type in component : " + point_type);
+				console.log(" point data ");
+				console.dir(JSON.stringify(component[point_type]));
+				console.log(" component data ");
+				console.dir(JSON.stringify(component.data));
+
+				var move_size = 0;
+				
+				if(mi_direction == "+" && op_direction == "+"){
+					move_size = Number(p_op_data.step) * move_ratio * op_size;
+				}else if(mi_direction == "+" && op_direction == "-"){
+					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
+				}else if(mi_direction == "-" && op_direction == "+"){
+					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
+				}else if(mi_direction == "-" && op_direction == "-"){
+					move_size = Number(p_op_data.step) * move_ratio * op_size;
+				}
+				
+				
+				point_data.x = Number(point_data.x) + move_size;
+				point_data.y = Number(point_data.y);
+				
+				
+				if (point_type == "start") {
+
+						var start_data = component_data[0];
+						start_data[1] = Number(start_data[1]) + move_size;
+						start_data[2] = Number(start_data[2]); 
+						
+				} else {
+					// end 포인트를 조작한다면...
 		 
-		  축 : two point (TP)  두점을 지나는 직선의 방정식 
-		  
-		       두점이름 : P12-P14  
-		  	뱡향 : Front, Back
-		  	크기 : 
-		  	
-		  
-		  		
-		  	예) 
-		  	
-		  		P12:X,L,10
-		  		P12:Y,U,3
-		  		P16:TP,P12-P16,F,12
-		  	
-		  		
-		*/  
+					
+					var end_data = component_data[1];
+
+ 				     if (component.type == "path") {
+
+ 
+							if (end_data[0] == "L") { // 라인
+
+								end_data[1] = Number(end_data[1]) + move_size;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+
+							} else if (end_data[0] == "H") { // 수평
+
+								end_data[1] = Number(end_data[1]) + move_size;
+
+							} else if (end_data[0] == "V") { // 수직
+							
+								//end_data[1] = Number(end_data[1]) + y_gap;
+
+							} else if (end_data[0] == "C") { 
+
+								//end_data[1] = Number(end_data[1]) + x_gap;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+								//end_data[3] = Number(end_data[3]) + x_gap;
+								//end_data[4] = Number(end_data[4]) + y_gap;
+								end_data[5] = Number(end_data[5]) + move_size;
+								//end_data[6] = Number(end_data[6]) + y_gap;
+
+							} else if (end_data[0] == "S") {
+
+								//end_data[1] = Number(end_data[1]) + x_gap;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+								end_data[3] = Number(end_data[3]) + move_size;
+								//end_data[4] = Number(end_data[4]) + y_gap;
+
+							} else if (end_data[0] == "Q") {
+
+								//end_data[1] = Number(end_data[1]) + x_gap;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+								end_data[3] = Number(end_data[3]) + move_size;
+								//end_data[4] = Number(end_data[4]) + y_gap;
+
+							} else if (end_data[0] == "T") {
+
+								end_data[1] = Number(end_data[1]) + move_size;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+
+							} else if (end_data[0] == "A") {
+								//console.log("A _____");
+							} else if (end_data[0] == "Z") {
+								//console.log("A _____");
+							}
+ 
+					} else if (component.type == "line") {
+ 
+
+							end_data[1] = Number(end_data[1]) + move_size;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+
+				 
+					}  
+
+				}
+				
+				
+				
+				console.log("------- COMPONENT POINT X MOVE  [ AFTER ]-----------------------------------------------------");
+				console.log(" point_name : " + p_op_data.target);
+				console.log(" component type : " + component.type);
+				console.log(" component index : " + component_index);
+				console.log(" point_type in component : " + point_type);
+				console.log(" point data ");
+				console.dir(JSON.stringify(component[point_type]));
+				console.log(" component data ");
+				console.dir(JSON.stringify(component.data));
+
+			}
+
+		} else {
+			alert("수치모델에 " + p_op_data.name + " 점이 존재하지 않습니다.");
+		}
+
+	};
+
+	var op_y_move = function(p_op_data, p_dm) {
+
+		console.log("             OP_Y_MOVE START");
+		console.dir(p_op_data);
+		console.dir(p_dm);
+
+		var move_ratio = p_dm.ratio;
+		var op_data = p_op_data.data;
+		var op_direction = op_data[1];
+		var op_size = Number(op_data[2]);
+		var mi_direction = p_op_data.mi_direction;
 		
-			
+		if (p_dm.point_dic[p_op_data.target]) {
+
+			var point_index_data = p_dm.point_dic[p_op_data.target].dme_index;
+
+			for ( var pid_index in point_index_data) {
+
+				
+
+				var component_index = point_index_data[pid_index].component_index;
+				var point_type = point_index_data[pid_index].type;
+				var component = p_dm.component[component_index];
+				var component_data = component.data;
+				var point_data = component[point_type];
+
+				console.log("------- COMPONENT POINT Y MOVE  [ BEFORE ]-----------------------------------------------------");
+				console.log(" point_name : " + p_op_data.target);
+				console.log(" component type : " + component.type);
+				console.log(" component index : " + component_index);
+				console.log(" point_type in component : " + point_type);
+				console.log(" point data ");
+				console.dir(JSON.stringify(component[point_type]));
+				console.log(" component data ");
+				console.dir(JSON.stringify(component.data));
+
+				var move_size = 0;
+				
+				if(mi_direction == "+" && op_direction == "+"){
+					move_size = Number(p_op_data.step) * move_ratio * op_size;
+				}else if(mi_direction == "+" && op_direction == "-"){
+					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
+				}else if(mi_direction == "-" && op_direction == "+"){
+					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
+				}else if(mi_direction == "-" && op_direction == "-"){
+					move_size = Number(p_op_data.step) * move_ratio * op_size;
+				}
+				
+				
+				point_data.x = Number(point_data.x);
+				point_data.y = Number(point_data.y) + move_size;
+				
+				
+				if (point_type == "start") {
+
+						var start_data = component_data[0];
+						start_data[1] = Number(start_data[1]);
+						start_data[2] = Number(start_data[2]) + move_size; 
+						
+				} else {
+					// end 포인트를 조작한다면...
+		 
+					
+					var end_data = component_data[1];
+
+ 				     if (component.type == "path") {
+
+ 
+							if (end_data[0] == "L") { // 라인
+
+								//end_data[1] = Number(end_data[1]) + move_size;
+								end_data[2] = Number(end_data[2]) + move_size;
+
+							} else if (end_data[0] == "H") { // 수평
+
+								//end_data[1] = Number(end_data[1]) + move_size;
+
+							} else if (end_data[0] == "V") { // 수직
+							
+								end_data[1] = Number(end_data[1]) + move_size;
+
+							} else if (end_data[0] == "C") { 
+
+								//end_data[1] = Number(end_data[1]) + x_gap;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+								//end_data[3] = Number(end_data[3]) + x_gap;
+								//end_data[4] = Number(end_data[4]) + y_gap;
+								//end_data[5] = Number(end_data[5]) + move_size;
+								end_data[6] = Number(end_data[6]) + move_size;
+
+							} else if (end_data[0] == "S") {
+
+								//end_data[1] = Number(end_data[1]) + x_gap;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+								//end_data[3] = Number(end_data[3]) + move_size;
+								end_data[4] = Number(end_data[4]) + move_size;
+
+							} else if (end_data[0] == "Q") {
+
+								//end_data[1] = Number(end_data[1]) + x_gap;
+								//end_data[2] = Number(end_data[2]) + y_gap;
+								//end_data[3] = Number(end_data[3]) + move_size;
+								end_data[4] = Number(end_data[4]) + move_size;
+
+							} else if (end_data[0] == "T") {
+
+								//end_data[1] = Number(end_data[1]) + move_size;
+								end_data[2] = Number(end_data[2]) + move_size;
+
+							} else if (end_data[0] == "A") {
+								//console.log("A _____");
+							} else if (end_data[0] == "Z") {
+								//console.log("A _____");
+							}
+ 
+					} else if (component.type == "line") {
+ 
+
+							//end_data[1] = Number(end_data[1]) + move_size;
+							end_data[2] = Number(end_data[2]) + move_size;
+
+				 
+					}  
+
+				}
+				
+				
+				
+				console.log("------- COMPONENT POINT Y MOVE  [ AFTER ]-----------------------------------------------------");
+				console.log(" point_name : " + p_op_data.target);
+				console.log(" component type : " + component.type);
+				console.log(" component index : " + component_index);
+				console.log(" point_type in component : " + point_type);
+				console.log(" point data ");
+				console.dir(JSON.stringify(component[point_type]));
+				console.log(" component data ");
+				console.dir(JSON.stringify(component.data));
+
+			}
+
+		} else {
+			alert("수치모델에 " + p_op_data.name + " 점이 존재하지 않습니다.");
+		}
+
+	};
+
+	var op_tp_move = function(p_op_data, p_dm) {
+
+		console.log("op_tp_move");
+		//console.dir(p_op_data);
+		//console.dir(p_dm);
+
+		if (p_dm.point_dic[p_op_data.target]) {
+			var point_index_data = p_dm.point_dic[p_op_data.target].dme_index;
+
+			for ( var pid_index in point_index_data) {
+				console.dir(point_index_data[pid_index]);
+			}
+
+		} else {
+			alert("수치모델에 " + p_op_data.name + " 점이 존재하지 않습니다.");
+		}
+
 	};
 </script>
 <style>
@@ -1263,9 +1737,7 @@
   <tr>
    <td>
     <div>
-     X 축 : <input type="text" id="center_x" value="450" /> 
-     Y 축 : <input type="text" id="center_y" value="450" /> 
-         비율 : <input type="text" id="center_ratio" value="1.1" />
+     X 축 : <input type="text" id="center_x" value="450" /> Y 축 : <input type="text" id="center_y" value="450" /> 비율 : <input type="text" id="center_ratio" value="1.1" />
      <button onclick="move_center();">중심축이동</button>
      <br>
     </div>
@@ -1276,39 +1748,39 @@
     <button onclick="import_model();">불러들이기</button> <textarea id="input_dm" cols="135" rows="5"></textarea>
     <h3>수치모델 출력</h3> <textarea id="output_dm" cols="135" rows="5"></textarea>
     <h3>controller</h3>
-    <button onclick="import_controller_data();">조건 불러들이기</button> <textarea id="input_ctrl" cols="135" rows="10"></textarea>
+    <button onclick="import_control_data();">통제 데이터 불러들이기</button> <textarea id="input_ctrl" cols="135" rows="10"></textarea>
     <h3>측정항목</h3>
     <div>
-     이름 : <input type="text" id="mi_name_1" /> min : <input type="text" id="mi_min_1"> max : <input type="text" id="mi_max_1"> now : <input type="text" id="mi_now_1">
-     <button onclick="mi_exe('1','up')">△</button>
-     <button onclick="mi_exe('1','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_2" /> min : <input type="text" id="mi_min_2"> max : <input type="text" id="mi_max_2"> now : <input type="text" id="mi_now_2">
-     <button onclick="mi_exe('2','up')">△</button>
-     <button onclick="mi_exe('2','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_3" /> min : <input type="text" id="mi_min_3"> max : <input type="text" id="mi_max_3"> now : <input type="text" id="mi_now_3">
-     <button onclick="mi_exe('3','up')">△</button>
-     <button onclick="mi_exe('3','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_4" /> min : <input type="text" id="mi_min_4"> max : <input type="text" id="mi_max_4"> now : <input type="text" id="mi_now_4">
-     <button onclick="mi_exe('4','up')">△</button>
-     <button onclick="mi_exe('4','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_5" /> min : <input type="text" id="mi_min_5"> max : <input type="text" id="mi_max_5"> now : <input type="text" id="mi_now_5">
-     <button onclick="mi_exe('5','up')">△</button>
-     <button onclick="mi_exe('5','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_6" /> min : <input type="text" id="mi_min_6"> max : <input type="text" id="mi_max_6"> now : <input type="text" id="mi_now_6">
-     <button onclick="mi_exe('6','up')">△</button>
-     <button onclick="mi_exe('6','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_7" /> min : <input type="text" id="mi_min_7"> max : <input type="text" id="mi_max_7"> now : <input type="text" id="mi_now_6">
-     <button onclick="mi_exe('6','up')">△</button>
-     <button onclick="mi_exe('7','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_8" /> min : <input type="text" id="mi_min_8"> max : <input type="text" id="mi_max_8"> now : <input type="text" id="mi_now_6">
-     <button onclick="mi_exe('6','up')">△</button>
-     <button onclick="mi_exe('8','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_9" /> min : <input type="text" id="mi_min_9"> max : <input type="text" id="mi_max_9"> now : <input type="text" id="mi_now_6">
-     <button onclick="mi_exe('6','up')">△</button>
-     <button onclick="mi_exe('9','down')">▽</button>
-     <br> 이름 : <input type="text" id="mi_name_10" /> min : <input type="text" id="mi_min_10"> max : <input type="text" id="mi_max_10"> now : <input type="text" id="mi_now_6">
-     <button onclick="mi_exe('6','up')">△</button>
-     <button onclick="mi_exe('10','down')">▽</button>
+     이름 : <input type="text" id="mi_name_1" size="10" size="10" /> min : <input type="text" id="mi_min_1" size="10"> max : <input type="text" id="mi_max_1" size="10"> step : <input type="text" id="mi_step_1" size="10"> now : <input readonly="readonly" type="text" id="mi_now_1" size="10">
+     <button onclick="mi_exe('1','+')">△</button>
+     <button onclick="mi_exe('1','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_2" size="10" /> min : <input type="text" id="mi_min_2" size="10"> max : <input type="text" id="mi_max_2" size="10"> step : <input type="text" id="mi_step_2" size="10"> now : <input readonly="readonly" type="text" id="mi_now_2" size="10">
+     <button onclick="mi_exe('2','+')">△</button>
+     <button onclick="mi_exe('2','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_3" size="10" /> min : <input type="text" id="mi_min_3" size="10"> max : <input type="text" id="mi_max_3" size="10"> step : <input type="text" id="mi_step_3" size="10"> now : <input readonly="readonly" type="text" id="mi_now_3" size="10">
+     <button onclick="mi_exe('3','+')">△</button>
+     <button onclick="mi_exe('3','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_4" size="10" /> min : <input type="text" id="mi_min_4" size="10"> max : <input type="text" id="mi_max_4" size="10"> step : <input type="text" id="mi_step_4" size="10"> now : <input readonly="readonly" type="text" id="mi_now_4" size="10">
+     <button onclick="mi_exe('4','+')">△</button>
+     <button onclick="mi_exe('4','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_5" size="10" /> min : <input type="text" id="mi_min_5" size="10"> max : <input type="text" id="mi_max_5" size="10"> step : <input type="text" id="mi_step_5" size="10"> now : <input readonly="readonly" type="text" id="mi_now_5" size="10">
+     <button onclick="mi_exe('5','+')">△</button>
+     <button onclick="mi_exe('5','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_6" size="10" /> min : <input type="text" id="mi_min_6" size="10"> max : <input type="text" id="mi_max_6" size="10"> step : <input type="text" id="mi_step_6" size="10"> now : <input readonly="readonly" type="text" id="mi_now_6" size="10">
+     <button onclick="mi_exe('6','+')">△</button>
+     <button onclick="mi_exe('6','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_7" size="10" /> min : <input type="text" id="mi_min_7" size="10"> max : <input type="text" id="mi_max_7" size="10"> step : <input type="text" id="mi_step_7" size="10"> now : <input readonly="readonly" type="text" id="mi_now_7" size="10">
+     <button onclick="mi_exe('7','+')">△</button>
+     <button onclick="mi_exe('7','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_8" size="10" /> min : <input type="text" id="mi_min_8" size="10"> max : <input type="text" id="mi_max_8" size="10"> step : <input type="text" id="mi_step_8" size="10"> now : <input readonly="readonly" type="text" id="mi_now_8" size="10">
+     <button onclick="mi_exe('8','+')">△</button>
+     <button onclick="mi_exe('8','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_9" size="10" /> min : <input type="text" id="mi_min_9" size="10"> max : <input type="text" id="mi_max_9" size="10"> step : <input type="text" id="mi_step_9" size="10"> now : <input readonly="readonly" type="text" id="mi_now_9" size="10">
+     <button onclick="mi_exe('9','+')">△</button>
+     <button onclick="mi_exe('9','-')">▽</button>
+     <br> 이름 : <input type="text" id="mi_name_10" size="10" /> min : <input type="text" id="mi_min_10" size="10"> max : <input type="text" id="mi_max_10" size="10"> step : <input type="text" id="mi_step_10" size="10"> now : <input readonly="readonly" type="text" id="mi_now_10" size="10">
+     <button onclick="mi_exe('10','+')">△</button>
+     <button onclick="mi_exe('10','-')">▽</button>
      <br>
     </div>
    </td>

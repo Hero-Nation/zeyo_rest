@@ -381,7 +381,7 @@
 
 			}// for ( var data_svg_element_index in data_svg_element) {
 
-			var dynamic_model_element = [];
+			var component = [];
 			var max_x = 0;
 			var max_y = 0;
 
@@ -410,7 +410,7 @@
 				}
 
 				this_data.data = this_e.array().value;
-				dynamic_model_element.push(this_data);
+				component.push(this_data);
 			}
 
 			extracted_data.center = {
@@ -418,7 +418,7 @@
 				y : max_y / 2
 			};
 
-			extracted_data.dynamic_model_element = dynamic_model_element;
+			extracted_data.component = component;
 
 			$("#output_data_editor").val("");
 			$("#output_data_editor").val(JSON.stringify(extracted_data));
@@ -437,16 +437,16 @@
 		var xy_x = $("#x_point").val();
 		var xy_y = $("#y_point").val();
 
-		var dynamic_model_element = extracted_data.dynamic_model_element;
+		var component = extracted_data.component;
 		var before_center = extracted_data.center;
 		
 		
 		var new_center_gap_x = xy_x - before_center.x;
 		var new_center_gap_y = xy_y - before_center.y;
 		 
-		for ( var element_index in dynamic_model_element) {
+		for ( var element_index in component) {
 			
-			var this_element = dynamic_model_element[element_index];
+			var this_element = component[element_index];
 			
 			if(this_element.type == "path"){
 				
