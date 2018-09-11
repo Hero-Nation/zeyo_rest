@@ -102,7 +102,8 @@
 		for ( var component_index in clone_dm.component) {
 			var component = clone_dm.component[component_index];
 			var moved_component = move_component(component, move_gap);
-			clone_dm.component[component_index] = scale_component_data(center,moved_component, center_ratio);
+			clone_dm.component[component_index] = scale_component_data(center,
+					moved_component, center_ratio);
 		}
 
 		clone_dm.center = center;
@@ -619,17 +620,20 @@
 
 	}
 
-	var get_point_by_extension = function(p_center, p_original_point,			p_extension) {
-		console.log("-------------------------------------------------------------------------");
+	var get_point_by_extension = function(p_center, p_original_point,
+			p_extension) {
+		console
+				.log("-------------------------------------------------------------------------");
 		console.log("       get_point_by_extension");
-		console.log("-------------------------------------------------------------------------");
+		console
+				.log("-------------------------------------------------------------------------");
 		console.log("       p_center");
 		console.dir(p_center);
 		console.log("       p_original_point");
 		console.dir(p_original_point);
 		console.log("       p_extension");
 		console.dir(p_extension);
-		
+
 		var target_x = null;
 		var target_y = null;
 
@@ -708,7 +712,7 @@
 		console.dir(eq_x2);
 		console.log("       eq_y2");
 		console.dir(eq_y2);
-		
+
 		if (x2 >= x1) {
 			return {
 				x : Number(Number(eq_x1).toFixed(2)),
@@ -1218,13 +1222,13 @@
 		for ( var dme_index in dme) {
 			console.log(" zip_model : dme_index");
 			console.log(dme_index);
-			
+
 			var dme_item = dme[dme_index];
 			var start_point = dme_item.start;
 			var end_point = dme_item.end;
 
 			console.dir(dme_item);
-			
+
 			var point_key = start_point.name + end_point.name;
 
 			if (pure_dme_index.hasOwnProperty(point_key)) {
@@ -1396,8 +1400,7 @@
 			console.dir(current_zip_dm);
 			draw_model(current_zip_dm);
 			$("#output_dm").val(JSON.stringify(current_zip_dm));
-			
-			
+
 		} else {
 			alert("통제 데이터가 존재 하지 않습니다.");
 		}
@@ -1454,14 +1457,12 @@
 		var op_direction = op_data[1];
 		var op_size = Number(op_data[2]);
 		var mi_direction = p_op_data.mi_direction;
-		
+
 		if (p_dm.point_dic[p_op_data.target]) {
 
 			var point_index_data = p_dm.point_dic[p_op_data.target].dme_index;
 
 			for ( var pid_index in point_index_data) {
-
-				
 
 				var component_index = point_index_data[pid_index].component_index;
 				var point_start_or_end = point_index_data[pid_index].type;
@@ -1469,118 +1470,117 @@
 				var component_data = component.data;
 				var point_data = component[point_start_or_end];
 
-				console.log("------- COMPONENT POINT X MOVE  [ BEFORE ]-----------------------------------------------------");
+				console
+						.log("------- COMPONENT POINT X MOVE  [ BEFORE ]-----------------------------------------------------");
 				console.log(" point_name : " + p_op_data.target);
 				console.log(" component type : " + component.type);
 				console.log(" component index : " + component_index);
-				console.log(" point_start_or_end in component : " + point_start_or_end);
+				console.log(" point_start_or_end in component : "
+						+ point_start_or_end);
 				console.log(" point data ");
 				console.dir(JSON.stringify(component[point_start_or_end]));
 				console.log(" component data ");
 				console.dir(JSON.stringify(component.data));
 
 				var move_size = 0;
-				
-				if(mi_direction == "+" && op_direction == "+"){
+
+				if (mi_direction == "+" && op_direction == "+") {
 					move_size = Number(p_op_data.step) * move_ratio * op_size;
-				}else if(mi_direction == "+" && op_direction == "-"){
-					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
-				}else if(mi_direction == "-" && op_direction == "+"){
-					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
-				}else if(mi_direction == "-" && op_direction == "-"){
+				} else if (mi_direction == "+" && op_direction == "-") {
+					move_size = (Number(p_op_data.step) * move_ratio * op_size)
+							* -1;
+				} else if (mi_direction == "-" && op_direction == "+") {
+					move_size = (Number(p_op_data.step) * move_ratio * op_size)
+							* -1;
+				} else if (mi_direction == "-" && op_direction == "-") {
 					move_size = Number(p_op_data.step) * move_ratio * op_size;
 				}
-				
-				
+
 				point_data.x = Number(point_data.x) + move_size;
 				point_data.y = Number(point_data.y);
-				
-				
+
 				if (point_start_or_end == "start") {
 
-						var start_data = component_data[0];
-						start_data[1] = Number(start_data[1]) + move_size;
-						start_data[2] = Number(start_data[2]); 
-						
+					var start_data = component_data[0];
+					start_data[1] = Number(start_data[1]) + move_size;
+					start_data[2] = Number(start_data[2]);
+
 				} else {
 					// end 포인트를 조작한다면...
-		 
+
 					var end_data = null;
-					
-					if(component_data.length == 1){
+
+					if (component_data.length == 1) {
 						end_data = component_data[0];
-					}else{
+					} else {
 						end_data = component_data[1];
 					}
-						
- 				     if (component.type == "path") {
 
- 
-							if (end_data[0] == "L") { // 라인
+					if (component.type == "path") {
 
-								end_data[1] = Number(end_data[1]) + move_size;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-
-							} else if (end_data[0] == "H") { // 수평
-
-								end_data[1] = Number(end_data[1]) + move_size;
-
-							} else if (end_data[0] == "V") { // 수직
-							
-								//end_data[1] = Number(end_data[1]) + y_gap;
-
-							} else if (end_data[0] == "C") { 
-
-								end_data[1] = Number(end_data[1]) + move_size;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-								end_data[3] = Number(end_data[3]) + move_size;
-								//end_data[4] = Number(end_data[4]) + y_gap;
-								end_data[5] = Number(end_data[5]) + move_size;
-								//end_data[6] = Number(end_data[6]) + y_gap;
-
-							} else if (end_data[0] == "S") {
-
-								end_data[1] = Number(end_data[1]) + move_size;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-								end_data[3] = Number(end_data[3]) + move_size;
-								//end_data[4] = Number(end_data[4]) + y_gap;
-
-							} else if (end_data[0] == "Q") {
-
-								end_data[1] = Number(end_data[1]) + move_size;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-								end_data[3] = Number(end_data[3]) + move_size;
-								//end_data[4] = Number(end_data[4]) + y_gap;
-
-							} else if (end_data[0] == "T") {
-
-								end_data[1] = Number(end_data[1]) + move_size;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-
-							} else if (end_data[0] == "A") {
-								//console.log("A _____");
-							} else if (end_data[0] == "Z") {
-								//console.log("A _____");
-							}
- 
-					} else if (component.type == "line") {
- 
+						if (end_data[0] == "L") { // 라인
 
 							end_data[1] = Number(end_data[1]) + move_size;
 							//end_data[2] = Number(end_data[2]) + y_gap;
 
-				 
-					}  
+						} else if (end_data[0] == "H") { // 수평
+
+							end_data[1] = Number(end_data[1]) + move_size;
+
+						} else if (end_data[0] == "V") { // 수직
+
+							//end_data[1] = Number(end_data[1]) + y_gap;
+
+						} else if (end_data[0] == "C") {
+
+							end_data[1] = Number(end_data[1]) + move_size;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+							end_data[3] = Number(end_data[3]) + move_size;
+							//end_data[4] = Number(end_data[4]) + y_gap;
+							end_data[5] = Number(end_data[5]) + move_size;
+							//end_data[6] = Number(end_data[6]) + y_gap;
+
+						} else if (end_data[0] == "S") {
+
+							end_data[1] = Number(end_data[1]) + move_size;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+							end_data[3] = Number(end_data[3]) + move_size;
+							//end_data[4] = Number(end_data[4]) + y_gap;
+
+						} else if (end_data[0] == "Q") {
+
+							end_data[1] = Number(end_data[1]) + move_size;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+							end_data[3] = Number(end_data[3]) + move_size;
+							//end_data[4] = Number(end_data[4]) + y_gap;
+
+						} else if (end_data[0] == "T") {
+
+							end_data[1] = Number(end_data[1]) + move_size;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+
+						} else if (end_data[0] == "A") {
+							//console.log("A _____");
+						} else if (end_data[0] == "Z") {
+							//console.log("A _____");
+						}
+
+					} else if (component.type == "line") {
+
+						end_data[1] = Number(end_data[1]) + move_size;
+						//end_data[2] = Number(end_data[2]) + y_gap;
+
+					}
 
 				}
-				
-				
-				
-				console.log("------- COMPONENT POINT X MOVE  [ AFTER ]-----------------------------------------------------");
+
+				console
+						.log("------- COMPONENT POINT X MOVE  [ AFTER ]-----------------------------------------------------");
 				console.log(" point_name : " + p_op_data.target);
 				console.log(" component type : " + component.type);
 				console.log(" component index : " + component_index);
-				console.log(" point_start_or_end in component : " + point_start_or_end);
+				console.log(" point_start_or_end in component : "
+						+ point_start_or_end);
 				console.log(" point data ");
 				console.dir(JSON.stringify(component[point_start_or_end]));
 				console.log(" component data ");
@@ -1605,14 +1605,12 @@
 		var op_direction = op_data[1];
 		var op_size = Number(op_data[2]);
 		var mi_direction = p_op_data.mi_direction;
-		
+
 		if (p_dm.point_dic[p_op_data.target]) {
 
 			var point_index_data = p_dm.point_dic[p_op_data.target].dme_index;
 
 			for ( var pid_index in point_index_data) {
-
-				
 
 				var component_index = point_index_data[pid_index].component_index;
 				var point_start_or_end = point_index_data[pid_index].type;
@@ -1620,119 +1618,117 @@
 				var component_data = component.data;
 				var point_data = component[point_start_or_end];
 
-				console.log("------- COMPONENT POINT Y MOVE  [ BEFORE ]-----------------------------------------------------");
+				console
+						.log("------- COMPONENT POINT Y MOVE  [ BEFORE ]-----------------------------------------------------");
 				console.log(" point_name : " + p_op_data.target);
 				console.log(" component type : " + component.type);
 				console.log(" component index : " + component_index);
-				console.log(" point_start_or_end in component : " + point_start_or_end);
+				console.log(" point_start_or_end in component : "
+						+ point_start_or_end);
 				console.log(" point data ");
 				console.dir(JSON.stringify(component[point_start_or_end]));
 				console.log(" component data ");
 				console.dir(JSON.stringify(component.data));
 
 				var move_size = 0;
-				
-				if(mi_direction == "+" && op_direction == "+"){
+
+				if (mi_direction == "+" && op_direction == "+") {
 					move_size = Number(p_op_data.step) * move_ratio * op_size;
-				}else if(mi_direction == "+" && op_direction == "-"){
-					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
-				}else if(mi_direction == "-" && op_direction == "+"){
-					move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
-				}else if(mi_direction == "-" && op_direction == "-"){
+				} else if (mi_direction == "+" && op_direction == "-") {
+					move_size = (Number(p_op_data.step) * move_ratio * op_size)
+							* -1;
+				} else if (mi_direction == "-" && op_direction == "+") {
+					move_size = (Number(p_op_data.step) * move_ratio * op_size)
+							* -1;
+				} else if (mi_direction == "-" && op_direction == "-") {
 					move_size = Number(p_op_data.step) * move_ratio * op_size;
 				}
-				
-				
+
 				point_data.x = Number(point_data.x);
 				point_data.y = Number(point_data.y) + move_size;
-				
-				
+
 				if (point_start_or_end == "start") {
 
-						var start_data = component_data[0];
-						start_data[1] = Number(start_data[1]);
-						start_data[2] = Number(start_data[2]) + move_size; 
-						
+					var start_data = component_data[0];
+					start_data[1] = Number(start_data[1]);
+					start_data[2] = Number(start_data[2]) + move_size;
+
 				} else {
 					// end 포인트를 조작한다면...
-		 
-					
+
 					var end_data = null;
-					
-					if(component_data.length == 1){
+
+					if (component_data.length == 1) {
 						end_data = component_data[0];
-					}else{
+					} else {
 						end_data = component_data[1];
 					}
 
- 				     if (component.type == "path") {
+					if (component.type == "path") {
 
- 
-							if (end_data[0] == "L") { // 라인
-
-								//end_data[1] = Number(end_data[1]) + move_size;
-								end_data[2] = Number(end_data[2]) + move_size;
-
-							} else if (end_data[0] == "H") { // 수평
-
-								//end_data[1] = Number(end_data[1]) + move_size;
-
-							} else if (end_data[0] == "V") { // 수직
-							
-								end_data[1] = Number(end_data[1]) + move_size;
-
-							} else if (end_data[0] == "C") { 
-
-								//end_data[1] = Number(end_data[1]) + x_gap;
-								end_data[2] = Number(end_data[2]) + move_size;
-								//end_data[3] = Number(end_data[3]) + x_gap;
-								end_data[4] = Number(end_data[4]) + move_size;
-								//end_data[5] = Number(end_data[5]) + move_size;
-								end_data[6] = Number(end_data[6]) + move_size;
-
-							} else if (end_data[0] == "S") {
-
-								//end_data[1] = Number(end_data[1]) + x_gap;
-								end_data[2] = Number(end_data[2]) + move_size;
-								//end_data[3] = Number(end_data[3]) + move_size;
-								end_data[4] = Number(end_data[4]) + move_size;
-
-							} else if (end_data[0] == "Q") {
-
-								//end_data[1] = Number(end_data[1]) + x_gap;
-								end_data[2] = Number(end_data[2]) + move_size;
-								//end_data[3] = Number(end_data[3]) + move_size;
-								end_data[4] = Number(end_data[4]) + move_size;
-
-							} else if (end_data[0] == "T") {
-
-								//end_data[1] = Number(end_data[1]) + move_size;
-								end_data[2] = Number(end_data[2]) + move_size;
-
-							} else if (end_data[0] == "A") {
-								//console.log("A _____");
-							} else if (end_data[0] == "Z") {
-								//console.log("A _____");
-							}
- 
-					} else if (component.type == "line") {
- 
+						if (end_data[0] == "L") { // 라인
 
 							//end_data[1] = Number(end_data[1]) + move_size;
 							end_data[2] = Number(end_data[2]) + move_size;
 
-				 
-					}  
+						} else if (end_data[0] == "H") { // 수평
+
+							//end_data[1] = Number(end_data[1]) + move_size;
+
+						} else if (end_data[0] == "V") { // 수직
+
+							end_data[1] = Number(end_data[1]) + move_size;
+
+						} else if (end_data[0] == "C") {
+
+							//end_data[1] = Number(end_data[1]) + x_gap;
+							end_data[2] = Number(end_data[2]) + move_size;
+							//end_data[3] = Number(end_data[3]) + x_gap;
+							end_data[4] = Number(end_data[4]) + move_size;
+							//end_data[5] = Number(end_data[5]) + move_size;
+							end_data[6] = Number(end_data[6]) + move_size;
+
+						} else if (end_data[0] == "S") {
+
+							//end_data[1] = Number(end_data[1]) + x_gap;
+							end_data[2] = Number(end_data[2]) + move_size;
+							//end_data[3] = Number(end_data[3]) + move_size;
+							end_data[4] = Number(end_data[4]) + move_size;
+
+						} else if (end_data[0] == "Q") {
+
+							//end_data[1] = Number(end_data[1]) + x_gap;
+							end_data[2] = Number(end_data[2]) + move_size;
+							//end_data[3] = Number(end_data[3]) + move_size;
+							end_data[4] = Number(end_data[4]) + move_size;
+
+						} else if (end_data[0] == "T") {
+
+							//end_data[1] = Number(end_data[1]) + move_size;
+							end_data[2] = Number(end_data[2]) + move_size;
+
+						} else if (end_data[0] == "A") {
+							//console.log("A _____");
+						} else if (end_data[0] == "Z") {
+							//console.log("A _____");
+						}
+
+					} else if (component.type == "line") {
+
+						//end_data[1] = Number(end_data[1]) + move_size;
+						end_data[2] = Number(end_data[2]) + move_size;
+
+					}
 
 				}
-				
-				
-				
-				console.log("------- COMPONENT POINT Y MOVE  [ AFTER ]-----------------------------------------------------");
+
+				console
+						.log("------- COMPONENT POINT Y MOVE  [ AFTER ]-----------------------------------------------------");
 				console.log(" point_name : " + p_op_data.target);
 				console.log(" component type : " + component.type);
 				console.log(" component index : " + component_index);
-				console.log(" point_start_or_end in component : " + point_start_or_end);
+				console.log(" point_start_or_end in component : "
+						+ point_start_or_end);
 				console.log(" point data ");
 				console.dir(JSON.stringify(component[point_start_or_end]));
 				console.log(" component data ");
@@ -1745,12 +1741,11 @@
 		}
 
 	};
-	
-	
+
 	/*
 	
-    {
-        "소매" :  ["p14:x,+,1","p14:y,+,1","p13:x,-,1","p13:y,-,1","p4:x,-,1","p4:y,-,1","p5:x,+,1","p5:y,-,2"],
+	{
+	    "소매" :  ["p14:x,+,1","p14:y,+,1","p13:x,-,1","p13:y,-,1","p4:x,-,1","p4:y,-,1","p5:x,+,1","p5:y,-,2"],
 	    "p14_x_+": ["p14:x,+,5"],
 	    "p14_x_-": ["p14:x,-,5"],
 	    "p14_y_+": ["p14:y,+,5"],
@@ -1761,8 +1756,7 @@
 	    "p14_tp_center_-": ["p14:tp,-,svg_center-p14,5"]
 	}
 	
-    */
-    
+	 */
 
 	var op_tp_move = function(p_op_data, p_dm) {
 
@@ -1775,83 +1769,80 @@
 		var op_direction = op_data[1];
 		var op_tp = op_data[2].split("-");
 		var op_size = Number(op_data[3]);
-		
+
 		var mi_direction = p_op_data.mi_direction;
-		
+
 		// 시작점과 끝점을 정의 한다. 
-		
+
 		var tp_start_point = null;
-	 	var tp_end_point = null;
+		var tp_end_point = null;
 
 		// 시작점
 		// svg_center 는 예약어 : template의 중심점
-		
-		if(op_tp[0] == "svg_center"){
-		
+
+		if (op_tp[0] == "svg_center") {
+
 			tp_start_point = p_dm.center;
-			
-		}else{
-			
+
+		} else {
+
 			if (p_dm.point_dic[op_tp[0].toUpperCase()]) {
-				
+
 				var dme_first_data = p_dm.point_dic[op_tp[0].toUpperCase()].dme_index[0];
-				var dme_first_start_or_end = dme_first_data.type; 
+				var dme_first_start_or_end = dme_first_data.type;
 				var first_component = p_dm.component[dme_first_data.component_index];
 				tp_start_point = first_component[dme_first_start_or_end];
-				
-			}else{
-			
-				alert("point_dic에 tp_start_point가 존재하지 않습니다. "+op_tp[0].toUpperCase());
+
+			} else {
+
+				alert("point_dic에 tp_start_point가 존재하지 않습니다. "
+						+ op_tp[0].toUpperCase());
 				return;
-				
+
 			}
-			
-			
+
 		}
-		
-		if(op_tp[1] == "svg_center"){
+
+		if (op_tp[1] == "svg_center") {
 			tp_end_point = p_dm.center;
-		}else{
-			
-		
+		} else {
+
 			if (p_dm.point_dic[op_tp[1].toUpperCase()]) {
-				
+
 				var dme_first_data = p_dm.point_dic[op_tp[1].toUpperCase()].dme_index[0];
-				var dme_first_start_or_end = dme_first_data.type; 
+				var dme_first_start_or_end = dme_first_data.type;
 				var first_component = p_dm.component[dme_first_data.component_index];
 				tp_end_point = first_component[dme_first_start_or_end];
-				
-			}else{
-			
-				alert("point_dic에 tp_start_point가 존재하지 않습니다. "+op_tp[1].toUpperCase());
+
+			} else {
+
+				alert("point_dic에 tp_start_point가 존재하지 않습니다. "
+						+ op_tp[1].toUpperCase());
 				return;
-				
+
 			}
 		}
-		
-		
+
 		var move_size = 0;
-		
-		if(mi_direction == "+" && op_direction == "+"){
+
+		if (mi_direction == "+" && op_direction == "+") {
 			move_size = Number(p_op_data.step) * move_ratio * op_size;
-		}else if(mi_direction == "+" && op_direction == "-"){
+		} else if (mi_direction == "+" && op_direction == "-") {
 			move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
-		}else if(mi_direction == "-" && op_direction == "+"){
+		} else if (mi_direction == "-" && op_direction == "+") {
 			move_size = (Number(p_op_data.step) * move_ratio * op_size) * -1;
-		}else if(mi_direction == "-" && op_direction == "-"){
+		} else if (mi_direction == "-" && op_direction == "-") {
 			move_size = Number(p_op_data.step) * move_ratio * op_size;
 		}
-		
-		
-		
-		var tp_moved_point = get_point_by_extension(tp_start_point,tp_end_point,move_size);
-		
-//		console.dir(tp_moved_point);
-//		return;
-		
-		
+
+		var tp_moved_point = get_point_by_extension(tp_start_point,
+				tp_end_point, move_size);
+
+		//		console.dir(tp_moved_point);
+		//		return;
+
 		// 새로 찾은 포인트로 값을 다 업데이트 해준다. 
-		
+
 		if (p_dm.point_dic[p_op_data.target]) {
 
 			var point_index_data = p_dm.point_dic[p_op_data.target].dme_index;
@@ -1864,121 +1855,118 @@
 				var component_data = component.data;
 				var point_data = component[point_start_or_end];
 
-				console.log("------- COMPONENT POINT TP MOVE  [ BEFORE ]-----------------------------------------------------");
+				console
+						.log("------- COMPONENT POINT TP MOVE  [ BEFORE ]-----------------------------------------------------");
 				console.log(" point_name : " + p_op_data.target);
 				console.log(" component type : " + component.type);
 				console.log(" component index : " + component_index);
-				console.log(" point_start_or_end in component : " + point_start_or_end);
+				console.log(" point_start_or_end in component : "
+						+ point_start_or_end);
 				console.log(" point data ");
 				console.dir(JSON.stringify(component[point_start_or_end]));
 				console.log(" component data ");
 				console.dir(JSON.stringify(component.data));
-			
+
 				point_data.x = Number(tp_moved_point.x);
 				point_data.y = Number(tp_moved_point.y);
-				
-				
+
 				if (point_start_or_end == "start") {
 
-						var start_data = component_data[0];
-						start_data[1] = Number(tp_moved_point.x);
-						start_data[2] = Number(tp_moved_point.y);
-						
+					var start_data = component_data[0];
+					start_data[1] = Number(tp_moved_point.x);
+					start_data[2] = Number(tp_moved_point.y);
+
 				} else {
 					// end 포인트를 조작한다면...
-		 
-					
+
 					var end_data = null;
-					
-					if(component_data.length == 1){
+
+					if (component_data.length == 1) {
 						end_data = component_data[0];
-					}else{
+					} else {
 						end_data = component_data[1];
 					}
 
- 				     if (component.type == "path") {
+					if (component.type == "path") {
 
- 
-							if (end_data[0] == "L") { // 라인
- 
-								end_data[1] = Number(tp_moved_point.x);
-								end_data[2] = Number(tp_moved_point.y);
+						if (end_data[0] == "L") { // 라인
 
-							} else if (end_data[0] == "H") { // 수평
- 
-							
-								end_data[1] = Number(tp_moved_point.x); 
+							end_data[1] = Number(tp_moved_point.x);
+							end_data[2] = Number(tp_moved_point.y);
 
-							} else if (end_data[0] == "V") { // 수직
-							
-								end_data[1] = Number(tp_moved_point.y);
+						} else if (end_data[0] == "H") { // 수평
 
-							} else if (end_data[0] == "C") { 
+							end_data[1] = Number(tp_moved_point.x);
 
-								//end_data[1] = Number(end_data[1]) + x_gap;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-								//end_data[3] = Number(end_data[3]) + x_gap;
-								//end_data[4] = Number(end_data[4]) + y_gap;
-								//end_data[5] = Number(end_data[5]) + move_size;
-								//end_data[6] = Number(end_data[6]) + move_size;
-								
-								end_data[5] = Number(tp_moved_point.x);
-								end_data[6] = Number(tp_moved_point.y);
+						} else if (end_data[0] == "V") { // 수직
 
-							} else if (end_data[0] == "S") {
+							end_data[1] = Number(tp_moved_point.y);
 
-								//end_data[1] = Number(end_data[1]) + x_gap;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-								//end_data[3] = Number(end_data[3]) + move_size;
-								//end_data[4] = Number(end_data[4]) + move_size;
-								
-								end_data[3] = Number(tp_moved_point.x);
-								end_data[4] = Number(tp_moved_point.y);
+						} else if (end_data[0] == "C") {
 
-							} else if (end_data[0] == "Q") {
+							//end_data[1] = Number(end_data[1]) + x_gap;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+							//end_data[3] = Number(end_data[3]) + x_gap;
+							//end_data[4] = Number(end_data[4]) + y_gap;
+							//end_data[5] = Number(end_data[5]) + move_size;
+							//end_data[6] = Number(end_data[6]) + move_size;
 
-								//end_data[1] = Number(end_data[1]) + x_gap;
-								//end_data[2] = Number(end_data[2]) + y_gap;
-								//end_data[3] = Number(end_data[3]) + move_size;
-								//end_data[4] = Number(end_data[4]) + move_size;
-								
-								end_data[3] = Number(tp_moved_point.x);
-								end_data[4] = Number(tp_moved_point.y);
+							end_data[5] = Number(tp_moved_point.x);
+							end_data[6] = Number(tp_moved_point.y);
 
-							} else if (end_data[0] == "T") {
+						} else if (end_data[0] == "S") {
 
-								//end_data[1] = Number(end_data[1]) + move_size;
-								//end_data[2] = Number(end_data[2]) + move_size;
-								
-								end_data[1] = Number(tp_moved_point.x);
-								end_data[2] = Number(tp_moved_point.y);
+							//end_data[1] = Number(end_data[1]) + x_gap;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+							//end_data[3] = Number(end_data[3]) + move_size;
+							//end_data[4] = Number(end_data[4]) + move_size;
 
-							} else if (end_data[0] == "A") {
-								//console.log("A _____");
-							} else if (end_data[0] == "Z") {
-								//console.log("A _____");
-							}
- 
-					} else if (component.type == "line") {
- 
+							end_data[3] = Number(tp_moved_point.x);
+							end_data[4] = Number(tp_moved_point.y);
+
+						} else if (end_data[0] == "Q") {
+
+							//end_data[1] = Number(end_data[1]) + x_gap;
+							//end_data[2] = Number(end_data[2]) + y_gap;
+							//end_data[3] = Number(end_data[3]) + move_size;
+							//end_data[4] = Number(end_data[4]) + move_size;
+
+							end_data[3] = Number(tp_moved_point.x);
+							end_data[4] = Number(tp_moved_point.y);
+
+						} else if (end_data[0] == "T") {
 
 							//end_data[1] = Number(end_data[1]) + move_size;
 							//end_data[2] = Number(end_data[2]) + move_size;
 
 							end_data[1] = Number(tp_moved_point.x);
 							end_data[2] = Number(tp_moved_point.y);
-				 
-					}  
+
+						} else if (end_data[0] == "A") {
+							//console.log("A _____");
+						} else if (end_data[0] == "Z") {
+							//console.log("A _____");
+						}
+
+					} else if (component.type == "line") {
+
+						//end_data[1] = Number(end_data[1]) + move_size;
+						//end_data[2] = Number(end_data[2]) + move_size;
+
+						end_data[1] = Number(tp_moved_point.x);
+						end_data[2] = Number(tp_moved_point.y);
+
+					}
 
 				}
-				
-				
-				
-				console.log("------- COMPONENT POINT TP MOVE  [ AFTER ]-----------------------------------------------------");
+
+				console
+						.log("------- COMPONENT POINT TP MOVE  [ AFTER ]-----------------------------------------------------");
 				console.log(" point_name : " + p_op_data.target);
 				console.log(" component type : " + component.type);
 				console.log(" component index : " + component_index);
-				console.log(" point_start_or_end in component : " + point_start_or_end);
+				console.log(" point_start_or_end in component : "
+						+ point_start_or_end);
 				console.log(" point data ");
 				console.dir(JSON.stringify(component[point_start_or_end]));
 				console.log(" component data ");
