@@ -1237,7 +1237,23 @@
 				pure_dme.push(dme_item);
 				pure_dme_index[point_key] = "EXIST";
 			}
+ 
 
+		}
+		
+		for ( var dme_index in pure_dme) {
+			console.log(" zip_model : dme_index");
+			console.log(dme_index);
+			
+			var dme_item = pure_dme[dme_index];
+			var start_point = dme_item.start;
+			var end_point = dme_item.end;
+
+			console.dir(dme_item);
+			
+
+			var point_key = start_point.name + end_point.name;
+ 
 			if (!point_dic.hasOwnProperty(start_point.name)) {
 
 				point_dic[start_point.name] = {};
@@ -1275,6 +1291,7 @@
 			}
 
 		}
+		
 
 		var zip_dme = {};
 		zip_dme.component = pure_dme;
@@ -1282,6 +1299,8 @@
 		zip_dme.point_dic = point_dic;
 		zip_dme.ratio = Number(p_dme.ratio);
 
+		
+		console.dir();
 		current_zip_dm = zip_dme;
 		draw_model(zip_dme);
 		$("#output_dm").val(JSON.stringify(zip_dme));
@@ -1742,22 +1761,7 @@
 
 	};
 
-	/*
-	
-	{
-	    "소매" :  ["p14:x,+,1","p14:y,+,1","p13:x,-,1","p13:y,-,1","p4:x,-,1","p4:y,-,1","p5:x,+,1","p5:y,-,2"],
-	    "p14_x_+": ["p14:x,+,5"],
-	    "p14_x_-": ["p14:x,-,5"],
-	    "p14_y_+": ["p14:y,+,5"],
-	    "p14_y_-": ["p14:y,-,5"],
-	    "p14_tp_p15_+": ["p14:tp,+,p15-p14,5"],
-	    "p14_tp_p15_-": ["p14:tp,-,p15-p14,5"],
-	    "p14_tp_center_+": ["p14:tp,+,svg_center-p14,5"],
-	    "p14_tp_center_-": ["p14:tp,-,svg_center-p14,5"]
-	}
-	
-	 */
-
+ 
 	var op_tp_move = function(p_op_data, p_dm) {
 
 		console.log("             OP_TP_MOVE START");
@@ -1979,6 +1983,65 @@
 		}
 
 	};
+	
+	
+	
+	
+	var find_point_target = null;
+
+	var before_point = function() {
+		var point_number = Number($("#point_number").val());
+
+		if (point_number <= 1) {
+			alert("이전의  점이 존재하지 않습니다");
+			return;
+		}
+
+		point_number--;
+
+		$("#point_number").val(point_number);
+		
+		var dme_index_info = current_zip_dm.point_dic["P"+point_number].dme_index[0];
+		var dme_index = dme_index_info.component_index;
+		var dme_type = dme_index_info.type;
+		var dme = current_zip_dm.component[dme_index_info.component_index];
+		var target_point = dme[dme_type];
+		
+		if (find_point_target != null) {
+			find_point_target.hide();
+			find_point_target = null;
+		}
+		find_point_target = MAIN_CANVAS.circle(10).fill('#f06').move(
+				Number(target_point.x),
+				Number(target_point.y));
+		find_point_target.show(); 
+		
+	};
+
+	var after_point = function() {
+
+		var point_number = $("#point_number").val();
+		point_number++;
+
+		$("#point_number").val(point_number);
+
+		var dme_index_info = current_zip_dm.point_dic["P"+point_number].dme_index[0];
+		var dme_index = dme_index_info.component_index;
+		var dme_type = dme_index_info.type;
+		var dme = current_zip_dm.component[dme_index_info.component_index];
+		var target_point = dme[dme_type];
+		
+		if (find_point_target != null) {
+			find_point_target.hide();
+			find_point_target = null;
+		}
+		find_point_target = MAIN_CANVAS.circle(10).fill('#f06').move(
+				Number(target_point.x),
+				Number(target_point.y));
+		find_point_target.show(); 
+	};
+
+	
 </script>
 <style>
 #MAIN_CANVAS {
@@ -2002,6 +2065,7 @@
  <a href="dynamic_model_builder.html" target="_blank">수치 모델 빌더</a>
  <a href="http://jsbeautifier.org" target="_blank">beautifier</a>
  <a href="http://jsonviewer.stack.hu" target="_blank">jsonviewer</a>
+ <a href="http://pressbin.com/tools/urlencode_urldecode/" target="_blank">encoder</a>
  <table id="maintable">
   <tr>
    <td>
@@ -2009,6 +2073,7 @@
      X 축 : <input type="text" id="center_x" value="450" /> Y 축 : <input type="text" id="center_y" value="450" /> 비율 : <input type="text" id="center_ratio" value="1.1" />
      <button onclick="move_center();">중심축이동</button>
      <br>
+     <button  onclick="before_point();">◁</button> P: <input type="text" id="point_number" value="0" /><button  onclick="after_point();">▷</button> 
     </div>
     <div id="MAIN_CANVAS"></div>
    </td>

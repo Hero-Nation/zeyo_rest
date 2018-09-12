@@ -54,7 +54,11 @@ var zeyo_dmc = (function() {
 		 		데이터를 보여준다. 
 		 
 		 */
+		
+		console.log("template_store");
 		console.dir(template_store);
+		console.log("template_store_clone");
+		console.dir(template_store_clone);
 		
 	};
 	
@@ -165,6 +169,10 @@ var zeyo_dmc = (function() {
 				alert("load_template : 입력한 템플릿의 width가 존재하지 않습니다.  인덱스 :"+param_index);
 				return;
 			}
+			
+			var name = template_data["name"];
+			template_data.dm = JSON.parse(decodeURIComponent(template_data["dm"]));
+			template_data.control_data = JSON.parse(decodeURIComponent(template_data["control_data"]));
 			
 			template_store[name] = template_data;
 			
@@ -1118,7 +1126,11 @@ var zeyo_dmc = (function() {
 		var size = Number(p_param["size"]);
 		
 		var target_template = template_store[target_template_name];
-		var current_control_data = target_template.control_data;
+		var clone_target_template = JSON.parse(JSON.stringify(target_template));
+
+		template_store_clone[target_template_name] = clone_target_template;
+		
+		var current_control_data = clone_target_template.control_data;
 
 		
 		if (current_control_data[measure]) {
@@ -1144,18 +1156,30 @@ var zeyo_dmc = (function() {
 				op_data.data = target_op;
 
 				if (op_type == "X") {
-					_op_x_move(op_data, target_template.dm);
+					_op_x_move(op_data, clone_target_template.dm);
 				} else if (op_type == "Y") {
-					_op_y_move(op_data, target_template.dm);
+					_op_y_move(op_data, clone_target_template.dm);
 				} else if (op_type == "TP") {
-					_op_tp_move(op_data, target_template.dm);
+					_op_tp_move(op_data, clone_target_template.dm);
 				}
 
 			}
  
+			
+
+			
 
 		} else {
 			alert("control_template : 통제 데이터가 존재 하지 않습니다.");
+		}
+		
+		MAIN_CANVAS.clear();
+		
+		
+		var tsc_keys = Object.keys(template_store_clone);
+		for(var tsc_index  in tsc_keys){
+			var tsc_name = tsc_keys[tsc_index];
+			_draw_template(template_store_clone[tsc_name]);
 		}
 		
 	};
