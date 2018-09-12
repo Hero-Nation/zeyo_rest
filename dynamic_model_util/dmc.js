@@ -287,9 +287,10 @@ var zeyo_dmc = (function() {
 			y : center_y
 		};
 
-		// 복사해서 쓴다.
-		var clone_dm = $.extend(true, {}, target_template.dm);
+		// 복사해서 쓴다. 
 
+		var clone_dm = JSON.parse(JSON.stringify(target_template));
+		
 		for ( var component_index in clone_dm.component) {
 			var component = clone_dm.component[component_index];
 			var moved_component = _move_component(component, move_gap);
@@ -307,9 +308,9 @@ var zeyo_dmc = (function() {
 	
 	
 	var _scale_component_data = function(p_center, p_component, p_ratio) {
-
-		var component_clone = $.extend(true, {}, p_component);
-
+ 
+		var component_clone = JSON.parse(JSON.stringify(p_component));
+		
 		component_clone.start = _get_point_by_ratio(p_center,				component_clone.start, p_ratio);
 		component_clone.start.name = p_component.start.name;
 		component_clone.end = _get_point_by_ratio(p_center, component_clone.end,				p_ratio);
