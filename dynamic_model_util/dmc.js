@@ -276,7 +276,7 @@ var zeyo_dmc = (function() {
 		var center_y 		= Number(p_param["center_y"]);
 		var ratio 			= Number(p_param["ratio"]);
 		
-		var target_template = template_store[name];
+		var target_template = template_store_clone[name];
 		
 		var move_gap = {};
 		move_gap.x = center_x - Number(target_template.dm.center.x);
@@ -289,7 +289,7 @@ var zeyo_dmc = (function() {
 
 		// 복사해서 쓴다. 
 
-		var clone_dm = JSON.parse(JSON.stringify(target_template));
+		var clone_dm = JSON.parse(JSON.stringify(target_template.dm));
 		
 		for ( var component_index in clone_dm.component) {
 			var component = clone_dm.component[component_index];
@@ -302,8 +302,9 @@ var zeyo_dmc = (function() {
 
 		target_template.dm = _zip_model(clone_dm);
 		
-		template_store[name] = target_template;
+		template_store_clone[name] = target_template;
 		
+		_refresh_canvas();
 	};
 	
 	
@@ -1174,6 +1175,12 @@ var zeyo_dmc = (function() {
 			alert("control_template : 통제 데이터가 존재 하지 않습니다.");
 		}
 		
+
+		_refresh_canvas();
+	};
+	
+	var _refresh_canvas = function(){
+		
 		MAIN_CANVAS.clear();
 		
 		
@@ -1182,9 +1189,7 @@ var zeyo_dmc = (function() {
 			var tsc_name = tsc_keys[tsc_index];
 			_draw_template(template_store_clone[tsc_name]);
 		}
-		
-	};
-	
+	}
 	
 	var _op_x_move = function(p_op_data, p_dm) {
  
